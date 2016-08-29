@@ -4,7 +4,7 @@
 	<breadcrumbs></breadcrumbs>
 
 	<ul>
-		<li each={ browseResults } onclick={ onClickItem }>
+		<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 			{ fields.display_name }
 		</li>
 	</ul>
@@ -37,8 +37,13 @@
 			if (variant == "Directory") {
 				this.browse(e.item.fields.path);
 			} else if (variant == "Song") {
-				eventBus.trigger("browser:queue", e.item);
+				eventBus.trigger("browser:queueTrack", e.item.fields);
 			}
+		}
+
+		onDragItemStart(e) {
+			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
+			return true;
 		}
 
 		eventBus.on("breadcrumbs:backtrack", function(path) {

@@ -4,20 +4,43 @@
 
 	<span onclick={ clear }>Clear</span>
 
-	<ul>
+	<ul ondragover={ allowDrop } ondrop={ onDrop }>
 		<li each={ tracks } onclick={ onClickItem }>
 			{ info.display_name }
 		</li>
 	</ul>
 
 	<script>
-		this.tracks = [];
 
-		queue(track) {
-			var playlistTrack = {};
-			playlistTrack.info = track.fields;
-			this.tracks.push(playlistTrack);
+		clear() {
+			this.tracks = [];
 			this.update();
+		}
+
+		queueTrackInternal(track) {
+			var playlistTrack = {};
+			playlistTrack.info = track;
+			this.tracks.push(playlistTrack);
+		}
+
+		queueTrack(track) {
+			this.queueTrackInternal(track);
+			this.update();
+		}
+
+		queueDirectory(path) {
+			fetch('api/flatten/' + path)
+			.then(function(res) {
+				return res.json();
+			})
+			.then(function(data) {
+				var length = data.length;
+				for (var i = 0; i < length; i++) {
+					console.log(data[i]);
+					this.queueTrackInternal(data[i]);
+				}
+				this.update();
+			}.bind(this));
 		}
 
 		playNext(currentTrack) {
@@ -34,10 +57,6 @@
 			}			
 		}
 
-		clear() {
-			this.tracks = [];
-		}
-
 		playTrack(playlistTrack) {
 			eventBus.trigger("playlist:jumpTo", playlistTrack);
 		}
@@ -46,8 +65,26 @@
 			this.playTrack(e.item);
 		}
 
-		eventBus.on("browser:queue", this.queue);
+		allowDrop(e) {
+			return false;
+		};
+
+		onDrop(e) {
+			var item = e.dataTransfer.getData("text/json");
+			item = JSON.parse(item);
+			var variant = item.variant;
+			if ( variant == "Song" ) {
+				this.queueTrack(item.fields);
+				this.update();
+			} else if ( variant == "Directory" ) {
+				this.queueDirectory(item.fields.path);
+			}
+		}
+
+		eventBus.on("browser:queueTrack", this.queueTrack);
 		eventBus.on("player:trackFinished", this.playNext);
+
+		this.clear();
 
 	</script>
 </playlist>
