@@ -2,14 +2,16 @@
 
 	<h2>Player</h2>
 	<span>{ currentTrack.info.display_name }</span>
-	<audio name="htmlAudio" controls src="api/serve/{ currentTrack.info.path }"></audio>
+	<audio name="htmlAudio" controls src="{ trackURL }"></audio>
 
 	<script>
 
 		this.currentTrack = null;
+		this.trackURL = null;
 
 		play(track) {
 			this.currentTrack = track;
+			this.trackURL = "api/serve/" + track.info.path;
 			this.update();
 			this.htmlAudio.play();
 		}
