@@ -8,17 +8,20 @@
 
 		<browser></browser>
 		<playlist></playlist>
+		<player></player>
 
 		<!--<script src="https://cdn.rawgit.com/github/fetch/master/fetch.js"></script>-->
 		<script src="https://rawgit.com/riot/riot/master/riot%2Bcompiler.min.js"></script>
 		<script type="riot/tag" src="tags/browser.tag"></script>
 		<script type="riot/tag" src="tags/playlist.tag"></script>
+		<script type="riot/tag" src="tags/player.tag"></script>
 
 		<script type="text/javascript">
 			var eventBus = riot.observable();
 	        riot.mount('browser');
 	        riot.mount('playlist');
+	        riot.mount('player');
 	    </script>
-		
+
 	</body>
 </html>

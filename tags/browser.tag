@@ -34,7 +34,7 @@
 			if (variant == "Directory") {
 				this.browse(e.item.fields.path);
 			} else if (variant == "Song") {
-				eventBus.trigger("playlist:queue", e.item);
+				eventBus.trigger("browser:queue", e.item);
 			}
 		}
 
