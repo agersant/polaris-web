@@ -1,6 +1,8 @@
 <browser>
 	<h2>File Browser</h2>
 
+	<breadcrumbs></breadcrumbs>
+
 	<ul>
 		<li each={ browseResults } onclick={ onClickItem }>
 			{ fields.display_name }
@@ -25,6 +27,7 @@
 				
 				this.reset();
 				this.browseResults = data;
+				this.tags.breadcrumbs.setCurrentPath(path);
 				this.update();
 			}.bind(this));
 		}
@@ -37,6 +40,10 @@
 				eventBus.trigger("browser:queue", e.item);
 			}
 		}
+
+		eventBus.on("breadcrumbs:backtrack", function(path) {
+			this.browse(path);
+		}.bind(this));
 
 		this.reset();
 		this.browse("");
