@@ -6,7 +6,7 @@
 
 	<ul ondragover={ allowDrop } ondrop={ onDrop }>
 		<li each={ tracks } onclick={ onClickItem }>
-			{ info.display_name }
+			{ info.title }
 		</li>
 	</ul>
 

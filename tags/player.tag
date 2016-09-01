@@ -1,7 +1,7 @@
 <player>
 
 	<h2>Player</h2>
-	<span>{ currentTrack.info.display_name }</span>
+	<span>{ currentTrack.info.title }</span>
 	<audio name="htmlAudio" controls src="{ trackURL }"></audio>
 
 	<script>
