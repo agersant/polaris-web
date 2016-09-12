@@ -1,7 +1,7 @@
 <player>
 
 	<h2>Player</h2>
-	<span>{ currentTrack.info.title }</span>
+	<span if="{ currentTrack }">{ currentTrack.info.artist } - { currentTrack.info.track_number }. { currentTrack.info.title }</span>
 	<audio name="htmlAudio" controls src="{ trackURL }"></audio>
 
 	<script>

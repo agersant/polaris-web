@@ -3,18 +3,24 @@
 
 	<breadcrumbs></breadcrumbs>
 
-	<img if={ folderArt } src="{ folderArt }" width="200px" height="200px" />
+	<div if={ album }>
+		<img if={ album.album_art } src="{ album.album_art }" width="200px" height="200px" />
+		<div>{ album.artist }<br/>{ album.year } - { album.title }</div>
+	</div>
 	<ul>
 		<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-			<img if={ variant == "Directory" && fields.folderArt } src="{ fields.folderArt }" width="80px" height="80px" />
-			{ variant == "Directory" ? fields.name : fields.title }
+			<img if={ variant == "Directory" && fields.album && fields.album.album_art } src="{ fields.album.album_art }" width="80px" height="80px" />
+			<span if={ variant == "Directory" }>{ fields.name }</span>
+			<span if={ variant == "Song" }>
+				{ fields.artist } - { fields.track_number }. { fields.title }
+			</span>
 		</li>
 	</ul>
 
 	<script>
 		reset() {
 			this.browseResults = [];
-			this.folderArt = null;
+			this.album = null;
 		}
 
 		browse(path) {
@@ -28,13 +34,11 @@
 				var length = data.length;
 				for (var i = 0; i < length; i++) {
 					data[i].fields = data[i].fields[0];
-					if (data[i].fields.album.album_art) {
-						data[i].fields.folderArt = "api/serve/" + data[i].fields.album.album_art;
-					} else {
-						data[i].fields.folderArt = null;
+					if (data[i].fields.album && data[i].fields.album.album_art) {
+						data[i].fields.album.album_art = "api/serve/" + data[i].fields.album.album_art;
 					}
-					if (data[i].variant == "Song") {
-						this.folderArt = data[i].fields.folderArt;
+					if (data[i].variant == "Song" && !this.album) {
+						this.album = data[i].fields.album;
 					}
 				}
 
