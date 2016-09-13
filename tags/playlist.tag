@@ -36,7 +36,6 @@
 			.then(function(data) {
 				var length = data.length;
 				for (var i = 0; i < length; i++) {
-					console.log(data[i]);
 					this.queueTrackInternal(data[i]);
 				}
 				this.update();
