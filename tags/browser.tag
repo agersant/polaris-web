@@ -24,7 +24,7 @@
 		}
 
 		browse(path) {
-			fetch('api/browse/' + path)
+			fetch("api/browse/" + path, { credentials: "same-origin" })
 			.then(function(res) {
 				return res.json();
 			})
