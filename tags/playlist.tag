@@ -29,7 +29,7 @@
 		}
 
 		queueDirectory(path) {
-			fetch('api/flatten/' + path)
+			fetch('api/flatten/' + path, { credentials: "same-origin" })
 			.then(function(res) {
 				return res.json();
 			})
