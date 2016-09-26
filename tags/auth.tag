@@ -7,10 +7,9 @@
 
 	<script>
 		doLogin() {
-			var form = document.forms.namedItem("authForm");
-			var formData = new FormData(form);
-			var username = encodeURIComponent(formData.get("username"));
-			var password = encodeURIComponent(formData.get("password"));
+			var form = document.forms["authForm"];
+			var username = encodeURIComponent(form.elements["username"].value);
+			var password = encodeURIComponent(form.elements["password"].value);
 			fetch("/api/auth", {
 				method: "POST",
 				body: "username=" + username + "&password=" + password,
