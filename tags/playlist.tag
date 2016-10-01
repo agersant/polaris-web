@@ -4,6 +4,13 @@
 
 	<span onclick={ clear }>Clear</span>
 
+	<select name="playbackOrder">
+		<option value="default">Default</option>
+		<option value="random">Random</option>
+		<option value="repeat-track">Repeat Track</option>
+		<option value="repeat-all">Repeat All</option>
+	</select>
+
 	<ul ondragover={ allowDrop } ondrop={ onDrop }>
 		<li each={ tracks } onclick={ onClickItem }>
 			{ info.artist } - { info.track_number }. { info.title }
@@ -43,17 +50,33 @@
 		}
 
 		playNext(currentTrack) {
-			var length = this.tracks.length;
-			for (var i = 0; i < length; i++) {
-				if (this.tracks[i] == currentTrack)
-				{
-					if (i + 1 < length) {
-						var nextTrack = this.tracks[i+1];
-						this.playTrack(nextTrack);
-					}
-					break;
+			var playbackOrder = this.playbackOrder.selectedOptions[0].value;
+			var numTracks = this.tracks.length;
+
+			var nextTrack = null;
+			if (playbackOrder == "random") {
+				if (numTracks > 0) {
+					var nextTrackIndex = Math.floor(Math.random() * numTracks);
+					nextTrack = this.tracks[nextTrackIndex];
 				}
-			}			
+			} else if (playbackOrder == "repeat-track") {
+				nextTrack = currentTrack;
+			} else {
+				var currentTrackIndex = this.tracks.indexOf(currentTrack);
+				if (currentTrackIndex >= 0) {
+					if (currentTrackIndex + 1 < numTracks) {
+						nextTrack = this.tracks[currentTrackIndex + 1];
+					} else if ( playbackOrder == "repeat-all" ) {
+						nextTrack = this.tracks[0];
+					}
+				} else if (numTracks > 0) {
+					nextTrack = this.tracks[0];
+				}
+			}
+
+			if (nextTrack != null) {
+				this.playTrack(nextTrack);
+			}
 		}
 
 		playTrack(playlistTrack) {
