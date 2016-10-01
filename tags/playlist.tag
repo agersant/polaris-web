@@ -12,8 +12,8 @@
 	</select>
 
 	<ul ondragover={ allowDrop } ondrop={ onDrop }>
-		<li each={ tracks } onclick={ onClickItem }>
-			{ info.artist } - { info.track_number }. { info.title }
+		<li class="track" each={ tracks } onclick={ onClickTrack }>
+			<span class="remove" onclick={ onClickRemoveTrack }>[-]</span>{ info.artist } - { info.track_number }. { info.title }
 		</li>
 	</ul>
 
@@ -83,8 +83,16 @@
 			eventBus.trigger("playlist:jumpTo", playlistTrack);
 		}
 
-		onClickItem(e) {
+		onClickTrack(e) {
 			this.playTrack(e.item);
+		}
+
+		onClickRemoveTrack(e) {
+			e.stopPropagation();
+			var trackIndex = this.tracks.indexOf(e.item);
+			if (trackIndex >= 0) {
+				this.tracks.splice(trackIndex, 1);
+			}
 		}
 
 		allowDrop(e) {
@@ -109,4 +117,20 @@
 		this.clear();
 
 	</script>
+
+	<style>
+		playlist .track {
+			cursor: default;
+		}
+		playlist .track:hover .remove {
+			visibility: visible;
+		}
+		playlist .track:not(:hover) .remove {
+			visibility: hidden;
+		}
+		playlist .remove {
+			cursor: pointer;
+		}
+	</style>
+
 </playlist>
