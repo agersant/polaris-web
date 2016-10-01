@@ -34,4 +34,14 @@
 
 	</script>
 
+	<style>
+		breadcrumbs li {
+			display: inline;
+			cursor: pointer;
+		}
+		breadcrumbs li:not(:first-child):before {
+			content: " > ";
+		}
+	</style>
+
 </breadcrumbs>

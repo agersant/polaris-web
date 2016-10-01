@@ -23,4 +23,18 @@
 		eventBus.on("playlist:jumpTo", this.play);
 
 	</script>
+
+	<style>
+		player {
+			display: block;
+			clear: both;
+			width: 100%;
+			height: 200px;
+			background-color: pink;
+		}
+
+		player audio {
+			width: 100%;
+		}
+	</style>
 </player>

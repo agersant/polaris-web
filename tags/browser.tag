@@ -1,21 +1,25 @@
 <browser>
-	<h2>File Browser</h2>
 
-	<breadcrumbs></breadcrumbs>
-
-	<div if={ album }>
-		<img if={ album.album_art } src="{ album.album_art }" width="200px" height="200px" />
-		<div>{ album.artist }<br/>{ album.year } - { album.title }</div>
+	<div class="paneHeader">
+		<h2>Music Collection</h2>
+		<breadcrumbs></breadcrumbs>
 	</div>
-	<ul>
-		<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-			<img if={ variant == "Directory" && fields.album && fields.album.album_art } src="{ fields.album.album_art }" width="80px" height="80px" />
-			<span if={ variant == "Directory" }>{ fields.name }</span>
-			<span if={ variant == "Song" }>
-				{ fields.artist } - { fields.track_number }. { fields.title }
-			</span>
-		</li>
-	</ul>
+
+	<div class="paneContent">
+		<div if={ album }>
+			<img if={ album.album_art } src="{ album.album_art }" width="200px" height="200px" />
+			<div>{ album.artist }<br/>{ album.year } - { album.title }</div>
+		</div>
+		<ul>
+			<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+				<img if={ variant == "Directory" && fields.album && fields.album.album_art } src="{ fields.album.album_art }" width="80px" height="80px" />
+				<span if={ variant == "Directory" }>{ fields.name }</span>
+				<span if={ variant == "Song" }>
+					{ fields.artist } - { fields.track_number }. { fields.title }
+				</span>
+			</li>
+		</ul>
+	</div>
 
 	<script>
 		reset() {
@@ -69,5 +73,13 @@
 		this.reset();
 		this.browse("");
 	</script>
+
+	<style>
+		browser {
+			float: left;
+			width: 50%;
+			height: calc(100% - 200px);
+		}
+	</style>
 
 </browser>

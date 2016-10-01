@@ -1,17 +1,17 @@
 <playlist>
 
-	<h2>Playlist</h2>
+	<div class="paneHeader">
+		<h2>Playlist</h2>
+		<span onclick={ clear }>Clear</span>
+		<select name="playbackOrder">
+			<option value="default">Default</option>
+			<option value="random">Random</option>
+			<option value="repeat-track">Repeat Track</option>
+			<option value="repeat-all">Repeat All</option>
+		</select>
+	</div>
 
-	<span onclick={ clear }>Clear</span>
-
-	<select name="playbackOrder">
-		<option value="default">Default</option>
-		<option value="random">Random</option>
-		<option value="repeat-track">Repeat Track</option>
-		<option value="repeat-all">Repeat All</option>
-	</select>
-
-	<ul ondragover={ allowDrop } ondrop={ onDrop }>
+	<ul class="paneContent" ondragover={ allowDrop } ondrop={ onDrop }>
 		<li class="track" each={ tracks } onclick={ onClickTrack }>
 			<span class="remove" onclick={ onClickRemoveTrack }>[-]</span>{ info.artist } - { info.track_number }. { info.title }
 		</li>
@@ -119,6 +119,12 @@
 	</script>
 
 	<style>
+		playlist {
+			float: right;
+			width: 50%;
+			height: calc(100% - 200px);
+		}
+
 		playlist .track {
 			cursor: default;
 		}
