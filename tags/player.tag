@@ -26,10 +26,6 @@
 
 	<style>
 		player {
-			display: block;
-			clear: both;
-			width: 100%;
-			height: 200px;
 			background-color: pink;
 		}
 

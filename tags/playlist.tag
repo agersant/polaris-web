@@ -119,14 +119,9 @@
 	</script>
 
 	<style>
-		playlist {
-			float: right;
-			width: 50%;
-			height: calc(100% - 200px);
-		}
-
 		playlist .track {
 			cursor: default;
+			white-space: nowrap;
 		}
 		playlist .track:hover .remove {
 			visibility: visible;
