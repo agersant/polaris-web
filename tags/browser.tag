@@ -13,7 +13,7 @@
 		<ul>
 			<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<img if={ variant == "Directory" && fields.album && fields.album.album_art } src="{ fields.album.album_art }" width="80px" height="80px" />
-				<span if={ variant == "Directory" }>{ fields.name }</span>
+				<span if={ variant == "Directory" } class="directory">{ fields.name }</span>
 				<span if={ variant == "Song" }>
 					{ fields.artist } - { fields.track_number }. { fields.title }
 				</span>
@@ -79,6 +79,11 @@
 			float: left;
 			width: 50%;
 			height: calc(100% - 200px);
+		}
+
+		browser .directory:before {
+			content: "🗀";
+			margin-right: 5px;
 		}
 	</style>
 

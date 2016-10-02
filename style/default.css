@@ -5,21 +5,34 @@ html, body, #app {
 * {
 	padding: 0;
 	margin: 0;
+	font-family: 'Hind', sans-serif;
 }
 
 .paneHeader {
 	width: 100%;
 	position: fixed;
-	height: 60px;
+	height: 90px;
 	z-index: 1;
-	background-color: lightskyblue;
+	border-bottom: 1px solid #EEE;
+	box-sizing: border-box;
+	padding: 20px;
 }
 
 .paneContent {
 	width: 100%;
 	position: relative;
-	height: calc(100% - 60px);
-	top: 60px;
+	height: calc(100% - 90px);
+	top: 90px;
 	overflow-y: auto;
-	background-color: lightcyan;
+	box-sizing: border-box;
+	padding: 20px;
+}
+
+li {
+	list-style-position: inside;
+	list-style-type: none;
+}
+
+h2 {
+	font-family: 'Montserrat', sans-serif;
 }
