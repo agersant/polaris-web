@@ -1,5 +1,5 @@
 <main>
-	<browser name="browser" ondragenter={ onBrowserMouseEnter } onmouseenter={ onBrowserMouseEnter }></browser>
+	<browser class="focused" name="browser" ondragenter={ onBrowserMouseEnter } onmouseenter={ onBrowserMouseEnter }></browser>
 	<playlist name="playlist" ondragenter={ onPlaylistMouseEnter } onmouseenter={ onPlaylistMouseEnter }></playlist>
 	<player></player>
 
