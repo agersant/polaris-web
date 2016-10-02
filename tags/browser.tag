@@ -9,8 +9,8 @@
 
 		<ul if={ viewMode == "explorer" } class="explorerView">
 			<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-				<span if={ variant == "Directory" } class="directory">{ fields.name }</span>
-				<span if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</span>
+				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
+				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
 			</li>
 		</ul>
 
@@ -135,8 +135,11 @@
 		}
 
 		browser .explorerView .directory, browser .explorerView .song {
-			white-space: nowrap;
 			cursor: default;
+			max-width: 100%;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		/*Discography view*/
