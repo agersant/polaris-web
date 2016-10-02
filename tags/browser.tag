@@ -29,16 +29,16 @@
 		</ul>
 
 		<div if={ viewMode == "album" } class="albumView">
+			<div class="title">{ album.title }</div>
+			<div class="artist">{ album.artist }</div>
 			<div class="details">
 				<img src="{ album.album_art }" />
-				<div>{ album.year }</div>
-				<div>{ album.title }</div>
+				<ul>
+					<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+						{ fields.track_number }. { fields.title }
+					</li>
+				</ul>
 			</div>
-			<ul>
-				<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-					<span>{ fields.track_number }. { fields.title }</span>
-				</li>
-			</ul>
 		</div>
 
 	</div>
@@ -204,21 +204,69 @@
 		}
 
 		/*Album view*/
-		browser .albumView .details {
-			float: left;
-			width: 400px;
-			margin-bottom: 20px;
-			margin-right: 20px;
+		browser .albumView .title {
+			margin-bottom: -10px;
+			font-size: 24px;
+			font-weight: 400;
+
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
-		browser .albumView .details img {
-			width: 100%;
+		browser .albumView .artist {
+			margin-bottom: 30px;
+			font-size: 20px;
+			color: #BBB;
+
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		browser .albumView .details {
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: flex-start;
+		}
+
+		browser.focused .albumView .details {
+			flex-flow: row nowrap;
 		}
 
 		browser .albumView ul {
-			float: left;
+			flex-grow: 1;
+			max-width: calc(100% - 40px);
 			cursor: default;
+			margin-left: 20px;
 		}
+
+		browser .albumView li {
+			padding: 5px 0;
+			border-bottom: 1px solid #EEE;
+
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		browser .albumView li:first-child {
+			padding-top: 0;
+		}
+
+		browser .albumView li:last-child {
+			border-bottom: 0;
+		}
+
+		browser .albumView img {
+			flex-shrink: 0; 
+			width: 100%;
+			height: 100%;
+			max-width: 25vw;
+			max-height: 25vw;
+			margin-bottom: 30px;
+		}
+
 	</style>
 
 </browser>
