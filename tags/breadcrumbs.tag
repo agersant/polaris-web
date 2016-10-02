@@ -35,6 +35,12 @@
 	</script>
 
 	<style>
+		breadcrumbs ul {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
 		breadcrumbs li {
 			display: inline;
 			cursor: pointer;
