@@ -43,6 +43,10 @@
 			.then(function(data) {
 				var length = data.length;
 				for (var i = 0; i < length; i++) {
+					data[i].path = "api/serve/" + data[i].path;
+					if (data[i].album && data[i].album.album_art) {
+						data[i].album.album_art = "api/serve/" + data[i].album.album_art;
+					}
 					this.queueTrackInternal(data[i]);
 				}
 				this.update();

@@ -41,6 +41,7 @@
 			bottom: 0;
 			width: 100%;
 			height: 200px;
+			box-sizing: border-box;
 		}
 
 		playlist.focused, browser.focused {

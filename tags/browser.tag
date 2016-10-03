@@ -83,6 +83,7 @@
 					}
 
 					if (data[i].variant == "Song") {
+						data[i].fields.path = "api/serve/" + data[i].fields.path;
 						if (!this.album) {
 							this.album = album;
 						} else if (this.album.title != album.title) {
@@ -143,7 +144,7 @@
 	</script>
 
 	<style>
-
+	
 		/*Explorer view*/
 		browser .explorerView .directory:before {
 			content: "🗀";
@@ -201,6 +202,7 @@
 		browser .discographyView img {
 			width: 100%;
 			height: 100%;
+			border-radius: 5px;
 		}
 
 		browser .discographyView .details {
@@ -224,8 +226,8 @@
 
 		/*Album view*/
 		browser .albumView .title {
-			margin-bottom: -10px;
-			font-size: 24px;
+			margin-bottom: -15px;
+			font-size: 30px;
 			font-weight: 400;
 
 			white-space: nowrap;
@@ -234,8 +236,8 @@
 		}
 
 		browser .albumView .artist {
-			margin-bottom: 30px;
-			font-size: 20px;
+			margin-bottom: 10px;
+			font-size: 24px;
 			color: #BBB;
 
 			white-space: nowrap;
@@ -284,6 +286,7 @@
 			max-width: 25vw;
 			max-height: 25vw;
 			margin-bottom: 30px;
+			border-radius: 5px;
 		}
 
 	</style>
