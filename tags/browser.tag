@@ -32,7 +32,7 @@
 			<div class="title">{ album.title }</div>
 			<div class="artist">{ album.artist }</div>
 			<div class="details">
-				<img src="{ album.album_art }" />
+				<img src="{ album.album_art }" draggable="true" ondragstart={ onDragAlbumStart } />
 				<ul>
 					<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 						{ fields.track_number }. { fields.title }
@@ -47,6 +47,7 @@
 		reset() {
 			this.browseResults = [];
 			this.album = null;
+			this.path = null;
 			this.viewMode = "explorer"; // explorer/discography/album
 		}
 
@@ -58,6 +59,8 @@
 			.then(function(data) {
 				
 				this.reset();
+				this.path = path;
+
 				var length = data.length;
 				var onlySongs = true;
 				var allSameAlbum = true;
@@ -115,6 +118,19 @@
 
 		onDragItemStart(e) {
 			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
+			return true;
+		}
+
+		onDragAlbumStart(e) {
+			var directoryItem = {
+				variant: "Directory",
+				fields: {
+					path: this.path,
+					name: null,
+					album: this.album,
+				},
+			};
+			e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
 			return true;
 		}
 
