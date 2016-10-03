@@ -2,7 +2,7 @@
 
 	<audio name="htmlAudio" controls src="{ trackURL }"/>
 
-	<div class="controls">
+	<div class="controls noselect">
 		<div class="playback">
 			<div class="control previous" onclick={ skipPrevious }><i class="material-icons md-18">skip_previous</i></div>
 			<div if={ paused } class="control play" onclick={ togglePlay }><i class="material-icons">play_arrow</i></div>
@@ -156,6 +156,7 @@
 		player .controls {
 			margin-right: 20px;
 			width: 120px;
+			cursor: default;
 		}
 
 		player .controls .playback {
@@ -170,7 +171,6 @@
 			border-radius: 50%;
 			border: 1px solid #BBB;
 			text-align: center;
-			cursor: default;
 		}
 
 		player .control.previous, player .control.next {
