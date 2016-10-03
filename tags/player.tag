@@ -82,11 +82,25 @@
 			}
 			var volume = Math.min(Math.max(x / e.currentTarget.offsetWidth, 0), 1);
 			this.htmlAudio.volume = volume;
-			this.volume = (100 * volume);
 		}
 
 		this.htmlAudio.addEventListener("ended", function() {
 			eventBus.trigger("player:trackFinished", this.currentTrack);
+		}.bind(this));
+
+		this.htmlAudio.addEventListener("pause", function() {
+			this.paused = this.htmlAudio.paused;
+			this.update();
+		}.bind(this));
+
+		this.htmlAudio.addEventListener("playing", function() {
+			this.paused = this.htmlAudio.paused;
+			this.update();
+		}.bind(this));
+
+		this.htmlAudio.addEventListener("volumechange", function() {
+			this.volume = (100 * this.htmlAudio.volume);
+			this.update();
 		}.bind(this));
 
 		this.htmlAudio.addEventListener("timeupdate", function() {
