@@ -4,10 +4,10 @@
 
 	<div class="controls">
 		<div class="playback">
-			<div class="control previous"><i class="material-icons md-18">skip_previous</i></div>
+			<div class="control previous" onclick={ skipPrevious }><i class="material-icons md-18">skip_previous</i></div>
 			<div if={ paused } class="control play" onclick={ togglePlay }><i class="material-icons">play_arrow</i></div>
 			<div if={ !paused } class="control pause" onclick={ togglePlay }><i class="material-icons">pause</i></div>
-			<div class="control next"><i class="material-icons md-18">skip_next</i></div>
+			<div class="control next" onclick={ skipNext }><i class="material-icons md-18">skip_next</i></div>
 		</div>
 		<div class="volume">
 			<div class="icon">
@@ -59,6 +59,14 @@
 				this.htmlAudio.pause();
 			}
 			this.paused = this.htmlAudio.paused;
+		}
+
+		skipPrevious(e) {
+			eventBus.trigger("player:playPrevious", this.currentTrack);
+		}
+
+		skipNext(e) {
+			eventBus.trigger("player:playNext", this.currentTrack);
 		}
 
 		seek(e) {

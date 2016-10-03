@@ -53,34 +53,47 @@
 			}.bind(this));
 		}
 
-		playNext(currentTrack) {
+		advance(currentTrack, delta) {
 			var playbackOrder = this.playbackOrder.selectedOptions[0].value;
 			var numTracks = this.tracks.length;
 
-			var nextTrack = null;
+			var newTrack = null;
 			if (playbackOrder == "random") {
 				if (numTracks > 0) {
-					var nextTrackIndex = Math.floor(Math.random() * numTracks);
-					nextTrack = this.tracks[nextTrackIndex];
+					var newTrackIndex = Math.floor(Math.random() * numTracks);
+					newTrack = this.tracks[newTrackIndex];
 				}
-			} else if (playbackOrder == "repeat-track") {
-				nextTrack = currentTrack;
+			} else if (playbackOrder == "repeat-track" || delta == 0) {
+				newTrack = currentTrack;
 			} else {
 				var currentTrackIndex = this.tracks.indexOf(currentTrack);
 				if (currentTrackIndex >= 0) {
-					if (currentTrackIndex + 1 < numTracks) {
-						nextTrack = this.tracks[currentTrackIndex + 1];
-					} else if ( playbackOrder == "repeat-all" ) {
-						nextTrack = this.tracks[0];
+					var newTrackIndex = currentTrackIndex + delta;
+					if (newTrackIndex >= 0 && newTrackIndex < numTracks) {
+						newTrack = this.tracks[newTrackIndex];
+					} else if (playbackOrder == "repeat-all") {
+						if (delta > 0) {
+							newTrack = this.tracks[0];
+						} else {
+							newTrack = this.tracks[this.tracks.length - 1];
+						}
 					}
 				} else if (numTracks > 0) {
-					nextTrack = this.tracks[0];
+					newTrack = this.tracks[0];
 				}
 			}
 
-			if (nextTrack != null) {
-				this.playTrack(nextTrack);
+			if (newTrack != null) {
+				this.playTrack(newTrack);
 			}
+		}
+
+		playPrevious(currentTrack) {
+			return this.advance(currentTrack, -1);
+		}
+
+		playNext(currentTrack) {
+			return this.advance(currentTrack, 1);
 		}
 
 		playTrack(playlistTrack) {
@@ -117,6 +130,8 @@
 
 		eventBus.on("browser:queueTrack", this.queueTrack);
 		eventBus.on("player:trackFinished", this.playNext);
+		eventBus.on("player:playPrevious", this.playPrevious);
+		eventBus.on("player:playNext", this.playNext);
 
 		this.clear();
 
