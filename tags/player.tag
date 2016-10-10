@@ -2,7 +2,7 @@
 
 	<audio name="htmlAudio" controls src="{ trackURL }"/>
 
-	<div class="controls noselect">
+	<div  if="{ currentTrack }" class="controls noselect">
 		<div class="playback">
 			<div class="control previous" onclick={ skipPrevious }><i class="material-icons md-18">skip_previous</i></div>
 			<div if={ paused } class="control play" onclick={ togglePlay }><i class="material-icons">play_arrow</i></div>
@@ -20,12 +20,12 @@
 		</div>
 	</div>
 
-	<div class="art">
+	<div  if="{ currentTrack }" class="art">
 		<img if={ albumArt } src="{ albumArt }"/>
 	</div>
 
-	<div class="currentTrack">
-		<div class="trackInfo" if="{ currentTrack }">
+	<div class="currentTrack" if="{ currentTrack }">
+		<div class="trackInfo">
 			<div class="primary">{ currentTrack.info.artist } - { currentTrack.info.title }</div>
 			<div class="secondary">{ currentTrack.info.album.title } ({currentTrack.info.album.year}) #{ currentTrack.info.track_number }</div>
 		</div>
@@ -33,7 +33,7 @@
 			<div class="fill" style="width: { trackProgress }%"/>
 			<div class="head" style="left: { trackProgress }%"/>
 		</div>
-		<div class="trackDuration">x:xx</div>
+		<div if="{ currentTrack }" class="trackDuration">x:xx</div>
 	</div>
 
 	<script>
@@ -190,6 +190,7 @@
 		}
 
 		player .volume {
+			margin-left: -4px;
 			display: flex;
 			flex-flow: row nowrap;
 		}
@@ -245,6 +246,24 @@
 			background-color: #FFF;
 			border: 1px solid #BBB;
 			border-radius: 50%;
+		}
+
+		player .controls, player .art img, player .currentTrack {
+			animation-duration: 250ms;
+			animation-name: fadein;
+		}
+
+		@keyframes fadein {
+			from {
+				margin-top: 100px;
+				transform: scale(0);
+				opacity: 0;
+			}
+			to {
+				margin-top: 0;
+				transform: scale(1);
+				opacity: 1;
+			}
 		}
 	</style>
 </player>
