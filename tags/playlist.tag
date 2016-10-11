@@ -21,6 +21,7 @@
 			<tbody>
 				<tr class="track" each={ tracks } onclick={ onClickTrack }>
 					<td><span class="remove" onclick={ onClickRemoveTrack }>[-]</span></td>
+					<td>{ info.album.artist } - { info.album.title } ({ info.album.year })</td>
 					<td>{ info.track_number }. { info.title }</td>
 				</tr>
 			</tbody>
