@@ -145,6 +145,10 @@
 
 	<style>
 	
+		browser .paneContent {
+			padding: 40px;
+		}
+
 		/*Explorer view*/
 		browser .explorerView .directory:before {
 			content: "🗀";

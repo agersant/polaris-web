@@ -11,11 +11,21 @@
 		</select>
 	</div>
 
-	<ul class="paneContent" ondragover={ allowDrop } ondrop={ onDrop }>
-		<li class="track" each={ tracks } onclick={ onClickTrack }>
-			<span class="remove" onclick={ onClickRemoveTrack }>[-]</span>{ info.artist } - { info.track_number }. { info.title }
-		</li>
-	</ul>
+	<div class="paneContent" ondragover={ allowDrop } ondrop={ onDrop }>
+		<table>
+			<thead>
+				<th></th>
+				<th>Artist - Album</th>
+				<th>Song</th>
+			</thead>
+			<tbody>
+				<tr class="track" each={ tracks } onclick={ onClickTrack }>
+					<td><span class="remove" onclick={ onClickRemoveTrack }>[-]</span></td>
+					<td>{ info.track_number }. { info.title }</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<script>
 
@@ -150,6 +160,25 @@
 		}
 		playlist .remove {
 			cursor: pointer;
+		}
+
+		playlist table {
+			width: 100%;
+			border-spacing: 0;
+		}
+
+		playlist th {
+			border-bottom: 1px solid #EEE;
+			text-align: left;
+			margin-bottom: 20px;
+		}
+
+		playlist tr:nth-child(2n) {
+			background-color: #F5F5F5;
+		}
+
+		playlist td {
+			padding: 2px 0;
 		}
 	</style>
 
