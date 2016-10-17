@@ -50,6 +50,7 @@
 			this.trackURL = track.info.path;
 			this.update();
 			this.htmlAudio.play();
+			eventBus.trigger("player:playing", this.currentTrack);
 		}
 
 		togglePlay(e) {

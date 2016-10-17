@@ -14,15 +14,17 @@
 	<div class="paneContent" ondragover={ allowDrop } ondrop={ onDrop }>
 		<table>
 			<thead>
-				<th></th>
+				<th class="remove"></th>
+				<th class="nowPlaying"></th>
 				<th>Artist - Album</th>
-				<th>Song</th>
+				<th class="song">Song</th>
 			</thead>
 			<tbody>
-				<tr class="track" each={ tracks } onclick={ onClickTrack }>
-					<td><span class="remove" onclick={ onClickRemoveTrack }>[-]</span></td>
-					<td>{ info.album.artist } - { info.album.title } ({ info.album.year })</td>
-					<td>{ info.track_number }. { info.title }</td>
+				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks } onclick={ onClickTrack }>
+					<td><div class="remove" onclick={ onClickRemoveTrack }>[-]</div></td>
+					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
+					<td class="text">{ track.info.album.artist } - { track.info.album.title } ({ track.info.album.year })</td>
+					<td class="text song">{ track.info.track_number }. { track.info.title }</td>
 				</tr>
 			</tbody>
 		</table>
@@ -31,7 +33,7 @@
 	<script>
 
 		clear() {
-			this.tracks = [];
+			this.tracks = [];			
 			this.update();
 		}
 
@@ -112,12 +114,17 @@
 		}
 
 		onClickTrack(e) {
-			this.playTrack(e.item);
+			this.playTrack(e.item.track);
+		}
+
+		updateCurrentTrack(track) {
+			this.currentTrack = track;
+			this.update();
 		}
 
 		onClickRemoveTrack(e) {
 			e.stopPropagation();
-			var trackIndex = this.tracks.indexOf(e.item);
+			var trackIndex = this.tracks.indexOf(e.item.track);
 			if (trackIndex >= 0) {
 				this.tracks.splice(trackIndex, 1);
 			}
@@ -143,6 +150,7 @@
 		eventBus.on("player:trackFinished", this.playNext);
 		eventBus.on("player:playPrevious", this.playPrevious);
 		eventBus.on("player:playNext", this.playNext);
+		eventBus.on("player:playing", this.updateCurrentTrack);
 
 		this.clear();
 
@@ -153,12 +161,15 @@
 			cursor: default;
 			white-space: nowrap;
 		}
+
 		playlist .track:hover .remove {
 			visibility: visible;
 		}
+
 		playlist .track:not(:hover) .remove {
 			visibility: hidden;
 		}
+
 		playlist .remove {
 			cursor: pointer;
 		}
@@ -180,6 +191,34 @@
 
 		playlist td {
 			padding: 2px 0;
+		}
+
+		playlist .remove, playlist td.nowPlaying {
+			width: 30px;
+			text-align: center;
+		}
+
+		playlist td.text {
+			max-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			padding-right: 30px;
+		}
+
+		playlist td.song {
+			width: 65%;
+		}
+
+		playlist tr.nowPlaying td {
+			color: #FFF;
+			font-weight: 600;
+			background-color: #13D5FF;
+		}
+
+		playlist .material-icons.nowPlaying {
+			vertical-align: middle;
+			padding-bottom: 2px;
 		}
 	</style>
 

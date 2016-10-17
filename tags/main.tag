@@ -1,19 +1,7 @@
 <main>
-	<browser class="focused" name="browser" ondragenter={ onBrowserMouseEnter } onmouseenter={ onBrowserMouseEnter }></browser>
+	<browser name="browser" ondragenter={ onBrowserMouseEnter } onmouseenter={ onBrowserMouseEnter }></browser>
 	<playlist name="playlist" ondragenter={ onPlaylistMouseEnter } onmouseenter={ onPlaylistMouseEnter }></playlist>
 	<player></player>
-
-	<script>
-		onBrowserMouseEnter(e) {
-			this.browser.classList.add("focused");
-			this.playlist.classList.remove("focused");
-		}
-
-		onPlaylistMouseEnter(e) {
-			this.browser.classList.remove("focused");
-			this.playlist.classList.add("focused");
-		}
-	</script>
 
 	<style>
 		playlist, browser {
@@ -23,13 +11,14 @@
 
 		browser {
 			position: absolute;
-			width: 75%;
+			width: 25%;
 			left: 0;
 			height: calc(100% - 200px);
 		}
 
 		playlist {
 			position: absolute;
+			width: 75%;
 			right: 0;
 			height: calc(100% - 200px);
 			z-index: 1;
@@ -42,16 +31,6 @@
 			width: 100%;
 			height: 200px;
 			box-sizing: border-box;
-		}
-
-		playlist.focused, browser.focused {
-			transition: width 0.120s ease;
-			width: 75%;
-		}
-
-		playlist:not(.focused), browser:not(.focused) {
-			transition: width 0.120s ease;
-			width: 25%;
 		}
 	</style>
 </main>
