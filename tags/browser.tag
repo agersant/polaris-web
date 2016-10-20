@@ -177,13 +177,13 @@
 		}
 
 		browser .discographyView .album {
-			width: 32%;
+			width: 48%;
 			margin-left: 1%;
 			margin-right: 1%;
 		}
 
-		browser .discographyView .album:nth-child(3n+1) { margin-left: 0; }
-		browser .discographyView .album:nth-child(3n) { margin-right: 0; }
+		browser .discographyView .album:nth-child(2n+1) { margin-left: 0; }
+		browser .discographyView .album:nth-child(2n) { margin-right: 0; }
 
 		browser .discographyView .cover {
 			width: 100%;
@@ -216,7 +216,7 @@
 		}
 
 		browser .discographyView .details .title {
-			white-space: nowrap;
+			line-height: 100%;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			padding-right: 10px;
