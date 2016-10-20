@@ -33,7 +33,7 @@
 			<div class="fill" style="width: { trackProgress }%"/>
 			<div class="head" style="left: { trackProgress }%"/>
 		</div>
-		<div if="{ currentTrack }" class="trackDuration">x:xx</div>
+		<div if="{ currentTrack }" class="trackDuration">{ timeElapsed }</div>
 	</div>
 
 	<script>
@@ -93,6 +93,16 @@
 			this.htmlAudio.volume = volume;
 		}
 
+		formatPlaybackTime(secondsPlayed) {
+			var minutes = Math.floor(secondsPlayed / 60);
+			var seconds = Math.floor(secondsPlayed) - 60 * minutes;
+			if (seconds < 10)
+			{
+				seconds = "0" + seconds;
+			}
+			return minutes + ":" + seconds;
+		}
+
 		this.htmlAudio.addEventListener("ended", function() {
 			eventBus.trigger("player:trackFinished", this.currentTrack);
 		}.bind(this));
@@ -115,6 +125,7 @@
 		this.htmlAudio.addEventListener("timeupdate", function() {
 			var progress = this.htmlAudio.currentTime / this.htmlAudio.duration;
 			this.trackProgress = 100 * progress;
+			this.timeElapsed = this.formatPlaybackTime(this.htmlAudio.currentTime);
 			this.update();
 		}.bind(this));
 
