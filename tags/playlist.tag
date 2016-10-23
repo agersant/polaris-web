@@ -2,13 +2,18 @@
 
 	<div class="paneHeader">
 		<h2>Playlist</h2>
+
 		<span onclick={ clear }>Clear</span>
-		<select name="playbackOrder">
-			<option value="default">Default</option>
-			<option value="random">Random</option>
-			<option value="repeat-track">Repeat Track</option>
-			<option value="repeat-all">Repeat All</option>
-		</select>
+
+		<span class="playbackOrder">
+			Order:
+			<select name="playbackOrder">
+				<option value="default">Default</option>
+				<option value="random">Random</option>
+				<option value="repeat-track">Repeat Track</option>
+				<option value="repeat-all">Repeat All</option>
+			</select>
+		</span>
 	</div>
 
 	<div class="paneContent" ondragover={ allowDrop } ondrop={ onDrop }>
@@ -157,6 +162,11 @@
 	</script>
 
 	<style>
+		playlist .playbackOrder {
+			position: absolute;
+			right: 20px;
+		}
+
 		playlist .track {
 			cursor: default;
 			white-space: nowrap;
