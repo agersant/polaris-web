@@ -177,13 +177,13 @@
 		}
 
 		browser .discographyView .album {
-			width: 48%;
+			width: 23.5%;
 			margin-left: 1%;
 			margin-right: 1%;
 		}
 
-		browser .discographyView .album:nth-child(2n+1) { margin-left: 0; }
-		browser .discographyView .album:nth-child(2n) { margin-right: 0; }
+		browser .discographyView .album:nth-child(4n+1) { margin-left: 0; }
+		browser .discographyView .album:nth-child(4n) { margin-right: 0; }
 
 		browser .discographyView .cover {
 			width: 100%;
@@ -251,7 +251,7 @@
 
 		browser .albumView .details {
 			display: flex;
-			flex-flow: row wrap;
+			flex-flow: row nowrap;
 			justify-content: flex-start;
 		}
 
@@ -283,8 +283,8 @@
 			flex-shrink: 0; 
 			width: 100%;
 			height: 100%;
-			max-width: 25vw;
-			max-height: 25vw;
+			max-width: 15vw;
+			max-height: 15vw;
 			margin-bottom: 30px;
 			border-radius: 5px;
 		}

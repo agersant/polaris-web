@@ -11,14 +11,14 @@
 
 		browser {
 			position: absolute;
-			width: 25%;
+			width: 40%;
 			left: 0;
 			height: calc(100% - 200px);
 		}
 
 		playlist {
 			position: absolute;
-			width: 75%;
+			width: 60%;
 			right: 0;
 			height: calc(100% - 200px);
 			z-index: 1;
