@@ -28,7 +28,7 @@
 				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks } onclick={ onClickTrack }>
 					<td><div class="remove" onclick={ onClickRemoveTrack }>[-]</div></td>
 					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
-					<td class="text">{ track.info.album.artist } - { track.info.album.title } ({ track.info.album.year })</td>
+					<td class="text">{ track.info.artist } - { track.info.album } ({ track.info.year })</td>
 					<td class="text song">{ track.info.track_number }. { track.info.title }</td>
 				</tr>
 			</tbody>
@@ -62,8 +62,8 @@
 				var length = data.length;
 				for (var i = 0; i < length; i++) {
 					data[i].path = "api/serve/" + data[i].path;
-					if (data[i].album && data[i].album.album_art) {
-						data[i].album.album_art = "api/serve/" + data[i].album.album_art;
+					if (data[i].album && data[i].artwork) {
+						data[i].artwork = "api/serve/" + data[i].artwork;
 					}
 					this.queueTrackInternal(data[i]);
 				}

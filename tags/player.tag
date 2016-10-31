@@ -27,7 +27,7 @@
 	<div class="currentTrack" if="{ currentTrack }">
 		<div class="trackInfo">
 			<div class="primary">{ currentTrack.info.artist } - { currentTrack.info.title }</div>
-			<div class="secondary">{ currentTrack.info.album.title } ({currentTrack.info.album.year}) #{ currentTrack.info.track_number }</div>
+			<div class="secondary">{ currentTrack.info.album } ({currentTrack.info.year}) #{ currentTrack.info.track_number }</div>
 		</div>
 		<div class="seekBar" onclick={ seek }>
 			<div class="fill" style="width: { trackProgress }%"/>
@@ -46,7 +46,7 @@
 
 		play(track) {
 			this.currentTrack = track;
-			this.albumArt = track.info.album.album_art;
+			this.albumArt = track.info.artwork;
 			this.trackURL = track.info.path;
 			this.update();
 			this.htmlAudio.play();

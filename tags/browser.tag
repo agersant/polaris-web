@@ -18,21 +18,21 @@
 			<li class="album" draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div class="cover">
 					<div class="coverCanvas">
-						<img if={ fields.album && fields.album.album_art } src="{ fields.album.album_art }"/>
+						<img if={ fields.artwork } src="{ fields.artwork }"/>
 					</div>
 				</div>
 				<div class="details">
-					<div class="title">{ fields.album.title }</div>
-					<div class="year">{ fields.album.year }</div>
+					<div class="title">{ fields.album }</div>
+					<div class="year">{ fields.year }</div>
 				</div>
 			</li>
 		</ul>
 
 		<div if={ viewMode == "album" } class="albumView">
-			<div class="title">{ album.title }</div>
-			<div class="artist">{ album.artist }</div>
+			<div class="title">{ album }</div>
+			<div class="artist">{ artist }</div>
 			<div class="details">
-				<img src="{ album.album_art }" draggable="true" ondragstart={ onDragAlbumStart } />
+				<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
 				<ul>
 					<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 						{ fields.track_number }. { fields.title }
@@ -46,6 +46,8 @@
 	<script>
 		reset() {
 			this.browseResults = [];
+			this.artwork = null;
+			this.artist = null;
 			this.album = null;
 			this.path = null;
 			this.viewMode = "explorer"; // explorer/discography/album
@@ -63,38 +65,37 @@
 
 				var length = data.length;
 				var onlySongs = true;
-				var allSameAlbum = true;
 				var allHaveAlbums = true;
 				var hasAnyPicture = false;
 
 				for (var i = 0; i < length; i++) {
 					
 					data[i].fields = data[i].fields[0];
-					
-					var album = data[i].fields.album;
 
-					if (album && album.title) {
-						if (data[i].fields.album.album_art) {
-							data[i].fields.album.album_art = "api/serve/" + data[i].fields.album.album_art;
-							hasAnyPicture = true;
-						}
-					} else {
+					if (!data[i].fields.album) {
 						allHaveAlbums = false;
+					}
+
+					if (data[i].fields.artwork) {
+						data[i].fields.artwork = "api/serve/" + data[i].fields.artwork;
+						hasAnyPicture = true;
 					}
 
 					if (data[i].variant == "Song") {
 						data[i].fields.path = "api/serve/" + data[i].fields.path;
-						if (!this.album) {
-							this.album = album;
-						} else if (this.album.title != album.title) {
-							allSameAlbum = false;
-						}
+						this.album = this.album || data[i].fields.album;
+						this.artwork = this.artwork || data[i].fields.artwork;
+						this.artist = this.artist || data[i].fields.album_artist || data[i].fields.artist;
 					} else {
 						onlySongs = false;
+						var slices = data[i].fields.path.replace(/\\/g, "/").split("/");
+						slices = slices.filter(function(s) { return s.length > 0; });
+						data[i].fields.name = slices[slices.length-1];
+						console.log(data[i].fields.path);
 					}
 				}
 
-				if (hasAnyPicture && allSameAlbum && onlySongs && length > 0) {
+				if (hasAnyPicture && onlySongs && length > 0) {
 					this.viewMode = "album";
 				} else if (hasAnyPicture && allHaveAlbums) {
 					this.viewMode = "discography";
