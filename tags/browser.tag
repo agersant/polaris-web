@@ -91,7 +91,6 @@
 						var slices = data[i].fields.path.replace(/\\/g, "/").split("/");
 						slices = slices.filter(function(s) { return s.length > 0; });
 						data[i].fields.name = slices[slices.length-1];
-						console.log(data[i].fields.path);
 					}
 				}
 
