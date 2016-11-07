@@ -255,7 +255,7 @@
 			width: 65%;
 		}
 
-		playlist tr.nowPlaying td {
+		playlist tr.nowPlaying td, playlist tr.nowPlaying td i {
 			color: #FFF;
 			font-weight: 600;
 			background-color: #13D5FF;

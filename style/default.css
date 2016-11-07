@@ -7,6 +7,7 @@ html, body, #app {
 	margin: 0;
 	font-family: 'Hind', sans-serif;
 	font-weight: 300;
+	color: #3A3A3A;
 }
 
 .paneHeader {
@@ -39,6 +40,7 @@ li {
 h2 {
 	font-family: 'Montserrat', sans-serif;
 	font-weight: 400;
+	color: #000;
 }
 
 .noselect {
