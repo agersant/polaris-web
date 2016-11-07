@@ -149,12 +149,21 @@
 			eventBus.trigger("playlist:jumpTo", playlistTrack);
 		}
 
+		snapToCurrentTrack() {
+			var currentTrackIndex = this.tracks.indexOf(this.currentTrack);
+			if (currentTrackIndex < 0) {
+				return;
+			}
+			this.scrollElement.scrollTop = (currentTrackIndex - 10) * this.itemHeight;
+		}
+
 		onClickTrack(e) {
 			this.playTrack(e.item.track);
 		}
 
 		updateCurrentTrack(track) {
 			this.currentTrack = track;
+			this.snapToCurrentTrack();
 			this.update();
 		}
 
