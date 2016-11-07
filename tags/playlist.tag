@@ -16,7 +16,8 @@
 		</span>
 	</div>
 
-	<div class="paneContent" ondragover={ allowDrop } ondrop={ onDrop }>
+	<div class="paneContent" name="scrollElement" ondragover={ allowDrop } ondrop={ onDrop }>
+		<div style="height: { scrollOffset * itemHeight }px"></div>
 		<table>
 			<thead>
 				<th class="remove"></th>
@@ -25,7 +26,7 @@
 				<th class="song">Song</th>
 			</thead>
 			<tbody>
-				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks } onclick={ onClickTrack }>
+				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks.slice( scrollOffset, scrollOffset + pageSize ) } no-reorder onclick={ onClickTrack }>
 					<td><div class="remove" onclick={ onClickRemoveTrack }>[-]</div></td>
 					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
 					<td class="text">{ track.info.artist } - { track.info.album } ({ track.info.year })</td>
@@ -33,11 +34,41 @@
 				</tr>
 			</tbody>
 		</table>
+		<div style="height: { (tracks.length - scrollOffset - pageSize) * itemHeight }px"></div>
 	</div>
 
 	<script>
 
+		this.pageSize = 60;
+		this.itemHeight = 30; // Also defined in CSS
+
+		var wait = false;
+		var hasPendingUpdate = false;
+		this.scrollElement.onscroll = function() {
+			var newOffset = Math.max(0, Math.floor(this.scrollElement.scrollTop / this.itemHeight - 1));
+			newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
+			if (newOffset == this.scrollOffset) {
+				return;
+			}
+			this.scrollOffset = newOffset;
+
+			if (!wait) {
+				wait = true;
+				setTimeout(function(){
+					wait = false;
+				}.bind(this), 1);
+				this.update();
+			} else if (!hasCallback) {
+				hasPendingUpdate = true;
+				setTimeout(function(){
+					hasPendingUpdate = false;
+					this.update();
+				}.bind(this), 1);
+			}
+		}.bind(this);
+
 		clear() {
+			this.scrollOffset = 0;
 			this.tracks = [];			
 			this.update();
 		}
@@ -193,6 +224,10 @@
 			border-bottom: 1px solid #EEE;
 			text-align: left;
 			margin-bottom: 20px;
+		}
+
+		playlist th, tr {
+			height: 30px; /*Used in JS*/
 		}
 
 		playlist tr:nth-child(2n) {
