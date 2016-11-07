@@ -135,6 +135,7 @@
 			if (newTrack != null) {
 				this.playTrack(newTrack);
 			}
+			this.snapToCurrentTrack();
 		}
 
 		playPrevious(currentTrack) {
@@ -163,7 +164,6 @@
 
 		updateCurrentTrack(track) {
 			this.currentTrack = track;
-			this.snapToCurrentTrack();
 			this.update();
 		}
 
