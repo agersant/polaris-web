@@ -3,7 +3,7 @@
 	<div class="paneHeader">
 		<h2>Playlist</h2>
 
-		<span onclick={ clear }>Clear</span>
+		<span class="clear noselect" onclick={ clear }>Clear</span>
 
 		<span class="playbackOrder">
 			Order:
@@ -27,7 +27,7 @@
 			</thead>
 			<tbody>
 				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks.slice( scrollOffset, scrollOffset + pageSize ) } no-reorder onclick={ onClickTrack }>
-					<td><div class="remove" onclick={ onClickRemoveTrack }>[-]</div></td>
+					<td><div class="remove noselect" onclick={ onClickRemoveTrack }>[-]</div></td>
 					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
 					<td class="text">{ track.info.artist } - { track.info.album } ({ track.info.year })</td>
 					<td class="text song">{ track.info.track_number }. { track.info.title }</td>
@@ -193,6 +193,10 @@
 	</script>
 
 	<style>
+		playlist .clear {
+			cursor: pointer;
+		}
+
 		playlist .playbackOrder {
 			position: absolute;
 			right: 20px;
