@@ -33,11 +33,18 @@
 			<div class="artist">{ artist }</div>
 			<div class="details">
 				<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
-				<ul>
-					<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-						{ fields.track_number }. { fields.title }
-					</li>
-				</ul>
+				<div class="trackList">
+					<ul>
+						<li each={ browseResults } >
+							<div class="discNumber" if="{ browseResults.length > 1 }">Disc { discNumber }</div>
+							<ul class="discContent">
+								<li class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+									{ fields.track_number }. { fields.title }
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 
@@ -102,7 +109,26 @@
 					this.viewMode = "explorer";
 				}
 
-				this.browseResults = data;
+				if (this.viewMode == "album") {
+					var discs = [];
+					for (var i = 0; i < length; i++) {
+						var discNumber = data[i].fields.disc_number || 1;
+						var disc = discs.find(function(d){ return d.discNumber == discNumber });
+						if (disc == undefined) {
+							disc = {
+								discNumber: discNumber,
+								songs: [],
+							};
+							discs.push(disc);
+						}
+						disc.songs.push(data[i]);
+					}
+					discs.sort(function(a,b){ return a.discNumber - b.discNumber; });
+					this.browseResults = discs;
+				} else {
+					this.browseResults = data;
+				}
+
 				this.tags.breadcrumbs.setCurrentPath(path);
 				this.update();
 			}.bind(this));
@@ -255,14 +281,27 @@
 			justify-content: flex-start;
 		}
 
-		browser .albumView ul {
+		browser .albumView .trackList {
 			flex-grow: 1;
 			max-width: calc(100% - 40px);
 			cursor: default;
-			margin-left: 20px;
+			margin-left: 10px;
 		}
 
-		browser .albumView li {
+		browser .albumView .discNumber {
+			font-weight: 600;
+			margin-bottom: 5px;
+		}
+
+		browser .albumView li:not(:first-child) .discNumber {
+			margin-top: 20px;
+		}
+
+		browser .albumView .discContent {
+			margin-left: 10px;
+		}
+
+		browser .albumView li.song {
 			padding: 5px 0;
 			border-bottom: 1px solid #EEE;
 
