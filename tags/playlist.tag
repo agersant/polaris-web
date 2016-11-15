@@ -248,7 +248,7 @@
 		}
 
 		playlist td {
-			padding: 2px 0;
+			padding-top: 4px;
 		}
 
 		playlist .remove, playlist td.nowPlaying {
