@@ -290,7 +290,7 @@
 			height: 16px;
 			position: relative;
 			top: -14px;
-			margin-left: -8px;
+			margin-left: -9px;
 			background-color: #FFF;
 			border: 1px solid #BBB;
 			border-radius: 3px;
