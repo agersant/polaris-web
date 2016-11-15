@@ -14,8 +14,8 @@
 				<i if={ volume == 0 } class="material-icons">volume_off</i>
 				<i if={ volume > 0 } class="material-icons">volume_down</i>
 			</div>
-			<div class="bar" onclick={ setVolume }>
-				<div class="fill" name="volumeFill" style="width: { volume }%"/>
+			<div class="bar" name="volumeInput" onmousedown={ volumeMouseDown }>
+				<div class="fill" name="volumeFill" style="width: { 100 * volume }%"/>
 			</div>
 		</div>
 	</div>
@@ -29,9 +29,9 @@
 			<div class="primary">{ currentTrack.info.artist } - { currentTrack.info.title }</div>
 			<div class="secondary">{ currentTrack.info.album } ({currentTrack.info.year}) #{ currentTrack.info.track_number }</div>
 		</div>
-		<div class="seekBar" onclick={ seek }>
-			<div class="fill" style="width: { trackProgress }%"/>
-			<div class="head" style="left: { trackProgress }%"/>
+		<div class="seekBar" name="seekInput" onmousedown={ seekMouseDown }>
+			<div class="fill" style="width: { 100 * trackProgress }%"/>
+			<div class="head" style="left: { 100 * trackProgress }%"/>
 		</div>
 		<div if="{ currentTrack }" class="trackDuration">{ timeElapsed }</div>
 	</div>
@@ -41,8 +41,10 @@
 		this.currentTrack = null;
 		this.trackURL = null;
 		this.albumArt = null;
-		this.volume = 100;
+		this.volume = 1;
 		this.trackProgress = 0;
+		this.mouseDown = false;
+		this.adjusting = null;
 
 		play(track) {
 			this.currentTrack = track;
@@ -70,27 +72,39 @@
 			eventBus.trigger("player:playNext", this.currentTrack);
 		}
 
-		seek(e) {
-			var x = e.pageX;
-			var o = e.currentTarget;
-			while (o) {
-				x -= o.offsetLeft;
-				o = o.offsetParent;
-			}
-			var progress = Math.min(Math.max(x / e.currentTarget.offsetWidth, 0), 1);
-			this.htmlAudio.currentTime = progress * this.htmlAudio.duration;
-			this.trackProgress = 100 * progress;
+		seekMouseDown(e) {
+			this.adjusting = "seek";
 		}
 
-		setVolume(e) {
-			var x = e.pageX;
-			var o = e.currentTarget;
-			while (o) {
-				x -= o.offsetLeft;
-				o = o.offsetParent;
+		seekMouseMove(e) {
+			if (this.mouseDown && this.adjusting == "seek") {
+				var x = e.pageX;
+				var o = this.seekInput;
+				while (o) {
+					x -= o.offsetLeft;
+					o = o.offsetParent;
+				}
+				var progress = Math.min(Math.max(x / this.seekInput.offsetWidth, 0), 1);
+				this.htmlAudio.currentTime = progress * this.htmlAudio.duration;
+				this.trackProgress = progress;
 			}
-			var volume = Math.min(Math.max(x / e.currentTarget.offsetWidth, 0), 1);
-			this.htmlAudio.volume = volume;
+		}
+
+		volumeMouseDown(e) {
+			this.adjusting = "volume";
+		}
+
+		volumeMouseMove(e) {
+			if (this.mouseDown && this.adjusting == "volume") {
+				var x = e.pageX;
+				var o = this.volumeInput;
+				while (o) {
+					x -= o.offsetLeft;
+					o = o.offsetParent;
+				}
+				var volume = Math.min(Math.max(x / this.volumeInput.offsetWidth, 0), 1);
+				this.htmlAudio.volume = volume;
+			}
 		}
 
 		formatPlaybackTime(secondsPlayed) {
@@ -118,19 +132,41 @@
 		}.bind(this));
 
 		this.htmlAudio.addEventListener("volumechange", function() {
-			this.volume = (100 * this.htmlAudio.volume);
+			this.volume = this.htmlAudio.volume;
 			this.update();
 		}.bind(this));
 
 		this.htmlAudio.addEventListener("timeupdate", function() {
 			var progress = this.htmlAudio.currentTime / this.htmlAudio.duration;
-			this.trackProgress = 100 * progress;
+			this.trackProgress = progress;
 			this.timeElapsed = this.formatPlaybackTime(this.htmlAudio.currentTime);
 			this.update();
 		}.bind(this));
 
-		eventBus.on("playlist:jumpTo", this.play);
+		// Global mouse handling
+		var onMouseMove = function(e) {
+			if (!this.mouseDown) {
+				return;
+			}
+			if (this.adjusting == "volume") {
+				this.volumeMouseMove(e);
+			} else if (this.adjusting == "seek") {
+				this.seekMouseMove(e);
+			}
+		}.bind(this);
 
+		document.body.addEventListener('mousemove', onMouseMove );
+		document.body.addEventListener('mousedown', function(e){
+    		this.mouseDown = true;
+			onMouseMove(e);
+		}.bind(this));
+
+		document.body.addEventListener('mouseup', function(){
+    		this.mouseDown = false;
+			this.adjusting = null;
+		}.bind(this));
+
+		eventBus.on("playlist:jumpTo", this.play);
 	</script>
 
 	<style>
@@ -211,15 +247,15 @@
 			flex-grow: 1;
 			background-color: #BBB;
 			height: 10px;
-			margin: 6px 0;
-			border-radius: 5px;
+			margin: 7px 0;
+			border-radius: 3px;
 		}
 
 		player .volume .fill {
 			height: 100%;
 			max-width: 100%;
 			background-color: #13D5FF;
-			border-radius: 5px;
+			border-radius: 3px;
 		}
 
 		player .trackInfo .primary {
@@ -238,7 +274,7 @@
 			background-color: #BBB;
 			height: 10px;
 			margin: 6px 0;
-			border-radius: 5px;
+			border-radius: 3px;
 		}
 
 		player .seekBar .fill {
@@ -246,7 +282,7 @@
 			width: 0;
 			max-width: 100%;
 			background-color: #13D5FF;
-			border-radius: 5px;
+			border-radius: 3px;
 		}
 
 		player .seekBar .head {
@@ -257,7 +293,7 @@
 			margin-left: -8px;
 			background-color: #FFF;
 			border: 1px solid #BBB;
-			border-radius: 50%;
+			border-radius: 3px;
 		}
 
 		player .controls, player .art img, player .currentTrack {
