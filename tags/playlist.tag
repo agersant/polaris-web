@@ -280,7 +280,7 @@
 			padding-right: 30px;
 		}
 
-		playlist td.song {
+		playlist th.song, playlist td.song {
 			width: 65%;
 		}
 
