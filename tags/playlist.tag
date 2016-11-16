@@ -44,6 +44,7 @@
 
 		var wait = false;
 		var hasPendingUpdate = false;
+		var hasCallback = false;
 		this.scrollElement.onscroll = function() {
 			var newOffset = Math.max(0, Math.floor(this.scrollElement.scrollTop / this.itemHeight - 1));
 			newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
