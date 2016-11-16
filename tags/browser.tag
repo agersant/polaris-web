@@ -290,7 +290,7 @@
 			flex-grow: 1;
 			max-width: calc(100% - 40px);
 			cursor: default;
-			margin-left: 10px;
+			margin-left: 20px;
 		}
 
 		browser .albumView .discNumber {
