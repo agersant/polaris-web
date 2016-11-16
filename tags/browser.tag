@@ -37,14 +37,14 @@
 					<ul>
 						<li each={ browseResults } >
 							<div class="discNumber" if="{ browseResults.length > 1 }">Disc { discNumber }</div>
-							<ul class="discContent">
-								<li class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-									{ fields.track_number }. { fields.title }
+							<ol class="discContent">
+								<li value={ fields.track_number } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+									{ fields.title }
 									<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
 										({ fields.artist })
 									</span>
 								</li>
-							</ul>
+							</ol>
 						</li>
 					</ul>
 				</div>
@@ -263,24 +263,18 @@
 
 		/*Album view*/
 		browser .albumView .title {
+			line-height: 1;
 			margin-top: -10px;
-			margin-bottom: -15px;
+			margin-bottom: 5px;
 			font-size: 30px;
 			font-weight: 400;
-
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
 		}
 
 		browser .albumView .artist {
-			margin-bottom: 10px;
+			line-height: 1;
+			margin-bottom: 20px;
 			font-size: 24px;
 			color: #BBB;
-
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
 		}
 
 		browser .albumView .details {
@@ -306,16 +300,15 @@
 		}
 
 		browser .albumView .discContent {
-			margin-left: 10px;
+			margin-left: 20px;
 		}
 
 		browser .albumView li.song {
 			padding-top: 7px;
 			padding-bottom: 3px;
 			border-bottom: 1px solid #EEE;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			list-style-type: unset;
+			list-style-position: outside;
 		}
 
 		browser .albumView .trackArtist {
