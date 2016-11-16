@@ -302,9 +302,9 @@
 		}
 
 		browser .albumView li.song {
-			padding: 5px 0;
+			padding-top: 7px;
+			padding-bottom: 3px;
 			border-bottom: 1px solid #EEE;
-
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
