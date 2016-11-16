@@ -29,8 +29,13 @@
 				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks.slice( scrollOffset, scrollOffset + pageSize ) } no-reorder onclick={ onClickTrack }>
 					<td><div class="remove noselect" onclick={ onClickRemoveTrack }>[-]</div></td>
 					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
-					<td class="text">{ track.info.artist } - { track.info.album } ({ track.info.year })</td>
-					<td class="text song">{ track.info.track_number }. { track.info.title }</td>
+					<td class="text">{ track.info.album_artist || track.info.artist } - { track.info.album } ({ track.info.year })</td>
+					<td class="text song">
+						{ track.info.track_number }. { track.info.title }
+						<span class="trackArtist" if={ track.info.album_artist && track.info.artist && track.info.album_artist != track.info.artist }>
+							({ track.info.artist })
+						</span>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -273,6 +278,14 @@
 
 		playlist td.song {
 			width: 65%;
+		}
+
+		playlist td.song .trackArtist {
+			color: #BBB;
+		}
+
+		playlist tr.nowPlaying td.song .trackArtist {
+			color: #B3F4FF;
 		}
 
 		playlist tr.nowPlaying td, playlist tr.nowPlaying td * {

@@ -40,6 +40,9 @@
 							<ul class="discContent">
 								<li class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 									{ fields.track_number }. { fields.title }
+									<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
+										({ fields.artist })
+									</span>
 								</li>
 							</ul>
 						</li>
@@ -313,6 +316,10 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+		}
+
+		browser .albumView .trackArtist {
+			color: #BBB;
 		}
 
 		browser .albumView li:first-child {
