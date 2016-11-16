@@ -251,7 +251,7 @@
 		}
 
 		playlist td {
-			padding-top: 4px;
+			padding-top: 3px;
 			font-size: 14px;
 		}
 
