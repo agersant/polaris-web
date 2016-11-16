@@ -176,6 +176,10 @@
 		}
 
 		/*Explorer view*/
+		browser .explorerView {
+			margin-top: -5px;
+		}
+
 		browser .explorerView .directory:before {
 			content: "🗀";
 			margin-right: 5px;
@@ -256,6 +260,7 @@
 
 		/*Album view*/
 		browser .albumView .title {
+			margin-top: -10px;
 			margin-bottom: -15px;
 			font-size: 30px;
 			font-weight: 400;
