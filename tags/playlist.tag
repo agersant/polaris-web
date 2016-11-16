@@ -40,6 +40,10 @@
 			</tbody>
 		</table>
 		<div style="height: { (tracks.length - scrollOffset - pageSize) * itemHeight }px"></div>
+		<div class="help" if={ tracks.length == 0 }>
+			<i class="material-icons md-48">queue</i><br/>
+			Make a playlist by dragging music<br/>from your collection to here. 
+		</div>
 	</div>
 
 	<script>
@@ -297,6 +301,18 @@
 		playlist .material-icons.nowPlaying {
 			vertical-align: middle;
 			padding-bottom: 2px;
+		}
+
+		playlist .help {
+			position: absolute;
+			top: 40%;
+			width: 100%;
+			text-align:center;
+			font-size: 22px;
+		}
+
+		playlist .help, playlist .help i {
+			color: #BBB;
 		}
 	</style>
 
