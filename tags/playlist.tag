@@ -237,6 +237,8 @@
 			border-bottom: 1px solid #EEE;
 			text-align: left;
 			margin-bottom: 20px;
+			font-size: 16px;
+			padding-top: 6px;
 		}
 
 		playlist th, tr {
@@ -249,10 +251,14 @@
 
 		playlist td {
 			padding-top: 4px;
+			font-size: 14px;
 		}
 
-		playlist .remove, playlist td.nowPlaying {
+		playlist .remove, playlist .nowPlaying {
 			width: 30px;
+		}
+
+		playlist .remove, playlisy td.nowPlaying {
 			text-align: center;
 		}
 
@@ -268,7 +274,7 @@
 			width: 65%;
 		}
 
-		playlist tr.nowPlaying td, playlist tr.nowPlaying td i {
+		playlist tr.nowPlaying td, playlist tr.nowPlaying td * {
 			color: #FFF;
 			font-weight: 600;
 			background-color: #13D5FF;
