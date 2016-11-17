@@ -48,14 +48,15 @@
 
 	<script>
 
-		this.pageSize = 60;
+		this.pageSize = 40;
+		this.pagePadding = 6;
 		this.itemHeight = 30; // Also defined in CSS
 
 		var wait = false;
 		var hasPendingUpdate = false;
 		var hasCallback = false;
 		this.scrollElement.onscroll = function() {
-			var newOffset = Math.max(0, Math.floor(this.scrollElement.scrollTop / this.itemHeight - 1));
+			var newOffset = Math.max(0, Math.floor(this.scrollElement.scrollTop / this.itemHeight) - this.pagePadding );
 			newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
 			if (newOffset == this.scrollOffset) {
 				return;
