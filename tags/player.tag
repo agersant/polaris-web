@@ -143,6 +143,36 @@
 			this.update();
 		}.bind(this));
 
+		this.htmlAudio.addEventListener('error', function(e) {
+			var title = this.currentTrack.info.title || "Unknown Song";
+			var errorText = "'" + title + "' could not be played because ";
+			var artwork = this.currentTrack.info.artwork || null;
+
+			var format = utils.getFileExtension(this.currentTrack.info.path);
+			if (format) {
+				format = " (" + format + ")";
+			} else {
+				format = "";
+			}
+
+			switch (e.target.error.code) {
+				case e.target.error.MEDIA_ERR_NETWORK:
+					notify.spawn("Playback Error", artwork, errorText + "of a network error.");
+					break;
+				case e.target.error.MEDIA_ERR_DECODE:
+					notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
+					break;
+				case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+					notify.spawn("Playback Error", artwork, errorText + "your browser does not support this file format" + format + ".");
+					break;
+				default:
+					console.log("Unexpected playback error: " + e.target.error.code);
+					break;
+			}
+
+			eventBus.trigger("player:trackFinished", this.currentTrack);
+		}.bind(this));
+
 		// Global mouse handling
 		var onMouseMove = function(e) {
 			if (!this.mouseDown) {
