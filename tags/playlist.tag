@@ -118,28 +118,28 @@
 			var numTracks = this.tracks.length;
 
 			var newTrack = null;
-			if (playbackOrder == "random") {
-				if (numTracks > 0) {
+			if (numTracks > 0) {
+				if (playbackOrder == "random") {
 					var newTrackIndex = Math.floor(Math.random() * numTracks);
 					newTrack = this.tracks[newTrackIndex];
-				}
-			} else if (playbackOrder == "repeat-track" || delta == 0) {
-				newTrack = currentTrack;
-			} else {
-				var currentTrackIndex = this.tracks.indexOf(currentTrack);
-				if (currentTrackIndex >= 0) {
-					var newTrackIndex = currentTrackIndex + delta;
-					if (newTrackIndex >= 0 && newTrackIndex < numTracks) {
-						newTrack = this.tracks[newTrackIndex];
-					} else if (playbackOrder == "repeat-all") {
-						if (delta > 0) {
-							newTrack = this.tracks[0];
-						} else {
-							newTrack = this.tracks[this.tracks.length - 1];
+				} else if (playbackOrder == "repeat-track") {
+					newTrack = currentTrack;
+				} else {
+					var currentTrackIndex = this.tracks.indexOf(currentTrack);
+					if (currentTrackIndex < 0) {
+						newTrack = this.tracks[0];
+					} else {
+						var newTrackIndex = currentTrackIndex + delta;
+						if (newTrackIndex >= 0 && newTrackIndex < numTracks) {
+							newTrack = this.tracks[newTrackIndex];
+						} else if (playbackOrder == "repeat-all") {
+							if (delta > 0) {
+								newTrack = this.tracks[0];
+							} else {
+								newTrack = this.tracks[this.tracks.length - 1];
+							}
 						}
 					}
-				} else if (numTracks > 0) {
-					newTrack = this.tracks[0];
 				}
 			}
 
