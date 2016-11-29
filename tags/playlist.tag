@@ -262,7 +262,7 @@
 
 		playlist td {
 			padding-top: 3px;
-			font-size: 14px;
+			font-size: 13px;
 		}
 
 		playlist .remove, playlist .nowPlaying {
