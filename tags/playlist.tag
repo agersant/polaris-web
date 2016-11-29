@@ -296,7 +296,7 @@
 		playlist tr.nowPlaying td, playlist tr.nowPlaying td * {
 			color: #FFF;
 			font-weight: 600;
-			background-color: #13D5FF;
+			background-color: #46C8F1;
 		}
 
 		playlist .material-icons.nowPlaying {

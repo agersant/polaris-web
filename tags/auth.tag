@@ -71,7 +71,7 @@
 			align-self: flex-end;
 			border: none;
 			color: #FFF;
-			background-color: #13D5FF;
+			background-color: #46C8F1;
 			border-radius: 5px;
 			font-size: 1.25em;
 		}
