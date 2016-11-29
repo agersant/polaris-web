@@ -1,10 +1,13 @@
 <auth>
 	<div class="authForm">
-		<form name="authForm" onsubmit={ doLogin }>
-			<input type="text" name="username" placeholder="Username">
-			<input type="password" name="password" placeholder="Password">
-			<input type="submit" value="Login">
-		</form>
+		<div class="content">
+			<img class="logo" src="img/logo.png"/>
+			<form name="authForm" onsubmit={ doLogin }>
+				<input type="text" name="username" placeholder="Username">
+				<input type="password" name="password" placeholder="Password">
+				<input type="submit" value="Login">
+			</form>
+		</div>
 	</div>
 
 	<script>
@@ -36,7 +39,12 @@
 			width: 25%;
 		}
 
-		.authForm form {
+		.authForm .logo {
+			width: 100%;
+			margin-bottom: 70px;
+		}
+
+		.authForm .content {
 			display: flex;
 			flex-flow: column nowrap;
 			justify-content: center;
@@ -44,20 +52,28 @@
 			height: 90%;
 		}
 
+		.authForm form {
+			display: flex;
+			flex-flow: column nowrap;
+			justify-content: center;
+			align-items: stretch;
+		}
+
 		.authForm input {
 			display: block;
-			margin: 10px 0;
-			font-size: 2em;
+			margin: 5px 0;
+			font-size: 1.5em;
 		}
 
 		.authForm input[type="submit"] {
 			width: 20%;
+			margin-top: 15px;
 			align-self: flex-end;
 			border: none;
 			color: #FFF;
 			background-color: #13D5FF;
 			border-radius: 5px;
-			font-size: 1.5em;
+			font-size: 1.25em;
 		}
 
 		.authForm input[type="text"], .authForm input[type="password"] {
