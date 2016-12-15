@@ -284,7 +284,7 @@
 		player .volume .fill {
 			height: 100%;
 			max-width: 100%;
-			background-color: #46C8F1;
+			background-color: #44C8F1;
 			border-radius: 3px;
 		}
 
@@ -311,7 +311,7 @@
 			height: 100%;
 			width: 0;
 			max-width: 100%;
-			background-color: #46C8F1;
+			background-color: #44c8f1;
 			border-radius: 3px;
 		}
 
