@@ -48,7 +48,7 @@
 
 	<script>
 
-		this.pageSize = 40;
+		this.pageSize = 50;
 		this.pagePadding = 6;
 		this.itemHeight = 30; // Also defined in CSS
 
