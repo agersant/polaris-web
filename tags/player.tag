@@ -1,6 +1,6 @@
 <player>
 
-	<audio name="htmlAudio" controls src="{ trackURL }"/>
+	<audio ref="htmlAudio" controls src="{ trackURL }"/>
 
 	<div  if="{ currentTrack }" class="controls noselect">
 		<div class="playback">
@@ -14,8 +14,8 @@
 				<i if={ volume == 0 } class="material-icons">volume_off</i>
 				<i if={ volume > 0 } class="material-icons">volume_down</i>
 			</div>
-			<div class="bar" name="volumeInput" onmousedown={ volumeMouseDown }>
-				<div class="fill" name="volumeFill" style="width: { 100 * volume }%"/>
+			<div class="bar" ref="volumeInput" onmousedown={ volumeMouseDown }>
+				<div class="fill" style="width: { 100 * volume }%"/>
 			</div>
 		</div>
 	</div>
@@ -29,7 +29,7 @@
 			<div class="primary">{ currentTrack.info.artist } - { currentTrack.info.title }</div>
 			<div class="secondary">{ currentTrack.info.album } ({currentTrack.info.year}) #{ currentTrack.info.track_number }</div>
 		</div>
-		<div class="seekBar" name="seekInput" onmousedown={ seekMouseDown }>
+		<div class="seekBar" ref="seekInput" onmousedown={ seekMouseDown }>
 			<div class="fill" style="width: { 100 * trackProgress }%"/>
 			<div class="head" style="left: { 100 * trackProgress }%"/>
 		</div>
@@ -51,17 +51,17 @@
 			this.albumArt = track.info.artwork;
 			this.trackURL = track.info.path;
 			this.update();
-			this.htmlAudio.play();
+			this.refs.htmlAudio.play();
 			eventBus.trigger("player:playing", this.currentTrack);
 		}
 
 		togglePlay(e) {
-			if (this.htmlAudio.paused) {
-				this.htmlAudio.play();
+			if (this.refs.htmlAudio.paused) {
+				this.refs.htmlAudio.play();
 			} else {
-				this.htmlAudio.pause();
+				this.refs.htmlAudio.pause();
 			}
-			this.paused = this.htmlAudio.paused;
+			this.paused = this.refs.htmlAudio.paused;
 		}
 
 		skipPrevious(e) {
@@ -79,13 +79,13 @@
 		seekMouseMove(e) {
 			if (this.mouseDown && this.adjusting == "seek") {
 				var x = e.pageX;
-				var o = this.seekInput;
+				var o = this.refs.seekInput;
 				while (o) {
 					x -= o.offsetLeft;
 					o = o.offsetParent;
 				}
-				var progress = Math.min(Math.max(x / this.seekInput.offsetWidth, 0), 1);
-				this.htmlAudio.currentTime = progress * this.htmlAudio.duration;
+				var progress = Math.min(Math.max(x / this.refs.seekInput.offsetWidth, 0), 1);
+				this.refs.htmlAudio.currentTime = progress * this.refs.htmlAudio.duration;
 				this.trackProgress = progress;
 			}
 		}
@@ -97,13 +97,13 @@
 		volumeMouseMove(e) {
 			if (this.mouseDown && this.adjusting == "volume") {
 				var x = e.pageX;
-				var o = this.volumeInput;
+				var o = this.refs.volumeInput;
 				while (o) {
 					x -= o.offsetLeft;
 					o = o.offsetParent;
 				}
-				var volume = Math.min(Math.max(x / this.volumeInput.offsetWidth, 0), 1);
-				this.htmlAudio.volume = volume;
+				var volume = Math.min(Math.max(x / this.refs.volumeInput.offsetWidth, 0), 1);
+				this.refs.htmlAudio.volume = volume;
 			}
 		}
 
@@ -117,61 +117,63 @@
 			return minutes + ":" + seconds;
 		}
 
-		this.htmlAudio.addEventListener("ended", function() {
-			eventBus.trigger("player:trackFinished", this.currentTrack);
-		}.bind(this));
+		this.on('mount', function() {
+			this.refs.htmlAudio.addEventListener("ended", function() {
+				eventBus.trigger("player:trackFinished", this.currentTrack);
+			}.bind(this));
 
-		this.htmlAudio.addEventListener("pause", function() {
-			this.paused = this.htmlAudio.paused;
-			this.update();
-		}.bind(this));
+			this.refs.htmlAudio.addEventListener("pause", function() {
+				this.paused = this.refs.htmlAudio.paused;
+				this.update();
+			}.bind(this));
 
-		this.htmlAudio.addEventListener("playing", function() {
-			this.paused = this.htmlAudio.paused;
-			this.update();
-		}.bind(this));
+			this.refs.htmlAudio.addEventListener("playing", function() {
+				this.paused = this.refs.htmlAudio.paused;
+				this.update();
+			}.bind(this));
 
-		this.htmlAudio.addEventListener("volumechange", function() {
-			this.volume = this.htmlAudio.volume;
-			this.update();
-		}.bind(this));
+			this.refs.htmlAudio.addEventListener("volumechange", function() {
+				this.volume = this.refs.htmlAudio.volume;
+				this.update();
+			}.bind(this));
 
-		this.htmlAudio.addEventListener("timeupdate", function() {
-			var progress = this.htmlAudio.currentTime / this.htmlAudio.duration;
-			this.trackProgress = progress;
-			this.timeElapsed = this.formatPlaybackTime(this.htmlAudio.currentTime);
-			this.update();
-		}.bind(this));
+			this.refs.htmlAudio.addEventListener("timeupdate", function() {
+				var progress = this.refs.htmlAudio.currentTime / this.refs.htmlAudio.duration;
+				this.trackProgress = progress;
+				this.timeElapsed = this.formatPlaybackTime(this.refs.htmlAudio.currentTime);
+				this.update();
+			}.bind(this));
 
-		this.htmlAudio.addEventListener('error', function(e) {
-			var title = this.currentTrack.info.title || "Unknown Song";
-			var errorText = "'" + title + "' could not be played because ";
-			var artwork = this.currentTrack.info.artwork || null;
+			this.refs.htmlAudio.addEventListener('error', function(e) {
+				var title = this.currentTrack.info.title || "Unknown Song";
+				var errorText = "'" + title + "' could not be played because ";
+				var artwork = this.currentTrack.info.artwork || null;
 
-			var format = utils.getFileExtension(this.currentTrack.info.path);
-			if (format) {
-				format = " (" + format + ")";
-			} else {
-				format = "";
-			}
+				var format = utils.getFileExtension(this.currentTrack.info.path);
+				if (format) {
+					format = " (" + format + ")";
+				} else {
+					format = "";
+				}
 
-			switch (e.target.error.code) {
-				case e.target.error.MEDIA_ERR_NETWORK:
-					notify.spawn("Playback Error", artwork, errorText + "of a network error.");
-					break;
-				case e.target.error.MEDIA_ERR_DECODE:
-					notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
-					break;
-				case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-					notify.spawn("Playback Error", artwork, errorText + "your browser does not support this file format" + format + ".");
-					break;
-				default:
-					console.log("Unexpected playback error: " + e.target.error.code);
-					break;
-			}
+				switch (e.target.error.code) {
+					case e.target.error.MEDIA_ERR_NETWORK:
+						notify.spawn("Playback Error", artwork, errorText + "of a network error.");
+						break;
+					case e.target.error.MEDIA_ERR_DECODE:
+						notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
+						break;
+					case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+						notify.spawn("Playback Error", artwork, errorText + "your browser does not support this file format" + format + ".");
+						break;
+					default:
+						console.log("Unexpected playback error: " + e.target.error.code);
+						break;
+				}
 
-			eventBus.trigger("player:trackFinished", this.currentTrack);
-		}.bind(this));
+				eventBus.trigger("player:trackFinished", this.currentTrack);
+			}.bind(this));
+		});
 
 		// Global mouse handling
 		var onMouseMove = function(e) {

@@ -11,7 +11,8 @@
 	</div>
 
 	<script>
-		doLogin() {
+		doLogin(e) {
+			e.preventDefault();
 			var form = document.forms["authForm"];
 			var username = encodeURIComponent(form.elements["username"].value);
 			var password = encodeURIComponent(form.elements["password"].value);
@@ -25,7 +26,7 @@
 			})
 			.then(function(res) {
 				if (Cookies.get("username") != undefined) {
-					riot.route("/");
+					route("/");
 				}
 			});
 		}

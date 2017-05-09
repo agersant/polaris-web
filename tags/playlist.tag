@@ -7,7 +7,7 @@
 
 		<span class="playbackOrder">
 			Order:
-			<select name="playbackOrder">
+			<select ref="playbackOrder">
 				<option value="default">Default</option>
 				<option value="random">Random</option>
 				<option value="repeat-track">Repeat Track</option>
@@ -16,7 +16,7 @@
 		</span>
 	</div>
 
-	<div class="paneContent" name="scrollElement" ondragover={ allowDrop } ondrop={ onDrop }>
+	<div class="paneContent" ref="scrollElement" ondragover={ allowDrop } ondrop={ onDrop }>
 		<div style="height: { scrollOffset * itemHeight }px"></div>
 		<table>
 			<thead>
@@ -55,28 +55,31 @@
 		var wait = false;
 		var hasPendingUpdate = false;
 		var hasCallback = false;
-		this.scrollElement.onscroll = function() {
-			var newOffset = Math.max(0, Math.floor(this.scrollElement.scrollTop / this.itemHeight) - this.pagePadding );
-			newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
-			if (newOffset == this.scrollOffset) {
-				return;
-			}
-			this.scrollOffset = newOffset;
 
-			if (!wait) {
-				wait = true;
-				setTimeout(function(){
-					wait = false;
-				}.bind(this), 1);
-				this.update();
-			} else if (!hasCallback) {
-				hasPendingUpdate = true;
-				setTimeout(function(){
-					hasPendingUpdate = false;
+		this.on('mount', function() {
+			this.refs.scrollElement.onscroll = function() {
+				var newOffset = Math.max(0, Math.floor(this.refs.scrollElement.scrollTop / this.itemHeight) - this.pagePadding );
+				newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
+				if (newOffset == this.scrollOffset) {
+					return;
+				}
+				this.scrollOffset = newOffset;
+
+				if (!wait) {
+					wait = true;
+					setTimeout(function(){
+						wait = false;
+					}.bind(this), 1);
 					this.update();
-				}.bind(this), 1);
-			}
-		}.bind(this);
+				} else if (!hasCallback) {
+					hasPendingUpdate = true;
+					setTimeout(function(){
+						hasPendingUpdate = false;
+						this.update();
+					}.bind(this), 1);
+				}
+			}.bind(this);
+		});
 
 		clear() {
 			this.scrollOffset = 0;
@@ -114,7 +117,7 @@
 		}
 
 		advance(currentTrack, delta) {
-			var playbackOrder = this.playbackOrder.selectedOptions[0].value;
+			var playbackOrder = this.refs.playbackOrder.selectedOptions[0].value;
 			var numTracks = this.tracks.length;
 
 			var newTrack = null;
@@ -166,7 +169,7 @@
 			if (currentTrackIndex < 0) {
 				return;
 			}
-			this.scrollElement.scrollTop = (currentTrackIndex - 10) * this.itemHeight;
+			this.refs.scrollElement.scrollTop = (currentTrackIndex - 10) * this.itemHeight;
 		}
 
 		onClickTrack(e) {
@@ -187,10 +190,12 @@
 		}
 
 		allowDrop(e) {
+			e.preventDefault();
 			return false;
 		};
 
 		onDrop(e) {
+			e.preventDefault();
 			var item = e.dataTransfer.getData("text/json");
 			item = JSON.parse(item);
 			var variant = item.variant;

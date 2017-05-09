@@ -149,7 +149,6 @@
 
 		onDragItemStart(e) {
 			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
-			return true;
 		}
 
 		onDragAlbumStart(e) {
@@ -162,7 +161,6 @@
 				},
 			};
 			e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
-			return true;
 		}
 
 		eventBus.on("breadcrumbs:backtrack", function(path) {
