@@ -80,7 +80,8 @@
 
 				for (var i = 0; i < length; i++) {
 					
-					data[i].fields = data[i].fields[0];
+					data[i].fields = data[i].Directory || data[i].Song;
+					data[i].variant = data[i].Directory ? "Directory" : "Song";
 
 					if (!data[i].fields.album) {
 						allHaveAlbums = false;
