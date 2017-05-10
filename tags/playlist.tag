@@ -199,10 +199,10 @@
 			var item = e.dataTransfer.getData("text/json");
 			item = JSON.parse(item);
 			var variant = item.variant;
-			if ( variant == "Song" ) {
+			if (variant == "Song") {
 				this.queueTrack(item.fields);
 				this.update();
-			} else if ( variant == "Directory" ) {
+			} else if (variant == "Directory") {
 				this.queueDirectory(item.fields.path);
 			}
 		}
