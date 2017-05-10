@@ -26,7 +26,7 @@
 			})
 			.then(function(res) {
 				if (Cookies.get("username") != undefined) {
-					route("/");
+					route("browse", null, true);
 				}
 			});
 		}

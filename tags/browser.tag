@@ -2,20 +2,22 @@
 
 	<div class="paneHeader">
 		<h2>Music Collection</h2>
-		<breadcrumbs></breadcrumbs>
+		<browser-tabs/>
 	</div>
 
 	<div class="paneContent">
 
+		<breadcrumbs if={ path != null }/>
+
 		<ul if={ viewMode == "explorer" } class="explorerView">
-			<li draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
 				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
 			</li>
 		</ul>
 
 		<ul if={ viewMode == "discography" } class="discographyView">
-			<li class="album" draggable="true" each={ browseResults } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+			<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div class="cover">
 					<div class="coverCanvas">
 						<img if={ fields.artwork } src="{ fields.artwork }"/>
@@ -35,8 +37,8 @@
 				<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
 				<div class="trackList">
 					<ul>
-						<li each={ browseResults } >
-							<div class="discNumber" if="{ browseResults.length > 1 }">Disc { discNumber }</div>
+						<li each={ items } >
+							<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
 							<ol class="discContent">
 								<li value={ fields.track_number } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 									{ fields.title }
@@ -54,8 +56,11 @@
 	</div>
 
 	<script>
+
+		var self = this;
+
 		reset() {
-			this.browseResults = [];
+			this.items = [];
 			this.artwork = null;
 			this.artist = null;
 			this.album = null;
@@ -63,85 +68,135 @@
 			this.viewMode = "explorer"; // explorer/discography/album
 		}
 
-		browse(path) {
-			fetch("api/browse/" + path, { credentials: "same-origin" })
-			.then(function(res) {
-				return res.json();
-			})
+		var r = route.create();
+    	r("", browse);
+    	r("browse..", browse);
+    	r("random", random);
+    	r("recent", recent);
+		this.on('mount', function() {
+			route.exec();
+		});
+
+		getViewMode(items) {
+			var onlySongs = true;
+			var allHaveAlbums = true;
+			var hasAnyPicture = false;
+
+			for (var i = 0; i < items.length; i++) {
+				var item = items[i];
+				if (!item.fields.album) {
+					allHaveAlbums = false;
+				}
+
+				if (item.fields.artwork) {
+					item.fields.artwork = "api/serve/" + item.fields.artwork;
+					hasAnyPicture = true;
+				}
+
+				if (item.variant == "Song") {
+					item.fields.path = "api/serve/" + item.fields.path;
+					this.album = this.album || item.fields.album;
+					this.artwork = this.artwork || item.fields.artwork;
+					this.artist = this.artist || item.fields.album_artist || item.fields.artist;
+				} else {
+					onlySongs = false;
+					var slices = item.fields.path.replace(/\\/g, "/").split("/");
+					slices = slices.filter(function(s) { return s.length > 0; });
+					item.fields.name = slices[slices.length-1];
+				}
+			}
+
+			if (hasAnyPicture && onlySongs && items.length > 0) {
+				return "album";
+			} else if (hasAnyPicture && allHaveAlbums) {
+				return "discography";
+			} else {
+				return "explorer";
+			}
+		}
+
+		splitAlbumByDisc(items) {
+			var discs = [];
+			for (var i = 0; i < items.length; i++) {
+				var discNumber = items[i].fields.disc_number || 1;
+				var disc = discs.find(function(d){ return d.discNumber == discNumber });
+				if (disc == undefined) {
+					disc = {
+						discNumber: discNumber,
+						songs: [],
+					};
+					discs.push(disc);
+				}
+				disc.songs.push(items[i]);
+			}
+			discs.sort(function(a,b){ return a.discNumber - b.discNumber; });
+			return discs;
+		}
+
+		displayItems(items) {
+			this.viewMode = this.getViewMode(items);
+			if (this.viewMode == "album") {
+				this.items = this.splitAlbumByDisc(items);
+			} else {
+				this.items = items;
+			}
+			this.update();
+		}
+
+		function random() {
+			fetch("api/random/", { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
 			.then(function(data) {
-				
+				this.reset();
+				for (var i = 0; i < data.length; i++) {
+					data[i] = {
+						variant: "Directory",
+						fields: data[i],
+					}
+				}
+				this.displayItems(data);
+			}.bind(self));
+		}
+
+		function recent() {
+			fetch("api/recent/", { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.reset();
+				for (var i = 0; i < data.length; i++) {
+					data[i] = {
+						variant: "Directory",
+						fields: data[i],
+					}
+				}
+				this.displayItems(data);
+			}.bind(self));
+		}
+
+		function browse(path) {
+			var matchPath = /^.*#browse\/?(.*)$/;
+			var matches = window.location.href.match(matchPath);
+			var path = matches ? matches[1] : "";
+			path = decodeURIComponent(path);
+
+			fetch("api/browse/" + path, { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
 				this.reset();
 				this.path = path;
-
-				var length = data.length;
-				var onlySongs = true;
-				var allHaveAlbums = true;
-				var hasAnyPicture = false;
-
-				for (var i = 0; i < length; i++) {
-					
+				for (var i = 0; i < data.length; i++) {
 					data[i].fields = data[i].Directory || data[i].Song;
 					data[i].variant = data[i].Directory ? "Directory" : "Song";
-
-					if (!data[i].fields.album) {
-						allHaveAlbums = false;
-					}
-
-					if (data[i].fields.artwork) {
-						data[i].fields.artwork = "api/serve/" + data[i].fields.artwork;
-						hasAnyPicture = true;
-					}
-
-					if (data[i].variant == "Song") {
-						data[i].fields.path = "api/serve/" + data[i].fields.path;
-						this.album = this.album || data[i].fields.album;
-						this.artwork = this.artwork || data[i].fields.artwork;
-						this.artist = this.artist || data[i].fields.album_artist || data[i].fields.artist;
-					} else {
-						onlySongs = false;
-						var slices = data[i].fields.path.replace(/\\/g, "/").split("/");
-						slices = slices.filter(function(s) { return s.length > 0; });
-						data[i].fields.name = slices[slices.length-1];
-					}
 				}
-
-				if (hasAnyPicture && onlySongs && length > 0) {
-					this.viewMode = "album";
-				} else if (hasAnyPicture && allHaveAlbums) {
-					this.viewMode = "discography";
-				} else {
-					this.viewMode = "explorer";
-				}
-
-				if (this.viewMode == "album") {
-					var discs = [];
-					for (var i = 0; i < length; i++) {
-						var discNumber = data[i].fields.disc_number || 1;
-						var disc = discs.find(function(d){ return d.discNumber == discNumber });
-						if (disc == undefined) {
-							disc = {
-								discNumber: discNumber,
-								songs: [],
-							};
-							discs.push(disc);
-						}
-						disc.songs.push(data[i]);
-					}
-					discs.sort(function(a,b){ return a.discNumber - b.discNumber; });
-					this.browseResults = discs;
-				} else {
-					this.browseResults = data;
-				}
-
+				this.displayItems(data);
 				this.tags.breadcrumbs.setCurrentPath(path);
-				this.update();
-			}.bind(this));
+			}.bind(self));
 		}
 
 		onClickItem(e) {
 			var variant = e.item.variant;
 			if (variant == "Directory") {
-				this.browse(e.item.fields.path);
+				route("browse/" + e.item.fields.path);
 			} else if (variant == "Song") {
 				eventBus.trigger("browser:queueTrack", e.item.fields);
 			}
@@ -156,19 +211,10 @@
 				variant: "Directory",
 				fields: {
 					path: this.path,
-					name: null,
-					album: this.album,
 				},
 			};
 			e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
-		}
-
-		eventBus.on("breadcrumbs:backtrack", function(path) {
-			this.browse(path);
-		}.bind(this));
-
-		this.reset();
-		this.browse("");
+		}	
 	</script>
 
 	<style>

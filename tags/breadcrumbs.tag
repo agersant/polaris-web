@@ -29,7 +29,7 @@
 		}
 
 		onClickItem(e) {
-			eventBus.trigger("breadcrumbs:backtrack", e.item.path);
+			route("browse/" + e.item.path);
 		}
 
 	</script>

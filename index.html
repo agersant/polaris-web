@@ -10,35 +10,30 @@
 	</head>
 	<body>
 
-		<div id="app"></div>
+		<router>
+			<route path="auth"><auth/></route>
+			<route path=".."><main/></route>
+		</router>
 		
 		<script src="lib/js.cookie.js"></script>
 		<script src="lib/riot%2Bcompiler.min.js"></script>
-		<script src="lib/route.min.js"></script>
+		<script src="lib/route+tag.min.js"></script>
 		<script src="js/notify.js"></script>
 		<script src="js/utils.js"></script>
 		<script type="riot/tag" src="tags/auth.tag"></script>
 		<script type="riot/tag" src="tags/breadcrumbs.tag"></script>
 		<script type="riot/tag" src="tags/browser.tag"></script>
+		<script type="riot/tag" src="tags/browser-tabs.tag"></script>
 		<script type="riot/tag" src="tags/main.tag"></script>
 		<script type="riot/tag" src="tags/player.tag"></script>
 		<script type="riot/tag" src="tags/playlist.tag"></script>
 
 		<script type="text/javascript">
 			var eventBus = riot.observable();
-
-			route("/auth", function() {
-				riot.mount("#app", "auth");
-			});
-
-			route("/", function() {
-				riot.mount("#app", "main");
-			});
-
+			riot.mount('*');
 			if (Cookies.get("username") == undefined) {
-				route("/auth");
+				route("auth", null, true);
 			}
-			route.start(true);
 	    </script>
 
 	</body>
