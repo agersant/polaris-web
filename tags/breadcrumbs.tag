@@ -36,7 +36,7 @@
 
 	<style>
 		breadcrumbs {
-			margin-top: 10px;
+			margin-top: 40px;
 			display: block;
 		}
 
@@ -50,8 +50,8 @@
 			font-size: 14px;
 			color: white;
 
-			margin-left: 12px;
-			margin-right: 12px;
+			margin-left: 32px;
+			margin-right: 32px;
 		}
 
 		li {
@@ -61,7 +61,7 @@
 			cursor: pointer;
 
 			padding-left: 8px;
-			padding-right: 8px;
+			padding-right: 5px;
 			background-color: #44C8F1;
 			border-radius: 5px;
 		}

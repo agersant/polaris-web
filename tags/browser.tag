@@ -227,7 +227,6 @@
 	
 		.results {
 			padding: 40px;
-			padding-top: 40px;
 		}
 
 		/*Explorer view*/
