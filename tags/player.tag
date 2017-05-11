@@ -313,7 +313,7 @@
 			height: 100%;
 			width: 0;
 			max-width: 100%;
-			background-color: #44c8f1;
+			background-color: #44C8F1;
 			border-radius: 3px;
 		}
 
