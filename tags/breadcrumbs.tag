@@ -35,19 +35,39 @@
 	</script>
 
 	<style>
-		breadcrumbs ul {
+		breadcrumbs {
+			margin-top: 10px;
+			display: block;
+		}
+
+		ul {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+
+			padding-left: 5px;
+			padding-right: 10px;
+			font-size: 14px;
+			color: white;
+
+			margin-left: 12px;
+			margin-right: 12px;
 		}
 
-		breadcrumbs li {
+		li {
 			display: inline;
+
+			color: white;
 			cursor: pointer;
+
+			padding-left: 8px;
+			padding-right: 8px;
+			background-color: #44C8F1;
+			border-radius: 5px;
 		}
 		
-		breadcrumbs li:not(:first-child):before {
-			content: " > ";
+		li + li {
+			margin-left: 5px;
 		}
 	</style>
 

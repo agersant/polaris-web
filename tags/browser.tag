@@ -9,46 +9,48 @@
 
 		<breadcrumbs if={ path != null }/>
 
-		<ul if={ viewMode == "explorer" } class="explorerView">
-			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
-				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
-			</li>
-		</ul>
+		<div class="results">
+			<ul if={ viewMode == "explorer" } class="explorerView">
+				<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+					<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
+					<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
+				</li>
+			</ul>
 
-		<ul if={ viewMode == "discography" } class="discographyView">
-			<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-				<div class="cover">
-					<div class="coverCanvas">
-						<img if={ fields.artwork } src="{ fields.artwork }"/>
+			<ul if={ viewMode == "discography" } class="discographyView">
+				<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+					<div class="cover">
+						<div class="coverCanvas">
+							<img if={ fields.artwork } src="{ fields.artwork }"/>
+						</div>
 					</div>
-				</div>
-				<div class="details">
-					<div class="title">{ fields.album }</div>
-					<div class="year">{ fields.year }</div>
-				</div>
-			</li>
-		</ul>
+					<div class="details">
+						<div class="title">{ fields.album }</div>
+						<div class="year">{ fields.year }</div>
+					</div>
+				</li>
+			</ul>
 
-		<div if={ viewMode == "album" } class="albumView">
-			<div class="title">{ album }</div>
-			<div class="artist">{ artist }</div>
-			<div class="details">
-				<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
-				<div class="trackList">
-					<ul>
-						<li each={ items } >
-							<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
-							<ol class="discContent">
-								<li value={ fields.track_number } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-									{ fields.title }
-									<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
-										({ fields.artist })
-									</span>
-								</li>
-							</ol>
-						</li>
-					</ul>
+			<div if={ viewMode == "album" } class="albumView">
+				<div class="title">{ album }</div>
+				<div class="artist">{ artist }</div>
+				<div class="details">
+					<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
+					<div class="trackList">
+						<ul>
+							<li each={ items } >
+								<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
+								<ol class="discContent">
+									<li value={ fields.track_number } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+										{ fields.title }
+										<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
+											({ fields.artist })
+										</span>
+									</li>
+								</ol>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -218,14 +220,19 @@
 	</script>
 
 	<style>
+
+		.paneHeader {
+			background-color: #161A1E;
+		}
 	
-		browser .paneContent {
+		.results {
 			padding: 40px;
+			padding-top: 40px;
 		}
 
 		/*Explorer view*/
 		browser .explorerView {
-			margin-top: -5px;
+			margin-top: -10px;
 		}
 
 		browser .explorerView .directory:before {
@@ -349,9 +356,9 @@
 		}
 
 		browser .albumView li.song {
-			padding-top: 7px;
-			padding-bottom: 3px;
-			border-bottom: 1px solid #EEE;
+			padding-top: 8px;
+			padding-bottom: 6px;
+			border-bottom: 1px solid #DDD;
 			list-style-type: unset;
 			list-style-position: outside;
 		}

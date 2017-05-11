@@ -218,13 +218,24 @@
 	</script>
 
 	<style>
+
+		.paneHeader {
+			background-color: #21272d;
+		}
+
+		.paneContent {
+			border-left: 1px solid #DDD;
+		}
+
 		playlist .clear {
 			cursor: pointer;
+			color: #BBB;
 		}
 
 		playlist .playbackOrder {
 			position: absolute;
 			right: 20px;
+			color: #BBB;
 		}
 
 		playlist .track {
@@ -262,7 +273,7 @@
 		}
 
 		playlist tr:nth-child(2n) {
-			background-color: #F5F5F5;
+			background-color: #F2F2F2;
 		}
 
 		playlist td {

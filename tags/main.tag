@@ -22,7 +22,6 @@
 			right: 0;
 			height: calc(100% - 160px);
 			z-index: 1;
-			border-left: 1px solid #EEE;
 		}
 
 		player {

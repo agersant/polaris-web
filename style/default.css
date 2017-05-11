@@ -15,11 +15,11 @@ html, body, #app {
 	position: fixed;
 	height: 90px;
 	z-index: 1;
-	border-bottom: 1px solid #EEE;
 	box-sizing: border-box;
 	padding: 20px;
 	white-space: nowrap;
 	overflow: hidden;
+	color: #FFF;
 }
 
 .paneContent {
@@ -37,10 +37,14 @@ li {
 	list-style-type: none;
 }
 
-h2 {
+.paneHeader h2 {
 	font-family: 'Montserrat', sans-serif;
 	font-weight: 400;
-	color: #000;
+	color: #FFF;
+}
+
+a {
+	text-decoration: none;
 }
 
 .noselect {

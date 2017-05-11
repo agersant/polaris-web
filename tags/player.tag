@@ -203,7 +203,7 @@
 
 	<style>
 		player {
-			border-top: 1px solid #EEE;
+			border-top: 1px solid #DDD;
 			padding: 40px;
 			display: flex;
 			flex-flow: row nowrap;
