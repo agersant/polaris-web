@@ -10,16 +10,14 @@
 	</head>
 	<body>
 
-		<router>
-			<route path="auth"><auth/></route>
-			<route path=".."><main/></route>
-		</router>
+		<app/>		
 		
 		<script src="lib/js.cookie.js"></script>
 		<script src="lib/riot%2Bcompiler.min.js"></script>
 		<script src="lib/route+tag.min.js"></script>
 		<script src="js/notify.js"></script>
 		<script src="js/utils.js"></script>
+		<script type="riot/tag" src="tags/app.tag"></script>
 		<script type="riot/tag" src="tags/auth.tag"></script>
 		<script type="riot/tag" src="tags/breadcrumbs.tag"></script>
 		<script type="riot/tag" src="tags/browser.tag"></script>
