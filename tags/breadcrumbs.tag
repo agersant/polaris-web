@@ -45,6 +45,7 @@
 			display: inline;
 			cursor: pointer;
 		}
+		
 		breadcrumbs li:not(:first-child):before {
 			content: " > ";
 		}
