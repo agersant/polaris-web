@@ -1,7 +1,7 @@
 <browser-tabs>
-	<a each={ tabs } href="#{ url }" class={ noselect: 1, selected: parent.currentURL == url }>
+	<span each={ tabs } onclick={ onClickTab } class={ noselect: 1, selected: parent.currentURL == url }>
 		{ name }
-  	</a>
+  	</span>
 
 	<script>
 		this.tabs = [
@@ -13,14 +13,18 @@
 		route(function(currentURL, a) {
 			this.currentURL = currentURL || this.tabs[0].url;
 		}.bind(this));
+
+		onClickTab(e) {
+			route(e.item.url);
+		}
 	</script>
 
 	<style>
-		a {
+		span {
 			color: #BBB;
 		}
 
-		a + a {
+		span + span {
 			margin-left: 20px;
 		}
 
