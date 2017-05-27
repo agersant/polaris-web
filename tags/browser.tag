@@ -92,12 +92,12 @@
 				}
 
 				if (item.fields.artwork) {
-					item.fields.artwork = "api/serve/" + item.fields.artwork;
+					item.fields.artwork = "api/serve/" + encodeURIComponent(item.fields.artwork);
 					hasAnyPicture = true;
 				}
 
 				if (item.variant == "Song") {
-					item.fields.path = "api/serve/" + item.fields.path;
+					item.fields.path = "api/serve/" + encodeURIComponent(item.fields.path);
 					this.album = this.album || item.fields.album;
 					this.artwork = this.artwork || item.fields.artwork;
 					this.artist = this.artist || item.fields.album_artist || item.fields.artist;

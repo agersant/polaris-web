@@ -106,9 +106,9 @@
 			.then(function(data) {
 				var length = data.length;
 				for (var i = 0; i < length; i++) {
-					data[i].path = "api/serve/" + data[i].path;
+					data[i].path = "api/serve/" + encodeURIComponent(data[i].path);
 					if (data[i].album && data[i].artwork) {
-						data[i].artwork = "api/serve/" + data[i].artwork;
+						data[i].artwork = "api/serve/" + encodeURIComponent(data[i].artwork);
 					}
 					this.queueTrackInternal(data[i]);
 				}
