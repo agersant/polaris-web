@@ -26,6 +26,7 @@
 					</div>
 					<div class="details">
 						<div class="title">{ fields.album }</div>
+						<div if={ path == null } class="artist">{ fields.artist }</div>
 						<div class="year">{ fields.year }</div>
 					</div>
 				</li>
@@ -257,10 +258,7 @@
 		browser .discographyView .album {
 			font-size: 0;
 			margin-bottom: 20px;
-			cursor: default;
-		}
-
-		browser .discographyView .album {
+			cursor: default;				
 			width: 23.5%;
 			margin-left: 1%;
 			margin-right: 1%;
@@ -294,21 +292,29 @@
 		}
 
 		browser .discographyView .details {
-			padding: 5px 0; 
+			padding: 10px 0; 
 			width: 100%;
-			font-size: 16px;
 		}
 
 		browser .discographyView .details .title {
-			line-height: 100%;
+			line-height: 95%;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			padding-right: 10px;
+			font-size: 18px;
+			font-weight: 400px;
+		}
+
+		browser .discographyView .details .artist {
+			margin-bottom: -5px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			padding-right: 10px;
+			font-size: 14px;
 		}
 
 		browser .discographyView .details .year {
-			margin-top: -5px;
-			font-size: 12px;
+			font-size: 14px;
 			color: #BBB;
 		}
 
