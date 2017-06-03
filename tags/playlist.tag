@@ -3,7 +3,7 @@
 	<div class="paneHeader">
 		<h2>Playlist</h2>
 
-		<span class="clear noselect" onclick={ clear }>Clear</span>
+		<span class="clear noselect" onclick={ onClickClear }>Clear</span>
 
 		<span class="playbackOrder">
 			Order:
@@ -87,11 +87,20 @@
 			if (playbackOrder) {
 				this.refs.playbackOrder.value = playbackOrder;
 			}
+			var tracks = utils.loadUserData("playlist");
+			if (tracks) {
+				this.tracks = tracks;
+			}
+			var currentTrackIndex = utils.loadUserData("currentTrackIndex");
+			if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < this.tracks.length) {
+				var newTrack = this.tracks[currentTrackIndex];
+				eventBus.trigger("playlist:jumpTo", newTrack);
+			}
 		}
 
 		clear() {
 			this.scrollOffset = 0;
-			this.tracks = [];			
+			this.tracks = [];
 			this.update();
 		}
 
@@ -103,6 +112,7 @@
 
 		queueTrack(track) {
 			this.queueTrackInternal(track);
+			this.savePlaylist();
 			this.update();
 		}
 
@@ -120,6 +130,7 @@
 					}
 					this.queueTrackInternal(data[i]);
 				}
+				this.savePlaylist();
 				this.update();
 			}.bind(this));
 		}
@@ -169,7 +180,7 @@
 		}
 
 		playTrack(playlistTrack) {
-			eventBus.trigger("playlist:jumpTo", playlistTrack);
+			eventBus.trigger("playlist:play", playlistTrack);
 		}
 
 		snapToCurrentTrack() {
@@ -186,6 +197,7 @@
 
 		updateCurrentTrack(track) {
 			this.currentTrack = track;
+			this.savePlaylist();
 			this.update();
 		}
 
@@ -195,6 +207,12 @@
 			if (trackIndex >= 0) {
 				this.tracks.splice(trackIndex, 1);
 			}
+			this.savePlaylist();
+		}
+
+		onClickClear() {
+			this.clear();
+			this.savePlaylist();
 		}
 
 		allowDrop(e) {
@@ -218,6 +236,13 @@
 		onChangePlaybackOrder(e) {
 			var playbackOrder = this.refs.playbackOrder.selectedOptions[0].value;
 			utils.saveUserData("playbackOrder", playbackOrder);
+		}
+
+		savePlaylist() {
+			if (utils.saveUserData("playlist", this.tracks)) {
+				var currentTrackIndex = this.tracks.indexOf(this.currentTrack);
+				utils.saveUserData("currentTrackIndex", currentTrackIndex);
+			}
 		}
 
 		eventBus.on("browser:queueTrack", this.queueTrack);
@@ -298,7 +323,7 @@
 			width: 30px;
 		}
 
-		playlist .remove, playlisy td.nowPlaying {
+		playlist .remove, playlist td.nowPlaying {
 			text-align: center;
 		}
 

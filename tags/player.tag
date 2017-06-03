@@ -45,14 +45,19 @@
 		this.trackProgress = 0;
 		this.mouseDown = false;
 		this.adjusting = null;
+		this.paused = true;
 
-		play(track) {
+		jumpTo(track) {
 			this.currentTrack = track;
 			this.albumArt = track.info.artwork;
 			this.trackURL = track.info.path;
 			this.update();
-			this.refs.htmlAudio.play();
 			eventBus.trigger("player:playing", this.currentTrack);
+		}
+
+		play(track) {
+			this.jumpTo(track);
+			this.refs.htmlAudio.play();
 		}
 
 		togglePlay(e) {
@@ -198,7 +203,8 @@
 			this.adjusting = null;
 		}.bind(this));
 
-		eventBus.on("playlist:jumpTo", this.play);
+		eventBus.on("playlist:jumpTo", this.jumpTo);
+		eventBus.on("playlist:play", this.play);
 	</script>
 
 	<style>
