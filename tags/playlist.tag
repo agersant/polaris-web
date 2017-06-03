@@ -7,7 +7,7 @@
 
 		<span class="playbackOrder">
 			Order:
-			<select ref="playbackOrder">
+			<select ref="playbackOrder" onchange={ onChangePlaybackOrder }>
 				<option value="default">Default</option>
 				<option value="random">Random</option>
 				<option value="repeat-track">Repeat Track</option>
@@ -57,6 +57,7 @@
 		var hasCallback = false;
 
 		this.on('mount', function() {
+			this.loadFromDisk();
 			this.refs.scrollElement.onscroll = function() {
 				var newOffset = Math.max(0, Math.floor(this.refs.scrollElement.scrollTop / this.itemHeight) - this.pagePadding );
 				newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
@@ -80,6 +81,13 @@
 				}
 			}.bind(this);
 		});
+
+		loadFromDisk() {
+			var playbackOrder = utils.loadUserData("playbackOrder");
+			if (playbackOrder) {
+				this.refs.playbackOrder.value = playbackOrder;
+			}
+		}
 
 		clear() {
 			this.scrollOffset = 0;
@@ -205,6 +213,11 @@
 			} else if (variant == "Directory") {
 				this.queueDirectory(item.fields.path);
 			}
+		}
+
+		onChangePlaybackOrder(e) {
+			var playbackOrder = this.refs.playbackOrder.selectedOptions[0].value;
+			utils.saveUserData("playbackOrder", playbackOrder);
 		}
 
 		eventBus.on("browser:queueTrack", this.queueTrack);

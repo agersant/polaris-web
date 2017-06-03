@@ -9,8 +9,26 @@ var utils = (function() {
 		return null;
 	};
 
+	var saveUserData = function(key, value) {
+		var username = Cookies.get("username");
+		if (!username) {
+			return;
+		}
+		localStorage[username + "." + key] = value;
+	}
+
+	var loadUserData = function(key) {
+		var username = Cookies.get("username");
+		if (!username) {
+			return;
+		}
+		return localStorage[username + "." + key];
+	}
+
 	return {
 		getFileExtension: getFileExtension,
+		saveUserData: saveUserData,
+		loadUserData: loadUserData,
 	} 
 
 })();
