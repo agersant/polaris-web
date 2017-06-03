@@ -15,7 +15,13 @@
 		}.bind(this));
 
 		onClickTab(e) {
-			route(e.item.url);
+			var newRoute = new RegExp("^.*#" + e.item.url + "$");
+			var currentURL = window.location.href;
+			if (newRoute.test(currentURL)) {
+				route.exec();
+			} else {
+				route(e.item.url);
+			}
 		}
 	</script>
 
