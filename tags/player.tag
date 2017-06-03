@@ -123,6 +123,12 @@
 		}
 
 		this.on('mount', function() {
+
+			var volume = utils.loadUserData("volume");
+			if (volume) {
+				this.refs.htmlAudio.volume = volume;
+			}
+
 			this.refs.htmlAudio.addEventListener("ended", function() {
 				eventBus.trigger("player:trackFinished", this.currentTrack);
 			}.bind(this));
@@ -139,6 +145,7 @@
 
 			this.refs.htmlAudio.addEventListener("volumechange", function() {
 				this.volume = this.refs.htmlAudio.volume;
+				utils.saveUserData("volume", this.volume);
 				this.update();
 			}.bind(this));
 
