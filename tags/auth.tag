@@ -25,7 +25,8 @@
 				credentials: 'same-origin',
 			})
 			.then(function(res) {
-				if (Cookies.get("username") != undefined) {
+				if (res.status == 200) {
+					Cookies.set("username", username);
 					route("browse", null, true);
 				}
 			});
