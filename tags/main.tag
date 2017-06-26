@@ -1,6 +1,6 @@
 <main>
-	<browser name="browser" ondragenter={ onBrowserMouseEnter } onmouseenter={ onBrowserMouseEnter }/>
-	<playlist name="playlist" ondragenter={ onPlaylistMouseEnter } onmouseenter={ onPlaylistMouseEnter }/>
+	<browser name="browser"/>
+	<playlist name="playlist"/>
 	<player/>
 
 	<style>
