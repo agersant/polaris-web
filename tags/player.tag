@@ -216,7 +216,6 @@
 
 	<style>
 		player {
-			border-top: 1px solid #DDD;
 			padding: 40px;
 			display: flex;
 			flex-flow: row nowrap;
@@ -262,7 +261,7 @@
 
 		player .control {
 			border-radius: 50%;
-			border: 1px solid #BBB;
+			border: 1px solid #AAA;
 			text-align: center;
 		}
 
@@ -290,7 +289,7 @@
 
 		player .volume .bar {
 			flex-grow: 1;
-			background-color: #BBB;
+			background-color: #AAA;
 			height: 10px;
 			margin: 7px 0;
 			border-radius: 3px;
@@ -316,7 +315,7 @@
 
 		player .seekBar {
 			width: 100%;
-			background-color: #BBB;
+			background-color: #AAA;
 			height: 10px;
 			margin: 6px 0;
 			border-radius: 3px;
@@ -337,7 +336,7 @@
 			top: -14px;
 			margin-left: -9px;
 			background-color: #FFF;
-			border: 1px solid #BBB;
+			border: 1px solid #AAA;
 			border-radius: 3px;
 		}
 

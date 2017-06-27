@@ -36,22 +36,17 @@
 
 	<style>
 		breadcrumbs {
-			margin-top: 40px;
 			display: block;
+			height: 20px;
 		}
 
 		ul {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-
-			padding-left: 5px;
 			padding-right: 10px;
 			font-size: 14px;
 			color: white;
-
-			margin-left: 32px;
-			margin-right: 32px;
 		}
 
 		li {

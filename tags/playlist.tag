@@ -2,32 +2,27 @@
 
 	<div class="paneHeader">
 		<h2>Playlist</h2>
-
-		<span class="clear noselect" onclick={ onClickClear }>Clear</span>
-
-		<span class="playbackOrder">
-			Order:
-			<select ref="playbackOrder" onchange={ onChangePlaybackOrder }>
-				<option value="default">Default</option>
-				<option value="random">Random</option>
-				<option value="repeat-track">Repeat Track</option>
-				<option value="repeat-all">Repeat All</option>
-			</select>
-		</span>
+		<div class="playlistOperations">
+			<!--<span class="noselect"><i class="material-icons md-18">save</i></span>-->
+			<span class="noselect" onclick={ onClickClear }><i class="material-icons md-18">delete</i></span><span class="playbackOrder">
+				Order:
+				<select ref="playbackOrder" onchange={ onChangePlaybackOrder }>
+					<option value="default">Default</option>
+					<option value="random">Random</option>
+					<option value="repeat-track">Repeat Track</option>
+					<option value="repeat-all">Repeat All</option>
+				</select>
+			</span>
+		</div>
 	</div>
 
 	<div class="paneContent" ref="scrollElement" ondragover={ allowDrop } ondrop={ onDrop }>
+		<div class="playlistPadding"></div>
 		<div style="height: { scrollOffset * itemHeight }px"></div>
 		<table>
-			<thead>
-				<th class="remove"></th>
-				<th class="nowPlaying"></th>
-				<th>Artist - Album</th>
-				<th class="song">Song</th>
-			</thead>
 			<tbody>
 				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks.slice( scrollOffset, scrollOffset + pageSize ) } no-reorder onclick={ onClickTrack }>
-					<td><div class="remove noselect" onclick={ onClickRemoveTrack }>[-]</div></td>
+					<td class="remove"><div class="remove noselect" onclick={ onClickRemoveTrack }>[-]</div></td>
 					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
 					<td class="text">{ track.info.album_artist || track.info.artist } - { track.info.album } ({ track.info.year })</td>
 					<td class="text song">
@@ -39,6 +34,7 @@
 				</tr>
 			</tbody>
 		</table>
+		<div class="playlistPadding"></div>
 		<div style="height: { (tracks.length - scrollOffset - pageSize) * itemHeight }px"></div>
 		<div class="help" if={ tracks.length == 0 }>
 			<i class="material-icons md-48">queue</i><br/>
@@ -52,10 +48,6 @@
 		this.pagePadding = 6;
 		this.itemHeight = 30; // Also defined in CSS
 
-		var wait = false;
-		var hasPendingUpdate = false;
-		var hasCallback = false;
-
 		this.on('mount', function() {
 			this.loadFromDisk();
 			this.refs.scrollElement.onscroll = function() {
@@ -65,20 +57,7 @@
 					return;
 				}
 				this.scrollOffset = newOffset;
-
-				if (!wait) {
-					wait = true;
-					setTimeout(function(){
-						wait = false;
-					}.bind(this), 1);
-					this.update();
-				} else if (!hasCallback) {
-					hasPendingUpdate = true;
-					setTimeout(function(){
-						hasPendingUpdate = false;
-						this.update();
-					}.bind(this), 1);
-				}
+				this.update();
 			}.bind(this);
 		});
 
@@ -257,77 +236,72 @@
 
 	<style>
 
-		.paneHeader {
-			background-color: #21272d;
+		.playbackOrder {
+			color: #DDD;
 		}
 
-		.paneContent {
-			border-left: 1px solid #DDD;
+		.playlistOperations {
+			height: 20px;
 		}
 
-		playlist .clear {
+		.playlistOperations span {
+			vertical-align: top;
+			font-size: 14px;
+		}
+
+		.playlistOperations > span {
 			cursor: pointer;
-			color: #BBB;
+			color: #AAA;
+			padding-right: 8px;
 		}
 
-		playlist .playbackOrder {
-			position: absolute;
-			right: 20px;
-			color: #BBB;
+		/*Not using padding on the container because that moves the scrollbar*/
+		.playlistPadding {
+			height: 0;
+			padding-top: 40px;
 		}
 
-		playlist .track {
+		.track {
 			cursor: default;
 			white-space: nowrap;
 		}
 
-		playlist .track:hover .remove {
-			visibility: visible;
+		.track:not(:hover) .remove {
+			color: transparent;
 		}
 
-		playlist .track:not(:hover) .remove {
-			visibility: hidden;
-		}
-
-		playlist .remove {
+		.remove {
 			cursor: pointer;
 		}
 
-		playlist table {
+		table {
 			width: 100%;
 			border-spacing: 0;
 		}
 
-		playlist th {
-			border-bottom: 1px solid #EEE;
-			text-align: left;
-			margin-bottom: 20px;
-			font-size: 16px;
-			padding-top: 6px;
-		}
-
-		playlist th, tr {
+		tr {
 			height: 30px; /*Used in JS*/
 		}
 
-		playlist tr:nth-child(2n) {
+		tr:nth-child(2n) {
 			background-color: #F2F2F2;
 		}
 
-		playlist td {
-			padding-top: 3px;
+		td {
+			padding-bottom: 3px;
+			vertical-align: bottom;
 			font-size: 13px;
 		}
 
-		playlist .remove, playlist .nowPlaying {
-			width: 30px;
+		.remove, playlist .nowPlaying {
+			width: 20px;
 		}
 
-		playlist .remove, playlist td.nowPlaying {
+		.remove, playlist td.nowPlaying {
 			text-align: center;
 		}
 
-		playlist td.text {
+		td.text {
 			max-width: 0;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -335,30 +309,30 @@
 			padding-right: 30px;
 		}
 
-		playlist th.song, playlist td.song {
+		td.song {
 			width: 65%;
 		}
 
-		playlist td.song .trackArtist {
-			color: #BBB;
+		td.song .trackArtist {
+			color: #AAA;
 		}
 
-		playlist tr.nowPlaying td.song .trackArtist {
+		tr.nowPlaying td.song .trackArtist {
 			color: #B3F4FF;
 		}
 
-		playlist tr.nowPlaying td, playlist tr.nowPlaying td * {
+		tr.nowPlaying td, tr.nowPlaying td * {
 			color: #FFF;
 			font-weight: 600;
 			background-color: #44C8F1;
 		}
 
-		playlist .material-icons.nowPlaying {
+		.material-icons.nowPlaying {
 			vertical-align: middle;
 			padding-bottom: 2px;
 		}
 
-		playlist .help {
+		.help {
 			position: absolute;
 			top: 40%;
 			width: 100%;
@@ -366,8 +340,8 @@
 			font-size: 22px;
 		}
 
-		playlist .help, playlist .help i {
-			color: #BBB;
+		.help, .help i {
+			color: #AAA;
 		}
 	</style>
 

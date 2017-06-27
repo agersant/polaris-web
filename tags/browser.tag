@@ -1,61 +1,56 @@
 <browser>
 
 	<div class="paneHeader">
-		<h2>Music Collection</h2>
-		<browser-tabs/>
+		<h2>{ title }</h2>
+		<div if={ tab == "random" } class="more noselect" onclick={ onClickMoreRandom }><i class="material-icons md-18">refresh</i><span>More</span></div>
+		<breadcrumbs if={ path != null }/>
 	</div>
 
 	<div class="paneContent">
+		<ul if={ viewMode == "explorer" } class="explorerView">
+			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
+				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
+			</li>
+		</ul>
 
-		<breadcrumbs if={ path != null }/>
-
-		<div class="results">
-			<ul if={ viewMode == "explorer" } class="explorerView">
-				<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-					<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
-					<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
-				</li>
-			</ul>
-
-			<ul if={ viewMode == "discography" } class="discographyView">
-				<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-					<div class="cover">
-						<div class="coverCanvas">
-							<img if={ fields.artwork } src="{ fields.artwork }"/>
-						</div>
+		<ul if={ viewMode == "discography" } class="discographyView">
+			<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+				<div class="cover">
+					<div class="coverCanvas">
+						<img if={ fields.artwork } src="{ fields.artwork }"/>
 					</div>
-					<div class="details">
-						<div class="title">{ fields.album }</div>
-						<div if={ path == null } class="artist">{ fields.artist }</div>
-						<div class="year">{ fields.year }</div>
-					</div>
-				</li>
-			</ul>
-
-			<div if={ viewMode == "album" } class="albumView">
-				<div class="title">{ album }</div>
-				<div class="artist">{ artist }</div>
+				</div>
 				<div class="details">
-					<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
-					<div class="trackList">
-						<ul>
-							<li each={ items } >
-								<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
-								<ol class="discContent">
-									<li value={ fields.track_number } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-										{ fields.title }
-										<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
-											({ fields.artist })
-										</span>
-									</li>
-								</ol>
-							</li>
-						</ul>
-					</div>
+					<div class="title">{ fields.album }</div>
+					<div if={ path == null } class="artist">{ fields.artist }</div>
+					<div class="year">{ fields.year }</div>
+				</div>
+			</li>
+		</ul>
+
+		<div if={ viewMode == "album" } class="albumView">
+			<div class="title">{ album }</div>
+			<div class="artist">{ artist }</div>
+			<div class="details">
+				<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
+				<div class="trackList">
+					<ul>
+						<li each={ items } >
+							<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
+							<ol class="discContent">
+								<li value={ fields.track_number } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+									{ fields.title }
+									<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
+										({ fields.artist })
+									</span>
+								</li>
+							</ol>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
-
 	</div>
 
 	<script>
@@ -68,6 +63,7 @@
 			this.artist = null;
 			this.album = null;
 			this.path = null;
+			this.title = "";
 			this.viewMode = "explorer"; // explorer/discography/album
 		}
 
@@ -157,6 +153,8 @@
 						fields: data[i],
 					}
 				}
+				this.tab = "random";
+				this.title = "Random Albums";
 				this.displayItems(data);
 			}.bind(self));
 		}
@@ -172,6 +170,8 @@
 						fields: data[i],
 					}
 				}
+				this.tab = "recent";
+				this.title = "Recently Added";
 				this.displayItems(data);
 			}.bind(self));
 		}
@@ -191,9 +191,16 @@
 					data[i].fields = data[i].Directory || data[i].Song;
 					data[i].variant = data[i].Directory ? "Directory" : "Song";
 				}
+				this.tab = "browse";
+				this.title = "Music Collection";
 				this.displayItems(data);
 				this.tags.breadcrumbs.setCurrentPath(path);
 			}.bind(self));
+		}
+
+		onClickMoreRandom(e) {
+			e.preventDefault();
+			route.exec();
 		}
 
 		onClickItem(e) {
@@ -222,19 +229,22 @@
 
 	<style>
 
-		.paneHeader {
-			background-color: #161A1E;
+		.more {
+			cursor: pointer;
+			height: 20px;
 		}
-	
-		.results {
-			padding: 40px;
+
+		.more span {
+			padding-left: 4px;
+			font-size: 14px;
+			vertical-align: top;
+		}
+
+		.paneContent {
+			padding-top: 40px;
 		}
 
 		/*Explorer view*/
-		browser .explorerView {
-			margin-top: -10px;
-		}
-
 		browser .explorerView .directory:before {
 			content: "🗀";
 			margin-right: 5px;
@@ -272,8 +282,8 @@
 			position: relative;
 		}
 
-		/*Hack to make this element stay square when its width changes*/
 		browser .discographyView .cover:after {
+			/*Hack to make this element stay square when its width changes*/
 			content: "";
 			display: block;
 			padding-bottom: 100%;
@@ -315,23 +325,22 @@
 
 		browser .discographyView .details .year {
 			font-size: 14px;
-			color: #BBB;
+			color: #AAA;
 		}
 
 		/*Album view*/
 		browser .albumView .title {
 			line-height: 1;
-			margin-top: -10px;
 			margin-bottom: 5px;
-			font-size: 30px;
-			font-weight: 400;
+			font-size: 20px;
+			font-family: "Montserrat", "sans-serif";
 		}
 
 		browser .albumView .artist {
 			line-height: 1;
 			margin-bottom: 20px;
-			font-size: 24px;
-			color: #BBB;
+			font-size: 20px;
+			color: #AAA;
 		}
 
 		browser .albumView .details {
@@ -369,7 +378,7 @@
 		}
 
 		browser .albumView .trackArtist {
-			color: #BBB;
+			color: #AAA;
 		}
 
 		browser .albumView li:first-child {

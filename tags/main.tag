@@ -1,19 +1,26 @@
 <main>
-	<browser name="browser"/>
-	<playlist name="playlist"/>
+	<menu/>
+	<browser/>
+	<playlist/>
 	<player/>
 
 	<style>
 		playlist, browser {
 			overflow-x: hidden;
-			background-color: white;
+			background-color: #FFF;
+		}
+
+		menu {
+			position: absolute;
+			width: 50px;
+			height: 100%;
 		}
 
 		browser {
 			position: absolute;
-			width: 40%;
-			left: 0;
-			height: calc(100% - 160px);
+			width: calc(40% - 50px);
+			left: 50px;
+			height: 100%;
 		}
 
 		playlist {
@@ -22,14 +29,19 @@
 			right: 0;
 			height: calc(100% - 160px);
 			z-index: 1;
+			box-sizing: border-box;
+			border-left: 1px solid #DDD;
 		}
 
 		player {
 			position: absolute;
+			width: 60%;
 			bottom: 0;
-			width: 100%;
+			right: 0;
 			height: 160px;
 			box-sizing: border-box;
+			border-left: 1px solid #DDD;
+			border-top: 1px solid #DDD;
 		}
 	</style>
 </main>

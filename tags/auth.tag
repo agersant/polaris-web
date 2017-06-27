@@ -82,7 +82,7 @@
 			border: 0;
 			padding-left: 10px;
 			box-sizing: content-box;
-			border-bottom: 1px solid #BBB; 
+			border-bottom: 1px solid #AAA; 
 		}
 		
 	</style>
