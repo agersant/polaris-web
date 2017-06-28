@@ -17,7 +17,6 @@
 	</div>
 
 	<div class="paneContent" ref="scrollElement" ondragover={ allowDrop } ondrop={ onDrop }>
-		<div class="playlistPadding"></div>
 		<div style="height: { scrollOffset * itemHeight }px"></div>
 		<table>
 			<tbody>
@@ -34,7 +33,6 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="playlistPadding"></div>
 		<div style="height: { (tracks.length - scrollOffset - pageSize) * itemHeight }px"></div>
 		<div class="help" if={ tracks.length == 0 }>
 			<i class="material-icons md-48">queue</i><br/>
@@ -236,6 +234,11 @@
 
 	<style>
 
+		.paneContent {
+			padding-left: 0;
+			padding-right: 0;
+		}
+
 		.playbackOrder {
 			color: #DDD;
 		}
@@ -253,12 +256,6 @@
 			cursor: pointer;
 			color: #AAA;
 			padding-right: 8px;
-		}
-
-		/*Not using padding on the container because that moves the scrollbar*/
-		.playlistPadding {
-			height: 0;
-			padding-top: 40px;
 		}
 
 		.track {

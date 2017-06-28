@@ -307,12 +307,11 @@
 		}
 
 		browser .discographyView .details .title {
-			line-height: 95%;
+			font-family: "Montserrat", "sans-serif";
 			overflow: hidden;
 			text-overflow: ellipsis;
 			padding-right: 10px;
-			font-size: 18px;
-			font-weight: 400px;
+			font-size: 16px;
 		}
 
 		browser .discographyView .details .artist {
