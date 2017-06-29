@@ -45,7 +45,7 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			padding-right: 10px;
-			font-size: 14px;
+			font-size: 0.875rem;
 			color: white;
 		}
 

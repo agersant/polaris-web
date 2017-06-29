@@ -256,7 +256,6 @@
 			flex-flow: row nowrap;
 			justify-content: space-between;
 			align-items: center;
-			font-size: 16px;
 		}
 
 		player .control {
@@ -304,13 +303,12 @@
 
 		player .trackInfo .primary {
 			font-weight: 600;
-			font-size: 16px; 
 			margin-bottom: -5px;
 		}
 
 		player .trackInfo .secondary, player .trackDuration {
 			font-weight: 300;
-			font-size: 14px; 
+			font-size: 0.875rem;
 		}
 
 		player .seekBar {

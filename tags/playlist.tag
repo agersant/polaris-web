@@ -249,7 +249,7 @@
 
 		.playlistOperations span {
 			vertical-align: top;
-			font-size: 14px;
+			font-size: 0.875rem;
 		}
 
 		.playlistOperations > span {
@@ -287,7 +287,7 @@
 		td {
 			padding-bottom: 3px;
 			vertical-align: bottom;
-			font-size: 13px;
+			font-size: 0.8125rem;
 		}
 
 		.remove, playlist .nowPlaying {
@@ -334,7 +334,7 @@
 			top: 40%;
 			width: 100%;
 			text-align:center;
-			font-size: 22px;
+			font-size: 1.375rem;
 		}
 
 		.help, .help i {

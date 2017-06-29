@@ -64,7 +64,7 @@
 		.authForm input {
 			display: block;
 			margin: 5px 0;
-			font-size: 1.5em;
+			font-size: 1.5rem;
 		}
 
 		.authForm input[type="submit"] {
@@ -75,7 +75,7 @@
 			color: #FFF;
 			background-color: #44C8F1;
 			border-radius: 5px;
-			font-size: 1.25em;
+			font-size: 1.25rem;
 		}
 
 		.authForm input[type="text"], .authForm input[type="password"] {

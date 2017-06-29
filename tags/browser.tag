@@ -236,7 +236,7 @@
 
 		.more span {
 			padding-left: 4px;
-			font-size: 14px;
+			font-size: 0.875rem;
 			vertical-align: top;
 		}
 
@@ -311,7 +311,7 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			padding-right: 10px;
-			font-size: 16px;
+			font-size: 1rem;
 		}
 
 		browser .discographyView .details .artist {
@@ -319,11 +319,11 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			padding-right: 10px;
-			font-size: 14px;
+			font-size: 0.875rem;
 		}
 
 		browser .discographyView .details .year {
-			font-size: 14px;
+			font-size: 0.875rem;
 			color: #AAA;
 		}
 
@@ -331,14 +331,14 @@
 		browser .albumView .title {
 			line-height: 1;
 			margin-bottom: 5px;
-			font-size: 20px;
+			font-size: 1.25rem;
 			font-family: "Montserrat", "sans-serif";
 		}
 
 		browser .albumView .artist {
 			line-height: 1;
 			margin-bottom: 20px;
-			font-size: 20px;
+			font-size: 1.25rem;
 			color: #AAA;
 		}
 

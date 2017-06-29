@@ -1,5 +1,6 @@
 html, body, #app {
 	height: 100%;
+	font-size: 100%;
 }
 
 * {
@@ -31,7 +32,7 @@ li {
 }
 
 h2 {
-	font-size: 32px;
+	font-size: 2rem;
 	font-family: 'Hind', sans-serif;
 	color: #AAA;
 }
