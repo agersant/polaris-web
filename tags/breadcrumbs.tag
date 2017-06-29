@@ -1,7 +1,7 @@
 <breadcrumbs>
 
 	<ul>
-		<li each={ components } onclick={ onClickItem }>
+		<li class="noselect" each={ components } onclick={ onClickItem }>
 			{ name }
 		</li>
 	</ul>
