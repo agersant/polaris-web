@@ -245,12 +245,12 @@
 		}
 
 		/*Explorer view*/
-		browser .explorerView .directory:before {
+		.explorerView .directory:before {
 			content: "🗀";
 			margin-right: 5px;
 		}
 
-		browser .explorerView .directory, browser .explorerView .song {
+		.explorerView .directory, .explorerView .song {
 			cursor: default;
 			max-width: 100%;
 			white-space: nowrap;
@@ -259,13 +259,13 @@
 		}
 
 		/*Discography view*/
-		browser .discographyView {
+		.discographyView {
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: flex-start;
 		}
 
-		browser .discographyView .album {
+		.discographyView .album {
 			font-size: 0;
 			margin-bottom: 20px;
 			cursor: default;				
@@ -274,39 +274,39 @@
 			margin-right: 1%;
 		}
 
-		browser .discographyView .album:nth-child(4n+1) { margin-left: 0; }
-		browser .discographyView .album:nth-child(4n) { margin-right: 0; }
+		.discographyView .album:nth-child(4n+1) { margin-left: 0; }
+		.discographyView .album:nth-child(4n) { margin-right: 0; }
 
-		browser .discographyView .cover {
+		.discographyView .cover {
 			width: 100%;
 			position: relative;
 		}
 
-		browser .discographyView .cover:after {
+		.discographyView .cover:after {
 			/*Hack to make this element stay square when its width changes*/
 			content: "";
 			display: block;
 			padding-bottom: 100%;
 		}
 
-		browser .discographyView .coverCanvas {
+		.discographyView .coverCanvas {
 			position: absolute;
 			width: 100%;
   			height: 100%;
 		}
 
-		browser .discographyView img {
+		.discographyView img {
 			width: 100%;
 			height: 100%;
 			border-radius: 5px;
 		}
 
-		browser .discographyView .details {
+		.discographyView .details {
 			padding: 10px 0; 
 			width: 100%;
 		}
 
-		browser .discographyView .details .title {
+		.discographyView .details .title {
 			font-family: "Montserrat", "sans-serif";
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -314,7 +314,7 @@
 			font-size: 1rem;
 		}
 
-		browser .discographyView .details .artist {
+		.discographyView .details .artist {
 			margin-bottom: -5px;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -322,53 +322,53 @@
 			font-size: 0.875rem;
 		}
 
-		browser .discographyView .details .year {
+		.discographyView .details .year {
 			font-size: 0.875rem;
 			color: #AAA;
 		}
 
 		/*Album view*/
-		browser .albumView .title {
+		.albumView .title {
 			line-height: 1;
 			margin-bottom: 5px;
 			font-size: 1.25rem;
 			font-family: "Montserrat", "sans-serif";
 		}
 
-		browser .albumView .artist {
+		.albumView .artist {
 			line-height: 1;
 			margin-bottom: 20px;
 			font-size: 1.25rem;
 			color: #AAA;
 		}
 
-		browser .albumView .details {
+		.albumView .details {
 			display: flex;
 			flex-flow: row nowrap;
 			justify-content: flex-start;
 		}
 
-		browser .albumView .trackList {
+		.albumView .trackList {
 			flex-grow: 1;
 			max-width: calc(100% - 40px);
 			cursor: default;
 			margin-left: 20px;
 		}
 
-		browser .albumView .discNumber {
+		.albumView .discNumber {
 			font-weight: 600;
 			margin-bottom: 5px;
 		}
 
-		browser .albumView li:not(:first-child) .discNumber {
+		.albumView li:not(:first-child) .discNumber {
 			margin-top: 20px;
 		}
 
-		browser .albumView .discContent {
+		.albumView .discContent {
 			margin-left: 20px;
 		}
 
-		browser .albumView li.song {
+		.albumView li.song {
 			padding-top: 8px;
 			padding-bottom: 6px;
 			border-bottom: 1px solid #DDD;
@@ -376,19 +376,19 @@
 			list-style-position: outside;
 		}
 
-		browser .albumView .trackArtist {
+		.albumView .trackArtist {
 			color: #AAA;
 		}
 
-		browser .albumView li:first-child {
+		.albumView li:first-child {
 			padding-top: 0;
 		}
 
-		browser .albumView li:last-child {
+		.albumView li:last-child {
 			border-bottom: 0;
 		}
 
-		browser .albumView img {
+		.albumView img {
 			flex-shrink: 0; 
 			width: 100%;
 			height: 100%;

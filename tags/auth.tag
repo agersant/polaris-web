@@ -41,12 +41,12 @@
 			width: 25%;
 		}
 
-		.authForm .logo {
+		.logo {
 			width: 100%;
 			margin-bottom: 70px;
 		}
 
-		.authForm .content {
+		.content {
 			display: flex;
 			flex-flow: column nowrap;
 			justify-content: center;
@@ -54,20 +54,20 @@
 			height: 90%;
 		}
 
-		.authForm form {
+		form {
 			display: flex;
 			flex-flow: column nowrap;
 			justify-content: center;
 			align-items: stretch;
 		}
 
-		.authForm input {
+		input {
 			display: block;
 			margin: 5px 0;
 			font-size: 1.5rem;
 		}
 
-		.authForm input[type="submit"] {
+		input[type="submit"] {
 			width: 20%;
 			margin-top: 15px;
 			align-self: flex-end;
@@ -78,7 +78,7 @@
 			font-size: 1.25rem;
 		}
 
-		.authForm input[type="text"], .authForm input[type="password"] {
+		input[type="text"], input[type="password"] {
 			border: 0;
 			padding-left: 10px;
 			box-sizing: content-box;

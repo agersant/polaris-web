@@ -223,48 +223,48 @@
 			justify-content: center;
 		}
 
-		player audio {
+		audio {
 			display: none;
 		}
 
-		player .art {
+		.art {
 			width: 120px;
 			height: 120px;
 			border-radius: 5px;
 		}
 
-		player .art img {
+		.art img {
 			width: 100%;
 			height: 100%;
 			border-radius: 5px;
 		}
 
-		player .currentTrack {
+		.currentTrack {
 			flex-grow: 1;
 			min-width: 200px;
 			padding-left: 20px;
 		}
 
-		player .controls {
+		.controls {
 			margin-right: 20px;
 			width: 120px;
 			cursor: default;
 		}
 
-		player .controls .playback {
+		.controls .playback {
 			display: flex;
 			flex-flow: row nowrap;
 			justify-content: space-between;
 			align-items: center;
 		}
 
-		player .control {
+		.control {
 			border-radius: 50%;
 			border: 1px solid #AAA;
 			text-align: center;
 		}
 
-		player .control.previous, player .control.next {
+		.control.previous, .control.next {
 			width: 28px;
 			height: 28px;
 			line-height: 28px;
@@ -272,7 +272,7 @@
 			box-sizing: border-box;
 		}
 
-		player .control.play, player .control.pause {
+		.control.play, .control.pause {
 			padding-top: 6px;
 			width: 40px;
 			height: 40px;
@@ -280,13 +280,13 @@
 			box-sizing: border-box;
 		}
 
-		player .volume {
+		.volume {
 			margin-left: -4px;
 			display: flex;
 			flex-flow: row nowrap;
 		}
 
-		player .volume .bar {
+		.volume .bar {
 			flex-grow: 1;
 			background-color: #AAA;
 			height: 10px;
@@ -294,24 +294,24 @@
 			border-radius: 3px;
 		}
 
-		player .volume .fill {
+		.volume .fill {
 			height: 100%;
 			max-width: 100%;
 			background-color: #44C8F1;
 			border-radius: 3px;
 		}
 
-		player .trackInfo .primary {
+		.trackInfo .primary {
 			font-weight: 600;
 			margin-bottom: -5px;
 		}
 
-		player .trackInfo .secondary, player .trackDuration {
+		.trackInfo .secondary, .trackDuration {
 			font-weight: 300;
 			font-size: 0.875rem;
 		}
 
-		player .seekBar {
+		.seekBar {
 			width: 100%;
 			background-color: #AAA;
 			height: 10px;
@@ -319,7 +319,7 @@
 			border-radius: 3px;
 		}
 
-		player .seekBar .fill {
+		.seekBar .fill {
 			height: 100%;
 			width: 0;
 			max-width: 100%;
@@ -327,7 +327,7 @@
 			border-radius: 3px;
 		}
 
-		player .seekBar .head {
+		.seekBar .head {
 			width: 16px;
 			height: 16px;
 			position: relative;
@@ -338,7 +338,7 @@
 			border-radius: 3px;
 		}
 
-		player .controls, player .art img, player .currentTrack {
+		.controls, .art img, .currentTrack {
 			animation-duration: 250ms;
 			animation-name: fadein;
 		}
