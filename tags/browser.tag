@@ -76,6 +76,10 @@
 			route.exec();
 		});
 
+		this.on('unmount', function() {
+			r.stop();
+		});
+
 		getViewMode(items) {
 			var onlySongs = true;
 			var allHaveAlbums = true;
