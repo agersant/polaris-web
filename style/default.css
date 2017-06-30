@@ -53,6 +53,18 @@ a {
 	text-decoration: none;
 }
 
+input[type="submit"] {
+	padding: 5px;
+	padding-left: 30px;
+	padding-right: 30px;
+	margin-top: 15px;
+	border: none;
+	color: #FFF;
+	background-color: #44C8F1;
+	border-radius: 5px;
+	font-weight: 600;
+}
+
 .noselect {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;

@@ -3,9 +3,9 @@
 		<div class="content">
 			<img class="logo" src="img/logo.png"/>
 			<form name="authForm" onsubmit={ doLogin }>
-				<input type="text" name="username" placeholder="Username">
-				<input type="password" name="password" placeholder="Password">
-				<input type="submit" value="Login">
+				<input type="text" name="username" placeholder="Username"/>
+				<input type="password" name="password" placeholder="Password"/>
+				<input type="submit" value="Login"/>
 			</form>
 		</div>
 	</div>
@@ -68,13 +68,7 @@
 		}
 
 		input[type="submit"] {
-			width: 20%;
-			margin-top: 15px;
 			align-self: flex-end;
-			border: none;
-			color: #FFF;
-			background-color: #44C8F1;
-			border-radius: 5px;
 			font-size: 1.25rem;
 		}
 

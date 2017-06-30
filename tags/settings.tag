@@ -15,4 +15,10 @@
 	<script>
 	</script>
 	
+	<style>
+		.paneContent {
+			padding-top: 40px;
+		}
+	</style>
+
 </settings>

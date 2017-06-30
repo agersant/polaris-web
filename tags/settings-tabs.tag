@@ -27,7 +27,7 @@
 	<style>
 		span {
 			cursor: pointer;
-			color: #BBB;
+			color: #AAA;
 		}
 
 		span + span {
