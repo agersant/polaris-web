@@ -11,10 +11,10 @@
 			{ icon: "library_music", url: "browse" },
 			{ icon: "shuffle", url: "random" },
 			{ icon: "new_releases", url: "recent" },
+			{ icon: "settings", url: "settings" },
 			/*
 			{ icon: "playlist_play", url: "" },
 			{ icon: "search", url: "" },
-			{ icon: "settings", url: "" },
 			*/
 		];
 

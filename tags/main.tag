@@ -1,11 +1,20 @@
 <main>
 	<menu/>
-	<browser/>
+	<router>
+		<route path="settings.."><settings/></route>
+		<route path=".."><browser/></route>
+	</router>
 	<playlist/>
 	<player/>
 
+	<script>
+		this.on('mount', function() {
+			route.exec();
+		});
+	</script>
+
 	<style>
-		playlist, browser {
+		playlist, browser, settings {
 			overflow-x: hidden;
 			background-color: #FFF;
 		}
@@ -16,7 +25,7 @@
 			height: 100%;
 		}
 
-		browser {
+		browser, settings {
 			position: absolute;
 			width: calc(40% - 50px);
 			left: 50px;
