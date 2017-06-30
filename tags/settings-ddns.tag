@@ -48,6 +48,7 @@
 
 		input[type="submit"] {
 			width: inherit;
+			margin-bottom: 0;
 		}
 
 		.explanation {
