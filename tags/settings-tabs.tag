@@ -11,19 +11,12 @@
 		];
 
 		route(function(currentURL, section) {
-			console.log(" currentURL " + currentURL );
 			this.currentSection = section || this.tabs[0].section;
 		}.bind(this));
 
 		onClickTab(e) {
 			var newURL = "settings/" + e.item.section;
-			var newRoute = new RegExp("^.*#" + newURL + "$");
-			var currentURL = window.location.href;
-			if (newRoute.test(currentURL)) {
-				route.exec();
-			} else {
-				route(newURL);
-			}
+			route(newURL);
 		}
 
 		this.on('mount', function() {

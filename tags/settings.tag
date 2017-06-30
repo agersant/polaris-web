@@ -5,6 +5,14 @@
 	</div>
 
 	<div class="paneContent">
-		TODO
+		<router>
+			<route path="settings/users"><settings-users/></route>
+			<route path="settings/ddns"><settings-ddns/></route>
+			<route path="settings/collection"><settings-collection/></route>
+		</router>
 	</div>
+
+	<script>
+	</script>
+	
 </settings>

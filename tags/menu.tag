@@ -1,7 +1,6 @@
 <menu>
 	<ul>
-		<li each={ buttons } onclick={ onClickTab } class={ noselect: 1, selected: parent.currentURL == url }>
-			{ name }
+		<li each={ buttons } onclick={ onClickTab } class={ noselect: 1, selected: parent.currentURL == ( rootURL || url ) }>
 			<i class="noselect material-icons md-18">{ icon }</i>
 		</li>
 	</ul>
@@ -11,7 +10,7 @@
 			{ icon: "library_music", url: "browse" },
 			{ icon: "shuffle", url: "random" },
 			{ icon: "new_releases", url: "recent" },
-			{ icon: "settings", url: "settings" },
+			{ icon: "settings", url: "settings/collection", rootURL: "settings" },
 			/*
 			{ icon: "playlist_play", url: "" },
 			{ icon: "search", url: "" },

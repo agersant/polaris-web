@@ -1,7 +1,7 @@
 <main>
 	<menu/>
 	<router>
-		<route path="settings.."><settings/></route>
+		<route path="settings/*"><settings/></route>
 		<route path=".."><browser/></route>
 	</router>
 	<playlist/>
