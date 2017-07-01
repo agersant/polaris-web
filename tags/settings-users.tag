@@ -88,7 +88,7 @@
 
 	<style>
 		ul {
-			width: 55%;
+			width: 100%;
 			box-sizing: border-box;
 			border: 1px solid #AAA;
 			border-radius: 3px;
