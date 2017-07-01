@@ -1,7 +1,7 @@
 <settings-collection>
 	<form>
 		<div class="field">
-			<label for="art_pattern">Album art pattern</label><input type="text" name="art_pattern" placeholder="Folder.(jpg|png)"/>
+			<label for="art_pattern">Album art pattern</label><input type="text" id="art_pattern" placeholder="Folder.(jpg|png)"/>
 			<p class="tip">The regular expression used to detect album art files.</p>
 		</div>
 		<div class="field sources">
@@ -21,7 +21,7 @@
 			<button onClick={ addSource }>Add more</button>
 		</div>
 		<div class="field sleep_duration">
-			<label for="sleep_duration">Delay between collection re-scans</label><input type="text" name="sleep_duration" placeholder=""/> minutes
+			<label for="sleep_duration">Delay between collection re-scans</label><input type="text" id="sleep_duration" placeholder=""/> minutes
 		</div>
 		<input type="submit" value="Apply"/>
 	</form>
@@ -86,7 +86,7 @@
 			top: 2px;
 		}
 
-		.sources input {
+		table input {
 			width: 100%;
 			box-sizing: border-box;
 		}
