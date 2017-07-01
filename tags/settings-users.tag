@@ -4,7 +4,7 @@
 			<label>User accounts</label>
 			<ul>
 				<li onClick={ editUser } each={ user in users }>
-					<span>{ user.name }</span>
+					<span class="username">{ user.name }</span>
 					<i if={ user != editing } onClick={ editUser } class="noselect material-icons md-18">edit</i>
 					<div class="edit" if={ user == editing }>
 						<div class="field">
@@ -103,6 +103,10 @@
 
 		li:not(:last-child) {
 			border-bottom: 1px solid #AAA;
+		}
+
+		span.username {
+			cursor: default;
 		}
 
 		.edit {
