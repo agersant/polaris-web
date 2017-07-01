@@ -4,15 +4,15 @@
 
 	<form>
 		<div class="field">
-			<label for="host">Hostname</label><input type="text" name="host" placeholder="http://yourname.ydns.eu"/>
+			<label for="host">Hostname</label><input type="text" id="host" placeholder="http://yourname.ydns.eu"/>
 			<p class="tip">The URL pointing to your Polaris server.</p>
 		</div>
 		<div class="field">
-			<label for="username">Username</label><input type="text" name="username"/>
+			<label for="username">Username</label><input type="text" id="username"/>
 			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
 		</div>
 		<div class="field">
-			<label for="password">Password</label><input type="text" name="password"/>
+			<label for="password">Password</label><input type="text" id="password"/>
 			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
 		</div>
 		<input type="submit" value="Apply"/>
