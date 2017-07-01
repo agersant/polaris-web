@@ -54,6 +54,7 @@ a {
 }
 
 input[type="submit"], button {
+	display: block;
 	padding: 5px;
 	padding-left: 30px;
 	padding-right: 30px;
@@ -70,6 +71,12 @@ button {
 	border: 1px solid #AAA;
 	color: inherit;
 	margin-top: 0;
+}
+
+button.danger {
+	background-color: #FF5763;
+	color: #FFF;
+	border: 0;
 }
 
 .noselect {
