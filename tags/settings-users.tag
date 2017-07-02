@@ -1,5 +1,5 @@
 <settings-users>
-	<form onsubmit={ save }>
+	<form if={ users } onsubmit={ save }>
 		<div class="field sources">
 			<label>User accounts</label>
 			<ul>
@@ -16,27 +16,29 @@
 						<div class="field">
 							<label for={ "password_" + user.name }>New password</label>
 							<input type="password" id={ "password_" + user.name } value={ user.password } oninput={ onPasswordInput }/>
+							<p if={ !this.validatePassword(user) } class="tip error">The password cannot be blank.</p>
 						</div>
 
 						<div class="field">
 							<label for={ "password_confirm_" + user.name }>Confirm new password</label>
 							<input type="password" id={ "password_confirm_" + user.name } value={ user.password_confirm } oninput={ onPasswordConfirmInput }/>
+							<p if={ !this.validatePasswordConfirmation(user) } class="tip error">The password confirmation does not match the new password.</p>
 						</div>
 
 						<div class="field">
-							<input type="checkbox" id={ "admin_" + user.name } checked={ user.admin } onchange={ onAdminInput }/><label for={ "admin_" + user.name } class="admin">Administrator</label>
+							<input type="checkbox" id={ "admin_" + user.name } disabled={ isSelf(user) } checked={ user.admin } onchange={ onAdminInput }/><label for={ "admin_" + user.name } class="admin">Administrator</label>
 							<p class="tip">Grants access to this settings page.</p>
 						</div>
 
 						<div class="field delete_container">
-							<button class="danger delete" onClick={ deleteUser }>Delete { user.name }</button>
+							<button if={ !isSelf(user) } class="danger delete" onClick={ deleteUser }>Delete { user.name }</button>
 						</div>
 					</div>
 				</li>
 			</ul>
 			<button onClick={ addUser }>Add user</button>
 		</div>
-		<input type="submit" value="Apply"/>
+		<input disabled={ !validatePasswords() } type="submit" value="Apply"/>
 	</form>
 
 	<script>
@@ -54,6 +56,24 @@
 				this.update();
 			}.bind(self));
 		});
+
+		isSelf(user) {
+			return user.name == Cookies.get("username");
+		}
+
+		validatePassword(user) {
+			return user.password || !user.isNew;
+		}
+
+		validatePasswordConfirmation(user) {
+			return !user.password || user.password_confirm === user.password;
+		}
+
+		validatePasswords() {
+			return this.users.every(function(user) {
+				return this.validatePassword(user) && this.validatePasswordConfirmation(user);
+			}.bind(this));
+		}
 
 		setContent(users) {
 			this.users = users;
@@ -77,7 +97,6 @@
 
 		deleteUser(e) {
 			e.stopPropagation();
-			// TODO don't delete current user
 			if (this.users.length == 1) {
 				return;
 			} else {
@@ -97,7 +116,7 @@
 		}
 
 		onPasswordConfirmInput(e) {
-			e.item.user.passwordConfirm = e.target.value;
+			e.item.user.password_confirm = e.target.value;
 		}
 
 		onAdminInput(e) {
@@ -105,7 +124,6 @@
 		}
 
 		save(e) {
-			// TODO form validation
 			var data = new FormData();
 			data.append( "config", JSON.stringify( this.config ) );
 			fetch("api/settings/",

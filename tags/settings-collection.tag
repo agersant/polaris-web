@@ -3,7 +3,7 @@
 		<div class="field">
 			<label for="art_pattern">Album art pattern</label><input type="text" id="art_pattern" value={ config.album_art_pattern } oninput={ onPatternInput } placeholder="Folder.(jpg|png)"/>
 			<p class="tip">The regular expression used to detect album art files.</p>
-			<p class="tip error">{ patternError }</p>
+			<p if={ !isPatternValid( config.album_art_pattern ) } class="tip error">Please enter a valid regular expression.</p>
 		</div>
 		<div class="field sources">
 			<label>Music sources</label>
@@ -44,14 +44,17 @@
 			}.bind(self));
 		});
 
+		isPatternValid(pattern) {
+			try {
+				var re = new RegExp(pattern);
+				return true;
+			} catch(e) {
+				return false;
+			}
+		}
+
 		onPatternInput(e) {
 			this.config.album_art_pattern = e.target.value;
-			this.patternError = null;
-			try {
-				var re = new RegExp(e.target.value);
-			} catch(e) {
-				this.patternError = "Please enter a valid regular expression.";
-			}
 		}
 
 		onSleepInput(e) {

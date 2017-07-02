@@ -79,6 +79,10 @@ button.danger {
 	border: 0;
 }
 
+input[type="submit"]:disabled, button:disabled {
+	background-color: #AAA;
+}
+
 .noselect {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
