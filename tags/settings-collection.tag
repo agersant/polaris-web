@@ -1,5 +1,5 @@
 <settings-collection>
-	<form onsubmit={ save }>
+	<form if={ config } onsubmit={ save }>
 		<div class="field">
 			<label for="art_pattern">Album art pattern</label><input type="text" id="art_pattern" value={ config.album_art_pattern } oninput={ onPatternInput } placeholder="Folder.(jpg|png)"/>
 			<p class="tip">The regular expression used to detect album art files.</p>
