@@ -161,13 +161,6 @@
 				var errorText = "'" + title + "' could not be played because ";
 				var artwork = this.currentTrack.info.artwork || null;
 
-				var format = utils.getFileExtension(this.currentTrack.info.path);
-				if (format) {
-					format = " (" + format + ")";
-				} else {
-					format = "";
-				}
-
 				switch (e.target.error.code) {
 					case e.target.error.MEDIA_ERR_NETWORK:
 						notify.spawn("Playback Error", artwork, errorText + "of a network error.");
@@ -176,7 +169,7 @@
 						notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
 						break;
 					case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-						notify.spawn("Playback Error", artwork, errorText + "your browser does not support this file format" + format + ".");
+						notify.spawn("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
 						break;
 					default:
 						console.log("Unexpected playback error: " + e.target.error.code);
