@@ -15,7 +15,7 @@
 			<label for="password">Password</label><input type="password" id="password" oninput={ onPasswordInput } value={ ydns.password }/>
 			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
 		</div>
-		<input type="submit" value="Apply"/>
+		<settings-apply onclick={ save }/>
 	</form>
 
 	<script>
@@ -47,15 +47,8 @@
 		}
 
 		save(e) {
-			// TODO form validation
-			var data = new FormData();
-			data.append( "config", JSON.stringify( this.config ) );
-			fetch("api/settings/",
-				{	method: "PUT"
-				,	credentials: "same-origin"
-				,	body: data
-				}
-			);
+			e.preventDefault();
+			eventBus.trigger("settings:submit", this.config);
 		}
 	</script>
 

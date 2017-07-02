@@ -60,13 +60,16 @@ input[type="submit"], button {
 	padding-right: 30px;
 	margin-top: 15px;
 	border: none;
-	color: #FFF;
-	background-color: #44C8F1;
 	border-radius: 5px;
+	background-color: #44C8F1;
+}
+
+input[type="submit"], input[type="submit"] *, button, button * {
+	color: #FFF;
 	font-weight: 600;
 }
 
-button {
+button:not(.submit) {
 	background-color: white;
 	border: 1px solid #AAA;
 	color: inherit;

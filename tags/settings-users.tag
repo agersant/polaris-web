@@ -38,7 +38,7 @@
 			</ul>
 			<button onClick={ addUser }>Add user</button>
 		</div>
-		<input disabled={ !validatePasswords() } type="submit" value="Apply"/>
+		 <settings-apply disabled={ !validatePasswords() } onclick={ save }/>
 	</form>
 
 	<script>
@@ -124,14 +124,8 @@
 		}
 
 		save(e) {
-			var data = new FormData();
-			data.append( "config", JSON.stringify( this.config ) );
-			fetch("api/settings/",
-				{	method: "PUT"
-				,	credentials: "same-origin"
-				,	body: data
-				}
-			);
+			e.preventDefault();
+			eventBus.trigger("settings:submit", this.config);
 		}
 	</script>
 

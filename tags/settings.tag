@@ -12,6 +12,44 @@
 		</router>
 	</div>
 
+	<script>
+
+		save(config) {
+			var data = new FormData();
+			data.append( "config", JSON.stringify( config ) );
+			eventBus.trigger("settings:submissionStatusUpdate", "applying");
+			fetch("api/settings/",
+				{	method: "PUT"
+				,	credentials: "same-origin"
+				,	body: data
+				}
+			)
+			.then(function(res) {
+
+				if (this.dead) {
+					return;
+				}
+				var status = res.ok ? "success" : "failure";
+				eventBus.trigger("settings:submissionStatusUpdate", status);
+				this.update();
+
+				setTimeout(function() {
+					if (this.dead) {
+						return;
+					}
+					eventBus.trigger("settings:submissionStatusUpdate", "ready");
+					this.update();
+				}.bind(this), 2000);
+			}.bind(this));
+		}
+
+		eventBus.on("settings:submit", this.save);
+		this.on("unmount", function() {
+			this.dead = true;
+			eventBus.off("settings:submit");
+		}.bind(this));
+	</script>
+
 	<style>
 		.paneContent {
 			padding-top: 40px;

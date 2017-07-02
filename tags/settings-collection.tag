@@ -25,7 +25,7 @@
 			<label for="sleep_duration">Delay between collection re-scans</label>
 			<input type="text" id="sleep_duration" value={ Math.round(config.reindex_every_n_seconds / 60) } oninput={ onSleepInput } placeholder=""/> minutes
 		</div>
-		<input type="submit" disabled={ patternError != null } value="Apply"/>
+		<settings-apply disabled={ !isPatternValid( config.album_art_pattern ) } onclick={ save }/>
 	</form>
 
 	<script>
@@ -92,14 +92,8 @@
 		}
 
 		save(e) {
-			var data = new FormData();
-			data.append( "config", JSON.stringify( this.config ) );
-			fetch("api/settings/",
-				{	method: "PUT"
-				,	credentials: "same-origin"
-				,	body: data
-				}
-			);
+			e.preventDefault();
+			eventBus.trigger("settings:submit", this.config);
 		}
 	</script>
 
