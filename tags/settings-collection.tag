@@ -3,6 +3,7 @@
 		<div class="field">
 			<label for="art_pattern">Album art pattern</label><input type="text" id="art_pattern" value={ config.album_art_pattern } oninput={ onPatternInput } placeholder="Folder.(jpg|png)"/>
 			<p class="tip">The regular expression used to detect album art files.</p>
+			<p class="tip error">{ patternError }</p>
 		</div>
 		<div class="field sources">
 			<label>Music sources</label>
@@ -24,7 +25,7 @@
 			<label for="sleep_duration">Delay between collection re-scans</label>
 			<input type="text" id="sleep_duration" value={ Math.round(config.reindex_every_n_seconds / 60) } oninput={ onSleepInput } placeholder=""/> minutes
 		</div>
-		<input type="submit" value="Apply"/>
+		<input type="submit" disabled={ patternError != null } value="Apply"/>
 	</form>
 
 	<script>
@@ -45,6 +46,12 @@
 
 		onPatternInput(e) {
 			this.config.album_art_pattern = e.target.value;
+			this.patternError = null;
+			try {
+				var re = new RegExp(e.target.value);
+			} catch(e) {
+				this.patternError = "Please enter a valid regular expression.";
+			}
 		}
 
 		onSleepInput(e) {
@@ -82,7 +89,6 @@
 		}
 
 		save(e) {
-			// TODO form validation
 			var data = new FormData();
 			data.append( "config", JSON.stringify( this.config ) );
 			fetch("api/settings/",

@@ -50,6 +50,11 @@
 			font-size: 0.8125rem;
 			color: #999;
 		}
+
+		.tip.error {
+			color: #FF5763;
+			font-weight: 400;
+		}
 	</style>
 
 </settings>
