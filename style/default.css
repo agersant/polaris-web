@@ -86,6 +86,17 @@ input[type="submit"]:disabled, button:disabled {
 	background-color: #AAA;
 }
 
+.tip {
+	width: 50%;
+	font-size: 0.8125rem;
+	color: #999;
+}
+
+.tip.error {
+	color: #FF5763;
+	font-weight: 400;
+}
+
 .noselect {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;

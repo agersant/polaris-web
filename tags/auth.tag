@@ -5,6 +5,7 @@
 			<form name="authForm" onsubmit={ doLogin }>
 				<input type="text" name="username" placeholder="Username"/>
 				<input type="password" name="password" placeholder="Password"/>
+				<p if={ badCredentials } class="tip error">Incorrect credentials, please try again.</p>
 				<input type="submit" value="Login"/>
 			</form>
 		</div>
@@ -16,6 +17,7 @@
 			var form = document.forms["authForm"];
 			var username = encodeURIComponent(form.elements["username"].value);
 			var password = encodeURIComponent(form.elements["password"].value);
+			this.badCredentials = false;
 			fetch("/api/auth", {
 				method: "POST",
 				body: "username=" + username + "&password=" + password,
@@ -28,8 +30,11 @@
 				if (res.status == 200) {
 					Cookies.set("username", username);
 					route("browse", null, true);
+				} else if (res.status == 401) {
+					this.badCredentials = true;
+					this.update();
 				}
-			});
+			}.bind(this));
 		}
 	</script>
 
@@ -72,13 +77,21 @@
 			font-size: 1.25rem;
 		}
 
+		input[type="text"], input[type="password"], .tip {
+			padding-left: 10px;
+		}
+
 		input[type="text"], input[type="password"] {
 			border: 0;
-			padding-left: 10px;
 			box-sizing: content-box;
 			border-bottom: 1px solid #AAA; 
 		}
-		
+
+		.tip {
+			/*Exclude from layout so the form doesn't move when this appears*/
+			height: 0;
+			overflow: visible;
+		}
 	</style>
 
 </auth>
