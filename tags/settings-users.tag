@@ -1,11 +1,12 @@
 <settings-users>
-	<form>
+	<form onsubmit={ saveUsers }>
 		<div class="field sources">
 			<label>User accounts</label>
 			<ul>
 				<li onClick={ editUser } each={ user in users }>
 					<span class="username">{ user.name }</span>
-					<i if={ user != editing } onClick={ editUser } class="noselect material-icons md-18">edit</i>
+					<i if={ user == editing } onClick={ stopEditUser } class="noselect material-icons md-18">expand_more</i>
+					<i if={ user != editing } onClick={ editUser } class="noselect material-icons md-18">chevron_right</i>
 					<div class="edit" if={ user == editing }>
 						<div class="field">
 							<label if={ user.isNew } for={ "name_" + user.name }>Username</label>
@@ -39,21 +40,39 @@
 	</form>
 
 	<script>
-		this.users = [
-			{ name: "agersant" },
-			{ name: "trevor" },
-			{ name: "junkrat" },
-		];
+
+		var self = this;
+		this.config = null;
+		this.users = null;
+
+		this.on('mount', function() {
+			fetch("api/settings/", { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.config = data;
+				this.users = data.users;
+				this.update();
+			}.bind(self));
+		});
+
+		setContent(users) {
+			this.users = users;
+		}
 
 		addUser(e) {
 			e.preventDefault();
-			var newUser = { name: "New User", isNew: true, };
+			var newUser = { name: "New User", password: "", isNew: true, };
 			this.users.push(newUser);
 			this.editing = newUser;
 		}
 
 		editUser(e) {
 			this.editing = e.item.user;
+		}
+
+		stopEditUser(e) {
+			e.stopPropagation();
+			this.editing = null;
 		}
 
 		deleteUser(e) {
@@ -83,6 +102,18 @@
 
 		onAdminInput(e) {
 			e.item.user.admin = e.target.checked;
+		}
+
+		saveUsers(e) {
+			// TODO form validation
+			var data = new FormData();
+			data.append( "config", JSON.stringify( this.config ) );
+			fetch("api/settings/",
+				{	method: "PUT"
+				,	credentials: "same-origin"
+				,	body: data
+				}
+			);
 		}
 	</script>
 
