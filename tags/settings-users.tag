@@ -1,5 +1,5 @@
 <settings-users>
-	<form onsubmit={ saveUsers }>
+	<form onsubmit={ save }>
 		<div class="field sources">
 			<label>User accounts</label>
 			<ul>
@@ -104,7 +104,7 @@
 			e.item.user.admin = e.target.checked;
 		}
 
-		saveUsers(e) {
+		save(e) {
 			// TODO form validation
 			var data = new FormData();
 			data.append( "config", JSON.stringify( this.config ) );
