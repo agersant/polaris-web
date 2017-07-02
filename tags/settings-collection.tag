@@ -22,7 +22,7 @@
 		</div>
 		<div class="field sleep_duration">
 			<label for="sleep_duration">Delay between collection re-scans</label>
-			<input type="text" id="sleep_duration" value={ config.reindex_every_n_seconds / 60 } oninput={ onSleepInput } placeholder=""/> minutes
+			<input type="text" id="sleep_duration" value={ Math.round(config.reindex_every_n_seconds / 60) } oninput={ onSleepInput } placeholder=""/> minutes
 		</div>
 		<input type="submit" value="Apply"/>
 	</form>
@@ -48,7 +48,12 @@
 		}
 
 		onSleepInput(e) {
-			this.config.reindex_every_n_seconds = e.target.value * 60;
+			var newDuration = Math.round(e.target.value) * 60;
+			if (isNaN(newDuration) || newDuration < 0) {
+				newDuration = 0;
+			}
+			e.target.value = newDuration / 60;
+			this.config.reindex_every_n_seconds = newDuration * 1;
 		}
 
 		onPathInput(e) {
