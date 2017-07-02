@@ -1,7 +1,7 @@
 <settings-collection>
-	<form>
+	<form onsubmit={ save }>
 		<div class="field">
-			<label for="art_pattern">Album art pattern</label><input type="text" id="art_pattern" placeholder="Folder.(jpg|png)"/>
+			<label for="art_pattern">Album art pattern</label><input type="text" id="art_pattern" value={ config.album_art_pattern } oninput={ onPatternInput } placeholder="Folder.(jpg|png)"/>
 			<p class="tip">The regular expression used to detect album art files.</p>
 		</div>
 		<div class="field sources">
@@ -13,24 +13,51 @@
 					<th/>
 				</thead>
 				<tr each={ mountPoint in mountPoints }>
-					<td><input type="text" name="path" value={ mountPoint.path }/></td>
-					<td class="name"><input type="text" name="name" value={ mountPoint.name }/></td>
+					<td><input type="text" value={ mountPoint.source } oninput={ onPathInput } /></td>
+					<td class="name"><input type="text" value={ mountPoint.name } oninput={ onNameInput }/></td>
 					<td><i onClick={ deleteMountPoint } class="noselect material-icons md-18">delete</i></td>
 				</tr>
 			</table>
 			<button onClick={ addSource }>Add more</button>
 		</div>
 		<div class="field sleep_duration">
-			<label for="sleep_duration">Delay between collection re-scans</label><input type="text" id="sleep_duration" placeholder=""/> minutes
+			<label for="sleep_duration">Delay between collection re-scans</label>
+			<input type="text" id="sleep_duration" value={ config.reindex_every_n_seconds / 60 } oninput={ onSleepInput } placeholder=""/> minutes
 		</div>
 		<input type="submit" value="Apply"/>
 	</form>
 
 	<script>
-		this.mountPoints = [
-			{ name:"root", path:"C:\\some_path" },
-			{ name:"moarmusic", path:"F:\\more_stuff" },
-		];
+
+		var self = this;
+		this.config = null;
+		this.mountPoints = null;
+
+		this.on('mount', function() {
+			fetch("api/settings/", { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.config = data;
+				this.mountPoints = data.mount_dirs;
+				this.update();
+			}.bind(self));
+		});
+
+		onPatternInput(e) {
+			this.config.album_art_pattern = e.target.value;
+		}
+
+		onSleepInput(e) {
+			this.config.reindex_every_n_seconds = e.target.value * 60;
+		}
+
+		onPathInput(e) {
+			e.item.mountPoint.source = e.target.value;
+		}
+
+		onNameInput(e) {
+			e.item.mountPoint.name = e.target.value;
+		}
 
 		addSource(e) {
 			e.preventDefault();
@@ -47,6 +74,18 @@
 					this.mountPoints.splice(mountPointIndex, 1);
 				}
 			}
+		}
+
+		save(e) {
+			// TODO form validation
+			var data = new FormData();
+			data.append( "config", JSON.stringify( this.config ) );
+			fetch("api/settings/",
+				{	method: "PUT"
+				,	credentials: "same-origin"
+				,	body: data
+				}
+			);
 		}
 	</script>
 
