@@ -237,6 +237,7 @@
 		.paneContent {
 			padding-left: 0;
 			padding-right: 0;
+			overflow-anchor: none;
 		}
 
 		.playbackOrder {
