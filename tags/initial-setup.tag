@@ -1,6 +1,6 @@
 <initial-setup>
 	<div class="setupContainer">
-		<div class="logo"><img src="img/logo.png"/></div>
+		<div class="logo"><img src="img/logo_no_text.png"/></div>
 		<div id="initial-setup-page"/>
 	</div>
 
@@ -97,14 +97,14 @@
 		#initial-setup-page {
 			flex-grow: 1;
 			flex-shrink: 1;
-			border-left: 1px dotted #44C8F1;
-			border-right: 1px dotted #44C8F1;
+			border-right: 2px solid #44C8F1;
 			padding-left: 40px;
 			padding-right: 40px;
 		}
 
 		.logo {
-			width: 20%;
+			width: 15%;
+			padding-top: 10px;
 			padding-right: 40px;
 			flex-grow: 0;
 			flex-shrink: 0;
