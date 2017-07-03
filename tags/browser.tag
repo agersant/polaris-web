@@ -248,6 +248,10 @@
 			padding-top: 40px;
 		}
 
+		.explorerView, .albumView {
+			margin-bottom: 40px;
+		}
+
 		/*Explorer view*/
 		.explorerView .directory:before {
 			content: "🗀";
