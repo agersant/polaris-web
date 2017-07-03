@@ -16,43 +16,17 @@ li {
 	list-style-type: none;
 }
 
-.paneHeader {
-	width: inherit;
-	position: fixed;
-	height: 100px;
-	z-index: 1;
-	box-sizing: border-box;
-	padding-left: 40px;
-	padding-right: 40px;
-	padding-top: 20px;
-	padding-bottom: 10px;
-	white-space: nowrap;
-	overflow: hidden;
-	border-bottom: 1px solid #DDD;
-}
-
 h2 {
 	font-size: 2rem;
 	font-family: 'Hind', sans-serif;
 	color: #AAA;
 }
 
-.paneContent {
-	width: 100%;
-	position: relative;
-	height: calc(100% - 100px);
-	top: 100px;
-	padding-left: 40px;
-	padding-right: 40px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	box-sizing: border-box;
-}
-
 a {
 	text-decoration: none;
 }
 
+/*Buttons*/
 input[type="submit"], button {
 	display: block;
 	padding: 5px;
@@ -86,6 +60,37 @@ input[type="submit"]:disabled, button:disabled {
 	background-color: #AAA;
 }
 
+/*Forms*/
+form .field {
+	margin-bottom: 25px;
+}
+
+form label {
+	display: block;
+	font-weight: 400;
+	margin-bottom: 2px;
+}
+
+form input {
+	display: block;
+	width: 55%;
+	padding: 4px;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-bottom: 5px;
+	border: 1px solid #AAA;
+	border-radius: 3px;
+	font-size: 0.875rem;
+	box-sizing: border-box;
+}
+
+/*Generic form help*/
+.explanation {
+	text-align: justify;
+	margin-bottom: 20px;
+	line-height: 1.25;
+}
+
 .tip {
 	width: 50%;
 	font-size: 0.8125rem;
@@ -97,6 +102,49 @@ input[type="submit"]:disabled, button:disabled {
 	font-weight: 400;
 }
 
+/*Mount points table*/
+table.mount_points {
+	width: 55%;
+}
+
+table.mount_points input {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mount_points th, .mount_points td {
+	border-right: 10px solid white;
+}
+
+.mount_points td.name {
+	width: 40%;
+}
+
+.mount_points th:last-child, .mount_points td:last-child {
+	border: 0;
+}
+
+.mount_points th {
+	font-family: "Montserrat", "sans-serif";
+	text-align: left;
+	color: #AAA;
+	font-size: 0.8125rem;
+}
+
+.mount_points td i {
+	cursor: pointer;
+	position: relative;
+	top: 2px;
+}
+
+/*Material icons*/
+.material-icons.md-16 { font-size: 16px; }
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+/*Prevent text selection*/
 .noselect {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -105,9 +153,3 @@ input[type="submit"]:disabled, button:disabled {
 	-ms-user-select: none;
 	user-select: none;
 }
-
-.material-icons.md-16 { font-size: 16px; }
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-24 { font-size: 24px; }
-.material-icons.md-36 { font-size: 36px; }
-.material-icons.md-48 { font-size: 48px; }

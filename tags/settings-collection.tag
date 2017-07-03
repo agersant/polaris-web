@@ -7,7 +7,7 @@
 		</div>
 		<div class="field sources">
 			<label>Music sources</label>
-			<table>
+			<table class="mount_points">
 				<thead>
 					<th>Location</th>
 					<th class="name">Name</th>
@@ -102,40 +102,6 @@
 			display: inline;
 			width: 50px;
 			text-align: right;
-		}
-
-		table {
-			width: 55%;
-		}
-
-		th, td {
-			border-right: 10px solid white;
-		}
-
-		td.name {
-			width: 40%;
-		}
-
-		th:last-child, td:last-child {
-			border: 0;
-		}
-
-		th {
-			font-family: "Montserrat", "sans-serif";
-			text-align: left;
-			color: #AAA;
-			font-size: 0.8125rem;
-		}
-
-		td i {
-			cursor: pointer;
-			position: relative;
-			top: 2px;
-		}
-
-		table input {
-			width: 100%;
-			box-sizing: border-box;
 		}
 	</style>
 

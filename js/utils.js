@@ -29,9 +29,26 @@ var utils = (function() {
 		return value;
 	}
 
+	var tryLogin = function(username, password) {
+		return fetch("/api/auth", {
+			method: "POST",
+			body: "username=" + username + "&password=" + password,
+			headers: {
+				"Content-type": "application/x-www-form-urlencoded",
+			},
+			credentials: 'same-origin',
+		}).then(function(res) {
+			if (res.status == 200) {
+				Cookies.set("username", username);
+			}
+			return res;
+		});
+	}
+
 	return {
 		saveUserData: saveUserData,
 		loadUserData: loadUserData,
+		tryLogin: tryLogin,
 	} 
 
 })();

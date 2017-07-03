@@ -10,7 +10,7 @@
 					<div class="edit" if={ user == editing }>
 						<div class="field">
 							<label if={ user.isNew } for={ "name_" + user.name }>Username</label>
-							<input if={ user.isNew } id={ "name_" + user.name } type="text" value={ user.name } oninput={ onUsernameInput } placeholder="username"/>
+							<input if={ user.isNew } id={ "name_" + user.name } type="text" value={ user.name } oninput={ onUsernameInput }/>
 						</div>
 
 						<div class="field">

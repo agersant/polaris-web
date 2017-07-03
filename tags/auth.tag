@@ -18,17 +18,8 @@
 			var username = encodeURIComponent(form.elements["username"].value);
 			var password = encodeURIComponent(form.elements["password"].value);
 			this.badCredentials = false;
-			fetch("/api/auth", {
-				method: "POST",
-				body: "username=" + username + "&password=" + password,
-				headers: {
-					"Content-type": "application/x-www-form-urlencoded",
-				},
-				credentials: 'same-origin',
-			})
-			.then(function(res) {
+			utils.tryLogin(username, password).then(function(res) {
 				if (res.status == 200) {
-					Cookies.set("username", username);
 					route("browse", null, true);
 				} else if (res.status == 401) {
 					this.badCredentials = true;
@@ -67,6 +58,7 @@
 		}
 
 		input {
+			width: inherit;
 			display: block;
 			margin: 5px 0;
 			font-size: 1.5rem;

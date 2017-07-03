@@ -58,12 +58,6 @@
 			color: #44C8F1;
 		}
 
-		.explanation {
-			text-align: justify;
-			margin-bottom: 20px;
-			line-height: 1.25;
-		}
-
 		.code {
 			font-family: "Courier New","sans-serif";
 			color: inherit;

@@ -21,11 +21,17 @@
 		<script type="riot/tag" src="tags/auth.tag"></script>
 		<script type="riot/tag" src="tags/breadcrumbs.tag"></script>
 		<script type="riot/tag" src="tags/browser.tag"></script>
+		<script type="riot/tag" src="tags/initial-setup.tag"></script>
+		<script type="riot/tag" src="tags/initial-setup-finish.tag"></script>
+		<script type="riot/tag" src="tags/initial-setup-mount.tag"></script>
+		<script type="riot/tag" src="tags/initial-setup-user.tag"></script>
+		<script type="riot/tag" src="tags/initial-setup-welcome.tag"></script>
 		<script type="riot/tag" src="tags/main.tag"></script>
 		<script type="riot/tag" src="tags/menu.tag"></script>
 		<script type="riot/tag" src="tags/player.tag"></script>
 		<script type="riot/tag" src="tags/playlist.tag"></script>
 		<script type="riot/tag" src="tags/settings.tag"></script>
+		<script type="riot/tag" src="tags/settings-apply.tag"></script>
 		<script type="riot/tag" src="tags/settings-collection.tag"></script>
 		<script type="riot/tag" src="tags/settings-ddns.tag"></script>
 		<script type="riot/tag" src="tags/settings-users.tag"></script>
@@ -33,10 +39,18 @@
 
 		<script type="text/javascript">
 			var eventBus = riot.observable();
-			riot.mount('*');
-			if (Cookies.get("username") == undefined) {
-				route("auth", null, true);
-			}
+
+			fetch("api/initial_setup/")
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				riot.mount('*');
+				if (!data.has_any_users || !data.has_any_mount_points) {
+					route("welcome", null, true);
+				} else if (Cookies.get("username") == undefined) {
+					route("auth", null, true);
+				}
+			});
+
 	    </script>
 
 	</body>

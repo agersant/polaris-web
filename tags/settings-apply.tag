@@ -1,7 +1,7 @@
 <settings-apply>
 	<button disabled={ opts.disabled || ( status != "ready" && status != "init" ) } class={ submit:1, success: status == "success", failure: status == "failure" }>
 		<div class="status">
-			<span class={ tick-in: status == "ready", tick-out: status != "ready" && status != "init" }>Apply</span>
+			<span class={ tick-in: status == "ready", tick-out: status != "ready" && status != "init" }>{ opts.action || "Apply" }</span>
 			<span class={ tick-in: status == "applying", tick-out: status != "applying" }>Applying…</span>
 			<span class={ tick-in: status == "success", tick-out: status != "success" }>Saved!</span>
 			<span class={ tick-in: status == "failure", tick-out: status != "failure" }>Error :(</span>

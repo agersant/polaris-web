@@ -52,5 +52,32 @@
 			border-left: 1px solid #DDD;
 			border-top: 1px solid #DDD;
 		}
+
+		.paneHeader {
+			width: inherit;
+			position: fixed;
+			height: 100px;
+			z-index: 1;
+			box-sizing: border-box;
+			padding-left: 40px;
+			padding-right: 40px;
+			padding-top: 20px;
+			padding-bottom: 10px;
+			white-space: nowrap;
+			overflow: hidden;
+			border-bottom: 1px solid #DDD;
+		}
+
+		.paneContent {
+			width: 100%;
+			position: relative;
+			height: calc(100% - 100px);
+			top: 100px;
+			padding-left: 40px;
+			padding-right: 40px;
+			overflow-x: hidden;
+			overflow-y: auto;
+			box-sizing: border-box;
+		}
 	</style>
 </main>
