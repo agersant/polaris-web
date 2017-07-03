@@ -44,7 +44,7 @@
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				riot.mount('*');
-				if (!data.has_any_users || !data.has_any_mount_points) {
+				if (!data.has_any_users) {
 					route("welcome", null, true);
 				} else if (Cookies.get("username") == undefined) {
 					route("auth", null, true);
