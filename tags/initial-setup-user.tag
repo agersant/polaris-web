@@ -42,6 +42,7 @@
 			eventBus.trigger("initialSetupUser", {
 				name: this.opts.name,
 				password: this.opts.password,
+				admin: true,
 			});
 		}
 	</script>
