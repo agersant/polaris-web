@@ -16,6 +16,8 @@ before_install:
   # Install testing library
   - npm install -g nightwatch
   - nightwatch -v
+  # Install Rust
+  - curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=stable -y
   # Build and run Polaris server
   - git clone http://github.com/agersant/polaris
   - cd polaris
