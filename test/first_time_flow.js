@@ -15,5 +15,21 @@ module.exports = {
 		browser.setValue("input#name", "test_music");
 		browser.expect.element("button.submit").to.be.enabled;
 		browser.click("button.submit");
+	},
+
+	"User setup" : function(browser) {
+		browser.expect.element("#initial-setup-page").to.have.attribute("data-is").equals("initial-setup-user");
+		browser.expect.element("#initial-setup-page h2").text.to.contain("User Account");
+		browser.expect.element("button.submit").to.not.be.enabled;
+		browser.setValue("input#username", "agersant");
+		browser.setValue("input#password", "very_secret");
+		browser.setValue("input#password_confirm", "very_secret");
+		browser.expect.element("button.submit").to.be.enabled;
+		browser.click("button.submit");
+	},
+
+	"Flow completion" : function(browser) {
+		browser.expect.element("main menu").to.be.present.before(4000);
+		browser.end();
 	}
 };
