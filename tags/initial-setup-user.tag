@@ -8,7 +8,7 @@
 		</div>
 
 		<div class="field">
-			<label for="password">New password</label>
+			<label for="password">Password</label>
 			<input type="password" id="password" value={ opts.password } oninput={ onPasswordInput }/>
 			<p if={ !opts.password } class="tip error">The password cannot be blank.</p>
 		</div>
