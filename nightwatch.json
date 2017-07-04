@@ -1,0 +1,17 @@
+{
+	"src_folders" : ["test"],
+
+	"test_settings" : {
+		"default" : {
+			"silent": true,
+			"screenshots" : {
+				"enabled" : false,
+				"path" : ""
+			},
+			"desiredCapabilities": {
+				"browserName": "phantomjs",
+				"javascriptEnabled" : true
+			}
+		}
+	}
+}
