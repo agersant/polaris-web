@@ -25,8 +25,8 @@ before_install:
   - git clone http://github.com/agersant/polaris
   - cd polaris
   - cargo build
+  - cargo run -- -d test/db.sqlite -w .. &
   - cd ..
-  - ./target/debug/polaris -d test/db.sqlite -w . &
 
 script:
   - sleep 2
