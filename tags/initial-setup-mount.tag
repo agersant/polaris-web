@@ -9,8 +9,8 @@
 				<th/>
 			</thead>
 			<tr>
-				<td><input type="text" value={ opts.source } oninput={ onPathInput } placeholder="C:\MyMusic"/></td>
-				<td class="name"><input type="text" value={ opts.name } oninput={ onNameInput } placeholder={ "Local Drive Music" }/></td>
+				<td><input id="source" type="text" value={ opts.source } oninput={ onPathInput } placeholder="C:\MyMusic"/></td>
+				<td class="name"><input id="name" type="text" value={ opts.name } oninput={ onNameInput } placeholder={ "Local Drive Music" }/></td>
 			</tr>
 		</table>
 		<button class="submit" disabled={ !validate() } onclick={ proceed }>Next</button>
