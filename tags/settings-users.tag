@@ -81,7 +81,7 @@
 
 		addUser(e) {
 			e.preventDefault();
-			var newUser = { name: "New User", password: "", isNew: true, };
+			var newUser = { name: "New User", password: "", isNew: true, admin: false };
 			this.users.push(newUser);
 			this.editing = newUser;
 		}
