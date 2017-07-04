@@ -10,12 +10,17 @@
 			{ icon: "library_music", url: "browse" },
 			{ icon: "shuffle", url: "random" },
 			{ icon: "new_releases", url: "recent" },
-			{ icon: "settings", url: "settings/collection", rootURL: "settings" },
 			/*
 			{ icon: "playlist_play", url: "" },
 			{ icon: "search", url: "" },
 			*/
 		];
+
+		if (Cookies.get("admin") == "true") {
+			this.buttons.push(
+				{ icon: "settings", url: "settings/collection", rootURL: "settings" }
+			);
+		}
 
 		route(function(currentURL, a) {
 			this.currentURL = currentURL || this.buttons[0].url;

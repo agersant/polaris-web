@@ -37,11 +37,18 @@ var utils = (function() {
 				"Content-type": "application/x-www-form-urlencoded",
 			},
 			credentials: 'same-origin',
-		}).then(function(res) {
+		})
+		.then(function(res) {
 			if (res.status == 200) {
 				Cookies.set("username", username);
+				return Promise.all([res.json(), res])
 			}
-			return res;
+			throw res.status;
+		})
+		.then(function(res) {
+			var body = res[0];
+			Cookies.set("admin", body.admin);
+			return res[1];
 		});
 	}
 

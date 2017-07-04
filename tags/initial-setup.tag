@@ -70,12 +70,11 @@
 			var password = this.config.users[0].password;
 			utils.tryLogin(username, password)
 			.then(function(res) {
-				if (res.status == 200) {
-					route("browse", null, true);
-				} else if (res.status == 401) {
-					console.log("Error while signing in");
-				}
-			}.bind(this));
+				route("browse", null, true);
+			})
+			.catch(function(res) {
+				console.log("Error while signing in");
+			});
 		}
 	</script>
 
