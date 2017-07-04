@@ -18,6 +18,9 @@ before_install:
   - nightwatch -v
   # Install Rust
   - curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=stable -y
+  - export PATH=$HOME/.cargo/bin:$PATH
+  - rustc --version
+  - cargo --version
   # Build and run Polaris server
   - git clone http://github.com/agersant/polaris
   - cd polaris
