@@ -22,8 +22,9 @@
 			<button onClick={ addSource }>Add more</button>
 		</div>
 		<div class="field sleep_duration">
-			<label for="sleep_duration">Delay between collection re-scans</label>
-			<input type="text" id="sleep_duration" value={ Math.round(config.reindex_every_n_seconds / 60) } oninput={ onSleepInput } placeholder=""/> minutes
+			<label for="sleep_duration">Scan collection every
+				<input type="text" id="sleep_duration" value={ Math.round(config.reindex_every_n_seconds / 60) } oninput={ onSleepInput } placeholder=""/> minutes
+			</label>
 		</div>
 		<settings-apply disabled={ !isPatternValid( config.album_art_pattern ) } onclick={ save }/>
 	</form>
@@ -91,6 +92,16 @@
 			}
 		}
 
+		reindex(e) {
+			e.preventDefault();
+			fetch("api/trigger_index/", { method: "POST", credentials: "same-origin" })
+			.then(function(res) {
+				if (res.status != 200) {
+					console.log("Index trigger error: " + res.status);
+				}
+			});
+		}
+
 		save(e) {
 			e.preventDefault();
 			eventBus.trigger("settings:submit", this.config);
@@ -98,6 +109,10 @@
 	</script>
 
 	<style>
+		.sleep_duration label {
+			display: inline;
+		}
+
 		.sleep_duration input {
 			display: inline;
 			width: 50px;
