@@ -29,5 +29,5 @@ before_install:
   - cd ..
 
 script:
-  - sleep 2
+  - sleep 10
   - nightwatch
