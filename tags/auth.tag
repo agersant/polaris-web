@@ -69,6 +69,7 @@
 		input[type="submit"] {
 			align-self: flex-end;
 			font-size: 1.25rem;
+			margin-top: 15px;
 		}
 
 		input[type="text"], input[type="password"], .tip {
