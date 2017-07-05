@@ -1,5 +1,5 @@
 <async-button>
-	<button disabled={ opts.disabled || currentState.disable } class={ submit: 1, success: currentState.success, success: currentState.failure }>
+	<button disabled={ opts.disabled || currentState.disabled } class={ submit: opts.submit, success: currentState.success, success: currentState.failure }>
 		<div class="status">
 			<span each={ state in opts.states } class={ tick-in: currentState == state && canTickIn, tick-out: currentState != state }>
 				{ state.name }
@@ -15,6 +15,17 @@
 			this.currentState = s;
 			this.update();
 		}
+
+		for (var stateName in this.opts.states) {
+			if (!this.opts.states.hasOwnProperty(stateName)) {
+				continue;
+			}
+			var state = this.opts.states[stateName];
+			if (state.init) {
+				this.setState(state);
+				break;
+			}
+		}
 	</script>
 
 	<style>
@@ -28,11 +39,17 @@
 		button.success {
 			transition: all 250ms ease-in-out;
 			background-color: #65C05A;
+			border: 0;
 		}
 
 		button.failure {
 			transition: all 250ms ease-in-out;
 			background-color: #FF5763;
+			border: 0;
+		}
+
+		button.success *, button.failure * {
+			color: #FFF;
 		}
 
 		.status {

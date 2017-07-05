@@ -25,6 +25,7 @@
 			<label for="sleep_duration">Scan collection every
 				<input type="text" id="sleep_duration" value={ Math.round(config.reindex_every_n_seconds / 60) } oninput={ onSleepInput } placeholder=""/> minutes
 			</label>
+			<async-button ref="reindex" states={ reindexStates } onClick={ reindex }/>
 		</div>
 		<settings-apply disabled={ !isPatternValid( config.album_art_pattern ) } onclick={ save }/>
 	</form>
@@ -92,14 +93,31 @@
 			}
 		}
 
+		this.reindexStates = {
+			ready: { name: "Scan now", init: true },
+			applying: { name: "Hold on…", disabled: true },
+			success: { name: "On it!", disabled: true, success: true },
+			failure: { name: "Error :(", disabled: true, failure: true },
+		};
+
 		reindex(e) {
 			e.preventDefault();
+			this.refs.reindex.setState(this.reindexStates.applying);
 			fetch("api/trigger_index/", { method: "POST", credentials: "same-origin" })
 			.then(function(res) {
 				if (res.status != 200) {
+					this.refs.reindex.setState(this.reindexStates.failure);
 					console.log("Index trigger error: " + res.status);
+				} else {
+					this.refs.reindex.setState(this.reindexStates.success);
 				}
-			});
+				setTimeout(function() {
+					if (!this.refs || !this.refs.reindex) {
+						return;
+					}
+					this.refs.reindex.setState(this.reindexStates.ready);
+				}.bind(this), 2000);
+			}.bind(this));
 		}
 
 		save(e) {
