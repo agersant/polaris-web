@@ -41,6 +41,20 @@ module.exports = {
 		browser.expect.element("breadcrumbs li:nth-of-type(4)").to.be.present;
 		browser.click("breadcrumbs li");
 		browser.expect.element(".explorerView").to.be.present.before(2000);
+	},
+
+	"Random": function(browser) {
+		browser.url("http://localhost:5050#random");
+		browser.expect.element("browser h2").text.to.contain("Random").before(2000);
+		browser.expect.element(".discographyView").to.be.present;
+		browser.expect.element(".discographyView li:nth-of-type(2)").to.be.present;
+	},
+
+	"Recent": function(browser) {
+		browser.url("http://localhost:5050#recent");
+		browser.expect.element("browser h2").text.to.contain("Recent").before(2000);
+		browser.expect.element(".discographyView").to.be.present;
+		browser.expect.element(".discographyView li:nth-of-type(2)").to.be.present;
 		browser.end();
 	},
 };
