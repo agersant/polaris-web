@@ -19,7 +19,10 @@
 				return;
 			}
 			this.config.mount_dirs = [mountPoint];
-			this.commit();
+			this.commit()
+			.then(function(res) {
+				fetch("api/trigger_index/", { method: "POST", credentials: "same-origin" });
+			});
 			eventBus.trigger("initialSetupNext");
 		}.bind(this));
 
@@ -60,6 +63,7 @@
 			.then(function(res) {
 				if (!res.ok) {
 					console.log("Error while applying settings");
+					throw res.status;
 				}
 				return res;
 			});
