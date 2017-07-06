@@ -11,7 +11,11 @@
 			"desiredCapabilities": {
 				"browserName": "phantomjs",
 				"javascriptEnabled" : true
-			}
+			},
+			"request_timeout_options": {
+                "timeout": 2000,
+                "retry_attempts": 10
+            }
 		}
 	}
 }
