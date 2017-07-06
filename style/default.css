@@ -43,6 +43,9 @@ input[type="submit"], input[type="submit"] *, button.submit, button.submit * {
 
 button, button * {
 	color: #3A3A3A;
+}
+
+input[type="submit"], input[type="submit"] *, button, button * {
 	font-weight: 600;
 }
 
