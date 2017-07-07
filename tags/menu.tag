@@ -12,8 +12,8 @@
 			{ icon: "new_releases", url: "recent" },
 			/*
 			{ icon: "playlist_play", url: "" },
-			{ icon: "search", url: "" },
 			*/
+			{ icon: "search", url: "search" },
 		];
 
 		if (Cookies.get("admin") == "true") {

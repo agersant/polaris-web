@@ -1,6 +1,7 @@
 <main>
 	<menu/>
 	<router>
+		<route path="search.."><search/></route>
 		<route path="settings/*"><settings/></route>
 		<route path=".."><browser/></route>
 	</router>
@@ -14,7 +15,7 @@
 	</script>
 
 	<style>
-		playlist, browser, settings {
+		playlist, browser, settings, search {
 			overflow-x: hidden;
 			background-color: #FFF;
 		}
@@ -25,7 +26,7 @@
 			height: 100%;
 		}
 
-		browser, settings {
+		browser, settings, search {
 			position: absolute;
 			width: calc(40% - 50px);
 			left: 50px;
