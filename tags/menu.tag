@@ -13,7 +13,6 @@
 			/*
 			{ icon: "playlist_play", url: "" },
 			*/
-			{ icon: "search", url: "search" },
 		];
 
 		if (Cookies.get("admin") == "true") {
