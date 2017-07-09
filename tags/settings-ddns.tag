@@ -4,7 +4,7 @@
 
 	<form if={ ydns } onsubmit={ save }>
 		<div class="field">
-			<label for="host">Hostname</label><input type="text" id="host" value={ ydns.host } oninput={ onHostInput } placeholder="http://yourname.ydns.eu"/>
+			<label for="host">Hostname</label><input type="text" id="host" value={ ydns.host } oninput={ onHostInput } placeholder="yourname.ydns.eu"/>
 			<p class="tip">The URL pointing to your Polaris server.</p>
 		</div>
 		<div class="field">
