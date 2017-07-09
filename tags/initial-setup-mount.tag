@@ -2,17 +2,19 @@
 	<h2>Music Sources</h2>
 	<p class="explanation">Please indicate which directories Polaris should scan to populate your collection.<br/>You can change this or add more directories later from the settings screen.</p>
 	<form onsubmit={ proceed }>
-		<table class="mount_points">
-			<thead>
-				<th>Location</th>
-				<th class="name">Name</th>
-				<th/>
-			</thead>
-			<tr>
-				<td><input id="source" type="text" value={ opts.source } oninput={ onPathInput } placeholder="C:\MyMusic"/></td>
-				<td class="name"><input id="name" type="text" value={ opts.name } oninput={ onNameInput } placeholder={ "Local Drive Music" }/></td>
-			</tr>
-		</table>
+		<div class="field">
+			<table class="mount_points">
+				<thead>
+					<th>Location</th>
+					<th class="name">Name</th>
+					<th/>
+				</thead>
+				<tr>
+					<td><input id="source" type="text" value={ opts.source } oninput={ onPathInput } placeholder="C:\MyMusic"/></td>
+					<td class="name"><input id="name" type="text" value={ opts.name } oninput={ onNameInput } placeholder={ "Local Drive Music" }/></td>
+				</tr>
+			</table>
+		</div>
 		<button class="submit" disabled={ !validate() } onclick={ proceed }>Next</button>
 	</form>
 
