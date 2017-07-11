@@ -28,6 +28,8 @@
 		span {
 			cursor: pointer;
 			color: #AAA;
+			line-height: 1rem;
+			font-size: 1rem;
 		}
 
 		span + span {
@@ -36,7 +38,7 @@
 
 		.selected {
 			color: #44C8F1;
-			border-bottom: 2px solid #44C8F1;
+			border-bottom: 1px solid #44C8F1;
 		}
 	</style>
 
