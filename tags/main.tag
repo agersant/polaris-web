@@ -1,8 +1,8 @@
 <main>
 	<menu/>
 	<router>
-		<route path="search.."><search/></route>
 		<route path="settings/*"><settings/></route>
+		<route path="playlists.."><playlists/></route>
 		<route path=".."><browser/></route>
 	</router>
 	<playlist/>
@@ -15,7 +15,7 @@
 	</script>
 
 	<style>
-		playlist, browser, settings, search {
+		playlist, browser, settings, search, playlists {
 			overflow-x: hidden;
 			background-color: #FFF;
 		}
@@ -26,7 +26,7 @@
 			height: 100%;
 		}
 
-		browser, settings, search {
+		browser, settings, search, playlists {
 			position: absolute;
 			width: calc(40% - 50px);
 			left: 50px;
@@ -60,8 +60,8 @@
 			height: 100px;
 			z-index: 1;
 			box-sizing: border-box;
-			padding-left: 40px;
-			padding-right: 40px;
+			padding-left: 50px;
+			padding-right: 50px;
 			padding-top: 20px;
 			padding-bottom: 10px;
 			white-space: nowrap;
@@ -74,8 +74,8 @@
 			position: relative;
 			height: calc(100% - 100px);
 			top: 100px;
-			padding-left: 40px;
-			padding-right: 40px;
+			padding-left: 50px;
+			padding-right: 50px;
 			overflow-x: hidden;
 			overflow-y: auto;
 			box-sizing: border-box;

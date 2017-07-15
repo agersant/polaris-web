@@ -10,9 +10,7 @@
 			{ icon: "library_music", url: "browse" },
 			{ icon: "shuffle", url: "random" },
 			{ icon: "new_releases", url: "recent" },
-			/*
-			{ icon: "playlist_play", url: "" },
-			*/
+			{ icon: "playlist_play", url: "playlists" },
 		];
 
 		if (Cookies.get("admin") == "true") {

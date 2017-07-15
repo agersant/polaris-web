@@ -245,11 +245,11 @@
 		}
 
 		.paneContent {
-			padding-top: 40px;
+			padding-top: 50px;
 		}
 
 		.explorerView, .albumView {
-			margin-bottom: 40px;
+			margin-bottom: 50px;
 		}
 
 		/*Explorer view*/

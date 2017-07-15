@@ -52,7 +52,7 @@
 
 	<style>
 		.paneContent {
-			padding-top: 40px;
+			padding-top: 50px;
 		}
 	</style>
 
