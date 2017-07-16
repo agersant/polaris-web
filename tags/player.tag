@@ -49,8 +49,8 @@
 
 		jumpTo(track) {
 			this.currentTrack = track;
-			this.albumArt = track.info.artwork;
-			this.trackURL = track.info.path;
+			this.albumArt = track.info.artworkURL;
+			this.trackURL = track.info.url;
 			this.update();
 			eventBus.trigger("player:playing", this.currentTrack);
 		}

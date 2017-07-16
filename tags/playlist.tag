@@ -3,7 +3,11 @@
 	<div class="paneHeader">
 		<h2>Playlist</h2>
 		<div class="playlistOperations">
-			<!--<span class="noselect"><i class="material-icons md-18">save</i></span>-->
+
+			<span class="noselect" onclick={ onClickSave }><i class="material-icons md-18">save</i>
+				<playlist-save if={ saving } tracks={ this.tracks }/>				
+			</span>
+
 			<span class="noselect" onclick={ onClickClear }><i class="material-icons md-18">delete</i></span><span class="playbackOrder">
 				Order:
 				<select ref="playbackOrder" onchange={ onChangePlaybackOrder }>
@@ -89,7 +93,7 @@
 
 		queueTrack(track) {
 			this.queueTrackInternal(track);
-			this.savePlaylist();
+			this.saveLocalPlaylist();
 			this.update();
 		}
 
@@ -101,13 +105,13 @@
 			.then(function(data) {
 				var length = data.length;
 				for (var i = 0; i < length; i++) {
-					data[i].path = "api/serve/" + encodeURIComponent(data[i].path);
+					data[i].url = "api/serve/" + encodeURIComponent(data[i].path);
 					if (data[i].album && data[i].artwork) {
-						data[i].artwork = "api/serve/" + encodeURIComponent(data[i].artwork);
+						data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
 					}
 					this.queueTrackInternal(data[i]);
 				}
-				this.savePlaylist();
+				this.saveLocalPlaylist();
 				this.update();
 			}.bind(this));
 		}
@@ -174,7 +178,7 @@
 
 		updateCurrentTrack(track) {
 			this.currentTrack = track;
-			this.savePlaylist();
+			this.saveLocalPlaylist();
 			this.update();
 		}
 
@@ -184,12 +188,12 @@
 			if (trackIndex >= 0) {
 				this.tracks.splice(trackIndex, 1);
 			}
-			this.savePlaylist();
+			this.saveLocalPlaylist();
 		}
 
 		onClickClear() {
 			this.clear();
-			this.savePlaylist();
+			this.saveLocalPlaylist();
 		}
 
 		allowDrop(e) {
@@ -215,11 +219,20 @@
 			utils.saveUserData("playbackOrder", playbackOrder);
 		}
 
-		savePlaylist() {
+		saveLocalPlaylist() {
 			if (utils.saveUserData("playlist", this.tracks)) {
 				var currentTrackIndex = this.tracks.indexOf(this.currentTrack);
 				utils.saveUserData("currentTrackIndex", currentTrackIndex);
 			}
+		}
+
+		onClickSave() {
+			this.saving = true;
+		}
+
+		endSave() {
+			this.saving = false;
+			this.update();
 		}
 
 		eventBus.on("browser:queueTrack", this.queueTrack);
@@ -227,12 +240,18 @@
 		eventBus.on("player:playPrevious", this.playPrevious);
 		eventBus.on("player:playNext", this.playNext);
 		eventBus.on("player:playing", this.updateCurrentTrack);
+		eventBus.on("playlist-save:cancel", this.endSave);
+		eventBus.on("playlist-save:done", this.endSave);
 
 		this.clear();
 
 	</script>
 
 	<style>
+
+		.paneHeader {
+			overflow: visible !important;
+		}
 
 		.paneContent {
 			padding-left: 0;
@@ -292,7 +311,7 @@
 		}
 
 		.remove, playlist .nowPlaying {
-			width: 20px;
+			width: 25px;
 		}
 
 		.remove, playlist td.nowPlaying {

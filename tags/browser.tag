@@ -18,7 +18,7 @@
 			<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div class="cover">
 					<div class="coverCanvas">
-						<img if={ fields.artwork } src="{ fields.artwork }"/>
+						<img if={ fields.artwork } src="{ fields.artworkURL }"/>
 					</div>
 				</div>
 				<div class="details">
@@ -33,7 +33,7 @@
 			<div class="title">{ album }</div>
 			<div class="artist">{ artist }</div>
 			<div class="details">
-				<img src="{ artwork }" draggable="true" ondragstart={ onDragAlbumStart } />
+				<img src="{ artworkURL }" draggable="true" ondragstart={ onDragAlbumStart } />
 				<div class="trackList">
 					<ul>
 						<li each={ items } >
@@ -59,7 +59,7 @@
 
 		reset() {
 			this.items = [];
-			this.artwork = null;
+			this.artworkURL = null;
 			this.artist = null;
 			this.album = null;
 			this.path = null;
@@ -92,14 +92,14 @@
 				}
 
 				if (item.fields.artwork) {
-					item.fields.artwork = "api/serve/" + encodeURIComponent(item.fields.artwork);
+					item.fields.artworkURL = "api/serve/" + encodeURIComponent(item.fields.artwork);
 					hasAnyPicture = true;
 				}
 
 				if (item.variant == "Song") {
-					item.fields.path = "api/serve/" + encodeURIComponent(item.fields.path);
+					item.fields.url = "api/serve/" + encodeURIComponent(item.fields.path);
 					this.album = this.album || item.fields.album;
-					this.artwork = this.artwork || item.fields.artwork;
+					this.artworkURL = this.artworkURL || item.fields.artworkURL;
 					this.artist = this.artist || item.fields.album_artist || item.fields.artist;
 				} else {
 					onlySongs = false;
