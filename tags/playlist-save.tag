@@ -34,7 +34,6 @@
 			playlist.tracks = this.opts.tracks.map(function(t) {
 				return t.info.path;
 			});
-			console.log(playlist.tracks);
 
 			var data = new FormData();
 			data.append( "playlist", JSON.stringify( playlist ) );
