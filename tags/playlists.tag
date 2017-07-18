@@ -6,15 +6,28 @@
 
 	<div class="paneContent">
 		<ul>
-			<li class="noselect"><i class="material-icons md-18">play_circle_outline</i>Chill & Grill</li>
-			<li class="noselect"><i class="material-icons md-18">play_circle_outline</i>Acid Shrimpy</li>
-			<li class="noselect"><i class="material-icons md-18">play_circle_outline</i>Harder Than A Rock</li>
-			<li class="noselect"><i class="material-icons md-18">play_circle_outline</i>Solar Fields #1</li>
-			<li class="noselect"><i class="material-icons md-18">play_circle_outline</i>Solar Fields #2</li>
-			<li class="noselect"><i class="material-icons md-18">play_circle_outline</i>Solar Fields #3</li>
-			<li class="noselect"><i class="material-icons md-18">play_circle_outline</i>Solar Fields #4</li>
+			<li class="noselect" each={ playlists }>{ name }</li>
 		</ul>
 	</div>
+
+	<script>
+		
+		this.playlists = [];
+
+		load() {
+			fetch("api/playlist/list", { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.playlists = data;
+				this.update();
+			}.bind(this));
+		}
+
+		this.on("mount", function(){
+			this.load();
+		}.bind(this));
+
+	</script>
 
 	<style>
 		.paneContent {
@@ -29,7 +42,6 @@
 
 		ul {
 			margin-bottom: 40px;
-			width: 60%;
 		}
 
 		li:not(:last-child) {
