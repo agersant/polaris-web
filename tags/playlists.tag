@@ -18,6 +18,9 @@
 			fetch("api/playlist/list", { credentials: "same-origin" })
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
+				if (this.dead) {
+					return;
+				}
 				this.playlists = data;
 				this.update();
 			}.bind(this));
@@ -25,6 +28,12 @@
 
 		this.on("mount", function(){
 			this.load();
+		}.bind(this));
+
+		eventBus.on("playlist-save:transmitted", this.load);
+		this.on("unmount", function() {
+			this.dead = true;
+			eventBus.off("playlist-save:transmitted");
 		}.bind(this));
 
 	</script>

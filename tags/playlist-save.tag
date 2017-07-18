@@ -57,6 +57,7 @@
 
 				var status = res.ok ? "success" : "failure";
 				this.tags["async-button"].setState(this.applyStates[status]);
+				eventBus.trigger("playlist-save:transmitted");
 				this.update();
 
 				setTimeout(function() {
