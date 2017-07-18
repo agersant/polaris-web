@@ -5,7 +5,7 @@
 	<form>
 		<div class="field">
 			<label for="playlist_name">Playlist name:
-				<input type="text" id="playlist_name" value={ playlistName } oninput="" placeholder="Test"/>
+				<input type="text" id="playlist_name" value={ playlistName } oninput={ onNameInput } placeholder="Test"/>
 			</label>
 		</div>
 		<async-button ref="save_playlist_confirm" submit="true" states={ applyStates } onclick={ savePlaylist } />
@@ -20,6 +20,10 @@
 		};
 
 		this.playlistName = "My Playlist🎧";
+
+		onNameInput(e) {
+			this.playlistName = e.target.value;
+		}
 
 		cancel(e) {
 			e.stopPropagation();
