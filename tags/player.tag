@@ -159,7 +159,7 @@
 			this.refs.htmlAudio.addEventListener('error', function(e) {
 				var title = this.currentTrack.info.title || "Unknown Song";
 				var errorText = "'" + title + "' could not be played because ";
-				var artwork = this.currentTrack.info.artwork || null;
+				var artwork = this.currentTrack.info.artworkURL || null;
 
 				switch (e.target.error.code) {
 					case e.target.error.MEDIA_ERR_NETWORK:
