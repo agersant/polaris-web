@@ -97,8 +97,8 @@
 			this.update();
 		}
 
-		queueDirectory(path) {
-			fetch('api/flatten/' + path, { credentials: "same-origin" })
+		queueTracks(url) {
+			fetch(url, { credentials: "same-origin" })
 			.then(function(res) {
 				return res.json();
 			})
@@ -114,6 +114,14 @@
 				this.saveLocalPlaylist();
 				this.update();
 			}.bind(this));
+		}
+
+		queueDirectory(path) {
+			this.queueTracks('api/flatten/' + path);
+		}
+
+		queuePlaylist(name) {
+			this.queueTracks('api/playlist/read/' + name);
 		}
 
 		advance(currentTrack, delta) {
@@ -211,6 +219,8 @@
 				this.update();
 			} else if (variant == "Directory") {
 				this.queueDirectory(item.fields.path);
+			} else if (variant == "Playlist") {
+				this.queuePlaylist(item.fields.name);
 			}
 		}
 

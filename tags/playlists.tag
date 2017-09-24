@@ -6,7 +6,7 @@
 
 	<div class="paneContent">
 		<ul>
-			<li class="noselect" each={ playlists }>{ name }</li>
+			<li class="noselect" draggable="true" each={ playlists } ondragstart={ onDragItemStart }>{ name }</li>
 		</ul>
 	</div>
 
@@ -35,6 +35,16 @@
 			this.dead = true;
 			eventBus.off("playlist-save:transmitted");
 		}.bind(this));
+
+		onDragItemStart(e) {
+			var playlistItem = {
+				variant: "Playlist",
+				fields: {
+					name: e.item.name,
+				},
+			};
+			e.dataTransfer.setData("text/json", JSON.stringify(playlistItem));
+		}
 
 	</script>
 
