@@ -16,6 +16,7 @@
 				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
 				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
 			</li>
+			<button onclick={ onClickQueue } name="queue" class="queue">queue</button>
 		</ul>
 
 		<ul if={ viewMode == "discography" } class="discographyView">
@@ -37,7 +38,10 @@
 			<div class="title">{ header }</div>
 			<div class="artist">{ subHeader }</div>
 			<div class="details">
-				<img src="{ artworkURL }" draggable="true" ondragstart={ onDragAlbumStart } />
+				<div>
+					<img src="{ artworkURL }" draggable="true" ondragstart={ onDragAlbumStart } />
+					<button onclick={ onClickQueue } name="queue" class="album queue">queue</button>
+				</div>
 				<div class="trackList">
 					<ul>
 						<li each={ items } >
@@ -116,13 +120,13 @@
 			}
 
 			if (this.tab != "playlist")
-			{
-				if (hasAnyPicture && onlySongs && items.length > 0) {
-					return "album";
-				} else if (hasAnyPicture && allHaveAlbums) {
-					return "discography";
+				{
+					if (hasAnyPicture && onlySongs && items.length > 0) {
+						return "album";
+					} else if (hasAnyPicture && allHaveAlbums) {
+						return "discography";
+					}
 				}
-			}
 
 			return "explorer";
 		}
@@ -157,36 +161,36 @@
 
 		function random() {
 			fetch("api/random/", { credentials: "same-origin" })
-			.then(function(res) { return res.json(); })
-			.then(function(data) {
-				this.reset();
-				for (var i = 0; i < data.length; i++) {
-					data[i] = {
-						variant: "Directory",
-						fields: data[i],
+				.then(function(res) { return res.json(); })
+				.then(function(data) {
+					this.reset();
+					for (var i = 0; i < data.length; i++) {
+						data[i] = {
+							variant: "Directory",
+							fields: data[i],
+						}
 					}
-				}
-				this.tab = "random";
-				this.title = "Random Albums";
-				this.displayItems(data);
-			}.bind(self));
+					this.tab = "random";
+					this.title = "Random Albums";
+					this.displayItems(data);
+				}.bind(self));
 		}
 
 		function recent() {
 			fetch("api/recent/", { credentials: "same-origin" })
-			.then(function(res) { return res.json(); })
-			.then(function(data) {
-				this.reset();
-				for (var i = 0; i < data.length; i++) {
-					data[i] = {
-						variant: "Directory",
-						fields: data[i],
+				.then(function(res) { return res.json(); })
+				.then(function(data) {
+					this.reset();
+					for (var i = 0; i < data.length; i++) {
+						data[i] = {
+							variant: "Directory",
+							fields: data[i],
+						}
 					}
-				}
-				this.tab = "recent";
-				this.title = "Recently Added";
-				this.displayItems(data);
-			}.bind(self));
+					this.tab = "recent";
+					this.title = "Recently Added";
+					this.displayItems(data);
+				}.bind(self));
 		}
 
 		function browse() {
@@ -196,19 +200,19 @@
 			path = decodeURIComponent(path);
 
 			fetch("api/browse/" + path, { credentials: "same-origin" })
-			.then(function(res) { return res.json(); })
-			.then(function(data) {
-				this.reset();
-				this.path = path;
-				for (var i = 0; i < data.length; i++) {
-					data[i].fields = data[i].Directory || data[i].Song;
-					data[i].variant = data[i].Directory ? "Directory" : "Song";
-				}
-				this.tab = "browse";
-				this.title = "Music Collection";
-				this.displayItems(data);
-				this.tags.breadcrumbs.setCurrentPath(path);
-			}.bind(self));
+				.then(function(res) { return res.json(); })
+				.then(function(data) {
+					this.reset();
+					this.path = path;
+					for (var i = 0; i < data.length; i++) {
+						data[i].fields = data[i].Directory || data[i].Song;
+						data[i].variant = data[i].Directory ? "Directory" : "Song";
+					}
+					this.tab = "browse";
+					this.title = "Music Collection";
+					this.displayItems(data);
+					this.tags.breadcrumbs.setCurrentPath(path);
+				}.bind(self));
 		}
 
 		function playlist() {
@@ -218,19 +222,18 @@
 			playlistName = decodeURIComponent(playlistName);
 
 			fetch("api/playlist/read/" + playlistName, { credentials: "same-origin" })
-			.then(function(res) { return res.json(); })
-			.then(function(data) {
-				this.reset();
-				for (var i = 0; i < data.length; i++) {
-					var fields = data[i];
-					data[i] = { fields: fields, variant: "Song" };
-				}
-				this.playlistName = playlistName;
-				this.header = playlistName;
-				this.tab = "playlist";
-				this.title = "Playlists";
-				this.displayItems(data);
-			}.bind(self));
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+					this.reset();
+					for (var i = 0; i < data.length; i++) {
+						var fields = data[i];
+						data[i] = { fields: fields, variant: "Song" };
+					}
+					this.tab = "playlist";
+					this.title = "Playlists";
+					this.header = playlistName;
+					this.displayItems(data);
+				}.bind(self));
 		}
 
 		onClickMoreRandom(e) {
@@ -247,6 +250,15 @@
 			}
 		}
 
+		onClickQueue(e) {
+			if ("album" === this.viewMode) {
+				eventBus.trigger("browser:queueItems", this.items[0].songs);
+			}
+			if ("explorer" === this.viewMode) {
+				eventBus.trigger("browser:queueItems", this.items);
+			}
+		}
+
 		onDragItemStart(e) {
 			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
 		}
@@ -260,7 +272,7 @@
 			};
 			e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
 		}
-
+    
 		onDeletePlaylist(e) {
 			fetch("api/playlist/" + this.playlistName,
 				{	method: "DELETE"
@@ -362,7 +374,7 @@
 		.discographyView .coverCanvas {
 			position: absolute;
 			width: 100%;
-  			height: 100%;
+			height: 100%;
 		}
 
 		.discographyView img {
@@ -466,6 +478,9 @@
 			max-height: 15vw;
 			margin-bottom: 30px;
 			border-radius: 5px;
+		}
+		.album.queue {
+			margin: 0 auto;
 		}
 
 	</style>
