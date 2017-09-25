@@ -46,7 +46,7 @@
 				<button onclick={ onQueueAll } class="queueAll">Queue All</button>
 			</div>
 			<div class="details">
-				<img src="{ artworkURL }" draggable="true" ondragstart={ onDragAlbumStart } />
+				<img src="{ artworkURL }" draggable="true" onclick={ onClickAlbum } ondragstart={ onDragAlbumStart } />
 				<div class="trackList">
 					<ul>
 						<li each={ items } >
@@ -286,6 +286,10 @@
 				},
 			};
 			e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
+		}
+
+		onClickAlbum(e) {
+			eventBus.trigger("browser:queueDirectory", this.path);
 		}
 
 		onDeletePlaylist(e) {
