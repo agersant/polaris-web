@@ -43,6 +43,7 @@ input[type="submit"], input[type="submit"] *, button.submit, button.submit * {
 
 button, button * {
 	color: #3A3A3A;
+	cursor: pointer;
 }
 
 input[type="submit"], input[type="submit"] *, button, button * {
