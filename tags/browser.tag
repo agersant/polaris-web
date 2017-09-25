@@ -8,7 +8,10 @@
 
 	<div class="paneContent">
 		<ul if={ viewMode == "explorer" } class="explorerView">
-			<div if={ header } class="playlistName">{ header }</div>
+			<div if={ tab == "playlist" } class="explorerActions">
+				<div class="header">{ header }</div>
+				<button class="danger" onclick={ onDeletePlaylist }>Delete</button>
+			</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
 				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
@@ -63,6 +66,7 @@
 			this.artworkURL = null;
 			this.header = null;
 			this.subHeader = null;
+			this.playlistName = null;
 			this.path = null;
 			this.title = "";
 			this.viewMode = "explorer"; // explorer/discography/album
@@ -221,9 +225,10 @@
 					var fields = data[i];
 					data[i] = { fields: fields, variant: "Song" };
 				}
+				this.playlistName = playlistName;
+				this.header = playlistName;
 				this.tab = "playlist";
 				this.title = "Playlists";
-				this.header = playlistName;
 				this.displayItems(data);
 			}.bind(self));
 		}
@@ -254,7 +259,18 @@
 				},
 			};
 			e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
-		}	
+		}
+
+		onDeletePlaylist(e) {
+			fetch("api/playlist/" + this.playlistName,
+				{	method: "DELETE"
+				,	credentials: "same-origin"
+				}
+			)
+			.then(function(res) {
+				route("playlists/");
+			});
+		}
 	</script>
 
 	<style>
@@ -279,11 +295,24 @@
 		}
 
 		/*Explorer view*/
-		.explorerView .playlistName {
+		.explorerView .header {
 			line-height: 1;
-			margin-bottom: 20px;
 			font-size: 1.25rem;
+			margin-bottom: 5px;
 			font-family: "Montserrat", "sans-serif";
+		}
+
+		.explorerView .explorerActions {
+			margin-bottom: 20px;
+		}
+
+		.explorerView .explorerActions button {
+			display: inline;
+			font-size: 0.8125rem;
+			padding: 0;
+			padding-left: 15px;
+			padding-right: 15px;
+			margin-right: 10px;
 		}
 
 		.explorerView .directory:before {
