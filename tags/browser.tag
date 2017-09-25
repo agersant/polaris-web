@@ -8,6 +8,7 @@
 
 	<div class="paneContent">
 		<ul if={ viewMode == "explorer" } class="explorerView">
+			<div if={ header } class="playlistName">{ header }</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
 				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
@@ -30,8 +31,8 @@
 		</ul>
 
 		<div if={ viewMode == "album" } class="albumView">
-			<div class="title">{ album }</div>
-			<div class="artist">{ artist }</div>
+			<div class="title">{ header }</div>
+			<div class="artist">{ subHeader }</div>
 			<div class="details">
 				<img src="{ artworkURL }" draggable="true" ondragstart={ onDragAlbumStart } />
 				<div class="trackList">
@@ -60,8 +61,8 @@
 		reset() {
 			this.items = [];
 			this.artworkURL = null;
-			this.artist = null;
-			this.album = null;
+			this.header = null;
+			this.subHeader = null;
 			this.path = null;
 			this.title = "";
 			this.viewMode = "explorer"; // explorer/discography/album
@@ -70,6 +71,7 @@
 		var r = route.create();
     	r("", browse);
     	r("browse..", browse);
+    	r("playlist..", playlist);
     	r("random", random);
     	r("recent", recent);
 		this.on('mount', function() {
@@ -98,9 +100,9 @@
 
 				if (item.variant == "Song") {
 					item.fields.url = "api/serve/" + encodeURIComponent(item.fields.path);
-					this.album = this.album || item.fields.album;
+					this.header = this.header || item.fields.album;
 					this.artworkURL = this.artworkURL || item.fields.artworkURL;
-					this.artist = this.artist || item.fields.album_artist || item.fields.artist;
+					this.subHeader = this.subHeader || item.fields.album_artist || item.fields.artist;
 				} else {
 					onlySongs = false;
 					var slices = item.fields.path.replace(/\\/g, "/").split("/");
@@ -109,13 +111,16 @@
 				}
 			}
 
-			if (hasAnyPicture && onlySongs && items.length > 0) {
-				return "album";
-			} else if (hasAnyPicture && allHaveAlbums) {
-				return "discography";
-			} else {
-				return "explorer";
+			if (this.tab != "playlist")
+			{
+				if (hasAnyPicture && onlySongs && items.length > 0) {
+					return "album";
+				} else if (hasAnyPicture && allHaveAlbums) {
+					return "discography";
+				}
 			}
+
+			return "explorer";
 		}
 
 		splitAlbumByDisc(items) {
@@ -180,7 +185,7 @@
 			}.bind(self));
 		}
 
-		function browse(path) {
+		function browse() {
 			var matchPath = /^.*#browse\/?(.*)$/;
 			var matches = window.location.href.match(matchPath);
 			var path = matches ? matches[1] : "";
@@ -199,6 +204,27 @@
 				this.title = "Music Collection";
 				this.displayItems(data);
 				this.tags.breadcrumbs.setCurrentPath(path);
+			}.bind(self));
+		}
+
+		function playlist() {
+			var matchPath = /^.*#playlist\/?(.*)$/;
+			var matches = window.location.href.match(matchPath);
+			var playlistName = matches ? matches[1] : "";
+			playlistName = decodeURIComponent(playlistName);
+
+			fetch("api/playlist/read/" + playlistName, { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.reset();
+				for (var i = 0; i < data.length; i++) {
+					var fields = data[i];
+					data[i] = { fields: fields, variant: "Song" };
+				}
+				this.tab = "playlist";
+				this.title = "Playlists";
+				this.header = playlistName;
+				this.displayItems(data);
 			}.bind(self));
 		}
 
@@ -253,6 +279,13 @@
 		}
 
 		/*Explorer view*/
+		.explorerView .playlistName {
+			line-height: 1;
+			margin-bottom: 20px;
+			font-size: 1.25rem;
+			font-family: "Montserrat", "sans-serif";
+		}
+
 		.explorerView .directory:before {
 			content: "🗀";
 			margin-right: 5px;

@@ -6,7 +6,7 @@
 
 	<div class="paneContent">
 		<ul>
-			<li class="noselect" draggable="true" each={ playlists } ondragstart={ onDragItemStart }>{ name }</li>
+			<li class="noselect" draggable="true" each={ playlists } onclick={ onClickItem } ondragstart={ onDragItemStart }>{ name }</li>
 		</ul>
 	</div>
 
@@ -35,6 +35,10 @@
 			this.dead = true;
 			eventBus.off("playlist-save:transmitted");
 		}.bind(this));
+
+		onClickItem(e) {
+			route("playlist/" + e.item.name);
+		}
 
 		onDragItemStart(e) {
 			var playlistItem = {
