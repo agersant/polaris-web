@@ -44,25 +44,23 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			padding-right: 10px;
 			font-size: 0.875rem;
 			color: white;
 		}
 
 		li {
 			display: inline;
-
-			color: white;
+			color: #FFF;
+			background-color: #44C8F1;
 			cursor: pointer;
-
 			padding-left: 8px;
 			padding-right: 5px;
-			background-color: #44C8F1;
 			border-radius: 5px;
+			margin-right: 5px;
 		}
-		
-		li + li {
-			margin-left: 5px;
+
+		li:last-child {
+			padding-right: 8px;
 		}
 	</style>
 
