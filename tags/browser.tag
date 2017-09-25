@@ -338,7 +338,7 @@
 		.discographyView .album {
 			font-size: 0;
 			margin-bottom: 20px;
-			cursor: default;				
+			cursor: default;
 			width: 23.5%;
 			margin-left: 1%;
 			margin-right: 1%;
@@ -372,7 +372,7 @@
 		}
 
 		.discographyView .details {
-			padding: 10px 0; 
+			padding: 10px 0;
 			width: 100%;
 		}
 
@@ -459,7 +459,7 @@
 		}
 
 		.albumView img {
-			flex-shrink: 0; 
+			flex-shrink: 0;
 			width: 100%;
 			height: 100%;
 			max-width: 15vw;

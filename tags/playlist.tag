@@ -5,7 +5,7 @@
 		<div class="playlistOperations">
 
 			<span class="noselect" onclick={ onClickSave }><i class="material-icons md-18">save</i>
-				<playlist-save if={ saving } tracks={ this.tracks }/>				
+				<playlist-save if={ saving } tracks={ this.tracks }/>
 			</span>
 
 			<span class="noselect" onclick={ onClickClear }><i class="material-icons md-18">delete</i></span><span class="playbackOrder">
@@ -40,7 +40,7 @@
 		<div style="height: { (tracks.length - scrollOffset - pageSize) * itemHeight }px"></div>
 		<div class="help" if={ tracks.length == 0 }>
 			<i class="material-icons md-48">queue</i><br/>
-			Make a playlist by dragging music<br/>from your collection to here. 
+			Make a playlist by dragging music<br/>from your collection to here.
 		</div>
 	</div>
 
