@@ -97,42 +97,37 @@
 			this.update();
 		}
 
-		queueTracks(url) {
-			fetch(url, { credentials: "same-origin" })
-				.then(function(res) {
-					return res.json();
-				})
-				.then(function(data) {
-					var length = data.length;
-					for (var i = 0; i < length; i++) {
-						data[i].url = "api/serve/" + encodeURIComponent(data[i].path);
-						if (data[i].album && data[i].artwork) {
-							data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
-						}
-						this.saveLocalPlaylist();
-						this.update();
-					}
-				})
-		}.bind(this);
-
-		queueItems(items) {
-			for (var item of items) {
-				var variant = item.variant;
-				if (variant == "Song") {
-					this.queueTrack(item.fields);
-					this.update();
-				} else if (variant == "Directory") {
-					this.queueDirectory(item.fields.path);
-				}
+		queueTracks(tracks) {
+			for (var i = 0; i < tracks.length; i++) {
+				this.queueTrackInternal(tracks[i]);
 			}
+			this.saveLocalPlaylist();
+			this.update();
+		}
+
+		queueURL(url) {
+			fetch(url, { credentials: "same-origin" })
+			.then(function(res) {
+				return res.json();
+			})
+			.then(function(data) {
+				var length = data.length;
+				for (var i = 0; i < length; i++) {
+					data[i].url = "api/serve/" + encodeURIComponent(data[i].path);
+					if (data[i].album && data[i].artwork) {
+						data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
+					}
+				}
+				this.queueTracks(data);
+			}.bind(this))
 		}
 
 		queueDirectory(path) {
-			this.queueTracks('api/flatten/' + path);
+			this.queueURL('api/flatten/' + path);
 		}
 
 		queuePlaylist(name) {
-			this.queueTracks('api/playlist/read/' + name);
+			this.queueURL('api/playlist/read/' + name);
 		}
 
 		advance(currentTrack, delta) {
@@ -199,7 +194,15 @@
 			e.preventDefault();
 			var item = e.dataTransfer.getData("text/json");
 			item = JSON.parse(item);
-			this.queueItems([item]);
+			var variant = item.variant;
+			if (variant == "Song") {
+				this.queueTrack(item.fields);
+				this.update();
+			} else if (variant == "Directory") {
+				this.queueDirectory(item.fields.path);
+			} else if (variant == "Playlist") {
+				this.queuePlaylist(item.fields.name);
+			}
 		}
 
 		updateCurrentTrack(track) {
@@ -227,21 +230,6 @@
 			return false;
 		};
 
-		onDrop(e) {
-			e.preventDefault();
-			var item = e.dataTransfer.getData("text/json");
-			item = JSON.parse(item);
-			var variant = item.variant;
-			if (variant == "Song") {
-				this.queueTrack(item.fields);
-				this.update();
-			} else if (variant == "Directory") {
-				this.queueDirectory(item.fields.path);
-			} else if (variant == "Playlist") {
-				this.queuePlaylist(item.fields.name);
-			}
-		}
-
 		onChangePlaybackOrder(e) {
 			var playbackOrder = this.refs.playbackOrder.selectedOptions[0].value;
 			utils.saveUserData("playbackOrder", playbackOrder);
@@ -264,7 +252,8 @@
 		}
 
 		eventBus.on("browser:queueTrack", this.queueTrack);
-		eventBus.on("browser:queueItems", this.queueItems);
+		eventBus.on("browser:queueTracks", this.queueTracks);
+		eventBus.on("browser:queueDirectory", this.queueDirectory);
 		eventBus.on("player:trackFinished", this.playNext);
 		eventBus.on("player:playPrevious", this.playPrevious);
 		eventBus.on("player:playNext", this.playNext);

@@ -8,40 +8,45 @@
 
 	<div class="paneContent">
 		<ul if={ viewMode == "explorer" } class="explorerView">
-			<div if={ tab == "playlist" } class="explorerActions">
+			<div class="viewActions" if={ path || tab == "playlist" }>
 				<div class="header">{ header }</div>
-				<button class="danger" onclick={ onDeletePlaylist }>Delete</button>
+				<button onclick={ onQueueAll }>Queue All</button><button if={ tab == "playlist" } class="danger" onclick={ onDeletePlaylist }>Delete</button>
 			</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
 				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
 			</li>
-			<button onclick={ onClickQueue } name="queue" class="queue">queue</button>
 		</ul>
 
-		<ul if={ viewMode == "discography" } class="discographyView">
-			<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-				<div class="cover">
-					<div class="coverCanvas">
-						<img if={ fields.artwork } src="{ fields.artworkURL }"/>
+		<div if={ viewMode == "discography" } class="discographyView">
+			<div class="viewActions">
+				<div class="header">{ header }</div>
+				<button onclick={ onQueueAll } class="queueAll">Queue All</button>
+			</div>
+			<ul>
+				<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+					<div class="cover">
+						<div class="coverCanvas">
+							<img if={ fields.artwork } src="{ fields.artworkURL }"/>
+						</div>
 					</div>
-				</div>
-				<div class="details">
-					<div class="title">{ fields.album }</div>
-					<div if={ path == null } class="artist">{ fields.artist }</div>
-					<div class="year">{ fields.year }</div>
-				</div>
-			</li>
-		</ul>
+					<div class="details">
+						<div class="title">{ fields.album }</div>
+						<div if={ path == null } class="artist">{ fields.artist }</div>
+						<div class="year">{ fields.year }</div>
+					</div>
+				</li>
+			</ul>
+		</div>
 
 		<div if={ viewMode == "album" } class="albumView">
-			<div class="title">{ header }</div>
-			<div class="artist">{ subHeader }</div>
+			<div class="viewActions">
+				<div class="header">{ header }</div>
+				<div class="subHeader">{ subHeader }</div>
+				<button onclick={ onQueueAll } class="queueAll">Queue All</button>
+			</div>
 			<div class="details">
-				<div>
-					<img src="{ artworkURL }" draggable="true" ondragstart={ onDragAlbumStart } />
-					<button onclick={ onClickQueue } name="queue" class="album queue">queue</button>
-				</div>
+				<img src="{ artworkURL }" draggable="true" ondragstart={ onDragAlbumStart } />
 				<div class="trackList">
 					<ul>
 						<li each={ items } >
@@ -119,16 +124,24 @@
 				}
 			}
 
-			if (this.tab != "playlist")
-				{
-					if (hasAnyPicture && onlySongs && items.length > 0) {
-						return "album";
-					} else if (hasAnyPicture && allHaveAlbums) {
-						return "discography";
-					}
+			this.header = this.header || this.getPathTail(this.path);
+
+			if (this.tab != "playlist") {
+				if (hasAnyPicture && onlySongs && items.length > 0) {
+					return "album";
+				} else if (hasAnyPicture && allHaveAlbums) {
+					return "discography";
 				}
+			}
 
 			return "explorer";
+		}
+
+		getPathTail(path) {
+			path = path.replace(/\\/g, "/");
+			var slices = path.split("/");
+			slices = slices.filter(function(s) { return s.length > 0; });
+			return slices[slices.length - 1] || "";
 		}
 
 		splitAlbumByDisc(items) {
@@ -161,36 +174,36 @@
 
 		function random() {
 			fetch("api/random/", { credentials: "same-origin" })
-				.then(function(res) { return res.json(); })
-				.then(function(data) {
-					this.reset();
-					for (var i = 0; i < data.length; i++) {
-						data[i] = {
-							variant: "Directory",
-							fields: data[i],
-						}
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.reset();
+				for (var i = 0; i < data.length; i++) {
+					data[i] = {
+						variant: "Directory",
+						fields: data[i],
 					}
-					this.tab = "random";
-					this.title = "Random Albums";
-					this.displayItems(data);
-				}.bind(self));
+				}
+				this.tab = "random";
+				this.title = "Random Albums";
+				this.displayItems(data);
+			}.bind(self));
 		}
 
 		function recent() {
 			fetch("api/recent/", { credentials: "same-origin" })
-				.then(function(res) { return res.json(); })
-				.then(function(data) {
-					this.reset();
-					for (var i = 0; i < data.length; i++) {
-						data[i] = {
-							variant: "Directory",
-							fields: data[i],
-						}
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.reset();
+				for (var i = 0; i < data.length; i++) {
+					data[i] = {
+						variant: "Directory",
+						fields: data[i],
 					}
-					this.tab = "recent";
-					this.title = "Recently Added";
-					this.displayItems(data);
-				}.bind(self));
+				}
+				this.tab = "recent";
+				this.title = "Recently Added";
+				this.displayItems(data);
+			}.bind(self));
 		}
 
 		function browse() {
@@ -200,19 +213,19 @@
 			path = decodeURIComponent(path);
 
 			fetch("api/browse/" + path, { credentials: "same-origin" })
-				.then(function(res) { return res.json(); })
-				.then(function(data) {
-					this.reset();
-					this.path = path;
-					for (var i = 0; i < data.length; i++) {
-						data[i].fields = data[i].Directory || data[i].Song;
-						data[i].variant = data[i].Directory ? "Directory" : "Song";
-					}
-					this.tab = "browse";
-					this.title = "Music Collection";
-					this.displayItems(data);
-					this.tags.breadcrumbs.setCurrentPath(path);
-				}.bind(self));
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.reset();
+				this.path = path;
+				for (var i = 0; i < data.length; i++) {
+					data[i].fields = data[i].Directory || data[i].Song;
+					data[i].variant = data[i].Directory ? "Directory" : "Song";
+				}
+				this.tab = "browse";
+				this.title = "Music Collection";
+				this.displayItems(data);
+				this.tags.breadcrumbs.setCurrentPath(path);
+			}.bind(self));
 		}
 
 		function playlist() {
@@ -222,18 +235,18 @@
 			playlistName = decodeURIComponent(playlistName);
 
 			fetch("api/playlist/read/" + playlistName, { credentials: "same-origin" })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-					this.reset();
-					for (var i = 0; i < data.length; i++) {
-						var fields = data[i];
-						data[i] = { fields: fields, variant: "Song" };
-					}
-					this.tab = "playlist";
-					this.title = "Playlists";
-					this.header = playlistName;
-					this.displayItems(data);
-				}.bind(self));
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.reset();
+				for (var i = 0; i < data.length; i++) {
+					var fields = data[i];
+					data[i] = { fields: fields, variant: "Song" };
+				}
+				this.tab = "playlist";
+				this.title = "Playlists";
+				this.header = playlistName;
+				this.displayItems(data);
+			}.bind(self));
 		}
 
 		onClickMoreRandom(e) {
@@ -250,12 +263,11 @@
 			}
 		}
 
-		onClickQueue(e) {
-			if ("album" === this.viewMode) {
-				eventBus.trigger("browser:queueItems", this.items[0].songs);
-			}
-			if ("explorer" === this.viewMode) {
-				eventBus.trigger("browser:queueItems", this.items);
+		onQueueAll(e) {
+			if (this.tab == "playlist") {
+				eventBus.trigger("browser:queueTracks", this.items.map(function(i){ return i.fields; }));
+			} else {
+				eventBus.trigger("browser:queueDirectory", this.path);
 			}
 		}
 
@@ -272,7 +284,7 @@
 			};
 			e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
 		}
-    
+
 		onDeletePlaylist(e) {
 			fetch("api/playlist/" + this.playlistName,
 				{	method: "DELETE"
@@ -302,29 +314,40 @@
 			padding-top: 50px;
 		}
 
-		.explorerView, .albumView {
-			margin-bottom: 50px;
+		.viewActions {
+			margin-bottom: 40px;
 		}
 
-		/*Explorer view*/
-		.explorerView .header {
+		.viewActions .header {
 			line-height: 1;
-			font-size: 1.25rem;
 			margin-bottom: 5px;
+			font-size: 1.25rem;
 			font-family: "Montserrat", "sans-serif";
 		}
 
-		.explorerView .explorerActions {
-			margin-bottom: 20px;
+		.viewActions .subHeader {
+			line-height: 1;
+			font-size: 1.25rem;
+			margin-bottom: 5px;
+			color: #AAA;
 		}
 
-		.explorerView .explorerActions button {
+		.viewActions button {
 			display: inline;
 			font-size: 0.8125rem;
 			padding: 0;
 			padding-left: 15px;
 			padding-right: 15px;
 			margin-right: 10px;
+		}
+
+		.explorerView, .albumView {
+			margin-bottom: 50px;
+		}
+
+		/*Explorer view*/
+		.explorerView .explorerActions {
+			margin-bottom: 20px;
 		}
 
 		.explorerView .directory:before {
@@ -341,7 +364,7 @@
 		}
 
 		/*Discography view*/
-		.discographyView {
+		.discographyView ul {
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: flex-start;
@@ -410,20 +433,6 @@
 		}
 
 		/*Album view*/
-		.albumView .title {
-			line-height: 1;
-			margin-bottom: 5px;
-			font-size: 1.25rem;
-			font-family: "Montserrat", "sans-serif";
-		}
-
-		.albumView .artist {
-			line-height: 1;
-			margin-bottom: 20px;
-			font-size: 1.25rem;
-			color: #AAA;
-		}
-
 		.albumView .details {
 			display: flex;
 			flex-flow: row nowrap;
@@ -479,10 +488,6 @@
 			margin-bottom: 30px;
 			border-radius: 5px;
 		}
-		.album.queue {
-			margin: 0 auto;
-		}
-
 	</style>
 
 </browser>
