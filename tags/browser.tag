@@ -73,11 +73,11 @@
 		}
 
 		var r = route.create();
-    	r("", browse);
-    	r("browse..", browse);
-    	r("playlist..", playlist);
-    	r("random", random);
-    	r("recent", recent);
+		r("", browse);
+		r("browse..", browse);
+		r("playlist..", playlist);
+		r("random", random);
+		r("recent", recent);
 		this.on('mount', function() {
 			route.exec();
 		});
