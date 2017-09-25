@@ -5,7 +5,7 @@
 		<div class="playlistOperations">
 
 			<span class="noselect" onclick={ onClickSave }><i class="material-icons md-18">save</i>
-				<playlist-save if={ saving } tracks={ this.tracks }/>				
+				<playlist-save if={ saving } tracks={ this.tracks }/>
 			</span>
 
 			<span class="noselect" onclick={ onClickClear }><i class="material-icons md-18">delete</i></span><span class="playbackOrder">
@@ -40,7 +40,7 @@
 		<div style="height: { (tracks.length - scrollOffset - pageSize) * itemHeight }px"></div>
 		<div class="help" if={ tracks.length == 0 }>
 			<i class="material-icons md-48">queue</i><br/>
-			Make a playlist by dragging music<br/>from your collection to here. 
+			Make a playlist by dragging music<br/>from your collection to here.
 		</div>
 	</div>
 
@@ -99,21 +99,32 @@
 
 		queueTracks(url) {
 			fetch(url, { credentials: "same-origin" })
-			.then(function(res) {
-				return res.json();
-			})
-			.then(function(data) {
-				var length = data.length;
-				for (var i = 0; i < length; i++) {
-					data[i].url = "api/serve/" + encodeURIComponent(data[i].path);
-					if (data[i].album && data[i].artwork) {
-						data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
+				.then(function(res) {
+					return res.json();
+				})
+				.then(function(data) {
+					var length = data.length;
+					for (var i = 0; i < length; i++) {
+						data[i].url = "api/serve/" + encodeURIComponent(data[i].path);
+						if (data[i].album && data[i].artwork) {
+							data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
+						}
+						this.saveLocalPlaylist();
+						this.update();
 					}
-					this.queueTrackInternal(data[i]);
+				})
+		}.bind(this);
+
+		queueItems(items) {
+			for (var item of items) {
+				var variant = item.variant;
+				if (variant == "Song") {
+					this.queueTrack(item.fields);
+					this.update();
+				} else if (variant == "Directory") {
+					this.queueDirectory(item.fields.path);
 				}
-				this.saveLocalPlaylist();
-				this.update();
-			}.bind(this));
+			}
 		}
 
 		queueDirectory(path) {
@@ -184,6 +195,13 @@
 			this.playTrack(e.item.track);
 		}
 
+		onDrop(e) {
+			e.preventDefault();
+			var item = e.dataTransfer.getData("text/json");
+			item = JSON.parse(item);
+			this.queueItems([item]);
+		}
+
 		updateCurrentTrack(track) {
 			this.currentTrack = track;
 			this.saveLocalPlaylist();
@@ -246,6 +264,7 @@
 		}
 
 		eventBus.on("browser:queueTrack", this.queueTrack);
+		eventBus.on("browser:queueItems", this.queueItems);
 		eventBus.on("player:trackFinished", this.playNext);
 		eventBus.on("player:playPrevious", this.playPrevious);
 		eventBus.on("player:playNext", this.playNext);
