@@ -19,7 +19,7 @@
 		</ul>
 
 		<div if={ viewMode == "discography" } class="discographyView">
-			<div class="viewActions">
+			<div class="viewActions" if={ path }>
 				<div class="header">{ header }</div>
 				<button onclick={ onQueueAll } class="queueAll">Queue All</button>
 			</div>
@@ -138,6 +138,9 @@
 		}
 
 		getPathTail(path) {
+			if (!path) {
+				return "";
+			}
 			path = path.replace(/\\/g, "/");
 			var slices = path.split("/");
 			slices = slices.filter(function(s) { return s.length > 0; });
