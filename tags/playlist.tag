@@ -5,7 +5,7 @@
 		<div class="playlistOperations">
 
 			<span class="noselect" onclick={ onClickSave }><i class="material-icons md-18">save</i>
-				<playlist-save if={ saving } tracks={ this.tracks }/>
+				<playlist-save if={ saving } tracks={ tracks } name={ playlistName } />
 			</span>
 
 			<span class="noselect" onclick={ onClickClear }><i class="material-icons md-18">delete</i></span><span class="playbackOrder">
@@ -77,10 +77,12 @@
 				var newTrack = this.tracks[currentTrackIndex];
 				eventBus.trigger("playlist:jumpTo", newTrack);
 			}
+			this.playlistName = utils.loadUserData("playlistName")
 		}
 
 		clear() {
 			this.scrollOffset = 0;
+			this.playlistName = null;
 			this.tracks = [];
 			this.update();
 		}
@@ -128,6 +130,7 @@
 
 		queuePlaylist(name) {
 			this.queueURL('api/playlist/read/' + name);
+			this.onPlaylistQueued(name);
 		}
 
 		advance(currentTrack, delta) {
@@ -235,8 +238,13 @@
 			utils.saveUserData("playbackOrder", playbackOrder);
 		}
 
+		onPlaylistQueued(playlistName) {
+			this.playlistName = playlistName;
+		}
+
 		saveLocalPlaylist() {
 			if (utils.saveUserData("playlist", this.tracks)) {
+				utils.saveUserData("playlistName", this.playlistName);
 				var currentTrackIndex = this.tracks.indexOf(this.currentTrack);
 				utils.saveUserData("currentTrackIndex", currentTrackIndex);
 			}
@@ -246,7 +254,8 @@
 			this.saving = true;
 		}
 
-		endSave() {
+		endSave(playlistName) {
+			this.playlistName = playlistName;
 			this.saving = false;
 			this.update();
 		}
@@ -254,6 +263,7 @@
 		eventBus.on("browser:queueTrack", this.queueTrack);
 		eventBus.on("browser:queueTracks", this.queueTracks);
 		eventBus.on("browser:queueDirectory", this.queueDirectory);
+		eventBus.on("browser:queuedPlaylist", this.onPlaylistQueued);
 		eventBus.on("player:trackFinished", this.playNext);
 		eventBus.on("player:playPrevious", this.playPrevious);
 		eventBus.on("player:playNext", this.playNext);

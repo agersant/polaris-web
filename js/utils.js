@@ -5,6 +5,9 @@ var utils = (function() {
 		if (!username) {
 			return;
 		}
+		if (value == null || value == undefined) {
+			localStorage.removeItem(username + "." + key);
+		}
 		if (typeof value == "object") {
 			value = JSON.stringify(value);
 		}
@@ -56,6 +59,6 @@ var utils = (function() {
 		saveUserData: saveUserData,
 		loadUserData: loadUserData,
 		tryLogin: tryLogin,
-	} 
+	}
 
 })();

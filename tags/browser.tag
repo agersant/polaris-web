@@ -247,6 +247,7 @@
 				}
 				this.tab = "playlist";
 				this.title = "Playlists";
+				this.playlistName = playlistName;
 				this.header = playlistName;
 				this.displayItems(data);
 			}.bind(self));
@@ -269,6 +270,7 @@
 		onQueueAll(e) {
 			if (this.tab == "playlist") {
 				eventBus.trigger("browser:queueTracks", this.items.map(function(i){ return i.fields; }));
+				eventBus.trigger("browser:queuedPlaylist", this.playlistName);
 			} else {
 				eventBus.trigger("browser:queueDirectory", this.path);
 			}

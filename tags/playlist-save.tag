@@ -19,7 +19,7 @@
 			failure: { name: "Error :(", disabled: true, failure: true },
 		};
 
-		this.playlistName = "My Playlist🎧";
+		this.playlistName = this.opts.name || "My Playlist🎧";
 
 		onNameInput(e) {
 			this.playlistName = e.target.value;
@@ -34,7 +34,7 @@
 			e.stopPropagation();
 
 			var playlist = {};
-			playlist.name = this.playlistName; 
+			playlist.name = this.playlistName;
 			playlist.tracks = this.opts.tracks.map(function(t) {
 				return t.info.path;
 			});
@@ -42,7 +42,7 @@
 			var data = new FormData();
 			data.append( "playlist", JSON.stringify( playlist ) );
 			this.tags["async-button"].setState(this.applyStates.saving);
-			
+
 			fetch("api/playlist/",
 				{	method: "PUT"
 				,	credentials: "same-origin"
@@ -65,7 +65,7 @@
 						return;
 					}
 					if (res.ok) {
-						eventBus.trigger("playlist-save:done");
+						eventBus.trigger("playlist-save:done", playlist.name);
 					} else {
 						this.tags["async-button"].setState(this.applyStates.ready);
 						this.update();
@@ -115,4 +115,4 @@
 
 	</style>
 
-</playlist-save> 
+</playlist-save>
