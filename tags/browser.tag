@@ -10,7 +10,7 @@
 		<ul if={ viewMode == "explorer" } class="explorerView">
 			<div class="viewActions" if={ path || tab == "playlist" }>
 				<div class="header">{ header }</div>
-				<button onclick={ onQueueAll }>Queue All</button><button if={ tab == "playlist" } class="danger" onclick={ onDeletePlaylist }>Delete</button>
+				<button onclick={ onQueueAll } class="small">Queue All</button><button if={ tab == "playlist" } class="danger small" onclick={ onDeletePlaylist }>Delete</button>
 			</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
@@ -21,7 +21,7 @@
 		<div if={ viewMode == "discography" } class="discographyView">
 			<div class="viewActions" if={ path }>
 				<div class="header">{ header }</div>
-				<button onclick={ onQueueAll } class="queueAll">Queue All</button>
+				<button onclick={ onQueueAll } class="small">Queue All</button>
 			</div>
 			<ul>
 				<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
@@ -43,7 +43,7 @@
 			<div class="viewActions">
 				<div class="header">{ header }</div>
 				<div class="subHeader">{ subHeader }</div>
-				<button onclick={ onQueueAll } class="queueAll">Queue All</button>
+				<button onclick={ onQueueAll } class="small">Queue All</button>
 			</div>
 			<div class="details">
 				<img src="{ artworkURL }" draggable="true" onclick={ onClickAlbum } ondragstart={ onDragAlbumStart } />
@@ -343,11 +343,6 @@
 
 		.viewActions button {
 			display: inline;
-			font-size: 0.8125rem;
-			padding: 0;
-			padding-left: 15px;
-			padding-right: 15px;
-			margin-right: 10px;
 		}
 
 		.explorerView, .albumView {
