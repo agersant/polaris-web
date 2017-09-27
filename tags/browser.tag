@@ -8,7 +8,7 @@
 
 	<div class="paneContent">
 		<ul if={ viewMode == "explorer" } class="explorerView">
-			<div class="viewActions" if={ path || tab == "playlist" }>
+			<div class="viewActions">
 				<div class="header">{ header }</div>
 				<button onclick={ onQueueAll } class="small">Queue All</button><button if={ tab == "playlist" } class="danger small" onclick={ onDeletePlaylist }>Delete</button>
 			</div>
@@ -139,7 +139,7 @@
 
 		getPathTail(path) {
 			if (!path) {
-				return "";
+				return "All Music";
 			}
 			path = path.replace(/\\/g, "/");
 			var slices = path.split("/");
