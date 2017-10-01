@@ -33,7 +33,7 @@ var utils = (function() {
 	}
 
 	var tryLogin = function(username, password) {
-		return fetch("/api/auth", {
+		return fetch("api/auth", {
 			method: "POST",
 			body: "username=" + username + "&password=" + password,
 			headers: {
