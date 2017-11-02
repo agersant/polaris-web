@@ -3,6 +3,7 @@
 	<div class="paneHeader">
 		<h2>{ title }</h2>
 		<div if={ tab == "random" } class="more noselect" onclick={ onClickMoreRandom }><i class="material-icons md-18">refresh</i><span>More</span></div>
+		<search-input if={ tab == "search" } />
 		<breadcrumbs if={ path != null }/>
 	</div>
 
@@ -84,9 +85,10 @@
 		var r = route.create();
 		r("", browse);
 		r("browse..", browse);
-		r("playlist..", playlist);
 		r("random", random);
 		r("recent", recent);
+		r("playlist..", playlist);
+		r("search..", search);
 		this.on('mount', function() {
 			route.exec();
 		});
@@ -252,6 +254,13 @@
 				this.displayItems(data);
 			}.bind(self));
 		}
+
+        function search() {
+            self.reset();
+            self.tab = "search";
+            self.title = "Search";
+            self.displayItems({});
+        }
 
 		onClickMoreRandom(e) {
 			e.preventDefault();

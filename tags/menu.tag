@@ -11,6 +11,7 @@
 			{ icon: "shuffle", target: "random", pattern: new RegExp("random") },
 			{ icon: "new_releases", target: "recent", pattern: new RegExp("recent") },
 			{ icon: "playlist_play", target: "playlists", pattern: new RegExp("playlist") },
+			{ icon: "search", target: "search", pattern: new RegExp("search") },
 		];
 
 		if (Cookies.get("admin") == "true") {
