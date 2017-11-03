@@ -11,7 +11,7 @@
 		<ul if={ viewMode == "explorer" } class="explorerView">
 			<div class="viewActions">
 				<div class="header">{ header }</div>
-				<button onclick={ onQueueAll } class="small">Queue All</button><button if={ tab == "playlist" } class="danger small" onclick={ onDeletePlaylist }>Delete</button>
+				<button onclick={ onQueueAll } class="small" if={items.length > 0}>Queue All</button><button if={ tab == "playlist" } class="danger small" onclick={ onDeletePlaylist }>Delete</button>
 			</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
@@ -99,13 +99,18 @@
 
 		getViewMode(items) {
 			var onlySongs = true;
+			var onlyDirectories = true;
+			var allSameAlbum = true;
 			var allHaveAlbums = true;
 			var hasAnyPicture = false;
+			var album = null;
 
 			for (var i = 0; i < items.length; i++) {
 				var item = items[i];
 				if (!item.fields.album) {
 					allHaveAlbums = false;
+				} else if (!album) {
+					album = item.fields.album;
 				}
 
 				if (item.fields.artwork) {
@@ -114,10 +119,12 @@
 				}
 
 				if (item.variant == "Song") {
+					onlyDirectories = false;
 					item.fields.url = "api/serve/" + encodeURIComponent(item.fields.path);
 					this.header = this.header || item.fields.album;
 					this.artworkURL = this.artworkURL || item.fields.artworkURL;
 					this.subHeader = this.subHeader || item.fields.album_artist || item.fields.artist;
+					allSameAlbum = allSameAlbum && item.fields.album == album;
 				} else {
 					onlySongs = false;
 					var slices = item.fields.path.replace(/\\/g, "/").split("/");
@@ -129,9 +136,12 @@
 			this.header = this.header || this.getPathTail(this.path);
 
 			if (this.tab != "playlist") {
-				if (hasAnyPicture && onlySongs && items.length > 0) {
-					return "album";
-				} else if (hasAnyPicture && allHaveAlbums) {
+				if (this.tab != "search") {
+					if (onlySongs && hasAnyPicture && allSameAlbum && items.length > 0) {
+						return "album";
+					}
+				}
+				if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
 					return "discography";
 				}
 			}
@@ -256,10 +266,30 @@
 		}
 
         function search() {
-            self.reset();
-            self.tab = "search";
-            self.title = "Search";
-            self.displayItems({});
+			var matchPath = /^.*#search\/?(.*)$/;
+			var matches = window.location.href.match(matchPath);
+			var query = matches ? matches[1] : "";
+			query = decodeURIComponent(query);
+
+			fetch("api/search/" + query, { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.reset();
+				for (var i = 0; i < data.length; i++) {
+					data[i].fields = data[i].Directory || data[i].Song;
+					data[i].variant = data[i].Directory ? "Directory" : "Song";
+				}
+				this.tab = "search";
+				this.title = "Search";
+				if (data.length == 0) {
+					this.header = "No results found";
+				} else if (data.length == 1) {
+					this.header = "1 result found";
+				} else {
+					this.header = data.length + " results found";
+				}
+				this.displayItems(data);
+			}.bind(self));
         }
 
 		onClickMoreRandom(e) {
@@ -277,11 +307,13 @@
 		}
 
 		onQueueAll(e) {
-			if (this.tab == "playlist") {
+			if (this.tab == "playlist" || this.tab == "search") {
 				eventBus.trigger("browser:queueTracks", this.items.map(function(i){ return i.fields; }));
-				eventBus.trigger("browser:queuedPlaylist", this.playlistName);
 			} else {
 				eventBus.trigger("browser:queueDirectory", this.path);
+			}
+			if (this.tab == "playlist") {
+				eventBus.trigger("browser:queuedPlaylist", this.playlistName);
 			}
 		}
 
