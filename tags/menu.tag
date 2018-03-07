@@ -12,13 +12,8 @@
 			{ icon: "new_releases", target: "recent", pattern: new RegExp("recent") },
 			{ icon: "playlist_play", target: "playlists", pattern: new RegExp("playlist") },
 			{ icon: "search", target: "search", pattern: new RegExp("search") },
+			{ icon: "settings", target: "settings/preferences", pattern: new RegExp("settings") },
 		];
-
-		if (Cookies.get("admin") == "true") {
-			this.buttons.push(
-				{ icon: "settings", target: "settings/collection", pattern: new RegExp("settings") }
-			);
-		}
 
 		route(function(currentURL, a) {
 			this.currentURL = currentURL || this.buttons[0].target;

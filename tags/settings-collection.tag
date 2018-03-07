@@ -122,7 +122,7 @@
 
 		save(e) {
 			e.preventDefault();
-			eventBus.trigger("settings:submit", this.config);
+			eventBus.trigger("settings:submitConfig", this.config);
 		}
 	</script>
 

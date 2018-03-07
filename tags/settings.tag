@@ -9,23 +9,21 @@
 			<route path="settings/users"><settings-users/></route>
 			<route path="settings/ddns"><settings-ddns/></route>
 			<route path="settings/collection"><settings-collection/></route>
+			<route path="settings/preferences"><settings-preferences/></route>
 		</router>
 	</div>
 
 	<script>
 
-		save(config) {
-			var data = new FormData();
-			data.append( "config", JSON.stringify( config ) );
+		save(formData, url) {
 			eventBus.trigger("settings:submissionStatusUpdate", "applying");
-			fetch("api/settings/",
+			fetch(url,
 				{	method: "PUT"
 				,	credentials: "same-origin"
-				,	body: data
+				,	body: formData
 				}
 			)
 			.then(function(res) {
-
 				if (this.dead) {
 					return;
 				}
@@ -43,10 +41,24 @@
 			}.bind(this));
 		}
 
-		eventBus.on("settings:submit", this.save);
+		saveConfig(config) {
+			var data = new FormData();
+			data.append( "config", JSON.stringify(config) );
+			this.save(data, "api/settings/");
+		}
+
+		savePreferences(preferences) {
+			var data = new FormData();
+			data.append("preferences", JSON.stringify(preferences));
+			this.save(data, "api/preferences/");
+		}
+
+		eventBus.on("settings:submitConfig", this.saveConfig);
+		eventBus.on("settings:submitPreferences", this.savePreferences);
 		this.on("unmount", function() {
 			this.dead = true;
-			eventBus.off("settings:submit");
+			eventBus.off("settings:submitConfig");
+			eventBus.off("settings:savePreferences");
 		}.bind(this));
 	</script>
 

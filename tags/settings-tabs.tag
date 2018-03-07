@@ -4,12 +4,6 @@
   	</span>
 
 	<script>
-		this.tabs = [
-			{ name: "Collection", section: "collection" },
-			{ name: "Users", section: "users" },
-			{ name: "Dynamic DNS", section: "ddns" }
-		];
-
 		route(function(currentURL, section) {
 			this.currentSection = section || this.tabs[0].section;
 		}.bind(this));
@@ -20,6 +14,14 @@
 		}
 
 		this.on('mount', function() {
+			this.tabs = [
+				{ name: "Preferences", section: "preferences" },
+			];
+			if (Cookies.get("admin") == "true") {
+				this.tabs.push({ name: "Collection", section: "collection" });
+				this.tabs.push({ name: "Users", section: "users" });
+				this.tabs.push({ name: "Dynamic DNS", section: "ddns" });
+			}
 			route.exec();
 		});
 	</script>

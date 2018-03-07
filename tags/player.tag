@@ -58,6 +58,8 @@
 		play(track) {
 			this.jumpTo(track);
 			this.refs.htmlAudio.play();
+			fetch("api/lastfm/now_playing/" + track.info.path, { credentials: "same-origin" });
+			this.canScrobble = true;
 		}
 
 		togglePlay(e) {
@@ -92,6 +94,7 @@
 				var progress = Math.min(Math.max(x / this.refs.seekInput.offsetWidth, 0), 1);
 				this.refs.htmlAudio.currentTime = progress * this.refs.htmlAudio.duration;
 				this.trackProgress = progress;
+				this.canScrobble = false;
 			}
 		}
 
@@ -122,6 +125,18 @@
 			return minutes + ":" + seconds;
 		}
 
+		updateScrobble() {
+			var currentTime = this.refs.htmlAudio.currentTime;
+			var duration = this.refs.htmlAudio.duration;
+			if (this.canScrobble) {
+				var shouldScrobble = duration > 30 && (currentTime > duration/2 || currentTime > 4*60);
+				if (shouldScrobble) {
+					fetch("api/lastfm/scrobble/" + this.currentTrack.info.path, { credentials: "same-origin" });
+					this.canScrobble = false;
+				}
+			}
+		}
+
 		this.on('mount', function() {
 
 			var volume = utils.loadUserData("volume");
@@ -150,9 +165,12 @@
 			}.bind(this));
 
 			this.refs.htmlAudio.addEventListener("timeupdate", function() {
-				var progress = this.refs.htmlAudio.currentTime / this.refs.htmlAudio.duration;
+				var currentTime = this.refs.htmlAudio.currentTime;
+				var duration = this.refs.htmlAudio.duration;
+				var progress = currentTime / duration;
 				this.trackProgress = progress;
-				this.timeElapsed = this.formatPlaybackTime(this.refs.htmlAudio.currentTime);
+				this.timeElapsed = this.formatPlaybackTime(currentTime);
+				this.updateScrobble();
 				this.update();
 			}.bind(this));
 
