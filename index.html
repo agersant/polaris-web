@@ -4,6 +4,7 @@
 		<title>Polaris</title>
 		<meta charset="UTF-8">
 		<link rel="shortcut icon" type="image/png" href="favicon.png"/>
+		<link rel="mask-icon" href="mask-icon.svg" color="#cb8bbe">
 		<link rel="stylesheet" type="text/css" href="style/default.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Hind:300,400,600|Montserrat">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -48,7 +49,7 @@
 		<script type="text/javascript">
 			var eventBus = riot.observable();
 
-			fetch("api/initial_setup/")
+			fetch("api/initial_setup/", {credentials: "same-origin"})
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				riot.mount('*');
