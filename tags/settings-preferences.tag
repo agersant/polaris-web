@@ -35,10 +35,33 @@
 			var apiKey = "02b96c939a2b451c31dfd67add1f696e";
 			var currentURL = new URL(window.location.href);
 			var username = Cookies.get("username");
-			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/auth?username=" + username;
-			var url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + callbackURL;
+			var successPopupContent = btoa(
+				`<!doctype html>
+				<html>
+					<head>
+						<title>Polaris</title>
+						<meta charset="UTF-8">
+					</head>
+					<body>
+						<script type="text/javascript">
+							window.opener.postMessage("polaris-lastfm-auth-success", "*");
+						<\/script>
+					</body>
+				</html>`
+			);
+			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/auth?content=" + encodeURIComponent(successPopupContent) + "&username=" + username;
+			var url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
 			var windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
-			window.open(url, "Link Last.fm account", windowFeatures);
+			var lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
+			window.addEventListener("message", function(event) {
+				if (event.source != lastFMPopup) {
+					return;
+				}
+				if (event.data == "polaris-lastfm-auth-success")
+				{
+					lastFMPopup.close();
+				}
+			}, false);
 		}
 
 		save(e) {
