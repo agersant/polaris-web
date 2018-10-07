@@ -37,8 +37,6 @@
 			var username = Cookies.get("username");
 			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/auth?username=" + username;
 			var url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + callbackURL;
-			console.log("callbackURL " + callbackURL);
-			console.log("url " + url);
 			var windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
 			window.open(url, "Link Last.fm account", windowFeatures);
 		}
