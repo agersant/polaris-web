@@ -2,10 +2,16 @@
 
 
 	<form if={ preferences } onsubmit={ save }>
-		<p class="explanation">Polaris can automatically submit songs you play to <a href="https://www.last.fm/" target="_blank">Last.fm</a>.</p>
 		<div class="field">
-			<label for="lastfm_username">Last.fm integration</label>
-			<button onclick={ linkLastFMAccount }>Link account</button>
+			<label for="lastfm_username">Last.fm scrobbling</label>
+			<div if={ preferences.lastfm_username }>
+				<p class="explanation">You are scrobbling music as <a href="https://www.last.fm/user/{preferences.lastfm_username}" target="_blank">{ preferences.lastfm_username }</a>.</p>
+				<button onclick={ unlinkLastFMAccount }>Unlink Last.fm account</button>
+			</div>
+			<div if={ !preferences.lastfm_username }>
+			<p class="explanation">Polaris can automatically submit songs you play to <a href="https://www.last.fm/" target="_blank">Last.fm</a>.</p>
+				<button onclick={ linkLastFMAccount }>Link Last.fm account</button>
+			</div>
 		</div>
 	</form>
 
@@ -15,13 +21,8 @@
 		this.preferences = null;
 
 		this.on('mount', function() {
-			fetch("api/preferences/", { credentials: "same-origin" })
-			.then(function(res) { return res.json(); })
-			.then(function(data) {
-				this.preferences = data;
-				this.update();
-			}.bind(self));
-		});
+			this.refreshPreferences();
+		}.bind(self));
 
 		onUsernameInput(e) {
 			this.preferences.lastfm_username = e.target.value;
@@ -29,6 +30,15 @@
 
 		onPasswordInput(e) {
 			this.preferences.lastfm_password = e.target.value;
+		}
+
+		refreshPreferences() {
+			fetch("api/preferences/", { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				this.preferences = data;
+				this.update();
+			}.bind(self));
 		}
 
 		linkLastFMAccount(e) {
@@ -49,7 +59,7 @@
 					</body>
 				</html>`
 			);
-			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/auth?content=" + encodeURIComponent(successPopupContent) + "&username=" + username;
+			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent) + "&username=" + username;
 			var url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
 			var windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
 			var lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
@@ -60,8 +70,16 @@
 				if (event.data == "polaris-lastfm-auth-success")
 				{
 					lastFMPopup.close();
+					this.refreshPreferences();
 				}
-			}, false);
+			}.bind(self), false);
+		}
+
+		unlinkLastFMAccount(e) {
+			fetch("api/lastfm/link", { credentials: "same-origin", method: "DELETE" })
+			.then(function(res) {
+				this.refreshPreferences();
+			}.bind(self));
 		}
 
 		save(e) {
