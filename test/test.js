@@ -8,7 +8,8 @@ describe('First Time Flow', function() {
 
   it('should load without error', done => {
     nightmare.goto('http://localhost:5050')
-      .then(function (result) { done() })
+      .then(result => { done() })
+      .catch(done)
   })
 
   it('should have a welcome message', done => {
@@ -16,8 +17,9 @@ describe('First Time Flow', function() {
       .evaluate(() => document.querySelector('#initial-setup-page h2').innerHTML)
       .end()
       .then(title => {
-        expect(title).to.equal('Welcome to Polaris')
+        expect(title).to.equal('Welcome to Polaris!')
         done()
       })
+      .catch(done)
   })
 })
