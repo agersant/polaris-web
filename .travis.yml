@@ -19,5 +19,5 @@ before_install:
   - cd ..
 
 script:
-  - sleep 10
+  - sleep 15
   - npm test

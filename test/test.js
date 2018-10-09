@@ -2,7 +2,7 @@ const Nightmare = require('nightmare')
 const assert = require('assert')
 
 describe('Load a Page', function() {
-  this.timeout('5s')
+  this.timeout('20s')
 
   let nightmare = null
   beforeEach(() => {
