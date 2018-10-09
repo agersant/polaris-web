@@ -31,5 +31,4 @@ before_script:
   - cd ..
 
 script:
-  - sleep 10
-  - npm test
+  - mocha

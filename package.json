@@ -1,7 +1,0 @@
-{
-	"name": "polaris-web",
-	"version": "0.7.1",
-	"scripts": {
-		"test": "DEBUG=nightmare:*,electron:* mocha"
-	}
-}
