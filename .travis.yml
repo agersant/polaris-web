@@ -15,6 +15,7 @@ before_install:
 install:
   # Install headless browser
   - npm install mocha
+  - npm install chai
   - npm install nightmare
   # Install Rust
   - curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=stable -y
@@ -31,4 +32,5 @@ before_script:
   - cd ..
 
 script:
+  - sleep 5
   - mocha

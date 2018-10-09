@@ -1,19 +1,23 @@
 const Nightmare = require('nightmare')
-const assert = require('assert')
+const chai = require('chai')
+const expect = chai.expect
 
-describe('Load a Page', function() {
+describe('First Time Flow', function() {
 
-  let nightmare = null
-  beforeEach(() => {
-    nightmare = new Nightmare()
+  let nightmare = new Nightmare()
+
+  it('should load without error', done => {
+    nightmare.goto('http://localhost:5050')
+      .then(function (result) { done() })
   })
 
-  describe('/ (Home Page)', () => {
-    it('should load without error', done => {
-      nightmare.goto('http://localhost:5050')
-        .end()
-        .then(function (result) { done() })
-        .catch(done)
-    })
+  it('should have a welcome message', done => {
+    nightmare.wait('#initial-setup-page')
+      .evaluate(() => document.querySelector('#initial-setup-page h2').innerHTML)
+      .end()
+      .then(title => {
+        expect(title).to.equal('Welcome to Polaris')
+        done()
+      })
   })
 })
