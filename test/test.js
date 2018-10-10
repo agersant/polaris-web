@@ -2,6 +2,9 @@ const Nightmare = require('nightmare')
 const chai = require('chai')
 const expect = chai.expect
 
+console.log("CHAI " + chai)
+console.log("EXPECT " + expect)
+
 describe('First Time Flow', function() {
 
   let nightmare = new Nightmare()
