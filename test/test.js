@@ -18,6 +18,9 @@ describe('First Time Flow', function() {
       .wait('h2')
       .evaluate(() => document.querySelector('h2').innerHTML)
       .then(title => { expect(title).to.equal('Welcome to Polaris!') })
+      .catch(done)
+
+    nightmare
       .click('button.submit')
       .then(() => { done() })
       .catch(done)
@@ -28,12 +31,21 @@ describe('First Time Flow', function() {
       .wait('button.submit')
       .evaluate(() => document.querySelector('h2').innerHTML)
       .then(title => { expect(title).to.equal('Music Sources') })
+      .catch(done)
+
+    nightmare
       .evaluate(() => document.querySelector('button.submit').disabled)
       .then(buttonDisabled => { expect(buttonDisabled).to.be.true })
+      .catch(done)
+
+    nightmare
       .type('input#source', 'test/collection')
       .type('input#name', 'test_music')
       .evaluate(() => document.querySelector('button.submit').disabled)
       .then(buttonDisabled => { expect(buttonDisabled).to.not.be.true })
+      .catch(done)
+
+    nightmare
       .click('button.submit')
       .then(() => { done() })
       .catch(done)
@@ -43,13 +55,22 @@ describe('First Time Flow', function() {
     nightmare
       .evaluate(() => document.querySelector('h2').innerHTML)
       .then(title => { expect(title).to.equal('User Account') })
+      .catch(done)
+
+    nightmare
       .evaluate(() => document.querySelector('button.submit').disabled)
       .then(buttonDisabled => { expect(buttonDisabled).to.be.true })
+      .catch(done)
+
+    nightmare
       .type('input#username', 'agersant')
       .type('input#password', 'very_secret')
       .type('input#password_confirm', 'very_secret')
       .evaluate(() => document.querySelector('button.submit').disabled)
       .then(buttonDisabled => { expect(buttonDisabled).to.not.be.true })
+      .catch(done)
+
+    nightmare
       .click('button.submit')
       .then(() => { done() })
       .catch(done)
