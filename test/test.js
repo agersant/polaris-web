@@ -48,8 +48,8 @@ describe('First Time Flow', function() {
 
   it('can fill out the mount point form', done => {
     nightmare
-      .type('input#source', 'test/collection')
-      .type('input#name', 'test_music')
+      .insert('input#source', 'test/collection')
+      .insert('input#name', 'test_music')
       .evaluate(() => document.querySelector('button.submit').disabled)
       .then(buttonDisabled => { expect(buttonDisabled).to.not.be.true })
       .then(() => { done() })
@@ -75,9 +75,9 @@ describe('First Time Flow', function() {
 
   it('can fill out the user account form', done => {
     nightmare
-      .type('input#username', 'agersant')
-      .type('input#password', 'very_secret')
-      .type('input#password_confirm', 'very_secret')
+      .insert('input#username', 'agersant')
+      .insert('input#password', 'very_secret')
+      .insert('input#password_confirm', 'very_secret')
       .evaluate(() => document.querySelector('button.submit').disabled)
       .then(buttonDisabled => { expect(buttonDisabled).to.not.be.true })
       .then(() => { done() })
@@ -87,6 +87,7 @@ describe('First Time Flow', function() {
   it('transitions to main page', done => {
     nightmare
       .click('button.submit')
+      .wait(5000)
       .wait('main menu')
       .end()
       .then(() => { done() })
