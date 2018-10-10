@@ -87,10 +87,10 @@ describe('First Time Flow', function() {
   it('transitions to main page', done => {
     nightmare
       .click('button.submit')
-      .wait(5000)
+      .wait(3000)
       .wait('main menu')
       .end()
       .then(() => { done() })
       .catch(done)
-  })
+  }).timeout(5000)
 })
