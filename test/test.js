@@ -2,8 +2,8 @@ const Nightmare = require('nightmare')
 const chai = require('chai')
 const expect = chai.expect
 
-const testUser = testUser
-const testPassword = testPassword
+const testUser = 'testUser'
+const testPassword = 'testPassword'
 
 function auth(nightmare) {
   nightmare
