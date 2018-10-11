@@ -133,7 +133,7 @@ describe("Authentication", () => {
 
   it('can login', done => {
     nightmare
-      .insert('input[name="username"]', testUser)
+      .insert('input[name="password"]', '')
       .insert('input[name="password"]', testPassword)
       .click('input[type="submit"]')
       .wait('main menu')
@@ -149,7 +149,7 @@ describe('Browse Collection', () => {
   before(() => { auth(nightmare) })
   after(() => { nightmare.end() })
 
-  it('has top-level mount', () => {
+  it('has top-level mount', done => {
     nightmare
       .wait('.directory')
       .evaluate(() => document.querySelector('.directory').innerHTML)
@@ -158,7 +158,7 @@ describe('Browse Collection', () => {
       .catch(done)
   })
 
-  it('has explorer content', () => {
+  it('has explorer content', done => {
     nightmare
       .click('.directory')
       .wait('.explorerView')
@@ -177,7 +177,7 @@ describe('Browse Collection', () => {
       .catch(done)
   })
 
-  it('has discography content', () => {
+  it('has discography content', done => {
     nightmare
       .click('.directory')
       .wait('.discographyView')
@@ -197,7 +197,7 @@ describe('Browse Collection', () => {
       .catch(done)
   })
 
-  it('has album content', () => {
+  it('has album content', done => {
     nightmare
       .click('.discographyView li')
       .wait('.albumView')
@@ -209,7 +209,7 @@ describe('Browse Collection', () => {
       .catch(done)
   })
 
-  it('has breadcrumbs', () => {
+  it('has breadcrumbs', done => {
     nightmare
       .wait('breadcrumbs li:nth-of-type(4)')
       .click('breadcrumbs li')
@@ -218,7 +218,7 @@ describe('Browse Collection', () => {
       .catch(done)
   })
 
-  it('shows random albums', () => {
+  it('shows random albums', done => {
     nightmare
       .goto('http://localhost:5050#random')
       .wait('.discographyView li:nth-of-type(2)')
@@ -229,7 +229,7 @@ describe('Browse Collection', () => {
       .catch(done)
   })
 
-  it('shows recent albums', () => {
+  it('shows recent albums', done => {
     nightmare
       .goto('http://localhost:5050#recent')
       .wait('.discographyView li:nth-of-type(2)')
