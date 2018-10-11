@@ -6,7 +6,7 @@ const testUser = testUser
 const testPassword = testPassword
 
 function auth(nightmare) {
-  await nightmare
+  nightmare
     .goto('http://localhost:5050')
     .insert('input[name="username"]', testUser)
     .insert('input[name="password"]', testPassword)
