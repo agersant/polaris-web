@@ -173,8 +173,8 @@ describe('Browse Collection', () => {
         return [directory1, directory2]
       })
       .then(directoryNames => {
-        expect(directory1).to.equal('Khemmis')
-        expect(directory2).to.equal('Tobokegao')
+        expect(directoryNames[0]).to.equal('Khemmis')
+        expect(directoryNames[1]).to.equal('Tobokegao')
       })
       .then(() => { done() })
       .catch(done)
@@ -190,11 +190,11 @@ describe('Browse Collection', () => {
       .evaluate(() => {
         var title = document.querySelector('.details .title').innerHTML
         var year = document.querySelector('.details .year').innerHTML
-        return [title, year]
+        return {title: title, year: year}
       })
       .then(data => {
-        expect(title).to.equal('Hunter')
-        expect(year).to.equal('2016')
+        expect(data.title).to.equal('Hunter')
+        expect(data.year).to.equal('2016')
       })
       .then(() => { done() })
       .catch(done)
