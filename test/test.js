@@ -193,7 +193,7 @@ describe('Browse Collection', () => {
         return {title: title, year: year}
       })
       .then(data => {
-        expect(data.title).to.equal('Hunter')
+        expect(data.title).to.equal('Hunted')
         expect(data.year).to.equal('2016')
       })
       .then(() => { done() })
@@ -204,7 +204,7 @@ describe('Browse Collection', () => {
     nightmare
       .click('.discographyView li')
       .wait('.albumView')
-      .wait('.arist')
+      .wait('.artist')
       .wait('.title')
       .wait('.tracklist')
       .wait('.tracklist li:nth-of-type(5)')
@@ -227,7 +227,7 @@ describe('Browse Collection', () => {
       .wait('.discographyView li:nth-of-type(2)')
       .wait('browser h2')
       .evaluate(() => document.querySelector('browser h2').innerHTML)
-      .then(title => { expect(title).to.equal('Random') })
+      .then(title => { expect(title).to.include('Random') })
       .then(() => { done() })
       .catch(done)
   })
@@ -238,7 +238,7 @@ describe('Browse Collection', () => {
       .wait('.discographyView li:nth-of-type(2)')
       .wait('browser h2')
       .evaluate(() => document.querySelector('browser h2').innerHTML)
-      .then(title => { expect(title).to.equal('Recent') })
+      .then(title => { expect(title).to.include('Recent') })
       .then(() => { done() })
       .catch(done)
   })
