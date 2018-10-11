@@ -8,6 +8,9 @@ const testPassword = 'testPassword'
 function auth(nightmare) {
   nightmare
     .goto('http://localhost:5050')
+    .wait('input[name="username"]')
+    .wait('input[name="password"]')
+    .wait('input[type="submit"]')
     .insert('input[name="username"]', testUser)
     .insert('input[name="password"]', testPassword)
     .click('input[type="submit"]')
