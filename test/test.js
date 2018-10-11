@@ -204,7 +204,7 @@ describe('Browse Collection', () => {
     nightmare
       .click('.discographyView li')
       .wait('.albumView')
-      .wait('.tracklist li:nth-of-type(5)')
+      .wait('.trackList li:nth-of-type(5)')
       .then(() => { done() })
       .catch(done)
   })

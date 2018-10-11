@@ -29,8 +29,8 @@ before_script:
   - cd polaris
   - cargo build
   - cargo run -- -d test/db.sqlite -w .. &
+  - sleep 5
   - cd ..
 
 script:
-  - sleep 5
   - mocha
