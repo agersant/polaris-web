@@ -125,11 +125,11 @@
 		}
 
 		queueDirectory(path) {
-			this.queueURL('api/flatten/' + path);
+			this.queueURL('api/flatten/' + encodeURIComponent(path));
 		}
 
 		queuePlaylist(name) {
-			this.queueURL('api/playlist/read/' + name);
+			this.queueURL('api/playlist/read/' + encodeURIComponent(name));
 			this.onPlaylistQueued(name);
 		}
 
