@@ -249,7 +249,7 @@
 			var playlistName = matches ? matches[1] : "";
 			playlistName = decodeURIComponent(playlistName);
 
-			fetch("api/playlist/read/" + encodeURIComponent(playlistName), { credentials: "same-origin" })
+			fetch("api/playlist/" + encodeURIComponent(playlistName), { credentials: "same-origin" })
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();

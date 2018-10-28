@@ -129,7 +129,7 @@
 		}
 
 		queuePlaylist(name) {
-			this.queueURL('api/playlist/read/' + encodeURIComponent(name));
+			this.queueURL('api/playlist/' + encodeURIComponent(name));
 			this.onPlaylistQueued(name);
 		}
 

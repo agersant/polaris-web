@@ -34,14 +34,13 @@
 			e.stopPropagation();
 
 			var playlist = {};
-			playlist.name = this.playlistName;
 			playlist.tracks = this.opts.tracks.map(function(t) {
 				return t.info.path;
 			});
 
 			this.tags["async-button"].setState(this.applyStates.saving);
 
-			fetch("api/playlist/",
+			fetch("api/playlist/" + encodeURIComponent(this.playlistName),
 				{	method: "PUT"
 				,	credentials: "same-origin"
 				,	body: JSON.stringify(playlist)
