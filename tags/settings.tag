@@ -15,12 +15,15 @@
 
 	<script>
 
-		save(formData, url) {
+		save(data, url) {
 			eventBus.trigger("settings:submissionStatusUpdate", "applying");
 			fetch(url,
 				{	method: "PUT"
 				,	credentials: "same-origin"
-				,	body: formData
+				,	body: JSON.stringify(data)
+				,	headers: {
+    					'Content-Type': 'application/json'
+  					}
 				}
 			)
 			.then(function(res) {
@@ -42,15 +45,11 @@
 		}
 
 		saveConfig(config) {
-			var data = new FormData();
-			data.append( "config", JSON.stringify(config) );
-			this.save(data, "api/settings/");
+			this.save(config, "api/settings/");
 		}
 
 		savePreferences(preferences) {
-			var data = new FormData();
-			data.append("preferences", JSON.stringify(preferences));
-			this.save(data, "api/preferences/");
+			this.save(preferences, "api/preferences/");
 		}
 
 		eventBus.on("settings:submitConfig", this.saveConfig);

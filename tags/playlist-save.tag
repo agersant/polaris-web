@@ -39,14 +39,15 @@
 				return t.info.path;
 			});
 
-			var data = new FormData();
-			data.append( "playlist", JSON.stringify( playlist ) );
 			this.tags["async-button"].setState(this.applyStates.saving);
 
 			fetch("api/playlist/",
 				{	method: "PUT"
 				,	credentials: "same-origin"
-				,	body: data
+				,	body: JSON.stringify(playlist)
+				,	headers: {
+    					'Content-Type': 'application/json'
+  					}
 				}
 			)
 			.then(function(res) {
