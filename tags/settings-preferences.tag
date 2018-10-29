@@ -59,7 +59,7 @@
 					</body>
 				</html>`
 			);
-			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent) + "&username=" + username;
+			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent);
 			var url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
 			var windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
 			var lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
