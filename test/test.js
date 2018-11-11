@@ -5,6 +5,8 @@ const expect = chai.expect
 const testUser = 'testUser'
 const testPassword = 'testPassword'
 
+function noop() { }
+
 function auth(nightmare) {
   nightmare
     .goto('http://localhost:5050')
@@ -20,7 +22,7 @@ function auth(nightmare) {
 describe('First Time Flow', () => {
 
   let nightmare = new Nightmare()
-  after(() => { nightmare.end() })
+  after(() => { nightmare.end(noop) })
 
   it('loads without error', done => {
     nightmare
@@ -114,7 +116,7 @@ describe('First Time Flow', () => {
 describe("Authentication", () => {
 
   let nightmare = new Nightmare()
-  after(() => { nightmare.end() })
+  after(() => { nightmare.end(noop) })
 
   it('loads the login form', done => {
     nightmare
@@ -150,7 +152,7 @@ describe('Browse Collection', () => {
 
   let nightmare = new Nightmare()
   before(() => { auth(nightmare) })
-  after(() => { nightmare.end() })
+  after(() => { nightmare.end(noop) })
 
   it('has top-level mount', done => {
     nightmare
