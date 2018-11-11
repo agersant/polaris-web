@@ -1,6 +1,5 @@
 const Nightmare = require('nightmare')
 const chai = require('chai')
-const wtf = require('wtfnode')
 const expect = chai.expect
 
 const testUser = 'testUser'
@@ -21,7 +20,7 @@ function auth(nightmare) {
 describe('First Time Flow', () => {
 
   let nightmare = new Nightmare()
-  after(() => { nightmare.end() })
+  after(() => { nightmare.end().resolve() })
 
   it('loads without error', done => {
     nightmare
@@ -115,7 +114,7 @@ describe('First Time Flow', () => {
 describe("Authentication", () => {
 
   let nightmare = new Nightmare()
-  after(() => { nightmare.end() })
+  after(() => { nightmare.end().resolve() })
 
   it('loads the login form', done => {
     nightmare
@@ -151,10 +150,7 @@ describe('Browse Collection', () => {
 
   let nightmare = new Nightmare()
   before(() => { auth(nightmare) })
-  after(() => {
-    nightmare.end()
-    wtf.dump()
-  })
+  after(() => { nightmare.end().resolve() })
 
   it('has top-level mount', done => {
     nightmare
