@@ -1,5 +1,6 @@
 const Nightmare = require('nightmare')
 const chai = require('chai')
+const wtf = require('wtfnode')
 const expect = chai.expect
 
 const testUser = 'testUser'
@@ -150,7 +151,10 @@ describe('Browse Collection', () => {
 
   let nightmare = new Nightmare()
   before(() => { auth(nightmare) })
-  after(() => { nightmare.end() })
+  after(() => {
+    nightmare.end()
+    wtf.dump()
+  })
 
   it('has top-level mount', done => {
     nightmare
