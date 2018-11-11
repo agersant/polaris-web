@@ -25,7 +25,7 @@ install:
 
 before_script:
   # Build and run Polaris server
-  - git clone http://github.com/agersant/polaris
+  - git clone -b rocket http://github.com/agersant/polaris
   - cd polaris
   - cargo build
   - cargo run -- -d test/db.sqlite -w .. &
