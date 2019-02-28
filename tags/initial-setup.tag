@@ -52,12 +52,13 @@
 		}.bind(this));
 
 		commit(final) {
-			var data = new FormData();
-			data.append("config", JSON.stringify(this.config));
 			return fetch("api/settings/",
 				{	method: "PUT"
 				,	credentials: "same-origin"
-				,	body: data
+				,	body: JSON.stringify(this.config)
+				,	headers: {
+    					'Content-Type': 'application/json'
+  					}
 				}
 			)
 			.then(function(res) {

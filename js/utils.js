@@ -35,9 +35,9 @@ var utils = (function() {
 	var tryLogin = function(username, password) {
 		return fetch("api/auth", {
 			method: "POST",
-			body: "username=" + username + "&password=" + password,
+			body: JSON.stringify({username: username, password: password}),
 			headers: {
-				"Content-type": "application/x-www-form-urlencoded",
+				"Content-type": "application/json",
 			},
 			credentials: 'same-origin',
 		})

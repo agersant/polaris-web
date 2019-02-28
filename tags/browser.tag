@@ -227,7 +227,7 @@
 			var path = matches ? matches[1] : "";
 			path = decodeURIComponent(path);
 
-			fetch("api/browse/" + path, { credentials: "same-origin" })
+			fetch("api/browse/" + encodeURIComponent(path), { credentials: "same-origin" })
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -249,7 +249,7 @@
 			var playlistName = matches ? matches[1] : "";
 			playlistName = decodeURIComponent(playlistName);
 
-			fetch("api/playlist/read/" + playlistName, { credentials: "same-origin" })
+			fetch("api/playlist/" + encodeURIComponent(playlistName), { credentials: "same-origin" })
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -271,7 +271,7 @@
 			var query = matches ? matches[1] : "";
 			query = decodeURIComponent(query);
 
-			fetch("api/search/" + query, { credentials: "same-origin" })
+			fetch("api/search/" + encodeURIComponent(query), { credentials: "same-origin" })
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -336,7 +336,7 @@
 		}
 
 		onDeletePlaylist(e) {
-			fetch("api/playlist/" + this.playlistName,
+			fetch("api/playlist/" + encodeURIComponent(this.playlistName),
 				{	method: "DELETE"
 				,	credentials: "same-origin"
 				}

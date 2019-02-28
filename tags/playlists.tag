@@ -11,11 +11,11 @@
 	</div>
 
 	<script>
-		
+
 		this.playlists = [];
 
 		load() {
-			fetch("api/playlist/list", { credentials: "same-origin" })
+			fetch("api/playlists", { credentials: "same-origin" })
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				if (this.dead) {

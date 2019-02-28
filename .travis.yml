@@ -18,14 +18,14 @@ install:
   - npm install chai
   - npm install nightmare
   # Install Rust
-  - curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=stable -y
+  - curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=nightly -y
   - export PATH=$HOME/.cargo/bin:$PATH
   - rustc --version
   - cargo --version
 
 before_script:
   # Build and run Polaris server
-  - git clone http://github.com/agersant/polaris
+  - git clone -b rocket http://github.com/agersant/polaris
   - cd polaris
   - cargo build
   - cargo run -- -d test/db.sqlite -w .. &
