@@ -53,7 +53,7 @@
 						<li each={ items } >
 							<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
 							<ol class="discContent">
-								<li value={ fields.track_number } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+								<li value={ fields.track_number || 0 } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 									{ fields.title }
 									<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
 										({ fields.artist })
@@ -172,6 +172,9 @@
 					discs.push(disc);
 				}
 				disc.songs.push(items[i]);
+			}
+			for (var i = 0; i < discs.length; i++) {
+				discs[i].songs.sort(function(a, b){ return (a.fields.track_number || 0) - (b.fields.track_number || 0); });
 			}
 			discs.sort(function(a,b){ return a.discNumber - b.discNumber; });
 			return discs;
