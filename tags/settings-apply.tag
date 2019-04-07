@@ -1,5 +1,5 @@
 <settings-apply>
-	<async-button states={ states } submit="true" disabled={ opts.disabled }/>
+	<async-button states={ states } submit={ true } disabled={ opts.disabled }/>
 	<script>
 		this.states = {
 			ready: { name: "Apply", init: true },
@@ -12,7 +12,7 @@
 			var newState = this.states[s];
 			this.tags["async-button"].setState(newState);
 		}.bind(this));
-		
+
 		this.on("unmount", function(){
 			eventBus.off("settings:submissionStatusUpdate");
 		});

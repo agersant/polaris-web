@@ -15,7 +15,7 @@
 			<label for="password">Password</label><input type="password" id="password" oninput={ onPasswordInput } value={ ydns.password }/>
 			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
 		</div>
-		<settings-apply onclick={ save }/>
+		<settings-apply/>
 	</form>
 
 	<script>

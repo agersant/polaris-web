@@ -8,7 +8,7 @@
 				<input type="text" id="playlist_name" value={ playlistName } oninput={ onNameInput } placeholder="Test"/>
 			</label>
 		</div>
-		<async-button ref="save_playlist_confirm" submit="true" states={ applyStates } onclick={ savePlaylist } />
+		<async-button ref="save_playlist_confirm" submit={ true } states={ applyStates } action={ savePlaylist } />
 	</form>
 
 	<script>

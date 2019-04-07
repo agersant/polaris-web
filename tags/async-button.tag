@@ -1,5 +1,5 @@
 <async-button>
-	<button disabled={ opts.disabled || currentState.disabled } class={ submit: opts.submit, success: currentState.success, failure: currentState.failure }>
+	<button onClick={ opts.action } disabled={ opts.disabled || currentState.disabled } type={ opts.submit ? "submit" : "button" } class={ submit: opts.submit, success: currentState.success, failure: currentState.failure }>
 		<div class="status">
 			<span each={ state in opts.states } class={ tick-in: currentState == state && canTickIn, tick-out: currentState != state }>
 				{ state.name }

@@ -25,9 +25,9 @@
 			<label for="sleep_duration">Scan collection every
 				<input type="text" id="sleep_duration" value={ Math.round(config.reindex_every_n_seconds / 60) } oninput={ onSleepInput } placeholder=""/> minutes
 			</label>
-			<async-button ref="reindex" states={ reindexStates } onClick={ reindex }/>
+			<async-button ref="reindex" submit={ false } states={ reindexStates } action={ reindex }/>
 		</div>
-		<settings-apply disabled={ !isPatternValid( config.album_art_pattern ) } onclick={ save }/>
+		<settings-apply disabled={ !isPatternValid(config.album_art_pattern) } />
 	</form>
 
 	<script>

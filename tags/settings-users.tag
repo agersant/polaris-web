@@ -38,7 +38,7 @@
 			</ul>
 			<button onClick={ addUser }>Add user</button>
 		</div>
-		 <settings-apply disabled={ !validatePasswords() } onclick={ save }/>
+		 <settings-apply disabled={ !validatePasswords() } />
 	</form>
 
 	<script>
