@@ -91,6 +91,7 @@
 			var playlistTrack = {};
 			playlistTrack.info = track;
 			this.tracks.push(playlistTrack);
+			eventBus.trigger("playlist:queued", playlistTrack);
 		}
 
 		queueTrack(track) {

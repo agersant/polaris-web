@@ -55,6 +55,12 @@
 			eventBus.trigger("player:playing", this.currentTrack);
 		}
 
+		onTrackQueued(newTrack) {
+			if (!this.currentTrack) {
+				this.jumpTo(newTrack);
+			}
+		}
+
 		play(track) {
 			this.jumpTo(track);
 			this.refs.htmlAudio.play();
@@ -221,6 +227,7 @@
 			this.adjusting = null;
 		}.bind(this));
 
+		eventBus.on("playlist:queued", this.onTrackQueued);
 		eventBus.on("playlist:jumpTo", this.jumpTo);
 		eventBus.on("playlist:play", this.play);
 	</script>
