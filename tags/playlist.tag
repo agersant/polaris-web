@@ -3,12 +3,14 @@
 	<div class="paneHeader">
 		<h2>Playlist</h2>
 		<div class="playlistOperations">
-
-			<span class="noselect" onclick={ onClickSave }><i class="material-icons md-18">save</i>
+			<span class="noselect save" onclick={ onClickSave }>
+				<i class="material-icons md-18">save</i>
 				<playlist-save if={ saving } tracks={ tracks } name={ playlistName } />
 			</span>
-
-			<span class="noselect" onclick={ onClickClear }><i class="material-icons md-18">delete</i></span><span class="playbackOrder">
+			<span class="noselect delete" onclick={ onClickClear }>
+				<i class="material-icons md-18">delete</i>
+			</span>
+			<span class="playbackOrder">
 				Order:
 				<select ref="playbackOrder" onchange={ onChangePlaybackOrder }>
 					<option value="default">Default</option>
@@ -288,23 +290,20 @@
 			overflow-anchor: none;
 		}
 
-		.playbackOrder {
-			color: #DDD;
-		}
-
 		.playlistOperations {
-			height: 20px;
+			font-size: 0; /*Prevent whitespace between span tags to be rendered*/
 		}
 
-		.playlistOperations span {
+
+		.playlistOperations .save, .playlistOperations .delete {
+			cursor: pointer;
+			padding-right: 8px;
+		}
+
+		.playlistOperations span.playbackOrder {
+			color: #AAA;
 			vertical-align: top;
 			font-size: 0.875rem;
-		}
-
-		.playlistOperations > span {
-			cursor: pointer;
-			color: #AAA;
-			padding-right: 8px;
 		}
 
 		.track {
