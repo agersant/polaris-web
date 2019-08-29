@@ -14,7 +14,7 @@
 				<button onclick={ onQueueAll } class="small" if={items.length > 0}>Queue All</button><button if={ tab == "playlist" } class="danger small" onclick={ onDeletePlaylist }>Delete</button>
 			</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-				<div if={ variant == "Directory" } class="directory">{ fields.name }</div>
+				<div if={ variant == "Directory" } class="directory"><i class="material-icons">folder</i>{ fields.name }</div>
 				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
 			</li>
 		</ul>
@@ -398,9 +398,10 @@
 			margin-bottom: 20px;
 		}
 
-		.explorerView .directory:before {
-			content: "🗀";
+		.explorerView .directory .material-icons {
+			vertical-align: bottom;
 			margin-right: 5px;
+			padding-bottom: 3px;
 		}
 
 		.explorerView .directory, .explorerView .song {
