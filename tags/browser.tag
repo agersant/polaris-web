@@ -15,7 +15,7 @@
 			</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory"><i class="material-icons">folder</i>{ fields.name }</div>
-				<div if={ variant == "Song" } class="song">{ fields.artist } - { fields.track_number }. { fields.title }</div>
+				<div if={ variant == "Song" } class="song">{ formatExplorerTrackDetails(this) }</div>
 			</li>
 		</ul>
 
@@ -53,8 +53,8 @@
 						<li each={ items } >
 							<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
 							<ol class="discContent">
-								<li value={ fields.track_number || 0 } class="song" draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-									{ fields.title }
+								<li value={ fields.track_number } class={ song: true, no-track-number: !fields.track_number } draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+									{ fields.title || utils.stripFileExtension(utils.getPathTail(fields.path)) }
 									<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
 										({ fields.artist })
 									</span>
@@ -133,7 +133,7 @@
 				}
 			}
 
-			this.header = this.header || this.getPathTail(this.path);
+			this.header = this.header || utils.getPathTail(this.path) || "All Music";
 
 			if (this.tab != "playlist") {
 				if (this.tab != "search") {
@@ -147,16 +147,6 @@
 			}
 
 			return "explorer";
-		}
-
-		getPathTail(path) {
-			if (!path) {
-				return "All Music";
-			}
-			path = path.replace(/\\/g, "/");
-			var slices = path.split("/");
-			slices = slices.filter(function(s) { return s.length > 0; });
-			return slices[slices.length - 1] || "";
 		}
 
 		splitAlbumByDisc(items) {
@@ -348,6 +338,25 @@
 				route("playlists/");
 			});
 		}
+
+		formatExplorerTrackDetails(item) {
+			details = "";
+			if (item.fields.artist) {
+				details += item.fields.artist;
+				details += " - ";
+			}
+			if (item.fields.track_number) {
+				details += item.fields.track_number;
+				details += ". ";
+
+			}
+			if (item.fields.title) {
+				details += item.fields.title;
+			} else {
+				details += utils.stripFileExtension(utils.getPathTail(item.fields.path));
+			}
+			return details;
+		}
 	</script>
 
 	<style>
@@ -514,6 +523,10 @@
 			border-bottom: 1px solid #DDD;
 			list-style-type: unset;
 			list-style-position: outside;
+		}
+
+		.albumView li.song.no-track-number {
+			list-style-type: none;
 		}
 
 		.albumView .trackArtist {

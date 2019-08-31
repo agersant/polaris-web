@@ -26,8 +26,8 @@
 
 	<div class="currentTrack" if="{ currentTrack }">
 		<div class="trackInfo">
-			<div class="primary">{ currentTrack.info.artist } - { currentTrack.info.title }</div>
-			<div class="secondary">{ currentTrack.info.album } ({currentTrack.info.year}) #{ currentTrack.info.track_number }</div>
+			<div class="primary">{ formatTrackInfoPrimary(currentTrack) }</div>
+			<div class="secondary">{ formatTrackInfoSecondary(currentTrack) }</div>
 		</div>
 		<div class="seekBar" ref="seekInput" onmousedown={ seekMouseDown }>
 			<div class="fill" style="width: { 100 * trackProgress }%"/>
@@ -131,6 +131,24 @@
 			return minutes + ":" + seconds;
 		}
 
+		formatTrackInfoPrimary(track) {
+			result = track.info.artist ? track.info.artist : "Unknown Artist";
+			result += " - ";
+			result += track.info.title || utils.stripFileExtension(utils.getPathTail(track.info.path));
+			return result;
+		}
+
+		formatTrackInfoSecondary(track) {
+			result = track.info.album || "Unknown Album";
+			if (track.info.year) {
+				result += " (" + track.info.year + ")";
+			}
+			if (track.info.track_number) {
+				result += " #" + track.info.track_number;
+			}
+			return result;
+		}
+
 		updateScrobble() {
 			var currentTime = this.refs.htmlAudio.currentTime;
 			var duration = this.refs.htmlAudio.duration;
@@ -181,7 +199,7 @@
 			}.bind(this));
 
 			this.refs.htmlAudio.addEventListener('error', function(e) {
-				var title = this.currentTrack.info.title || "Unknown Song";
+				var title = this.formatTrackInfoPrimary(this.currentTrack);
 				var errorText = "'" + title + "' could not be played because ";
 				var artwork = this.currentTrack.info.artworkURL || null;
 

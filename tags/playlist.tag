@@ -29,9 +29,9 @@
 				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks.slice( scrollOffset, scrollOffset + pageSize ) } no-reorder onclick={ onClickTrack }>
 					<td class="remove"><div class="remove noselect" onclick={ onClickRemoveTrack }>[-]</div></td>
 					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
-					<td class="text">{ track.info.album_artist || track.info.artist } - { track.info.album } ({ track.info.year })</td>
+					<td class="text">{ formatTrackContext(track) }</td>
 					<td class="text song">
-						{ track.info.track_number }. { track.info.title }
+						{ formatTrackDetails(track) }
 						<span class="trackArtist" if={ track.info.album_artist && track.info.artist && track.info.album_artist != track.info.artist }>
 							({ track.info.artist })
 						</span>
@@ -261,6 +261,35 @@
 			this.playlistName = playlistName;
 			this.saving = false;
 			this.update();
+		}
+
+		formatTrackContext(track) {
+			context = "";
+			if (track.info.album_artist || track.info.artist) {
+				context += track.info.album_artist || track.info.artist;
+			} else {
+				context += "Unknown Artist";
+			}
+			context += " - ";
+			context += track.info.album ? track.info.album : "Unknown Album";
+			if (track.info.year) {
+				context += " (" + track.info.year + ")";
+			}
+			return context;
+		}
+
+		formatTrackDetails(track) {
+			details = "";
+			if (track.info.track_number)  {
+				details += track.info.track_number;
+				details += ". ";
+			}
+			if (track.info.title) {
+				details += track.info.title;
+			} else {
+				details += utils.stripFileExtension(utils.getPathTail(track.info.path));
+			}
+			return details;
 		}
 
 		eventBus.on("browser:queueTrack", this.queueTrack);
