@@ -19,16 +19,13 @@ function auth(nightmare) {
     .wait('main menu')
 }
 
-describe('First Time Flow', () => {
+describe('First Time Flow', function () {
 
   let nightmare = new Nightmare()
   after(() => { nightmare.end(noop) })
 
-  it('loads without error', done => {
-    nightmare
-      .goto('http://localhost:5050')
-      .then(result => { done() })
-      .catch(done)
+  it('loads without error', async function () {
+    await nightmare.goto('http://localhost:5050')
   })
 
   it('has a welcome message', done => {
