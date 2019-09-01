@@ -28,9 +28,12 @@ before_script:
   - git clone http://github.com/agersant/polaris
   - cd polaris
   - cargo build
-  - cargo run -- -d test/db.sqlite -w .. &
+  - cargo run -- -d test/db.sqlite -w .. -f  > polaris_test.log 2>&1 &
   - sleep 5
   - cd ..
 
 script:
   - mocha
+
+after_failure:
+  - cat polaris/polaris_test.log
