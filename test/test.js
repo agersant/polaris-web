@@ -21,8 +21,6 @@ function auth(nightmare) {
 
 describe('First Time Flow', () => {
 
-  this.timeout('30s')
-
   let nightmare = new Nightmare()
   after(() => { nightmare.end(noop) })
 
