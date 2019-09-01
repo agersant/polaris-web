@@ -21,6 +21,8 @@ function auth(nightmare) {
 
 describe('First Time Flow', () => {
 
+  this.timeout('30s')
+
   let nightmare = new Nightmare()
   after(() => { nightmare.end(noop) })
 
@@ -192,7 +194,7 @@ describe('Browse Collection', () => {
       .evaluate(() => {
         var title = document.querySelector('.details .title').innerHTML
         var year = document.querySelector('.details .year').innerHTML
-        return {title: title, year: year}
+        return { title: title, year: year }
       })
       .then(data => {
         expect(data.title).to.equal('Hunted')
