@@ -29,7 +29,7 @@ before_script:
   - cd polaris
   - cargo build
   - cargo run -- -d test/db.sqlite -w .. &
-  - sleep 20
+  - sleep 5
   - cd ..
 
 script:
