@@ -74,6 +74,7 @@ describe('First Time Flow', function () {
   it('transitions to user setup', done => {
     nightmare
       .click('button.submit')
+      .wait(3000)
       .evaluate(() => document.querySelector('h2').innerHTML)
       .then(title => { expect(title).to.equal('User Account') })
       .then(() => { done() })
