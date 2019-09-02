@@ -2,10 +2,8 @@ language: node_js
 node_js:
   - "node"
 
-addons:
-    apt:
-      packages:
-        - xvfb
+services:
+  - xvfb
 
 before_install:
   # Virtual display to make Electron happy
