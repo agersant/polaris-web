@@ -9,7 +9,7 @@ function noop() { }
 
 function auth(nightmare) {
   nightmare
-    .goto('http://localhost:8000')
+    .goto('http://localhost:5050')
     .wait('input[name="username"]')
     .wait('input[name="password"]')
     .wait('input[type="submit"]')
@@ -25,7 +25,7 @@ describe('First Time Flow', function () {
   after(() => { nightmare.end(noop) })
 
   it('loads without error', async function () {
-    await nightmare.goto('http://localhost:8000')
+    await nightmare.goto('http://localhost:5050')
   })
 
   it('has a welcome message', done => {
@@ -117,7 +117,7 @@ describe("Authentication", () => {
 
   it('loads the login form', done => {
     nightmare
-      .goto('http://localhost:8000')
+      .goto('http://localhost:5050')
       .wait('form')
       .then(result => { done() })
       .catch(done)
@@ -219,7 +219,7 @@ describe('Browse Collection', () => {
 
   it('shows random albums', done => {
     nightmare
-      .goto('http://localhost:8000#random')
+      .goto('http://localhost:5050#random')
       .wait('.discographyView li:nth-of-type(2)')
       .wait('browser h2')
       .evaluate(() => document.querySelector('browser h2').innerHTML)
@@ -230,7 +230,7 @@ describe('Browse Collection', () => {
 
   it('shows recent albums', done => {
     nightmare
-      .goto('http://localhost:8000#recent')
+      .goto('http://localhost:5050#recent')
       .wait('.discographyView li:nth-of-type(2)')
       .wait('browser h2')
       .evaluate(() => document.querySelector('browser h2').innerHTML)

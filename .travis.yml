@@ -21,7 +21,7 @@ before_script:
   - git clone http://github.com/agersant/polaris
   - cd polaris
   - cargo build
-  - cargo run -- -p 8000 -d test/db.sqlite -w .. -f  > polaris_test.log 2>&1 &
+  - cargo run -- -d test/db.sqlite -w .. -f  > polaris_test.log 2>&1 &
   - sleep 5
   - cd ..
 
