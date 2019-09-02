@@ -27,7 +27,7 @@ before_script:
   - cd ..
 
 script:
-  - xvfb-run --server-args="-screen 0 1024x768x24" mocha
+  - DEBUG=nightmare mocha
 
 after_failure:
   - cat polaris/polaris_test.log
