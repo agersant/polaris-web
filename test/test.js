@@ -156,7 +156,7 @@ describe('Browse Collection', () => {
     nightmare
       .wait('.directory')
       .evaluate(() => document.querySelector('.directory').innerHTML)
-      .then(directoryName => { expect(directoryName).to.equal('test_music') })
+      .then(directoryName => { expect(directoryName).to.contain('test_music') })
       .then(() => { done() })
       .catch(done)
   })
@@ -173,8 +173,8 @@ describe('Browse Collection', () => {
         return [directory1, directory2]
       })
       .then(directoryNames => {
-        expect(directoryNames[0]).to.equal('Khemmis')
-        expect(directoryNames[1]).to.equal('Tobokegao')
+        expect(directoryNames[0]).to.contain('Khemmis')
+        expect(directoryNames[1]).to.contain('Tobokegao')
       })
       .then(() => { done() })
       .catch(done)
