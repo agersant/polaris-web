@@ -6,6 +6,11 @@ node_js:
 services:
   - xvfb
 
+addons:
+  apt:
+    packages:
+      - libgconf-2-4
+
 install:
   # Install headless browser
   - npm install mocha
