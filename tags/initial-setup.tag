@@ -21,9 +21,11 @@
 			this.config.mount_dirs = [mountPoint];
 			this.commit()
 			.then(function(res) {
-				fetch("api/trigger_index/", { method: "POST", credentials: "same-origin" });
+				fetch("api/trigger_index/", { method: "POST", credentials: "same-origin" })
+				.then(function() {
+					eventBus.trigger("initialSetupNext");
+				});
 			});
-			eventBus.trigger("initialSetupNext");
 		}.bind(this));
 
 		eventBus.on("initialSetupUser", function(user) {
