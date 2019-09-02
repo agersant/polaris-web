@@ -27,7 +27,7 @@ before_script:
   - cd ..
 
 script:
-  - DEBUG=nightmare mocha
+  - DEBUG=nightmare:*,electron:* mocha
 
 after_failure:
   - cat polaris/polaris_test.log
