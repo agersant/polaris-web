@@ -5,11 +5,6 @@ node_js:
 services:
   - xvfb
 
-before_install:
-  # Virtual display to make Electron happy
-  - export DISPLAY=':99.0'
-  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
 install:
   # Install headless browser
   - npm install mocha
