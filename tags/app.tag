@@ -4,4 +4,5 @@
 		<route path="auth"><auth/></route>
 		<route path=".."><main/></route>
 	</router>
+	<window-title-updater/>
 </app>
