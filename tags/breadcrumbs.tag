@@ -11,19 +11,28 @@
 		this.components = [];
 
 		setCurrentPath(path) {
-			path = path.replace(/\\/g, "/");
-			var slices = path.split("/");
-			slices = slices.filter(function(s) { return s.length > 0; });
-			var components = slices.map(function(slice, index) {
-				return {
-					name: slice,
-					path: slices.slice(0, index + 1).join("/"),
-				};
-			});
-			components.unshift({
+			var components = [{
 				name: "All Music",
 				path: "",
-			});
+			}];
+
+			var separatorMatcher = /[\\/]/g;
+			var previousLastIndex = 0;
+			while (separatorMatcher.test(path)) {
+				components.push({
+					name: path.substring(previousLastIndex, separatorMatcher.lastIndex - 1),
+					path: path.substring(0, separatorMatcher.lastIndex - 1),
+				});
+				previousLastIndex = separatorMatcher.lastIndex;
+			}
+
+			if (path) {
+				components.push({
+					name: path.substring(previousLastIndex),
+					path: path,
+				});
+			}
+
 			this.components = components;
 			this.update();
 		}
