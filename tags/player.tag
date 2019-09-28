@@ -2,7 +2,7 @@
 
 	<audio ref="htmlAudio" controls src="{ trackURL }"/>
 
-	<div  if="{ currentTrack }" class="controls noselect">
+	<div if="{ currentTrack }" class="controls noselect">
 		<div class="playback">
 			<div class="control previous" onclick={ skipPrevious }><i class="material-icons md-18">skip_previous</i></div>
 			<div if={ paused } class="control play" onclick={ togglePlay }><i class="material-icons">play_arrow</i></div>
