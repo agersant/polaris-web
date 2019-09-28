@@ -36,6 +36,7 @@
 							({ track.info.artist })
 						</span>
 					</td>
+					<td class="text duration">{ formatTrackDuration(track) }</td>
 				</tr>
 			</tbody>
 		</table>
@@ -292,6 +293,18 @@
 			return details;
 		}
 
+		formatTrackDuration(track) {
+			var durationInSeconds = parseInt(track.info.duration, 10);
+			if (isNaN(durationInSeconds)) {
+				return "";
+			}
+			var date = new Date(null);
+			date.setSeconds(durationInSeconds);
+			var formatted = date.toISOString().substr(11, 8);
+			formatted = formatted.replace(/^[0:]{1,4}/, "");
+			return formatted;
+		}
+
 		eventBus.on("browser:queueTrack", this.queueTrack);
 		eventBus.on("browser:queueTracks", this.queueTracks);
 		eventBus.on("browser:queueDirectory", this.queueDirectory);
@@ -383,12 +396,12 @@
 			padding-right: 30px;
 		}
 
-		td.song {
-			width: 65%;
-		}
-
 		td.song .trackArtist {
 			color: #AAA;
+		}
+
+		td.duration {
+			text-align: right;
 		}
 
 		tr.nowPlaying td.song .trackArtist {
