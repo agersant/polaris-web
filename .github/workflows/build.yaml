@@ -26,7 +26,7 @@ jobs:
       with:
         command: run
         toolchain: nightly
-        args: --manifest-path polaris/Cargo.toml -- -d test/db.sqlite -w .
+        args: --release --manifest-path polaris/Cargo.toml -- -d test/db.sqlite -w .
     - name: Run Tests
       env:
         DEBUG: nightmare:*,electron:*
