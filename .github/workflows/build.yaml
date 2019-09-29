@@ -1,0 +1,30 @@
+name: Build
+on: push
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+    - run: |
+      npm install mocha
+      npm install chai
+      npm install nightmare
+      sudo apt-get install xvfp
+      git clone http://github.com/agersant/polaris
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        override: true
+    - uses: actions-rs/cargo@v1
+      with:
+        command: run
+        toolchain: nightly
+        args: --manifest-path polaris/Cargo.toml -- -d test/db.sqlite -w .
+    - run: |
+      sleep 5
+      xvfb-run mocha
+      env: DEBUG=nightmare:*,electron:*
