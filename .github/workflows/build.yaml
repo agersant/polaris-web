@@ -23,10 +23,11 @@ jobs:
       run: git clone http://github.com/agersant/polaris
     - name: Build and Run Polaris
       uses: actions-rs/cargo@v1
+      working-directory: polaris
       with:
         command: run
         toolchain: nightly
-        args: --release --manifest-path polaris/Cargo.toml -- -d test/db.sqlite -w .
+        args: --release -- -d test/db.sqlite -w .
     - name: Run Tests
       env:
         DEBUG: nightmare:*,electron:*
