@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - env:
-      DEBUG: nightmare:*,electron:*
     - uses: actions/checkout@master
     - uses: actions/setup-node@v1
     - run: |
@@ -29,3 +27,5 @@ jobs:
     - run: |
         sleep 5
         xvfb-run mocha
+      env:
+        DEBUG: nightmare:*,electron:*
