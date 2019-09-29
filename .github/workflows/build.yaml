@@ -24,7 +24,7 @@ jobs:
       run: git clone http://github.com/agersant/polaris
     - name: Build And Run Polaris
       working-directory: polaris
-      run: cargo +nightly run --release -- -d test/db.sqlite -w .
+      run: cargo +nightly run --release -- -d test/db.sqlite -w ..
     - name: Run Tests
       env:
         DEBUG: nightmare:*,electron:*
