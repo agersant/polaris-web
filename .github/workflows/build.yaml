@@ -13,7 +13,7 @@ jobs:
         npm install mocha
         npm install chai
         npm install nightmare
-        sudo apt-get install xvfp
+        sudo apt-get install xvfb
         git clone http://github.com/agersant/polaris
     - uses: actions-rs/toolchain@v1
       with:
