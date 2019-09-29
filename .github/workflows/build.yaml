@@ -8,23 +8,28 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-    - uses: actions/setup-node@v1
-    - run: |
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+    - name: Install test framework
+      run: |
         npm install mocha
         npm install chai
         npm install nightmare
-        git clone http://github.com/agersant/polaris
-    - uses: actions-rs/toolchain@v1
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: nightly
-        override: true
-    - uses: actions-rs/cargo@v1
+    - name: Clone Polaris
+      run: git clone http://github.com/agersant/polaris
+    - name: Build and Run Polaris
+      uses: actions-rs/cargo@v1
       with:
         command: run
         toolchain: nightly
         args: --manifest-path polaris/Cargo.toml -- -d test/db.sqlite -w .
-    - run: |
-        sleep 5
-        xvfb-run mocha
+    - name: Run Tests
       env:
         DEBUG: nightmare:*,electron:*
+      run: |
+        sleep 5
+        xvfb-run mocha
