@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - name: Clone Polaris Web
+      uses: actions/checkout@master
     - name: Install Node.js
       uses: actions/setup-node@v1
     - name: Install test framework
@@ -21,7 +22,7 @@ jobs:
         toolchain: nightly
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
-    - name: Build and Run Polaris
+    - name: Build And Run Polaris
       working-directory: polaris
       run: cargo +nightly run --release -- -d test/db.sqlite -w .
     - name: Run Tests
