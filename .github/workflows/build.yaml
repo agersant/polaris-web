@@ -13,8 +13,8 @@ jobs:
     - name: Install test framework
       run: |
         npm install -g mocha
-        npm install -g chai
-        npm install -g nightmare
+        npm install chai
+        npm install nightmare
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
