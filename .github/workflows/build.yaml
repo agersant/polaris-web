@@ -10,11 +10,11 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-node@v1
     - run: |
-      npm install mocha
-      npm install chai
-      npm install nightmare
-      sudo apt-get install xvfp
-      git clone http://github.com/agersant/polaris
+        npm install mocha
+        npm install chai
+        npm install nightmare
+        sudo apt-get install xvfp
+        git clone http://github.com/agersant/polaris
     - uses: actions-rs/toolchain@v1
       with:
         toolchain: nightly
@@ -25,6 +25,6 @@ jobs:
         toolchain: nightly
         args: --manifest-path polaris/Cargo.toml -- -d test/db.sqlite -w .
     - run: |
-      sleep 5
-      xvfb-run mocha
+        sleep 5
+        xvfb-run mocha
       env: DEBUG=nightmare:*,electron:*
