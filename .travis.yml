@@ -13,9 +13,9 @@ addons:
 
 install:
   # Install headless browser
-  - npm install mocha
-  - npm install chai
-  - npm install nightmare
+  - npm install -g mocha
+  - npm install -g chai
+  - npm install -g nightmare
   # Install Rust
   - curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=nightly -y
   - export PATH=$HOME/.cargo/bin:$PATH
