@@ -51,6 +51,14 @@
 			this.currentTrack = track;
 			this.albumArt = track.info.artworkURL;
 			this.trackURL = track.info.url;
+			if (navigator.mediaSession && MediaMetadata) {
+				navigator.mediaSession.metadata = new MediaMetadata({
+					title: track.info.title,
+					artist: track.info.artist,
+					album: track.info.album,
+					artwork: [{ src: track.info.artworkURL },]
+				});
+			}
 			this.update();
 			eventBus.trigger("player:playing", this.currentTrack);
 		}
@@ -194,6 +202,13 @@
 				var progress = currentTime / duration;
 				this.trackProgress = progress;
 				this.timeElapsed = this.formatPlaybackTime(currentTime);
+				if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
+					navigator.mediaSession.setPositionState({
+						position: currentTime,
+						duration: duration,
+						playbackRate: 1,
+					});
+				}
 				this.updateScrobble();
 				this.update();
 			}.bind(this));
@@ -220,6 +235,11 @@
 
 				eventBus.trigger("player:trackFinished", this.currentTrack);
 			}.bind(this));
+
+			if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
+				navigator.mediaSession.setActionHandler('previoustrack', this.skipPrevious);
+				navigator.mediaSession.setActionHandler('nexttrack', this.skipNext );
+			}
 		});
 
 		// Global mouse handling
