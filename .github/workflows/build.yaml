@@ -21,6 +21,8 @@ jobs:
       with:
         toolchain: nightly
         profile: minimal
+    - name: Install libsqlite3-dev
+      run: sudo apt-get install libsqlite3-dev
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
     - name: Build And Run Polaris
