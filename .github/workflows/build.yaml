@@ -20,6 +20,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         toolchain: nightly
+        profile: minimal
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
     - name: Build And Run Polaris
