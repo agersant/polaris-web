@@ -333,9 +333,11 @@
 		}
 
 		.playlistOperations {
-			font-size: 0; /*Prevent whitespace between span tags to be rendered*/
+			display: flex;
+			flex-grow: 1;
+			flex-shrink: 1;
+			min-height: 0;
 		}
-
 
 		.playlistOperations .save, .playlistOperations .delete {
 			cursor: pointer;
@@ -344,8 +346,8 @@
 
 		.playlistOperations span.playbackOrder {
 			color: #AAA;
-			vertical-align: top;
 			font-size: 0.875rem;
+			align-self: center;
 		}
 
 		.track {
