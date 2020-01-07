@@ -45,11 +45,14 @@
 
 	<style>
 		breadcrumbs {
-			display: block;
-			height: 20px;
+    		display: flex;
+			flex-shrink: 1;
+    		flex-grow: 1;
+    		min-height: 0;
 		}
 
 		ul {
+			display: flex;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -58,12 +61,13 @@
 		}
 
 		li {
-			display: inline;
+			display: inline-block;
 			color: #FFF;
 			background-color: #44C8F1;
 			cursor: pointer;
-			padding-left: 8px;
-			padding-right: 5px;
+			padding-left: 10px;
+			padding-right: 10px;
+			padding-top: 2px;
 			border-radius: 5px;
 			margin-right: 5px;
 		}

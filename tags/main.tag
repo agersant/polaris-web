@@ -55,6 +55,8 @@
 		}
 
 		.paneHeader {
+			display: flex;
+			flex-direction: column;
 			width: inherit;
 			position: fixed;
 			height: 100px;
