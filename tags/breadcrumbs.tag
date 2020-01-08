@@ -63,11 +63,12 @@
 		li {
 			display: inline-block;
 			color: #FFF;
+			font-weight: 600;
 			background-color: #44C8F1;
 			cursor: pointer;
 			padding-left: 10px;
 			padding-right: 10px;
-			padding-top: 2px;
+			padding-top: 1px;
 			border-radius: 5px;
 			margin-right: 5px;
 		}
