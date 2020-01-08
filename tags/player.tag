@@ -52,12 +52,15 @@
 			this.albumArt = track.info.artworkURL;
 			this.trackURL = track.info.url;
 			if (navigator.mediaSession && MediaMetadata) {
-				navigator.mediaSession.metadata = new MediaMetadata({
+				var metadata = new MediaMetadata({
 					title: track.info.title,
 					artist: track.info.artist,
 					album: track.info.album,
-					artwork: [{ src: track.info.artworkURL },]
 				});
+				if (track.info.artworkURL) {
+					metadata.artwork = [{ src: track.info.artworkURL }];
+				}
+				navigator.mediaSession.metadata = metadata;
 			}
 			this.update();
 			eventBus.trigger("player:playing", this.currentTrack);
