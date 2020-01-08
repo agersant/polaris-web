@@ -22,6 +22,14 @@ app {
 	--theme-bad: #FF5763;
 	--theme-foreground-against-good: #FFF;
 	--theme-foreground-against-bad: #FFF;
+
+	/*Dark theme overrides*/
+	--theme-foreground: #DDD;
+	--theme-foreground-muted: #999;
+	--theme-background: #222;
+	--theme-background-muted: #282828;
+	--theme-border: #888;
+	--theme-border-muted: #333;
 }
 
 * {
