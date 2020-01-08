@@ -319,7 +319,7 @@
 
 		.control {
 			border-radius: 50%;
-			border: 1px solid #AAA;
+			border: 1px solid var(--theme-border);
 			text-align: center;
 		}
 
@@ -347,7 +347,7 @@
 
 		.volume .bar {
 			flex-grow: 1;
-			background-color: #AAA;
+			background-color: var(--theme-foreground-muted);
 			height: 10px;
 			margin: 7px 0;
 			border-radius: 3px;
@@ -356,7 +356,7 @@
 		.volume .fill {
 			height: 100%;
 			max-width: 100%;
-			background-color: #44C8F1;
+			background-color: var(--theme-accent);
 			border-radius: 3px;
 		}
 
@@ -372,7 +372,7 @@
 
 		.seekBar {
 			width: 100%;
-			background-color: #AAA;
+			background-color: var(--theme-foreground-muted);
 			height: 10px;
 			margin: 6px 0;
 			border-radius: 3px;
@@ -382,7 +382,7 @@
 			height: 100%;
 			width: 0;
 			max-width: 100%;
-			background-color: #44C8F1;
+			background-color: var(--theme-accent);
 			border-radius: 3px;
 		}
 
@@ -392,8 +392,8 @@
 			position: relative;
 			top: -14px;
 			margin-left: -9px;
-			background-color: #FFF;
-			border: 1px solid #AAA;
+			background-color: var(--theme-background);
+			border: 1px solid var(--theme-border);
 			border-radius: 3px;
 		}
 

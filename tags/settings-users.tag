@@ -133,7 +133,7 @@
 		ul {
 			width: 100%;
 			box-sizing: border-box;
-			border: 1px solid #AAA;
+			border: 1px solid var(--theme-border);
 			border-radius: 3px;
 			margin-bottom: 10px;
 		}
@@ -145,7 +145,7 @@
 		}
 
 		li:not(:last-child) {
-			border-bottom: 1px solid #AAA;
+			border-bottom: 1px solid var(--theme-border);
 		}
 
 		span.username {

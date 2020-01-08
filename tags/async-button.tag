@@ -38,18 +38,22 @@
 
 		button.success {
 			transition: all 250ms ease-in-out;
-			background-color: #65C05A;
+			background-color: var(--theme-good);
 			border: 0;
 		}
 
 		button.failure {
 			transition: all 250ms ease-in-out;
-			background-color: #FF5763;
+			background-color: var(--theme-bad);
 			border: 0;
 		}
 
-		button.success *, button.failure * {
-			color: #FFF;
+		button.success * {
+			color: var(--theme-foreground-against-good);
+		}
+
+		button.failure * {
+			color: var(--theme-foreground-against-bad);
 		}
 
 		.status {

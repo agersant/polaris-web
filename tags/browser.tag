@@ -391,7 +391,7 @@
 			line-height: 1;
 			font-size: 1.25rem;
 			margin-bottom: 5px;
-			color: #AAA;
+			color: var(--theme-foreground-muted);
 		}
 
 		.viewActions button {
@@ -487,7 +487,7 @@
 
 		.discographyView .details .year {
 			font-size: 0.875rem;
-			color: #AAA;
+			color: var(--theme-foreground-muted);
 		}
 
 		/*Album view*/
@@ -520,7 +520,7 @@
 		.albumView li.song {
 			padding-top: 8px;
 			padding-bottom: 6px;
-			border-bottom: 1px solid #DDD;
+			border-bottom: 1px solid var(--theme-border-muted);
 			list-style-type: unset;
 			list-style-position: outside;
 		}
@@ -530,7 +530,7 @@
 		}
 
 		.albumView .trackArtist {
-			color: #AAA;
+			color: var(--theme-foreground-muted);
 		}
 
 		.albumView li:first-child {

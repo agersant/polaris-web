@@ -85,9 +85,9 @@
 			cursor: default;
 			position: absolute;
 			width: 400px;
-			background-color: #FFF;
-			border: 1px solid #DDD;
-			border-bottom: 2px solid #44C8F1;
+			background-color: var(--theme-background);
+			border: 1px solid var(--theme-border-muted);
+			border-bottom: 2px solid var(--theme-accent);
 			animation: .15s ease-out 0s 1 intro;
 		}
 

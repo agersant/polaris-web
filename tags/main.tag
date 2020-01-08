@@ -15,9 +15,9 @@
 	</script>
 
 	<style>
-		playlist, browser, settings, search, playlists {
+		playlist, browser, settings, search, playlists, player {
 			overflow-x: hidden;
-			background-color: #FFF;
+			background-color: var(--theme-background);
 		}
 
 		menu {
@@ -40,7 +40,7 @@
 			height: calc(100% - 160px);
 			z-index: 1;
 			box-sizing: border-box;
-			border-left: 1px solid #DDD;
+			border-left: 1px solid var(--theme-border-muted);
 		}
 
 		player {
@@ -50,8 +50,8 @@
 			right: 0;
 			height: 160px;
 			box-sizing: border-box;
-			border-left: 1px solid #DDD;
-			border-top: 1px solid #DDD;
+			border-left: 1px solid var(--theme-border-muted);
+			border-top: 1px solid var(--theme-border-muted);
 		}
 
 		.paneHeader {
@@ -68,7 +68,7 @@
 			padding-bottom: 10px;
 			white-space: nowrap;
 			overflow: hidden;
-			border-bottom: 1px solid #DDD;
+			border-bottom: 1px solid var(--theme-border-muted);
 		}
 
 		.paneContent {

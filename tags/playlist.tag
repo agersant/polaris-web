@@ -345,7 +345,7 @@
 		}
 
 		.playlistOperations span.playbackOrder {
-			color: #AAA;
+			color: var(--theme-foreground-muted);
 			font-size: 0.875rem;
 			align-self: center;
 		}
@@ -373,7 +373,7 @@
 		}
 
 		tr:nth-child(2n) {
-			background-color: #F2F2F2;
+			background-color: var(--theme-background-muted);
 		}
 
 		td {
@@ -399,7 +399,7 @@
 		}
 
 		td.song .trackArtist {
-			color: #AAA;
+			color: var(--theme-foreground-muted);
 		}
 
 		td.duration {
@@ -407,13 +407,13 @@
 		}
 
 		tr.nowPlaying td.song .trackArtist {
-			color: #B3F4FF;
+			color: var(--theme-foreground-against-accent-muted);
 		}
 
 		tr.nowPlaying td, tr.nowPlaying td * {
-			color: #FFF;
+			color: var(--theme-foreground-against-accent);
 			font-weight: 600;
-			background-color: #44C8F1;
+			background-color: var(--theme-accent);
 		}
 
 		.material-icons.nowPlaying {
@@ -430,7 +430,7 @@
 		}
 
 		.help, .help i {
-			color: #AAA;
+			color: var(--theme-foreground-muted);
 		}
 	</style>
 

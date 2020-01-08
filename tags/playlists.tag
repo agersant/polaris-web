@@ -68,7 +68,7 @@
 		}
 
 		li:not(:last-child) {
-			border-bottom: 1px solid #DDD;
+			border-bottom: 1px solid var(--theme-border-muted);
 		}
 
 		li:not(:first-child) {

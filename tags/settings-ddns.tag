@@ -55,7 +55,7 @@
 	<style>
 		a {
 			text-decoration: underline;
-			color: #44C8F1;
+			color: var(--theme-accent);
 		}
 
 		.code {
