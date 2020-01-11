@@ -53,14 +53,15 @@
 
 		ul {
 			display: flex;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
 			font-size: 0.875rem;
+			max-width: 100%;
 		}
 
 		li {
 			display: inline-block;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
 			font-weight: 600;
 			color: var(--theme-foreground-against-accent);
 			background-color: var(--theme-accent);
@@ -70,10 +71,12 @@
 			padding-top: 1px;
 			border-radius: 5px;
 			margin-right: 5px;
+			flex-shrink: 0;
 		}
 
 		li:last-child {
-			padding-right: 8px;
+			flex-shrink: 1;
+			margin-right: 0;
 		}
 	</style>
 
