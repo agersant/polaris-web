@@ -54,10 +54,12 @@
 							<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
 							<ol class="discContent">
 								<li value={ fields.track_number } class={ song: true, no-track-number: !fields.track_number } draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-									{ fields.title || utils.stripFileExtension(utils.getPathTail(fields.path)) }
-									<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
-										({ fields.artist })
-									</span>
+									<div class="songName">
+										{ fields.title || utils.stripFileExtension(utils.getPathTail(fields.path)) }
+										<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
+											({ fields.artist })
+										</span>
+									</div>
 								</li>
 							</ol>
 						</li>
@@ -497,9 +499,19 @@
 			justify-content: flex-start;
 		}
 
+		.albumView img {
+			flex-shrink: 0;
+			width: 100%;
+			height: 100%;
+			max-width: 15vw;
+			max-height: 15vw;
+			margin-bottom: 30px;
+			border-radius: 5px;
+		}
+
 		.albumView .trackList {
 			flex-grow: 1;
-			max-width: calc(100% - 40px);
+			min-width: 0;
 			cursor: default;
 			margin-left: 20px;
 		}
@@ -523,6 +535,12 @@
 			border-bottom: 1px solid var(--theme-border-muted);
 			list-style-type: unset;
 			list-style-position: outside;
+
+		}
+
+		.albumView .songName {
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.albumView li.song.no-track-number {
@@ -541,15 +559,6 @@
 			border-bottom: 0;
 		}
 
-		.albumView img {
-			flex-shrink: 0;
-			width: 100%;
-			height: 100%;
-			max-width: 15vw;
-			max-height: 15vw;
-			margin-bottom: 30px;
-			border-radius: 5px;
-		}
 	</style>
 
 </browser>
