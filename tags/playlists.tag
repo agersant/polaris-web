@@ -5,9 +5,13 @@
 	</div>
 
 	<div class="paneContent">
-		<ul>
+		<ul if={ playlists.length > 0 }>
 			<li class="noselect" draggable="true" each={ playlists } onclick={ onClickItem } ondragstart={ onDragItemStart }>{ name }</li>
 		</ul>
+		<div class="help" if={ playlists.length == 0 }>
+			<i class="material-icons md-48">playlist_add</i><br/>
+			Save a playlist by pressing the <i class="save material-icons md-20">save</i> button above it.<br/>
+		</div>
 	</div>
 
 	<script>
@@ -57,12 +61,6 @@
 			padding-top: 50px;
 		}
 
-		i {
-			position: relative;
-			top: 3px;
-			margin-right: 5px;
-		}
-
 		ul {
 			margin-bottom: 40px;
 		}
@@ -78,6 +76,15 @@
 		li {
 			cursor: pointer;
 			padding-bottom: 6px;
+		}
+
+		.help {
+			margin-top: -50px;
+		}
+
+		.help i.save {
+			position: relative;
+			top: 4px;
 		}
 	</style>
 

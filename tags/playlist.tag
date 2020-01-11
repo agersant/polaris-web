@@ -43,7 +43,7 @@
 		<div style="height: { (tracks.length - scrollOffset - pageSize) * itemHeight }px"></div>
 		<div class="help" if={ tracks.length == 0 }>
 			<i class="material-icons md-48">queue</i><br/>
-			Make a playlist by dragging music<br/>from your collection to here.
+			Make a playlist by dragging music from your collection to here.
 		</div>
 	</div>
 
@@ -420,18 +420,6 @@
 		.material-icons.nowPlaying {
 			vertical-align: middle;
 			padding-bottom: 2px;
-		}
-
-		.help {
-			position: absolute;
-			top: 40%;
-			width: 100%;
-			text-align:center;
-			font-size: 1.375rem;
-		}
-
-		.help, .help i {
-			color: var(--theme-foreground-muted);
 		}
 	</style>
 
