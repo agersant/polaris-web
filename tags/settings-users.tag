@@ -2,10 +2,13 @@
 	<form if={ users } onsubmit={ save }>
 		<label>User accounts</label>
 		<ul>
-			<li onClick={ editUser } each={ user in users }>
-				<span class="username">{ user.name }</span>
-				<i if={ user == editing } onClick={ stopEditUser } class="noselect material-icons md-18">expand_more</i>
-				<i if={ user != editing } onClick={ editUser } class="noselect material-icons md-18">chevron_right</i>
+			<li each={ user in users }>
+				<span class="username" onClick={ toggleEditUser }>
+					{ user.name }
+					<i if={ user == editing } class="noselect material-icons md-18">expand_more</i>
+					<i if={ user != editing } class="noselect material-icons md-18">chevron_right</i>
+				</span>
+
 				<div class="edit" if={ user == editing }>
 					<div class="field" if={ user.isNew }>
 						<label for={ "name_" + user.name }>Username</label>
@@ -29,7 +32,7 @@
 						<p class="tip">Grants access to all settings.</p>
 					</div>
 
-					<div if={ !isSelf(user) } class="field delete_container">
+					<div if={ !isSelf(user) } class="delete_container">
 						<button class="danger delete" onClick={ deleteUser }>Delete { user.name }</button>
 					</div>
 				</div>
@@ -84,13 +87,13 @@
 			this.editing = newUser;
 		}
 
-		editUser(e) {
-			this.editing = e.item.user;
-		}
-
-		stopEditUser(e) {
+		toggleEditUser(e) {
 			e.stopPropagation();
-			this.editing = null;
+			if (this.editing == e.item.user) {
+				this.editing = null;
+			} else {
+				this.editing = e.item.user;
+			}
 		}
 
 		deleteUser(e) {
@@ -138,8 +141,6 @@
 		}
 
 		li {
-			padding-top: 10px;
-			padding-bottom: 10px;
 		}
 
 		li:not(:last-child) {
@@ -147,8 +148,12 @@
 		}
 
 		span.username {
-			cursor: default;
+			display: inline-block;
+			width: 100%;
+			cursor: pointer;
 			font-weight: 600;
+			padding-top: 10px;
+			padding-bottom: 10px;
 		}
 
 		.edit {
@@ -157,6 +162,7 @@
 			padding-top: 15px;
 			background-color: var(--theme-background-muted);
 			border-radius: 5px;
+			margin-bottom: 10px;
 		}
 
 		form .edit .field {
@@ -189,12 +195,12 @@
 			top: 4px;
 		}
 
-		.edit .delete_container {
+		.delete_container {
 			display: flex;
 			flex-flow: row nowrap;
 			justify-content: flex-end;
 			align-items: stretch;
-			margin-bottom: 0;
+			padding-bottom: 15px;
 		}
 
 		button.add-user {
