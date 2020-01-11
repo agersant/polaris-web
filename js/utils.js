@@ -1,6 +1,6 @@
-var utils = (function () {
+var utils = (function() {
 
-	var saveUserData = function (key, value) {
+	var saveUserData = function(key, value) {
 		var username = Cookies.get("username");
 		if (!username) {
 			return;
@@ -20,7 +20,7 @@ var utils = (function () {
 		}
 	}
 
-	var loadUserData = function (key) {
+	var loadUserData = function(key) {
 		var username = Cookies.get("username");
 		if (!username) {
 			return;
@@ -32,7 +32,7 @@ var utils = (function () {
 		return value;
 	}
 
-	var tryLogin = function (username, password) {
+	var tryLogin = function(username, password) {
 		return fetch("api/auth", {
 			method: "POST",
 			body: JSON.stringify({ username: username, password: password }),
@@ -41,31 +41,31 @@ var utils = (function () {
 			},
 			credentials: 'same-origin',
 		})
-			.then(function (res) {
+			.then(function(res) {
 				if (res.status == 200) {
 					Cookies.set("username", username);
 					return Promise.all([res.json(), res])
 				}
 				throw res.status;
 			})
-			.then(function (res) {
+			.then(function(res) {
 				var body = res[0];
 				Cookies.set("admin", body.admin);
 				return res[1];
 			});
 	}
 
-	var getPathTail = function (path) {
+	var getPathTail = function(path) {
 		if (!path) {
 			return null;
 		}
 		path = path.replace(/\\/g, "/");
 		var slices = path.split("/");
-		slices = slices.filter(function (s) { return s.length > 0; });
+		slices = slices.filter(s => s.length > 0);
 		return slices[slices.length - 1] || "";
 	}
 
-	var stripFileExtension = function (path) {
+	var stripFileExtension = function(path) {
 		if (!path) {
 			return null;
 		}
