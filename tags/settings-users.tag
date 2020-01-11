@@ -27,7 +27,7 @@
 
 						<div class="field">
 							<input type="checkbox" id={ "admin_" + user.name } disabled={ isSelf(user) } checked={ user.admin } onchange={ onAdminInput }/><label for={ "admin_" + user.name } class="admin">Administrator</label>
-							<p class="tip">Grants access to this settings page.</p>
+							<p class="tip">Grants access to all settings.</p>
 						</div>
 
 						<div class="field delete_container">
