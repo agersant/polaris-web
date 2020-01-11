@@ -535,7 +535,6 @@
 			border-bottom: 1px solid var(--theme-border-muted);
 			list-style-type: unset;
 			list-style-position: outside;
-
 		}
 
 		.albumView .songName {
