@@ -87,7 +87,7 @@ form .field {
 form label {
 	display: block;
 	font-weight: 600;
-	margin-bottom: 5px;
+	margin-bottom: 2px;
 }
 
 form input, form select {
