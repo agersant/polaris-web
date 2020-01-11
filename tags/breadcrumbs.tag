@@ -57,14 +57,13 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			font-size: 0.875rem;
-			color: white;
 		}
 
 		li {
 			display: inline-block;
-			color: #FFF;
 			font-weight: 600;
-			background-color: #44C8F1;
+			color: var(--theme-foreground-against-accent);
+			background-color: var(--theme-accent);
 			cursor: pointer;
 			padding-left: 10px;
 			padding-right: 10px;

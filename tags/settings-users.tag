@@ -1,44 +1,45 @@
 <settings-users>
 	<form if={ users } onsubmit={ save }>
-		<div class="field sources">
-			<label>User accounts</label>
-			<ul>
-				<li onClick={ editUser } each={ user in users }>
-					<span class="username">{ user.name }</span>
-					<i if={ user == editing } onClick={ stopEditUser } class="noselect material-icons md-18">expand_more</i>
-					<i if={ user != editing } onClick={ editUser } class="noselect material-icons md-18">chevron_right</i>
-					<div class="edit" if={ user == editing }>
-						<div class="field">
-							<label if={ user.isNew } for={ "name_" + user.name }>Username</label>
-							<input if={ user.isNew } id={ "name_" + user.name } type="text" value={ user.name } oninput={ onUsernameInput }/>
-						</div>
+		<label>User accounts</label>
+		<ul>
+			<li each={ user in users }>
+				<span class="username" onClick={ toggleEditUser }>
+					{ user.name }
+					<i if={ user == editing } class="noselect material-icons md-18">expand_more</i>
+					<i if={ user != editing } class="noselect material-icons md-18">chevron_right</i>
+				</span>
 
-						<div class="field">
-							<label for={ "password_" + user.name }>New password</label>
-							<input type="password" id={ "password_" + user.name } value={ user.password } oninput={ onPasswordInput }/>
-							<p if={ !this.validatePassword(user) } class="tip error">The password cannot be blank.</p>
-						</div>
-
-						<div class="field">
-							<label for={ "password_confirm_" + user.name }>Confirm new password</label>
-							<input type="password" id={ "password_confirm_" + user.name } value={ user.password_confirm } oninput={ onPasswordConfirmInput }/>
-							<p if={ !this.validatePasswordConfirmation(user) } class="tip error">The password confirmation does not match the new password.</p>
-						</div>
-
-						<div class="field">
-							<input type="checkbox" id={ "admin_" + user.name } disabled={ isSelf(user) } checked={ user.admin } onchange={ onAdminInput }/><label for={ "admin_" + user.name } class="admin">Administrator</label>
-							<p class="tip">Grants access to this settings page.</p>
-						</div>
-
-						<div class="field delete_container">
-							<button if={ !isSelf(user) } class="danger delete" onClick={ deleteUser }>Delete { user.name }</button>
-						</div>
+				<div class="edit" if={ user == editing }>
+					<div class="field" if={ user.isNew }>
+						<label for={ "name_" + user.name }>Username</label>
+						<input id={ "name_" + user.name } type="text" value={ user.name } oninput={ onUsernameInput }/>
 					</div>
-				</li>
-			</ul>
-			<button onClick={ addUser }>Add user</button>
-		</div>
-		 <settings-apply disabled={ !validatePasswords() } />
+
+					<div class="field">
+						<label for={ "password_" + user.name }>New password</label>
+						<input type="password" id={ "password_" + user.name } value={ user.password } oninput={ onPasswordInput }/>
+						<p if={ !this.validatePassword(user) } class="tip error">The password cannot be blank.</p>
+					</div>
+
+					<div class="field">
+						<label for={ "password_confirm_" + user.name }>Confirm new password</label>
+						<input type="password" id={ "password_confirm_" + user.name } value={ user.password_confirm } oninput={ onPasswordConfirmInput }/>
+						<p if={ !this.validatePasswordConfirmation(user) } class="tip error">The password confirmation does not match the new password.</p>
+					</div>
+
+					<div class="field">
+						<input type="checkbox" id={ "admin_" + user.name } disabled={ isSelf(user) } checked={ user.admin } onchange={ onAdminInput }/><label for={ "admin_" + user.name } class="admin">Administrator</label>
+						<p class="tip">Grants access to all settings.</p>
+					</div>
+
+					<div if={ !isSelf(user) } class="delete_container">
+						<button class="danger delete" onClick={ deleteUser }>Delete { user.name }</button>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<button class="add-user" onClick={ addUser }>Add user</button>
+		<settings-apply disabled={ !validatePasswords() } />
 	</form>
 
 	<script>
@@ -86,13 +87,13 @@
 			this.editing = newUser;
 		}
 
-		editUser(e) {
-			this.editing = e.item.user;
-		}
-
-		stopEditUser(e) {
+		toggleEditUser(e) {
 			e.stopPropagation();
-			this.editing = null;
+			if (this.editing == e.item.user) {
+				this.editing = null;
+			} else {
+				this.editing = e.item.user;
+			}
 		}
 
 		deleteUser(e) {
@@ -131,30 +132,47 @@
 
 	<style>
 		ul {
-			width: 100%;
-			box-sizing: border-box;
-			border: 1px solid #AAA;
-			border-radius: 3px;
+			width: calc(70% + 40px);
+			padding-left: 20px;
+			padding-right: 20px;
 			margin-bottom: 10px;
+			background-color: var(--theme-background-muted);
+			border-radius: 10px;
 		}
 
 		li {
-			padding: 5px;
-			padding-left: 10px;
-			padding-right: 10px;
 		}
 
 		li:not(:last-child) {
-			border-bottom: 1px solid #AAA;
+			border-bottom: 1px solid var(--theme-border-muted);
 		}
 
 		span.username {
-			cursor: default;
+			display: inline-block;
+			width: 100%;
+			cursor: pointer;
+			font-weight: 600;
+			padding-top: 10px;
+			padding-bottom: 10px;
 		}
 
 		.edit {
 			padding-left: 20px;
-			margin-top: 20px;
+			padding-right: 20px;
+			padding-top: 15px;
+			background-color: var(--theme-background-muted);
+			border-radius: 5px;
+			margin-bottom: 10px;
+		}
+
+		form .edit .field {
+			width: 100%;
+			padding: 0px;
+			margin-bottom: 15px;
+		}
+
+		.edit label {
+			font-weight: 400;
 		}
 
 		input[type="checkbox"] {
@@ -169,12 +187,6 @@
 			display: inline;
 		}
 
-		button.delete {
-			margin-top: 10px;
-			margin-right: 10px;
-			margin-bottom: 15px;
-		}
-
 		i {
 			float: right;
 			text-align: right;
@@ -183,12 +195,16 @@
 			top: 4px;
 		}
 
-		.field .delete_container {
+		.delete_container {
 			display: flex;
 			flex-flow: row nowrap;
 			justify-content: flex-end;
 			align-items: stretch;
-			margin-bottom: 0;
+			padding-bottom: 15px;
+		}
+
+		button.add-user {
+			margin-bottom: 25px;
 		}
 	</style>
 </settings-users>

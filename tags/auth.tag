@@ -79,7 +79,7 @@
 		input[type="text"], input[type="password"] {
 			border: 0;
 			box-sizing: content-box;
-			border-bottom: 1px solid #AAA; 
+			border-bottom: 1px solid var(--theme-border);
 		}
 
 		.tip {

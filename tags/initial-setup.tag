@@ -103,7 +103,7 @@
 		#initial-setup-page {
 			flex-grow: 1;
 			flex-shrink: 1;
-			border-right: 2px solid #44C8F1;
+			border-right: 2px solid var(--theme-accent);
 			padding-left: 40px;
 			padding-right: 40px;
 		}

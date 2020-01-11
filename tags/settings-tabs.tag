@@ -29,7 +29,7 @@
 	<style>
 		span {
 			cursor: pointer;
-			color: #AAA;
+			color: var(--theme-foreground-muted);
 			line-height: 1rem;
 			font-size: 1rem;
 		}
@@ -39,8 +39,8 @@
 		}
 
 		.selected {
-			color: #44C8F1;
-			border-bottom: 1px solid #44C8F1;
+			color: var(--theme-accent);
+			border-bottom: 1px solid var(--theme-accent);
 		}
 	</style>
 

@@ -1,4 +1,4 @@
-html, body, #app {
+html, body, .theme-base, .theme-accent {
 	height: 100%;
 	font-size: 100%;
 }
@@ -8,7 +8,7 @@ html, body, #app {
 	margin: 0;
 	font-family: 'Hind', sans-serif;
 	font-weight: 300;
-	color: #3A3A3A;
+	color: var(--theme-foreground);
 }
 
 li {
@@ -19,7 +19,7 @@ li {
 h2 {
 	font-size: 2rem;
 	font-family: 'Hind', sans-serif;
-	color: #AAA;
+	color: var(--theme-foreground-muted);
 }
 
 a {
@@ -34,15 +34,14 @@ input[type="submit"], button {
 	padding-right: 30px;
 	border: none;
 	border-radius: 5px;
-	background-color: #44C8F1;
+	background-color: var(--theme-accent);
 }
 
 input[type="submit"], input[type="submit"] *, button.submit, button.submit * {
-	color: #FFF;
+	color: var(--theme-foreground-against-accent);
 }
 
 button, button * {
-	color: #3A3A3A;
 	cursor: pointer;
 }
 
@@ -51,14 +50,14 @@ input[type="submit"], input[type="submit"] *, button, button * {
 }
 
 button:not(.submit) {
-	background-color: white;
-	border: 1px solid #AAA;
+	background-color: var(--theme-background);
+	border: 1px solid var(--theme-border);
 	margin-top: 0;
 }
 
 button.danger {
-	background-color: #FF5763;
-	color: #FFF;
+	background-color: var(--theme-bad);
+	color: var(--theme-foreground-against-bad);
 	border: 0;
 }
 
@@ -76,26 +75,41 @@ input[type="submit"]:disabled, button:disabled {
 
 /*Forms*/
 form .field {
+	width: 70%;
+	padding: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	border-radius: 10px;
+	background-color: var(--theme-background-muted);
 	margin-bottom: 25px;
 }
 
 form label {
 	display: block;
-	font-weight: 400;
+	font-weight: 600;
 	margin-bottom: 2px;
 }
 
-form input {
-	display: block;
-	width: 55%;
+form input, form select {
+	width: 100%;
 	padding: 4px;
 	padding-left: 8px;
 	padding-right: 8px;
 	margin-bottom: 5px;
-	border: 1px solid #AAA;
+	border: 1px solid var(--theme-border);
 	border-radius: 3px;
 	font-size: 0.875rem;
 	box-sizing: border-box;
+	background-color: var(--theme-background);
+}
+
+select {
+	border: 1px solid var(--theme-border-muted);
+	border-radius: 3px;
+}
+
+select, select option {
+	background-color: var(--theme-background);
 }
 
 /*Generic form help*/
@@ -106,46 +120,49 @@ form input {
 }
 
 .tip {
-	width: 50%;
 	font-size: 0.8125rem;
-	color: #999;
+	color: var(--theme-foreground-muted);
 }
 
 .tip.error {
-	color: #FF5763;
+	color: var(--theme-bad);
 	font-weight: 400;
 }
 
-/*Mount points table*/
-table.mount_points {
-	width: 55%;
+/*Mount points, theme preferences*/
+form table {
+	width: 100%;
+	border-spacing: 10px 5px;
+	margin-top: -5px;
+	margin-left: -10px;
+	margin-right: -10px;
 }
 
-table.mount_points input {
+form table input, form table select {
 	width: 100%;
 	box-sizing: border-box;
 }
 
-.mount_points th, .mount_points td {
-	border-right: 10px solid white;
+form td input, form td select {
+	margin: 0;
 }
 
-.mount_points td.name {
+form td:first-child {
+	width: 60%;
+}
+
+form td:nth-child(2) {
 	width: 40%;
 }
 
-.mount_points th:last-child, .mount_points td:last-child {
-	border: 0;
-}
-
-.mount_points th {
+form th {
 	font-family: "Montserrat", "sans-serif";
 	text-align: left;
-	color: #AAA;
+	color: var(--theme-foreground-muted);
 	font-size: 0.8125rem;
 }
 
-.mount_points td i {
+form td i {
 	cursor: pointer;
 	position: relative;
 	top: 2px;

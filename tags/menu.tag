@@ -34,7 +34,7 @@
 		ul {
 			text-align: center;
 			height: 100%;
-			background-color: #161A1E;
+			background-color: var(--theme-menu-background);
 		}
 
 		li {
@@ -43,12 +43,12 @@
 		}
 
 		li i.material-icons {
-			color: #FFF;
+			color: var(--theme-foreground-against-accent);
 			line-height: 50px;
 		}
 
 		.selected {
-			background-color: #44C8F1;
+			background-color: var(--theme-accent);
 		}
 	</style>
 </menu>

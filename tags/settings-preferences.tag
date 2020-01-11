@@ -3,6 +3,27 @@
 
 	<form if={ preferences } onsubmit={ save }>
 		<div class="field">
+			<label>Theme</label>
+			<table>
+				<thead>
+					<th>Mode</th>
+					<th>Color</th>
+					<th/>
+				</thead>
+				<tr>
+					<td>
+						<select ref="base" onchange={ onThemeSelected }>
+							<option each={ theme in theming.listBases() } value={ theme.id } selected={ theming.getCurrentTheme() == theme.id } no-reorder>{ theme.name } </option>
+						</select>
+					</td>
+					<td class="accent-color">
+						<input ref="accent" type="color" value={ theming.getCurrentAccentColor() } oninput={ onAccentPreview } onchange={ onAccentSelected }>
+					</td>
+					<td><i onClick={ resetTheme } class="noselect material-icons md-18">restore</i></td>
+				</tr>
+			</table>
+		</div>
+		<div class="field">
 			<label for="lastfm_username">Last.fm scrobbling</label>
 			<div if={ preferences.lastfm_username }>
 				<p class="explanation">You are scrobbling music as <a href="https://www.last.fm/user/{preferences.lastfm_username}" target="_blank">{ preferences.lastfm_username }</a>.</p>
@@ -23,6 +44,32 @@
 		this.on('mount', function() {
 			this.refreshPreferences();
 		}.bind(self));
+
+		onThemeSelected(e) {
+			this.preferences.web_theme_base = e.target.value;
+			theming.setBase(this.preferences.web_theme_base);
+			this.save(e);
+		}
+
+		onAccentPreview(e) {
+			this.preferences.web_theme_accent = e.target.value;
+			theming.setAccentColor(this.preferences.web_theme_accent);
+		}
+
+		onAccentSelected(e) {
+			this.preferences.web_theme_accent = e.target.value;
+			theming.setAccentColor(this.preferences.web_theme_accent);
+			this.save(e);
+		}
+
+		resetTheme(e) {
+			this.preferences.web_theme_base = null;
+			this.preferences.web_theme_accent = null;
+			theming.setBase(this.preferences.web_theme_base);
+			theming.setAccentColor(this.preferences.web_theme_accent);
+			this.update();
+			this.save(e);
+		}
 
 		onUsernameInput(e) {
 			this.preferences.lastfm_username = e.target.value;
@@ -91,7 +138,15 @@
 	<style>
 		a {
 			text-decoration: underline;
-			color: #44C8F1;
+			color: var(--theme-accent);
+		}
+
+		td.accent-color {
+			background-color: var(--theme-accent)
+		}
+
+		input[type="color"] {
+			opacity: 0;
 		}
 	</style>
 </settings-preferences>
