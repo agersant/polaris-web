@@ -7,15 +7,15 @@
 		</div>
 		<div class="field sources">
 			<label>Music sources</label>
-			<table class="mount_points">
+			<table>
 				<thead>
 					<th>Location</th>
-					<th class="name">Name</th>
+					<th>Name</th>
 					<th/>
 				</thead>
 				<tr each={ mountPoint in mountPoints }>
 					<td><input type="text" value={ mountPoint.source } oninput={ onPathInput } /></td>
-					<td class="name"><input type="text" value={ mountPoint.name } oninput={ onNameInput }/></td>
+					<td><input type="text" value={ mountPoint.name } oninput={ onNameInput }/></td>
 					<td><i onClick={ deleteMountPoint } class="noselect material-icons md-18">delete</i></td>
 				</tr>
 			</table>

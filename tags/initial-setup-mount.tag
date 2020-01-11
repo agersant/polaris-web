@@ -3,7 +3,7 @@
 	<p class="explanation">Please indicate which directories Polaris should scan to populate your collection.<br/>You can change this or add more directories later from the settings screen.</p>
 	<form onsubmit={ proceed }>
 		<div class="field">
-			<table class="mount_points">
+			<table>
 				<thead>
 					<th>Location</th>
 					<th class="name">Name</th>

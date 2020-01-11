@@ -1,35 +1,6 @@
-html, body {
+html, body, .theme-base, .theme-accent {
 	height: 100%;
 	font-size: 100%;
-}
-
-app {
-	--theme-accent: #44C8F1;
-	--theme-foreground: #3A3A3A;
-	--theme-foreground-muted: #AAA;
-	--theme-foreground-against-accent: #FFF;
-	--theme-foreground-against-accent-muted: #B3F4FF;
-	--theme-background: #FFF;
-	--theme-background-muted: #F2F2F2;
-
-	--theme-border: #AAA;
-	--theme-border-muted: #DDD;
-
-	--theme-menu-foreground: #FFF;
-	--theme-menu-background: #161A1E;
-
-	--theme-good: #65C05A;
-	--theme-bad: #FF5763;
-	--theme-foreground-against-good: #FFF;
-	--theme-foreground-against-bad: #FFF;
-
-	/*Dark theme overrides*/
-	--theme-foreground: #DDD;
-	--theme-foreground-muted: #999;
-	--theme-background: #222;
-	--theme-background-muted: #282828;
-	--theme-border: #888;
-	--theme-border-muted: #333;
 }
 
 * {
@@ -104,18 +75,23 @@ input[type="submit"]:disabled, button:disabled {
 
 /*Forms*/
 form .field {
+	width: 70%;
+	padding: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	border-radius: 10px;
+	background-color: var(--theme-background-muted);
 	margin-bottom: 25px;
 }
 
 form label {
 	display: block;
-	font-weight: 400;
-	margin-bottom: 2px;
+	font-weight: 600;
+	margin-bottom: 5px;
 }
 
-form input {
-	display: block;
-	width: 55%;
+form input, form select {
+	width: 100%;
 	padding: 4px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -144,7 +120,6 @@ select, select option {
 }
 
 .tip {
-	width: 50%;
 	font-size: 0.8125rem;
 	color: var(--theme-foreground-muted);
 }
@@ -154,36 +129,40 @@ select, select option {
 	font-weight: 400;
 }
 
-/*Mount points table*/
-table.mount_points {
-	width: 55%;
+/*Mount points, theme preferences*/
+form table {
+	width: 100%;
+	border-spacing: 10px 5px;
+	margin-top: -5px;
+	margin-left: -10px;
+	margin-right: -10px;
 }
 
-table.mount_points input {
+form table input, form table select {
 	width: 100%;
 	box-sizing: border-box;
 }
 
-.mount_points th, .mount_points td {
-	border-right: 10px solid var(--theme-background);
+form td input, form td select {
+	margin: 0;
 }
 
-.mount_points td.name {
+form td:first-child {
+	width: 60%;
+}
+
+form td:nth-child(2) {
 	width: 40%;
 }
 
-.mount_points th:last-child, .mount_points td:last-child {
-	border: 0;
-}
-
-.mount_points th {
+form th {
 	font-family: "Montserrat", "sans-serif";
 	text-align: left;
 	color: var(--theme-foreground-muted);
 	font-size: 0.8125rem;
 }
 
-.mount_points td i {
+form td i {
 	cursor: pointer;
 	position: relative;
 	top: 2px;

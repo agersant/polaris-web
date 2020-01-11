@@ -407,7 +407,8 @@
 		}
 
 		tr.nowPlaying td.song .trackArtist {
-			color: var(--theme-foreground-against-accent-muted);
+			color: var(--theme-foreground-against-accent);
+			opacity: 0.65;
 		}
 
 		tr.nowPlaying td, tr.nowPlaying td * {

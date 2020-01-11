@@ -11,7 +11,17 @@
 	<script>
 		this.on('mount', function() {
 			route.exec();
+			this.applyTheme();
 		});
+
+		applyTheme() {
+			fetch("api/preferences/", { credentials: "same-origin" })
+			.then(function(res) { return res.json(); })
+			.then(function(data) {
+				theming.setBase(data.web_theme_base);
+				theming.setAccentColor(data.web_theme_accent);
+			}.bind(self));
+		}
 	</script>
 
 	<style>
