@@ -19,17 +19,14 @@ function auth(nightmare) {
     .wait('main menu')
 }
 
-describe('First Time Flow', function () {
+describe('First Time Flow', function() {
 
   let nightmare = new Nightmare()
   after(() => { nightmare.end(noop) })
 
-  it('loads without error', async function () {
-    await nightmare.goto('http://localhost:5050')
-  })
-
-  it('has a welcome message', done => {
+  it('loads without error', done => {
     nightmare
+      .goto('http://localhost:5050')
       .wait('h2')
       .evaluate(() => document.querySelector('h2').innerHTML)
       .then(title => { expect(title).to.equal('Welcome to Polaris!') })
