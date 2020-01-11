@@ -3,11 +3,9 @@
 		<i class="material-icons md-18" onclick={ cancel }>close</i>
 	</div>
 	<form>
-		<div class="field">
-			<label for="playlist_name">Playlist name:
-				<input type="text" id="playlist_name" value={ playlistName } oninput={ onNameInput } placeholder="Test"/>
-			</label>
-		</div>
+		<label for="playlist_name">Playlist name:
+			<input type="text" id="playlist_name" value={ playlistName } oninput={ onNameInput } placeholder="Test"/>
+		</label>
 		<async-button ref="save_playlist_confirm" submit={ true } states={ applyStates } action={ savePlaylist } />
 	</form>
 
@@ -100,6 +98,15 @@
 
 		form {
 			padding: 20px;
+		}
+
+		input {
+			width: inherit;
+			margin-left: 10px;
+		}
+
+		label {
+			margin-bottom: 15px;
 		}
 
 		@keyframes intro {
