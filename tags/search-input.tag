@@ -13,16 +13,26 @@
 	</script>
 
     <style>
+
+        search-input {
+            height: 22px;
+        }
+
         form {
-            margin-top: -5px;
+            height: 100%;
+            display: flex;
         }
 
         input, button {
             display: inline;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-bottom: 0;
         }
 
         input {
             width: 40%;
+            font-size: 0.812rem;
         }
 
         button {
