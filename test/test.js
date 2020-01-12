@@ -1,3 +1,5 @@
+require('mocha-generators').install();
+
 const Nightmare = require('nightmare')
 const chai = require('chai')
 const expect = chai.expect
@@ -24,87 +26,78 @@ describe('First Time Flow', function() {
   let nightmare = new Nightmare()
   after(() => { nightmare.end(noop) })
 
-  it('loads without error', done => {
-    nightmare
-      .goto('http://localhost:5050')
-      .wait('h2')
-      .evaluate(() => document.querySelector('h2').innerHTML)
-      .then(title => { expect(title).to.equal('Welcome to Polaris!') })
-      .then(() => { done() })
-      .catch(done)
+  describe('Welcome message', function() {
+    it('loads', function*() {
+      var title = yield nightmare
+        .goto('http://localhost:5050')
+        .wait('h2')
+        .evaluate(() => document.querySelector('h2').innerHTML);
+      expect(title).to.equal('Welcome to Polaris!');
+    })
+
+    it('has a submit button', function*() {
+      yield nightmare
+        .click('button.submit')
+        .wait(2000);
+    })
   })
 
-  it('has a submit button', done => {
-    nightmare
-      .wait('button.submit')
-      .then(() => { done() })
-      .catch(done)
+  describe('Mount points setup', function() {
+    it('has a title', function*() {
+      var title = yield nightmare
+        .evaluate(() => document.querySelector('h2').innerHTML)
+      expect(title).to.equal('Music Sources');
+    })
+
+    it('cannot be submitted prematurely', function*() {
+      var buttonDisabled = yield nightmare
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.be.true;
+    })
+
+    it('can be filled', function*() {
+      var buttonDisabled = yield nightmare
+        .insert('input#source', 'test/collection')
+        .insert('input#name', 'test_music')
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.not.be.true;
+
+      yield nightmare
+        .click('button.submit')
+        .wait(2000);
+    })
   })
 
-  it('transitions to mount point setup', done => {
-    nightmare
-      .click('button.submit')
-      .evaluate(() => document.querySelector('h2').innerHTML)
-      .then(title => { expect(title).to.equal('Music Sources') })
-      .then(() => { done() })
-      .catch(done)
+  describe('User account setup', function() {
+    it('has a title', function*() {
+      var title = yield nightmare
+        .evaluate(() => document.querySelector('h2').innerHTML)
+      expect(title).to.equal('User Account');
+    })
+
+    it('cannot be submitted prematurely', function*() {
+      var buttonDisabled = yield nightmare
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.be.true;
+    })
+
+    it('can be filled', function*() {
+      var buttonDisabled = yield nightmare
+        .insert('input#username', testUser)
+        .insert('input#password', testPassword)
+        .insert('input#password_confirm', testPassword)
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.not.be.true;
+
+      yield nightmare
+        .click('button.submit')
+    })
   })
 
-  it('cannot submit prematurely', done => {
-    nightmare
-      .evaluate(() => document.querySelector('button.submit').disabled)
-      .then(buttonDisabled => { expect(buttonDisabled).to.be.true })
-      .then(() => { done() })
-      .catch(done)
-  })
-
-  it('can fill out the mount point form', done => {
-    nightmare
-      .insert('input#source', 'test/collection')
-      .insert('input#name', 'test_music')
-      .evaluate(() => document.querySelector('button.submit').disabled)
-      .then(buttonDisabled => { expect(buttonDisabled).to.not.be.true })
-      .then(() => { done() })
-      .catch(done)
-  })
-
-  it('transitions to user setup', done => {
-    nightmare
-      .click('button.submit')
-      .wait(3000)
-      .evaluate(() => document.querySelector('h2').innerHTML)
-      .then(title => { expect(title).to.equal('User Account') })
-      .then(() => { done() })
-      .catch(done)
-  })
-
-  it('cannot submit prematurely', done => {
-    nightmare
-      .evaluate(() => document.querySelector('button.submit').disabled)
-      .then(buttonDisabled => { expect(buttonDisabled).to.be.true })
-      .then(() => { done() })
-      .catch(done)
-  })
-
-  it('can fill out the user account form', done => {
-    nightmare
-      .insert('input#username', testUser)
-      .insert('input#password', testPassword)
-      .insert('input#password_confirm', testPassword)
-      .evaluate(() => document.querySelector('button.submit').disabled)
-      .then(buttonDisabled => { expect(buttonDisabled).to.not.be.true })
-      .then(() => { done() })
-      .catch(done)
-  })
-
-  it('transitions to main page', done => {
-    nightmare
-      .click('button.submit')
-      .wait(3000)
+  it('Leads to main page', function*() {
+    yield nightmare
       .wait('main menu')
-      .then(() => { done() })
-      .catch(done)
-  }).timeout(5000)
+  });
 
 })
 
