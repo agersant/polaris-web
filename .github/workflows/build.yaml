@@ -30,11 +30,10 @@ jobs:
       working-directory: polaris
       run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
     - name: Retrieve cached Polaris executable
-      working-directory: polaris
       id: cache_polaris_build
       uses: actions/cache@v1
       with:
-        path: target
+        path: polaris/target
         key: ${{ runner.os }}-polaris-${{ hashFiles('polaris-version') }}
     - name: Build Polaris
       working-directory: polaris
