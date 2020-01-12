@@ -26,6 +26,14 @@ a {
 	text-decoration: none;
 }
 
+button:focus {
+	outline: none;
+}
+
+button::-moz-focus-inner {
+	border: 0;
+}
+
 /*Buttons*/
 input[type="submit"], button {
 	display: block;
