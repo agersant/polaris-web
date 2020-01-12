@@ -5,7 +5,7 @@ describe('Initial Setup', function() {
     cy.get('h2').contains('Welcome to Polaris!')
     cy.get('button.submit').click()
 
-    cy.get('h2').contains('Mount Sources')
+    cy.get('h2').contains('Music Sources')
     cy.get('button.submit').should('be.disabled')
     cy.get('input#source').type('test/collection')
     cy.get('input#name').type('test_music')
