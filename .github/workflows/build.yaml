@@ -22,10 +22,6 @@ jobs:
       with:
         path: polaris/target/polaris
         key: ${{ runner.os }}-polaris-server-${{ hashFiles('polaris-version') }}
-    - name: Install test framework
-      run: |
-        npm install -g jest
-        npm install nightmare
     - name: Install Rust toolchain
       if: steps.cache_polaris_executable.outputs.cache-hit != 'true'
       uses: actions-rs/toolchain@v1
@@ -42,9 +38,8 @@ jobs:
     - name: Run Polaris
       working-directory: polaris
       run: ./target/release/polaris -d test/db.sqlite -w ..
-    - name: Run Tests
-      env:
-        DEBUG: nightmare:*,electron:*
-      run: |
-        sleep 10
-        xvfb-run jest --runInBand --config=test/config.json
+    - name: Run Initial Setup Tests
+        uses: cypress-io/github-action@v1
+        with:
+          wait-on: 'http://localhost:5050'
+          spec: tests/initual-setup.js
