@@ -28,7 +28,7 @@
 		</ul>
 
 		<div if={ viewMode == "discography" } class="discographyView">
-			<div class="viewActions" if={ path }>
+			<div class="viewActions" if={ tab != "recent" && tab != "random" }>
 				<div class="header">{ header }</div>
 				<button onclick={ onQueueAll } class="small">Queue All</button>
 			</div>
@@ -310,10 +310,22 @@
 		}
 
 		onQueueAll(e) {
-			if (this.tab == "search") {
-				eventBus.trigger("browser:queueTracks", this.items.map(i => i.fields ));
-			} else {
+			if (this.tab != "search") {
 				eventBus.trigger("browser:queueDirectory", this.path);
+			} else {
+				var songItems = [];
+				var directoryItems = [];
+				this.items.forEach(item => {
+					if (item.variant == "Song") {
+						songItems.push(item);
+					} else if (item.variant == "Directory") {
+						directoryItems.push(item);
+					}
+				});
+				eventBus.trigger("browser:queueTracks", songItems.map(i => i.fields ));
+				directoryItems.forEach(item => {
+					eventBus.trigger("browser:queueDirectory", item.fields.path);
+				});
 			}
 		}
 
