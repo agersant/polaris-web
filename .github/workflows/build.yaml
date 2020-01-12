@@ -47,4 +47,4 @@ jobs:
         DEBUG: nightmare:*,electron:*
       run: |
         sleep 10
-        xvfb-run jest
+        xvfb-run jest --config=test/config.json
