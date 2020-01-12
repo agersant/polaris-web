@@ -1,6 +1,7 @@
 {
 	"baseUrl": "http://localhost:5050",
+	"integrationFolder": "tests",
 	"testFiles": [
-		"tests/initial-setup.js"
+		"initial-setup.js"
 	]
 }
