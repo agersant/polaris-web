@@ -39,7 +39,7 @@ jobs:
       working-directory: polaris
       run: ./target/release/polaris -d test/db.sqlite -w ..
     - name: Setup npm package
-      run: npm init
+      run: npm init -y
     - name: Run Initial Setup Tests
       uses: cypress-io/github-action@v1
       with:
