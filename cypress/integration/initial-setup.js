@@ -1,4 +1,9 @@
 describe('Initial Setup', function() {
+
+  beforeEach(function() {
+    cy.wipeInitialSetup()
+  })
+
   it('can be completed', function() {
     cy.visit('/')
 
