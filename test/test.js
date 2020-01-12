@@ -1,8 +1,4 @@
-require('mocha-generators').install();
-
 const Nightmare = require('nightmare')
-const chai = require('chai')
-const expect = chai.expect
 
 const testUser = 'testUser'
 const testPassword = 'testPassword'
@@ -18,29 +14,29 @@ function auth(nightmare) {
     .insert('input[name="username"]', testUser)
     .insert('input[name="password"]', testPassword)
     .click('input[type="submit"]')
-    .wait('main menu')
+    .wait('main menu');
 }
 
-describe('First Time Flow', function() {
+describe('First Time Flow', () => {
 
-  let nightmare = new Nightmare()
-  after(() => { nightmare.end(noop) })
+  let nightmare = new Nightmare();
+  after(() => { nightmare.end(noop) });
 
-  describe('Welcome message', function() {
-    it('loads', function*() {
-      var title = yield nightmare
+  describe('Welcome message', () => {
+    test('message is shown', async () => {
+      const title = await nightmare
         .goto('http://localhost:5050')
         .wait('h2')
         .evaluate(() => document.querySelector('h2').innerHTML);
-      expect(title).to.equal('Welcome to Polaris!');
-    })
+      expect(title).toBe('Welcome to Polaris!');
+    });
 
-    it('has a submit button', function*() {
-      yield nightmare
+    test('can click submit button', async () => {
+      await nightmare
         .click('button.submit')
         .wait(2000);
-    })
-  })
+    });
+  });
   /*
     describe('Mount points setup', function() {
       it('has a title', function*() {
@@ -48,39 +44,39 @@ describe('First Time Flow', function() {
           .evaluate(() => document.querySelector('h2').innerHTML)
         expect(title).to.equal('Music Sources');
       })
-  
+
       it('cannot be submitted prematurely', function*() {
         var buttonDisabled = yield nightmare
           .evaluate(() => document.querySelector('button.submit').disabled);
         expect(buttonDisabled).to.be.true;
       })
-  
+
       it('can be filled', function*() {
         var buttonDisabled = yield nightmare
           .insert('input#source', 'test/collection')
           .insert('input#name', 'test_music')
           .evaluate(() => document.querySelector('button.submit').disabled);
         expect(buttonDisabled).to.not.be.true;
-  
+
         yield nightmare
           .click('button.submit')
           .wait(2000);
       })
     })
-  
+
     describe('User account setup', function() {
       it('has a title', function*() {
         var title = yield nightmare
           .evaluate(() => document.querySelector('h2').innerHTML)
         expect(title).to.equal('User Account');
       })
-  
+
       it('cannot be submitted prematurely', function*() {
         var buttonDisabled = yield nightmare
           .evaluate(() => document.querySelector('button.submit').disabled);
         expect(buttonDisabled).to.be.true;
       })
-  
+
       it('can be filled', function*() {
         var buttonDisabled = yield nightmare
           .insert('input#username', testUser)
@@ -88,19 +84,19 @@ describe('First Time Flow', function() {
           .insert('input#password_confirm', testPassword)
           .evaluate(() => document.querySelector('button.submit').disabled);
         expect(buttonDisabled).to.not.be.true;
-  
+
         yield nightmare
           .click('button.submit')
       })
     })
-  
+
     describe('Main page', function() {
       it('appears', function*() {
         yield nightmare
           .wait('main menu')
       })
     })
-  
+
   */
 })
 

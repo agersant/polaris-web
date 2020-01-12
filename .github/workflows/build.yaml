@@ -24,9 +24,7 @@ jobs:
         key: ${{ runner.os }}-polaris-${{ hashFiles('polaris-version') }}
     - name: Install test framework
       run: |
-        npm install -g mocha
-        npm install mocha-generators
-        npm install chai
+        npm install -g jest
         npm install nightmare
     - name: Install Rust toolchain
       if: steps.cache_polaris_build.outputs.cache-hit != 'true'
@@ -49,4 +47,4 @@ jobs:
         DEBUG: nightmare:*,electron:*
       run: |
         sleep 10
-        xvfb-run mocha
+        xvfb-run jest
