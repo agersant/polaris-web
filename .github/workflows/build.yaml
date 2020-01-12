@@ -11,19 +11,6 @@ jobs:
       uses: actions/checkout@master
     - name: Install Node.js
       uses: actions/setup-node@v1
-    - name: Install test framework
-      run: |
-        npm install -g mocha
-        npm install mocha-generators
-        npm install chai
-        npm install nightmare
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: nightly
-        profile: minimal
-    - name: Install libsqlite3-dev
-      run: sudo apt-get install libsqlite3-dev
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
     - name: Store polaris version
@@ -35,13 +22,28 @@ jobs:
       with:
         path: polaris/target
         key: ${{ runner.os }}-polaris-${{ hashFiles('polaris-version') }}
+    - name: Install test framework
+      run: |
+        npm install -g mocha
+        npm install mocha-generators
+        npm install chai
+        npm install nightmare
+    - name: Install Rust toolchain
+      if: steps.cache_polaris_build.outputs.cache-hit != 'true'
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        profile: minimal
+    - name: Install libsqlite3-dev
+      if: steps.cache_polaris_build.outputs.cache-hit != 'true'
+      run: sudo apt-get install libsqlite3-dev
     - name: Build Polaris
       working-directory: polaris
       if: steps.cache_polaris_build.outputs.cache-hit != 'true'
       run: cargo +nightly build --release
     - name: Run Polaris
       working-directory: polaris
-      run: cargo +nightly run --release -- -d test/db.sqlite -w ..
+      run: ./target/release/polaris -d test/db.sqlite -w ..
     - name: Run Tests
       env:
         DEBUG: nightmare:*,electron:*
