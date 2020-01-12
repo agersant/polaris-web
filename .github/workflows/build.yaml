@@ -40,7 +40,7 @@ jobs:
       run: ./target/release/polaris -d test/db.sqlite -w ..
     - name: Install Node.js
       uses: actions/setup-node@v1
-    - name: Setup npmn package
+    - name: Setup npm package
       run: npm init
     - name: Run Initial Setup Tests
       uses: cypress-io/github-action@v1
