@@ -26,7 +26,19 @@ jobs:
       run: sudo apt-get install libsqlite3-dev
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
-    - name: Build And Run Polaris
+    - name: Store polaris version
+      run: git rev-parse HEAD > /workspace/polaris-version
+    - name: Retrieve cached Polaris executable
+      id: cache-polaris
+      uses: actions/cache@v1
+      with:
+        path: target
+        key: ${{ runner.os }}-polaris-${{ hashFiles('/workspace/polaris-version') }}
+    - name: Build Polaris
+      working-directory: polaris
+      if: steps.cache-polaris.outputs.cache-hit != 'true'
+      run: cargo +nightly build --release
+    - name: Run Polaris
       working-directory: polaris
       run: cargo +nightly run --release -- -d test/db.sqlite -w ..
     - name: Run Tests
