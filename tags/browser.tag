@@ -11,7 +11,15 @@
 		<ul if={ viewMode == "explorer" } class="explorerView">
 			<div class="viewActions">
 				<div class="header">{ header }</div>
-				<button onclick={ onQueueAll } class="small" if={items.length > 0}>Queue All</button><button if={ tab == "playlist" } class="danger small" onclick={ onDeletePlaylist }>Delete</button>
+				<button if={ tab != "playlist" && items.length > 0 } onclick={ onQueueAll } class="small">
+					Queue All
+				</button>
+				<button if={ tab == "playlist" && items.length > 0 } onclick={ onQueuePlaylist } class="small">
+					Play
+				</button>
+				<button if={ tab == "playlist" } onclick={ onDeletePlaylist } class="danger small" >
+					Delete
+				</button>
 			</div>
 			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 				<div if={ variant == "Directory" } class="directory"><i class="material-icons">folder</i>{ fields.name }</div>
@@ -302,14 +310,15 @@
 		}
 
 		onQueueAll(e) {
-			if (this.tab == "playlist" || this.tab == "search") {
-				eventBus.trigger("browser:queueTracks", this.items.map(function(i){ return i.fields; }));
+			if (this.tab == "search") {
+				eventBus.trigger("browser:queueTracks", this.items.map(i => i.fields ));
 			} else {
 				eventBus.trigger("browser:queueDirectory", this.path);
 			}
-			if (this.tab == "playlist") {
-				eventBus.trigger("browser:queuedPlaylist", this.playlistName);
-			}
+		}
+
+		onQueuePlaylist(e) {
+			eventBus.trigger("browser:queuePlaylist", this.playlistName, this.items.map(i => i.fields ));
 		}
 
 		onDragItemStart(e) {
@@ -380,6 +389,7 @@
 
 		.viewActions {
 			margin-bottom: 40px;
+			font-size: 0;
 		}
 
 		.viewActions .header {

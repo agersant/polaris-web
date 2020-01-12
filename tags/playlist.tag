@@ -1,7 +1,7 @@
 <playlist>
 
 	<div class="paneHeader">
-		<h2>Playlist</h2>
+		<h2>{ this.playlistName || "Playlist" }</h2>
 		<div class="playlistOperations">
 			<span class="noselect save" onclick={ onClickSave }>
 				<i class="material-icons md-18">save</i>
@@ -80,7 +80,7 @@
 				var newTrack = this.tracks[currentTrackIndex];
 				eventBus.trigger("playlist:jumpTo", newTrack);
 			}
-			this.playlistName = utils.loadUserData("playlistName")
+			this.playlistName = utils.loadUserData("playlistName");
 		}
 
 		clear() {
@@ -132,9 +132,14 @@
 			this.queueURL('api/flatten/' + encodeURIComponent(path));
 		}
 
-		queuePlaylist(name) {
-			this.queueURL('api/playlist/' + encodeURIComponent(name));
-			this.onPlaylistQueued(name);
+		queuePlaylist(name, tracks) {
+			this.clear();
+			this.playlistName = name;
+			if (tracks) {
+				this.queueTracks(tracks);
+			} else {
+				this.queueURL('api/playlist/' + encodeURIComponent(name));
+			}
 		}
 
 		advance(currentTrack, delta) {
@@ -242,10 +247,6 @@
 			utils.saveUserData("playbackOrder", playbackOrder);
 		}
 
-		onPlaylistQueued(playlistName) {
-			this.playlistName = playlistName;
-		}
-
 		saveLocalPlaylist() {
 			if (utils.saveUserData("playlist", this.tracks)) {
 				utils.saveUserData("playlistName", this.playlistName);
@@ -259,8 +260,9 @@
 		}
 
 		endSave(playlistName) {
-			this.playlistName = playlistName;
 			this.saving = false;
+			this.playlistName = playlistName;
+			this.saveLocalPlaylist();
 			this.update();
 		}
 
@@ -308,7 +310,7 @@
 		eventBus.on("browser:queueTrack", this.queueTrack);
 		eventBus.on("browser:queueTracks", this.queueTracks);
 		eventBus.on("browser:queueDirectory", this.queueDirectory);
-		eventBus.on("browser:queuedPlaylist", this.onPlaylistQueued);
+		eventBus.on("browser:queuePlaylist", this.queuePlaylist);
 		eventBus.on("player:trackFinished", this.playNext);
 		eventBus.on("player:playPrevious", this.playPrevious);
 		eventBus.on("player:playNext", this.playNext);

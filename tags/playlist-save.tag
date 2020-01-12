@@ -63,12 +63,12 @@
 						return;
 					}
 					if (res.ok) {
-						eventBus.trigger("playlist-save:done", playlist.name);
+						eventBus.trigger("playlist-save:done", this.playlistName);
 					} else {
 						this.tags["async-button"].setState(this.applyStates.ready);
 						this.update();
 					}
-				}.bind(this), 2000);
+				}.bind(this), 1000);
 			}.bind(this));
 		}
 
