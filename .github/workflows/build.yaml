@@ -9,8 +9,6 @@ jobs:
     steps:
     - name: Clone Polaris Web
       uses: actions/checkout@master
-    - name: Install Node.js
-      uses: actions/setup-node@v1
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
     - name: Check polaris version
@@ -21,7 +19,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: polaris/target
-        key: ${{ runner.os }}-polaris-cached-${{ hashFiles('polaris-version') }}
+        key: polaris-binary-${{ hashFiles('polaris-version') }}
     - name: Install Rust toolchain
       if: steps.cache.outputs.cache-hit != 'true'
       uses: actions-rs/toolchain@v1
@@ -37,14 +35,24 @@ jobs:
       run: cargo +nightly build --release
     - name: Run Polaris
       working-directory: polaris
-      run: ./target/release/polaris -d test/db.sqlite -w ..
+      run: ./target/release/polaris -d test/db.sqlite -w .. -f & > polaris.log
+
+    - name: Install Node.js
+      uses: actions/setup-node@v1
     - name: Setup npm package
       run: npm init -y && npm install
-    - name: Run Initial Setup Tests
+    - name: Run Automated Tests
       uses: cypress-io/github-action@v1
       with:
         wait-on: 'http://localhost:5050'
         config-file: tests/cypress.json
+
+    - name: Upload Polaris Log
+      uses: actions/upload-artifact@v1
+      if: failure()
+      with:
+        name: polaris-log
+        path: polaris/polaris.log
     - name: Upload Screenshots
       uses: actions/upload-artifact@v1
       if: failure()
