@@ -1,0 +1,2 @@
+async-only: true
+timeout: 10000
