@@ -14,7 +14,7 @@
 		</div>
 
 		<div class="field">
-			<label for="password_confirm">Confirm new password</label>
+			<label for="password_confirm">Confirm password</label>
 			<input type="password" id="password_confirm" value={ opts.password_confirm } oninput={ onPasswordConfirmInput }/>
 			<p if={ opts.password && opts.password_confirm && opts.password !== opts.password_confirm } class="tip error">The passwords do not match.</p>
 		</div>
