@@ -38,8 +38,6 @@ jobs:
     - name: Run Polaris
       working-directory: polaris
       run: ./target/release/polaris -d test/db.sqlite -w ..
-    - name: Install Node.js
-      uses: actions/setup-node@v1
     - name: Setup npm package
       run: npm init
     - name: Run Initial Setup Tests
