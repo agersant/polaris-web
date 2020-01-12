@@ -1,7 +1,5 @@
-const testUser = 'testUser'
+/*const testUser = 'testUser'
 const testPassword = 'testPassword'
-
-function noop() { }
 
 function auth(nightmare) {
   nightmare
@@ -13,25 +11,22 @@ function auth(nightmare) {
     .insert('input[name="password"]', testPassword)
     .click('input[type="submit"]')
     .wait('main menu');
-}
+}*/
 
 module.exports = () => {
-  let nightmare = new Nightmare();
-  afterAll(() => { nightmare.end(noop) });
-
   describe('First Time Flow', () => {
     describe('Welcome message', () => {
       test('message is shown', async () => {
-        /*const title = await page
-          .goto('http://localhost:5050')
-          .waitFor('h2')
-          .evaluate(() => document.querySelector('h2').innerHTML);
+        /*await page.goto('http://localhost:5050');
+        await page.waitFor('h2');
+        const title = await page.evaluate(() => document.querySelector('h2').innerHTML);
         expect(title).toBe('Welcome to Polaris!');*/
       });
       test('can click submit button', async () => {
-        /*await page
-          .waitForNavigation()
-          .click('button.submit');*/
+        /*await Promise.all([
+          page.waitForNavigation(),
+          page.click('button.submit'),
+        ]);*/
       });
     });
   });
