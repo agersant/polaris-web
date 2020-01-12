@@ -3,9 +3,9 @@
 		<div class="content">
 			<img class="logo" src="img/logo.png"/>
 			<form name="authForm" onsubmit={ doLogin }>
-				<input type="text" name="username" placeholder="Username" autofocus/>
-				<input type="password" name="password" placeholder="Password"/>
-				<p if={ badCredentials } class="tip error">Incorrect credentials, please try again.</p>
+				<input data-cy="username" type="text" name="username" placeholder="Username" autofocus/>
+				<input data-cy="password" type="password" name="password" placeholder="Password"/>
+				<p if={ badCredentials } data-cy="login-error" class="tip error">Incorrect credentials, please try again.</p>
 				<input type="submit" value="Login"/>
 			</form>
 		</div>
