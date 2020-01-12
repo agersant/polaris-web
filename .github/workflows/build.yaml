@@ -27,13 +27,15 @@ jobs:
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
     - name: Store polaris version
-      run: git rev-parse HEAD > /workspace/polaris-version
+      working-directory: polaris
+      run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
     - name: Retrieve cached Polaris executable
+      working-directory: polaris
       id: cache-polaris
       uses: actions/cache@v1
       with:
         path: target
-        key: ${{ runner.os }}-polaris-${{ hashFiles('/workspace/polaris-version') }}
+        key: ${{ runner.os }}-polaris-${{ hashFiles('polaris-version') }}
     - name: Build Polaris
       working-directory: polaris
       if: steps.cache-polaris.outputs.cache-hit != 'true'
