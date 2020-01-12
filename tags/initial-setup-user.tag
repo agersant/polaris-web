@@ -18,7 +18,7 @@
 			<input type="password" id="password_confirm" value={ opts.password_confirm } oninput={ onPasswordConfirmInput }/>
 			<p if={ opts.password && opts.password_confirm && opts.password !== opts.password_confirm } class="tip error">The passwords do not match.</p>
 		</div>
-		<button class="submit" disabled={ !validate() } onclick={ proceed }>Next</button>
+		<button data-cy="submit-user" class="submit" disabled={ !validate() } onclick={ proceed }>Next</button>
 	</form>
 	<script>
 		validate() {
