@@ -18,6 +18,6 @@ describe('Initial Setup', function() {
     cy.get('input#password_confirm').type('testPassword')
     cy.get('[data-cy=submit-user]').click()
 
-    cy.get('main menu').should('exist')
+    cy.hash().should('eq', '#browse')
   })
 })

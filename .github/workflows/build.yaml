@@ -45,7 +45,6 @@ jobs:
       uses: cypress-io/github-action@v1
       with:
         wait-on: 'http://localhost:5050'
-        config-file: tests/cypress.json
 
     - name: Upload Screenshots
       uses: actions/upload-artifact@v1
