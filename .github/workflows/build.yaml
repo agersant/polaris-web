@@ -44,5 +44,4 @@ jobs:
       uses: cypress-io/github-action@v1
       with:
         wait-on: 'http://localhost:5050'
-        spec: tests/initial-setup.js
         config-file: tests/cypress.json

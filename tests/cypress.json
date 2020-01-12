@@ -1,3 +1,6 @@
 {
-	"baseUrl": "http://localhost:5050"
+	"baseUrl": "http://localhost:5050",
+	"testFiles": [
+		"tests/initial-setup.js"
+	]
 }
