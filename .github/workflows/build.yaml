@@ -13,7 +13,7 @@ jobs:
       uses: actions/setup-node@v1
     - name: Clone Polaris
       run: git clone http://github.com/agersant/polaris
-    - name: Store polaris version
+    - name: Check polaris version
       working-directory: polaris
       run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
     - name: Retrieve cached Polaris executable
