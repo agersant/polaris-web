@@ -35,7 +35,7 @@ jobs:
       run: cargo +nightly build --release
     - name: Run Polaris
       working-directory: polaris
-      run: ./target/release/polaris -d test/db.sqlite -w .. -f & > polaris.log
+      run: ./target/release/polaris -d test/db.sqlite -w .. -f &
 
     - name: Install Node.js
       uses: actions/setup-node@v1
@@ -47,12 +47,6 @@ jobs:
         wait-on: 'http://localhost:5050'
         config-file: tests/cypress.json
 
-    - name: Upload Polaris Log
-      uses: actions/upload-artifact@v1
-      if: failure()
-      with:
-        name: polaris-log
-        path: polaris/polaris.log
     - name: Upload Screenshots
       uses: actions/upload-artifact@v1
       if: failure()
