@@ -17,90 +17,88 @@ function auth(nightmare) {
     .wait('main menu');
 }
 
-describe('First Time Flow', () => {
-
+export default () => {
   let nightmare = new Nightmare();
-  after(() => { nightmare.end(noop) });
+  afterAll(() => { nightmare.end(noop) });
 
-  describe('Welcome message', () => {
-    test('message is shown', async () => {
-      const title = await nightmare
-        .goto('http://localhost:5050')
-        .wait('h2')
-        .evaluate(() => document.querySelector('h2').innerHTML);
-      expect(title).toBe('Welcome to Polaris!');
-    });
-
-    test('can click submit button', async () => {
-      await nightmare
-        .click('button.submit')
-        .wait(2000);
-    });
-  });
-  /*
-    describe('Mount points setup', function() {
-      it('has a title', function*() {
-        var title = yield nightmare
-          .evaluate(() => document.querySelector('h2').innerHTML)
-        expect(title).to.equal('Music Sources');
-      })
-
-      it('cannot be submitted prematurely', function*() {
-        var buttonDisabled = yield nightmare
-          .evaluate(() => document.querySelector('button.submit').disabled);
-        expect(buttonDisabled).to.be.true;
-      })
-
-      it('can be filled', function*() {
-        var buttonDisabled = yield nightmare
-          .insert('input#source', 'test/collection')
-          .insert('input#name', 'test_music')
-          .evaluate(() => document.querySelector('button.submit').disabled);
-        expect(buttonDisabled).to.not.be.true;
-
-        yield nightmare
+  describe('First Time Flow', () => {
+    describe('Welcome message', () => {
+      test('message is shown', async () => {
+        const title = await nightmare
+          .goto('http://localhost:5050')
+          .wait('h2')
+          .evaluate(() => document.querySelector('h2').innerHTML);
+        expect(title).toBe('Welcome to Polaris!');
+      });
+      test('can click submit button', async () => {
+        await nightmare
           .click('button.submit')
           .wait(2000);
-      })
-    })
-
-    describe('User account setup', function() {
-      it('has a title', function*() {
-        var title = yield nightmare
-          .evaluate(() => document.querySelector('h2').innerHTML)
-        expect(title).to.equal('User Account');
-      })
-
-      it('cannot be submitted prematurely', function*() {
-        var buttonDisabled = yield nightmare
-          .evaluate(() => document.querySelector('button.submit').disabled);
-        expect(buttonDisabled).to.be.true;
-      })
-
-      it('can be filled', function*() {
-        var buttonDisabled = yield nightmare
-          .insert('input#username', testUser)
-          .insert('input#password', testPassword)
-          .insert('input#password_confirm', testPassword)
-          .evaluate(() => document.querySelector('button.submit').disabled);
-        expect(buttonDisabled).to.not.be.true;
-
-        yield nightmare
-          .click('button.submit')
-      })
-    })
-
-    describe('Main page', function() {
-      it('appears', function*() {
-        yield nightmare
-          .wait('main menu')
-      })
-    })
-
-  */
-})
+      });
+    });
+  });
+}
 
 /*
+  describe('Mount points setup', function() {
+    it('has a title', function*() {
+      var title = yield nightmare
+        .evaluate(() => document.querySelector('h2').innerHTML)
+      expect(title).to.equal('Music Sources');
+    })
+
+    it('cannot be submitted prematurely', function*() {
+      var buttonDisabled = yield nightmare
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.be.true;
+    })
+
+    it('can be filled', function*() {
+      var buttonDisabled = yield nightmare
+        .insert('input#source', 'test/collection')
+        .insert('input#name', 'test_music')
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.not.be.true;
+
+      yield nightmare
+        .click('button.submit')
+        .wait(2000);
+    })
+  })
+
+  describe('User account setup', function() {
+    it('has a title', function*() {
+      var title = yield nightmare
+        .evaluate(() => document.querySelector('h2').innerHTML)
+      expect(title).to.equal('User Account');
+    })
+
+    it('cannot be submitted prematurely', function*() {
+      var buttonDisabled = yield nightmare
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.be.true;
+    })
+
+    it('can be filled', function*() {
+      var buttonDisabled = yield nightmare
+        .insert('input#username', testUser)
+        .insert('input#password', testPassword)
+        .insert('input#password_confirm', testPassword)
+        .evaluate(() => document.querySelector('button.submit').disabled);
+      expect(buttonDisabled).to.not.be.true;
+
+      yield nightmare
+        .click('button.submit')
+    })
+  })
+
+  describe('Main page', function() {
+    it('appears', function*() {
+      yield nightmare
+        .wait('main menu')
+    })
+  })
+
 describe("Authentication", () => {
 
 let nightmare = new Nightmare()
