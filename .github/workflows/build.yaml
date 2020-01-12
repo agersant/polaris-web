@@ -40,8 +40,3 @@ jobs:
       run: ./target/release/polaris -d test/db.sqlite -w ..
     - name: Setup npm package
       run: npm init -y && npm install
-    - name: Run Initial Setup Tests
-      uses: cypress-io/github-action@v1
-      with:
-        wait-on: 'http://localhost:5050'
-        config-file: tests/cypress.json
