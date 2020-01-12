@@ -17,7 +17,7 @@ function auth(nightmare) {
     .wait('main menu');
 }
 
-export default () => {
+module.exports = () => {
   let nightmare = new Nightmare();
   afterAll(() => { nightmare.end(noop) });
 
