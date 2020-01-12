@@ -94,10 +94,12 @@ describe('First Time Flow', function() {
     })
   })
 
-  it('Leads to main page', function*() {
-    yield nightmare
-      .wait('main menu')
-  });
+  describe('Main page', function() {
+    it('appears', function*() {
+      yield nightmare
+        .wait('main menu')
+    })
+  })
 
 })
 
