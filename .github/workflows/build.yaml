@@ -17,23 +17,23 @@ jobs:
       working-directory: polaris
       run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
     - name: Retrieve cached Polaris executable
-      id: cache_polaris_executable
+      id: cache
       uses: actions/cache@v1
       with:
-        path: polaris/target/release/polaris
-        key: ${{ runner.os }}-polaris-server-${{ hashFiles('polaris-version') }}
+        path: polaris/target
+        key: ${{ runner.os }}-polaris-cached-${{ hashFiles('polaris-version') }}
     - name: Install Rust toolchain
-      if: steps.cache_polaris_executable.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       uses: actions-rs/toolchain@v1
       with:
         toolchain: nightly
         profile: minimal
     - name: Install libsqlite3-dev
-      if: steps.cache_polaris_executable.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       run: sudo apt-get install libsqlite3-dev
     - name: Build Polaris
       working-directory: polaris
-      if: steps.cache_polaris_executable.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       run: cargo +nightly build --release
     - name: Run Polaris
       working-directory: polaris
