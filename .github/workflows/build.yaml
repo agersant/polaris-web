@@ -38,8 +38,11 @@ jobs:
     - name: Run Polaris
       working-directory: polaris
       run: ./target/release/polaris -d test/db.sqlite -w ..
+    - name: Setup Cypress Prereq
+      run: 'echo { "name": "polaris-web", "version": "0.0" } > package.json'
     - name: Run Initial Setup Tests
       uses: cypress-io/github-action@v1
       with:
         wait-on: 'http://localhost:5050'
         spec: tests/initual-setup.js
+        config-file: tests/cypress.json
