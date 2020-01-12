@@ -39,7 +39,7 @@ jobs:
       working-directory: polaris
       run: ./target/release/polaris -d test/db.sqlite -w ..
     - name: Run Initial Setup Tests
-        uses: cypress-io/github-action@v1
-        with:
-          wait-on: 'http://localhost:5050'
-          spec: tests/initual-setup.js
+      uses: cypress-io/github-action@v1
+      with:
+        wait-on: 'http://localhost:5050'
+        spec: tests/initual-setup.js
