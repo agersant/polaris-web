@@ -7,6 +7,7 @@ var utils = (function() {
 		}
 		if (value == null || value == undefined) {
 			localStorage.removeItem(username + "." + key);
+			return true;
 		}
 		if (typeof value == "object") {
 			value = JSON.stringify(value);
