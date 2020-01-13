@@ -17,9 +17,8 @@
 
 		save(data, url) {
 			eventBus.trigger("settings:submissionStatusUpdate", "applying");
-			fetch(url,
+			utils.api(url,
 				{	method: "PUT"
-				,	credentials: "same-origin"
 				,	body: JSON.stringify(data)
 				,	headers: {
     					'Content-Type': 'application/json'
@@ -45,11 +44,11 @@
 		}
 
 		saveConfig(config) {
-			this.save(config, "api/settings/");
+			this.save(config, "/settings");
 		}
 
 		savePreferences(preferences) {
-			this.save(preferences, "api/preferences/");
+			this.save(preferences, "/preferences");
 		}
 
 		eventBus.on("settings:submitConfig", this.saveConfig);

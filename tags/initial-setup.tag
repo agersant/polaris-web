@@ -7,7 +7,7 @@
 	<script>
 		this.on("mount", function(){
 			riot.mount("#initial-setup-page", "initial-setup-welcome");
-			fetch("api/settings/", { credentials: "same-origin" })
+			utils.api("/settings")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.config = data;
@@ -21,7 +21,7 @@
 			this.config.mount_dirs = [mountPoint];
 			this.commit()
 			.then(function(res) {
-				fetch("api/trigger_index/", { method: "POST", credentials: "same-origin" })
+				utils.api("/trigger_index", { method: "POST" })
 				.then(function() {
 					eventBus.trigger("initialSetupNext");
 				});
@@ -54,9 +54,8 @@
 		}.bind(this));
 
 		commit(final) {
-			return fetch("api/settings/",
+			return utils.api("/settings",
 				{	method: "PUT"
-				,	credentials: "same-origin"
 				,	body: JSON.stringify(this.config)
 				,	headers: {
     					'Content-Type': 'application/json'

@@ -38,9 +38,8 @@
 
 			this.tags["async-button"].setState(this.applyStates.saving);
 
-			fetch("api/playlist/" + encodeURIComponent(this.playlistName),
+			utils.api("/playlist/" + encodeURIComponent(this.playlistName),
 				{	method: "PUT"
-				,	credentials: "same-origin"
 				,	body: JSON.stringify(playlist)
 				,	headers: {
     					'Content-Type': 'application/json'

@@ -44,6 +44,21 @@ var utils = (function() {
 		});
 	}
 
+	var api = function(endpoint, options) {
+		if (!options) {
+			options = {};
+		}
+		options.credentials = "same-origin";
+		return fetch("api" + endpoint, options)
+			.then((res) => {
+				if (res.status == 401) {
+					route("auth", null, true);
+					throw "Authentication error";
+				}
+				return res;
+			});
+	}
+
 	var getPathTail = function(path) {
 		if (!path) {
 			return null;
@@ -65,6 +80,7 @@ var utils = (function() {
 		saveUserData: saveUserData,
 		loadUserData: loadUserData,
 		tryLogin: tryLogin,
+		api: api,
 		getPathTail: getPathTail,
 		stripFileExtension: stripFileExtension,
 	}

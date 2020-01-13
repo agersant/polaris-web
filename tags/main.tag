@@ -15,7 +15,7 @@
 		});
 
 		applyTheme() {
-			fetch("api/preferences/", { credentials: "same-origin" })
+			utils.api("/preferences")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				theming.setBase(data.web_theme_base);

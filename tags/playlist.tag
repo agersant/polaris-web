@@ -112,7 +112,7 @@
 		}
 
 		queueURL(url) {
-			fetch(url, { credentials: "same-origin" })
+			utils.api(url)
 			.then(function(res) {
 				return res.json();
 			})
@@ -129,7 +129,7 @@
 		}
 
 		queueDirectory(path) {
-			this.queueURL('api/flatten/' + encodeURIComponent(path));
+			this.queueURL('/flatten/' + encodeURIComponent(path));
 		}
 
 		queuePlaylist(name, tracks) {
@@ -138,7 +138,7 @@
 			if (tracks) {
 				this.queueTracks(tracks);
 			} else {
-				this.queueURL('api/playlist/' + encodeURIComponent(name));
+				this.queueURL('/playlist/' + encodeURIComponent(name));
 			}
 		}
 

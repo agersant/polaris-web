@@ -37,7 +37,7 @@
 		this.mountPoints = null;
 
 		this.on('mount', function() {
-			fetch("api/settings/", { credentials: "same-origin" })
+			utils.api("/settings")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.config = data;
@@ -103,7 +103,7 @@
 		reindex(e) {
 			e.preventDefault();
 			this.refs.reindex.setState(this.reindexStates.applying);
-			fetch("api/trigger_index/", { method: "POST", credentials: "same-origin" })
+			utils.api("/trigger_index", { method: "POST" })
 			.then(function(res) {
 				if (res.status != 200) {
 					this.refs.reindex.setState(this.reindexStates.failure);

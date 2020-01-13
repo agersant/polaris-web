@@ -19,7 +19,7 @@
 		this.playlists = [];
 
 		load() {
-			fetch("api/playlists", { credentials: "same-origin" })
+			utils.api("/playlists")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				if (this.dead) {

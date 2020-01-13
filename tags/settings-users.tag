@@ -49,7 +49,7 @@
 		this.users = null;
 
 		this.on('mount', function() {
-			fetch("api/settings/", { credentials: "same-origin" })
+			utils.api("/settings")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.config = data;

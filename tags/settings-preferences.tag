@@ -80,7 +80,7 @@
 		}
 
 		refreshPreferences() {
-			fetch("api/preferences/", { credentials: "same-origin" })
+			utils.api("/preferences")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.preferences = data;
@@ -123,7 +123,7 @@
 		}
 
 		unlinkLastFMAccount(e) {
-			fetch("api/lastfm/link", { credentials: "same-origin", method: "DELETE" })
+			utils.api("/lastfm/link", { method: "DELETE" })
 			.then(function(res) {
 				this.refreshPreferences();
 			}.bind(self));

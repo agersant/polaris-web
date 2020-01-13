@@ -191,7 +191,7 @@
 		}
 
 		function random() {
-			fetch("api/random/", { credentials: "same-origin" })
+			utils.api("/random")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -208,7 +208,7 @@
 		}
 
 		function recent() {
-			fetch("api/recent/", { credentials: "same-origin" })
+			utils.api("/recent")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -230,7 +230,7 @@
 			var path = matches ? matches[1] : "";
 			path = decodeURIComponent(path);
 
-			fetch("api/browse/" + encodeURIComponent(path), { credentials: "same-origin" })
+			utils.api("/browse/" + encodeURIComponent(path))
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -252,7 +252,7 @@
 			var playlistName = matches ? matches[1] : "";
 			playlistName = decodeURIComponent(playlistName);
 
-			fetch("api/playlist/" + encodeURIComponent(playlistName), { credentials: "same-origin" })
+			utils.api("/playlist/" + encodeURIComponent(playlistName))
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -274,7 +274,7 @@
 			var query = matches ? matches[1] : "";
 			query = decodeURIComponent(query);
 
-			fetch("api/search/" + encodeURIComponent(query), { credentials: "same-origin" })
+			utils.api("/search/" + encodeURIComponent(query))
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				this.reset();
@@ -352,11 +352,7 @@
 		}
 
 		onDeletePlaylist(e) {
-			fetch("api/playlist/" + encodeURIComponent(this.playlistName),
-				{	method: "DELETE"
-				,	credentials: "same-origin"
-				}
-			)
+			utils.api("/playlist/" + encodeURIComponent(this.playlistName), { method: "DELETE" })
 			.then(function(res) {
 				route("playlists/");
 			});

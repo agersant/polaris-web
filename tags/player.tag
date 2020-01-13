@@ -75,7 +75,7 @@
 		play(track) {
 			this.jumpTo(track);
 			this.refs.htmlAudio.play();
-			fetch("api/lastfm/now_playing/" + encodeURIComponent(track.info.path), { credentials: "same-origin", method: "PUT" });
+			utils.api("/lastfm/now_playing/" + encodeURIComponent(track.info.path), { method: "PUT" });
 			this.canScrobble = true;
 		}
 
@@ -166,7 +166,7 @@
 			if (this.canScrobble) {
 				var shouldScrobble = duration > 30 && (currentTime > duration/2 || currentTime > 4*60);
 				if (shouldScrobble) {
-					fetch("api/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { credentials: "same-origin", method: "POST" });
+					utils.api("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
 					this.canScrobble = false;
 				}
 			}

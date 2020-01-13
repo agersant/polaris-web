@@ -63,7 +63,7 @@
 		<script type="text/javascript">
 			var eventBus = riot.observable();
 
-			fetch("api/initial_setup/", { credentials: "same-origin" })
+			utils.api("/initial_setup")
 				.then(function(res) { return res.json(); })
 				.then(function(data) {
 					riot.mount('*');
