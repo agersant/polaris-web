@@ -20,10 +20,9 @@
 			this.badCredentials = false;
 			utils.tryLogin(username, password)
 			.then(function(res) {
-				route("browse", null, true);
-			})
-			.catch(function(status){
-				if (status == 401) {
+				if (res.status == 200) {
+					route("browse", null, true);
+				} else if (res.status == 401) {
 					this.badCredentials = true;
 					this.update();
 				}
