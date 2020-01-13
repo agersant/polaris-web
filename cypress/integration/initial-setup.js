@@ -13,7 +13,7 @@ describe('Initial Setup', function() {
     cy.contains('Music Sources')
     cy.get('[data-cy=submit-mount-points]').should('be.disabled')
     cy.get('input#source').type('test/collection')
-    cy.get('input#name').type('test_music')
+    cy.get('input#name').type('Test')
     cy.get('[data-cy=submit-mount-points]').click()
 
     cy.contains('User Account')

@@ -22,6 +22,20 @@ Cypress.Commands.add('wipeInitialSetup', () => {
 })
 
 Cypress.Commands.add('completeInitialSetup', () => {
+
+	const waitForCollectionIndex = () => {
+		cy.request('/api/browse')
+			.then((resp) => {
+				if (resp.status == 200) {
+					const body = JSON.parse(resp.body)
+					if (body[0].variant == 'Directory') {
+						return
+					}
+				}
+				waitForCollectionIndex()
+			})
+	}
+
 	cy.request('GET', '/api/initial_setup')
 		.then((r) => {
 			if (r.body.has_any_users) {
@@ -29,15 +43,19 @@ Cypress.Commands.add('completeInitialSetup', () => {
 			}
 			cy.request('PUT', '/api/settings', {
 				users: [{
-					username: 'testUser',
-					password: 'testPassword'
+					name: 'testUser',
+					password: 'testPassword',
+					admin: true
 				}],
 				mount_dirs: [{
 					source: 'tests/collection',
 					name: 'Test'
 				}]
 			})
+			cy.login()
+			waitForCollectionIndex()
 		})
+
 	cy.clearCookies()
 })
 
