@@ -27,8 +27,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 		cy.request('/api/browse')
 			.then((resp) => {
 				if (resp.status == 200) {
-					const body = JSON.parse(resp.body)
-					if (body[0].variant == 'Directory') {
+					if (resp.body != '[]') {
 						return
 					}
 				}
@@ -36,7 +35,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 			})
 	}
 
-	cy.request('GET', '/api/initial_setup')
+	cy.request('/api/initial_setup')
 		.then((r) => {
 			if (r.body.has_any_users) {
 				return
@@ -53,11 +52,11 @@ Cypress.Commands.add('completeInitialSetup', () => {
 					name: 'Test'
 				}]
 			})
-			cy.login()
-
-			waitForCollectionIndex()
 		})
 
+	cy.login()
+	cy.request('POST', '/api/trigger_index')
+	waitForCollectionIndex()
 	cy.clearCookies()
 })
 
