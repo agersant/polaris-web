@@ -40,3 +40,10 @@ Cypress.Commands.add('completeInitialSetup', () => {
 		})
 	cy.clearCookies()
 })
+
+Cypress.Commands.add('login', () => {
+	cy.request('POST', '/api/auth', {
+		username: 'testUser',
+		password: 'testPassword'
+	})
+})
