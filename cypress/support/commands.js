@@ -41,6 +41,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 			if (r.body.has_any_users) {
 				return
 			}
+
 			cy.request('PUT', '/api/settings', {
 				users: [{
 					name: 'testUser',
@@ -53,6 +54,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 				}]
 			})
 			cy.login()
+
 			waitForCollectionIndex()
 		})
 
