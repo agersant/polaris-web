@@ -1,4 +1,4 @@
-describe('Random Albums', function() {
+describe('Recent Albums', function() {
 
 	beforeEach(function() {
 		cy.completeInitialSetup()
