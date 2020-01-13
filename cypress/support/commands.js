@@ -27,7 +27,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 		cy.request('/api/browse')
 			.then((resp) => {
 				if (resp.status == 200) {
-					if (resp.body != '[]') {
+					if (resp.body != []) {
 						return
 					}
 				}
@@ -48,7 +48,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 					admin: true
 				}],
 				mount_dirs: [{
-					source: 'tests/collection',
+					source: 'test/collection',
 					name: 'Test'
 				}]
 			})
