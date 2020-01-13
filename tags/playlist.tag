@@ -7,7 +7,7 @@
 				<i class="material-icons md-18">save</i>
 				<playlist-save if={ saving } tracks={ tracks } name={ playlistName } />
 			</span>
-			<span class="noselect delete" onclick={ onClickClear }>
+			<span data-cy="clear-playlist" class="noselect delete" onclick={ onClickClear }>
 				<i class="material-icons md-18">delete</i>
 			</span>
 			<span class="playbackOrder">
@@ -22,13 +22,13 @@
 		</div>
 	</div>
 
-	<div class="paneContent" ref="scrollElement" ondragover={ allowDrop } ondrop={ onDrop }>
+	<div data-cy="playlist" class="paneContent" ref="scrollElement" ondragover={ allowDrop } ondrop={ onDrop }>
 		<div style="height: { scrollOffset * itemHeight }px"></div>
 		<table>
 			<tbody>
-				<tr class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks.slice( scrollOffset, scrollOffset + pageSize ) } no-reorder onclick={ onClickTrack }>
-					<td class="remove"><div class="remove noselect" onclick={ onClickRemoveTrack }>[-]</div></td>
-					<td class="nowPlaying"><i if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
+				<tr data-cy="track" class={ track:true, nowPlaying: (track == currentTrack) } each={ track in tracks.slice( scrollOffset, scrollOffset + pageSize ) } no-reorder onclick={ onClickTrack }>
+					<td data-cy="remove" class="remove"><div class="remove noselect" onclick={ onClickRemoveTrack }>[-]</div></td>
+					<td class="nowPlaying"><i data-cy="now-playing" if={ track == currentTrack } class="nowPlaying material-icons md-16">play_arrow</i></td>
 					<td class="text">{ formatTrackContext(track) }</td>
 					<td class="text song">
 						{ formatTrackDetails(track) }
