@@ -15,7 +15,7 @@
 				</tr>
 			</table>
 		</div>
-		<button class="submit" disabled={ !validate() } onclick={ proceed }>Next</button>
+		<button data-cy="submit-mount-points" class="submit" disabled={ !validate() } onclick={ proceed }>Next</button>
 	</form>
 
 	<script>

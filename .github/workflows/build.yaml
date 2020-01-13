@@ -9,28 +9,53 @@ jobs:
     steps:
     - name: Clone Polaris Web
       uses: actions/checkout@master
-    - name: Install Node.js
-      uses: actions/setup-node@v1
-    - name: Install test framework
-      run: |
-        npm install -g mocha
-        npm install chai
-        npm install nightmare
+    - name: Clone Polaris
+      run: git clone http://github.com/agersant/polaris
+    - name: Check polaris version
+      working-directory: polaris
+      run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
+    - name: Retrieve cached Polaris executable
+      id: cache
+      uses: actions/cache@v1
+      with:
+        path: polaris/target
+        key: polaris-binary-${{ hashFiles('polaris-version') }}
     - name: Install Rust toolchain
+      if: steps.cache.outputs.cache-hit != 'true'
       uses: actions-rs/toolchain@v1
       with:
         toolchain: nightly
         profile: minimal
     - name: Install libsqlite3-dev
+      if: steps.cache.outputs.cache-hit != 'true'
       run: sudo apt-get install libsqlite3-dev
-    - name: Clone Polaris
-      run: git clone http://github.com/agersant/polaris
-    - name: Build And Run Polaris
+    - name: Build Polaris
       working-directory: polaris
-      run: cargo +nightly run --release -- -d test/db.sqlite -w ..
-    - name: Run Tests
-      env:
-        DEBUG: nightmare:*,electron:*
-      run: |
-        sleep 10
-        xvfb-run mocha
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: cargo +nightly build --release
+    - name: Run Polaris
+      working-directory: polaris
+      run: ./target/release/polaris -d test/db.sqlite -w .. -f &
+
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+    - name: Setup npm package
+      run: npm init -y && npm install
+    - name: Run Automated Tests
+      uses: cypress-io/github-action@v1
+      with:
+        wait-on: 'http://localhost:5050'
+
+    - name: Upload Screenshots
+      uses: actions/upload-artifact@v1
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
+    - name: Upload Video
+      uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: cypress-videos
+        path: cypress/videos
+

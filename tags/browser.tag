@@ -33,7 +33,7 @@
 				<button onclick={ onQueueAll } class="small">Queue All</button>
 			</div>
 			<ul>
-				<li class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
+				<li data-cy="album" class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
 					<div class="cover">
 						<div class="coverCanvas">
 							<img if={ fields.artwork } src="{ fields.artworkURL }"/>
