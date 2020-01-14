@@ -6,12 +6,8 @@
 		<div class="field">
 			<label for="host">Hostname</label><input type="text" id="host" value={ ydns.host } oninput={ onHostInput } placeholder="yourname.ydns.eu"/>
 			<p class="tip">The URL pointing to your Polaris server.</p>
-		</div>
-		<div class="field">
 			<label for="username">Username</label><input type="text" id="username" oninput={ onUsernameInput } value={ ydns.username } />
 			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
-		</div>
-		<div class="field">
 			<label for="password">Password</label><input type="password" id="password" oninput={ onPasswordInput } value={ ydns.password }/>
 			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
 		</div>
