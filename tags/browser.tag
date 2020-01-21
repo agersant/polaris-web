@@ -7,7 +7,7 @@
 		<breadcrumbs if={ path != null }/>
 	</div>
 
-	<div class="paneContent">
+	<div class="paneContent" ref="paneContent">
 		<ul if={ viewMode == "explorer" } class="explorerView">
 			<div class="viewActions">
 				<div class="header">{ header }</div>
@@ -80,6 +80,7 @@
 	<script>
 
 		var self = this;
+		this.savedPositions = new Map();
 
 		reset() {
 			this.items = [];
@@ -190,6 +191,14 @@
 			this.update();
 		}
 
+		cleanSavedPositions() {
+			for (const path of self.savedPositions.keys()) {
+  				if (!self.path.startsWith(path)) {
+    				self.savedPositions.delete(path);
+				}
+			}
+		}
+
 		function random() {
 			utils.api("/random")
 			.then(function(res) { return res.json(); })
@@ -225,6 +234,11 @@
 		}
 
 		function browse() {
+
+			if (self.path) {
+				self.savedPositions.set(self.path, self.refs.paneContent.scrollTop);
+			}
+
 			var matchPath = /^.*#browse\/?(.*)$/;
 			var matches = window.location.href.match(matchPath);
 			var path = matches ? matches[1] : "";
@@ -243,6 +257,8 @@
 				this.title = "Music Collection";
 				this.displayItems(data);
 				this.tags.breadcrumbs.setCurrentPath(path);
+				this.cleanSavedPositions();
+				this.refs.paneContent.scrollTop = this.savedPositions.get(path) || 0;
 			}.bind(self));
 		}
 
