@@ -14,7 +14,7 @@
     "vue-router": "^3.1.5"
   },
   "scripts": {
-    "watch": "parcel index.html"
+    "watch": "parcel watch index.html"
   },
   "devDependencies": {
     "@vue/component-compiler-utils": "^3.1.1",
