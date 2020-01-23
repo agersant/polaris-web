@@ -1,0 +1,26 @@
+{
+  "name": "polaris-web",
+  "version": "1.0.0",
+  "description": "Web UI for Polaris",
+  "main": "index.js",
+  "repository": "https://github.com/agersant/polaris-web.git",
+  "author": "Antoine Gersant <antoine.gersant@lesforges.org>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "js-cookie": "^2.2.1",
+    "vue": "^2.6.11",
+    "vue-hot-reload-api": "^2.3.4",
+    "vue-router": "^3.1.5"
+  },
+  "scripts": {
+    "watch": "parcel index.html"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^3.1.1",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "alias": {
+    "vue": "./node_modules/vue/dist/vue.common.js"
+  }
+}

@@ -15,66 +15,11 @@
 
 		<div class="theme-base">
 			<div class="theme-accent">
-				<app />
+				<div id="app" />
 			</div>
 		</div>
 
-		<script src="lib/js.cookie.js"></script>
-		<script src="lib/riot+compiler.min.js"></script>
-		<script src="lib/route+tag.min.js"></script>
-		<script src="lib/fetch.js"></script>
-		<script src="lib/find.js"></script>
-		<script src="lib/promise.min.js"></script>
-		<script src="js/notify.js"></script>
-		<script src="js/theming.js"></script>
-		<script src="js/utils.js"></script>
-
-		<script src="js/theme-bases/light.js"></script>
-		<script src="js/theme-bases/dark.js"></script>
-		<script src="js/theme-bases/brown.js"></script>
-		<script src="js/theme-bases/blue.js"></script>
-
-		<script type="riot/tag" src="tags/app.tag"></script>
-		<script type="riot/tag" src="tags/async-button.tag"></script>
-		<script type="riot/tag" src="tags/auth.tag"></script>
-		<script type="riot/tag" src="tags/breadcrumbs.tag"></script>
-		<script type="riot/tag" src="tags/browser.tag"></script>
-		<script type="riot/tag" src="tags/initial-setup.tag"></script>
-		<script type="riot/tag" src="tags/initial-setup-finish.tag"></script>
-		<script type="riot/tag" src="tags/initial-setup-mount.tag"></script>
-		<script type="riot/tag" src="tags/initial-setup-user.tag"></script>
-		<script type="riot/tag" src="tags/initial-setup-welcome.tag"></script>
-		<script type="riot/tag" src="tags/main.tag"></script>
-		<script type="riot/tag" src="tags/menu.tag"></script>
-		<script type="riot/tag" src="tags/player.tag"></script>
-		<script type="riot/tag" src="tags/playlist.tag"></script>
-		<script type="riot/tag" src="tags/playlist-save.tag"></script>
-		<script type="riot/tag" src="tags/playlists.tag"></script>
-		<script type="riot/tag" src="tags/search-input.tag"></script>
-		<script type="riot/tag" src="tags/settings.tag"></script>
-		<script type="riot/tag" src="tags/settings-apply.tag"></script>
-		<script type="riot/tag" src="tags/settings-collection.tag"></script>
-		<script type="riot/tag" src="tags/settings-ddns.tag"></script>
-		<script type="riot/tag" src="tags/settings-preferences.tag"></script>
-		<script type="riot/tag" src="tags/settings-users.tag"></script>
-		<script type="riot/tag" src="tags/settings-tabs.tag"></script>
-		<script type="riot/tag" src="tags/window-title-updater.tag"></script>
-
-		<script type="text/javascript">
-			var eventBus = riot.observable();
-
-			utils.api("/initial_setup")
-				.then(function(res) { return res.json(); })
-				.then(function(data) {
-					riot.mount('*');
-					if (!data.has_any_users) {
-						route("welcome", null, true);
-					} else if (Cookies.get("username") == undefined) {
-						route("auth", null, true);
-					}
-				});
-
-		</script>
+		<script src="./src/index.js"></script>
 
 	</body>
 
