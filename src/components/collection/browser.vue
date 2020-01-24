@@ -8,6 +8,7 @@
 		<div class="paneContent" ref="paneContent">
 			<div class="viewActions">
 				<div class="header">{{ header }}</div>
+				<div v-if="subHeader" class="subHeader">{{ subHeader }}</div>
 				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
 				<!--<button if={ tab == "playlist" && items.length > 0 } onclick={ onQueuePlaylist } class="small">
 					Play
@@ -25,40 +26,17 @@
 			<discography
 				v-if="viewMode == 'discography'"
 				v-bind:showArtistName="false"
-				v-bind:items="items"
+				v-bind:albums="items"
 				v-on:itemClick="onItemClicked"
 				v-on:itemDragStart="onItemDragStart"
 			></discography>
-			<!--
-
-		<div if={ viewMode == "album" } class="albumView">
-			<div class="viewActions">
-				<div class="header">{ header }</div>
-				<div class="subHeader">{ subHeader }</div>
-				<button onclick={ onQueueAll } class="small">Queue All</button>
-			</div>
-			<div class="details">
-				<img src="{ artworkURL }" draggable="true" onclick={ onClickAlbum } ondragstart={ onDragAlbumStart } />
-				<div class="trackList">
-					<ul>
-						<li each={ items } >
-							<div class="discNumber" if="{ items.length > 1 }">Disc { discNumber }</div>
-							<ol class="discContent">
-								<li value={ fields.track_number } class={ song: true, no-track-number: !fields.track_number } draggable="true" each={ songs } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-									<div class="songName">
-										{ fields.title || utils.stripFileExtension(utils.getPathTail(fields.path)) }
-										<span class="trackArtist" if={ fields.artist && fields.album_artist && fields.artist != fields.album_artist }>
-											({ fields.artist })
-										</span>
-									</div>
-								</li>
-							</ol>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-			-->
+			<album
+				v-if="viewMode == 'album'"
+				v-bind:discs="items"
+				v-bind:artworkURL="artworkURL"
+				v-on:itemClick="onItemClicked"
+				v-on:itemDragStart="onItemDragStart"
+			></album>
 		</div>
 	</div>
 </template>
@@ -73,6 +51,8 @@ export default {
 			items: [],
 			title: "",
 			header: "",
+			artworkURL: "",
+			subHeader: "",
 			viewMode: "" // explorer/discography/album
 		};
 	},
@@ -92,7 +72,10 @@ export default {
 	methods: {
 		reset() {
 			this.items = [];
+			this.title = "";
 			this.header = "";
+			this.subHeader = "";
+			this.artworkURL = "";
 			this.viewMode = "explorer";
 		},
 
@@ -444,71 +427,5 @@ export default {
 .explorerView,
 .albumView {
 	margin-bottom: 50px;
-}
-
-/*Album view*/
-.albumView .details {
-	display: flex;
-	flex-flow: row nowrap;
-	justify-content: flex-start;
-}
-
-.albumView img {
-	flex-shrink: 0;
-	width: 100%;
-	height: 100%;
-	max-width: 15vw;
-	max-height: 15vw;
-	margin-bottom: 30px;
-	border-radius: 5px;
-}
-
-.albumView .trackList {
-	flex-grow: 1;
-	min-width: 0;
-	cursor: default;
-	margin-left: 20px;
-}
-
-.albumView .discNumber {
-	font-weight: 600;
-	margin-bottom: 5px;
-}
-
-.albumView li:not(:first-child) .discNumber {
-	margin-top: 20px;
-}
-
-.albumView .discContent {
-	margin-left: 20px;
-}
-
-.albumView li.song {
-	padding-top: 8px;
-	padding-bottom: 6px;
-	border-bottom: 1px solid var(--theme-border-muted);
-	list-style-type: unset;
-	list-style-position: outside;
-}
-
-.albumView .songName {
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.albumView li.song.no-track-number {
-	list-style-type: none;
-}
-
-.albumView .trackArtist {
-	color: var(--theme-foreground-muted);
-}
-
-.albumView li:first-child {
-	padding-top: 0;
-}
-
-.albumView li:last-child {
-	border-bottom: 0;
 }
 </style>

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Cookies from 'js-cookie'
 
 import * as Utils from './utils'
+import Album from './components/collection/layout/album'
 import Auth from './components/auth'
 import App from './components/app'
 import Browser from './components/collection/browser'
@@ -35,6 +36,7 @@ Utils.api('/initial_setup')
 	.then(function(res) { return res.json(); })
 	.then(function(data) {
 
+		Vue.component('album', Album);
 		Vue.component('auth', Auth);
 		Vue.component('app', App);
 		Vue.component('browser', Browser);

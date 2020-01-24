@@ -5,20 +5,20 @@
 				data-cy="album"
 				class="album"
 				draggable="true"
-				v-for="(item, index) in items"
+				v-for="(album, index) in albums"
 				v-bind:key="index"
-				v-on:click="$emit('itemClick', item)"
-				v-on:dragstart="$emit('itemDragStart', item)"
+				v-on:click="$emit('itemClick', album)"
+				v-on:dragstart="$emit('itemDragStart', album)"
 			>
 				<div class="cover">
 					<div class="coverCanvas">
-						<img v-if="item.fields.artwork" v-bind:src="item.fields.artworkURL" />
+						<img v-if="album.fields.artwork" v-bind:src="album.fields.artworkURL" />
 					</div>
 				</div>
 				<div class="details">
-					<div class="title">{{ item.fields.album }}</div>
-					<div v-if="showArtistName" class="artist">{{ item.fields.artist }}</div>
-					<div class="year">{{ item.fields.year }}</div>
+					<div class="title">{{ album.fields.album }}</div>
+					<div v-if="showArtistName" class="artist">{{ album.fields.artist }}</div>
+					<div class="year">{{ album.fields.year }}</div>
 				</div>
 			</li>
 		</ul>
@@ -28,7 +28,7 @@
 <script>
 export default {
 	props: {
-		items: {
+		albums: {
 			type: Array,
 			required: true
 		},
