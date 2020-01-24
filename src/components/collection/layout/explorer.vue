@@ -1,5 +1,5 @@
 <template>
-	<ul class="explorerView">
+	<ul>
 		<li
 			draggable="true"
 			v-for="(item, index) in items"

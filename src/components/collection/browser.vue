@@ -9,6 +9,12 @@
 			<div class="viewActions">
 				<div class="header">{{ header }}</div>
 				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
+				<!--<button if={ tab == "playlist" && items.length > 0 } onclick={ onQueuePlaylist } class="small">
+					Play
+				</button>
+				<button if={ tab == "playlist" } onclick={ onDeletePlaylist } class="danger small" >
+					Delete
+				</button>-->
 			</div>
 			<explorer
 				v-if="viewMode == 'explorer'"
@@ -16,27 +22,14 @@
 				v-on:itemClick="onItemClicked"
 				v-on:itemDragStart="onItemDragStart"
 			></explorer>
+			<discography
+				v-if="viewMode == 'discography'"
+				v-bind:showArtistName="false"
+				v-bind:items="items"
+				v-on:itemClick="onItemClicked"
+				v-on:itemDragStart="onItemDragStart"
+			></discography>
 			<!--
-		<div if={ viewMode == "discography" } class="discographyView">
-			<div class="viewActions" if={ tab != "recent" && tab != "random" }>
-				<div class="header">{ header }</div>
-				<button onclick={ onQueueAll } class="small">Queue All</button>
-			</div>
-			<ul>
-				<li data-cy="album" class="album" draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-					<div class="cover">
-						<div class="coverCanvas">
-							<img if={ fields.artwork } src="{ fields.artworkURL }"/>
-						</div>
-					</div>
-					<div class="details">
-						<div class="title">{ fields.album }</div>
-						<div if={ path == null } class="artist">{ fields.artist }</div>
-						<div class="year">{ fields.year }</div>
-					</div>
-				</li>
-			</ul>
-		</div>
 
 		<div if={ viewMode == "album" } class="albumView">
 			<div class="viewActions">
@@ -91,6 +84,7 @@ export default {
 
 	watch: {
 		$route(to, from) {
+			this.reset();
 			this.browse();
 		}
 	},
@@ -98,6 +92,7 @@ export default {
 	methods: {
 		reset() {
 			this.items = [];
+			this.header = "";
 			this.viewMode = "explorer";
 		},
 
@@ -449,79 +444,6 @@ export default {
 .explorerView,
 .albumView {
 	margin-bottom: 50px;
-}
-
-/*Discography view*/
-.discographyView ul {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-}
-
-.discographyView .album {
-	font-size: 0;
-	margin-bottom: 20px;
-	cursor: default;
-	width: 23.5%;
-	margin-left: 1%;
-	margin-right: 1%;
-}
-
-.discographyView .album:nth-child(4n + 1) {
-	margin-left: 0;
-}
-.discographyView .album:nth-child(4n) {
-	margin-right: 0;
-}
-
-.discographyView .cover {
-	width: 100%;
-	position: relative;
-}
-
-.discographyView .cover:after {
-	/*Hack to make this element stay square when its width changes*/
-	content: "";
-	display: block;
-	padding-bottom: 100%;
-}
-
-.discographyView .coverCanvas {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-}
-
-.discographyView img {
-	width: 100%;
-	height: 100%;
-	border-radius: 5px;
-}
-
-.discographyView .details {
-	padding: 10px 0;
-	width: 100%;
-}
-
-.discographyView .details .title {
-	font-family: "Montserrat", "sans-serif";
-	overflow: hidden;
-	text-overflow: ellipsis;
-	padding-right: 10px;
-	font-size: 1rem;
-}
-
-.discographyView .details .artist {
-	margin-bottom: -5px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	padding-right: 10px;
-	font-size: 0.875rem;
-}
-
-.discographyView .details .year {
-	font-size: 0.875rem;
-	color: var(--theme-foreground-muted);
 }
 
 /*Album view*/
