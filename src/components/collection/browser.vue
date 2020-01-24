@@ -423,9 +423,4 @@ export default {
 .viewActions button {
 	display: inline;
 }
-
-.explorerView,
-.albumView {
-	margin-bottom: 50px;
-}
 </style>

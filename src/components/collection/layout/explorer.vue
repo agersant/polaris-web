@@ -1,5 +1,5 @@
 <template>
-	<ul>
+	<ul class="explorerView">
 		<li
 			draggable="true"
 			v-for="(item, index) in items"
@@ -32,8 +32,8 @@ export default {
 </script>
 
 <style scoped>
-.explorerActions {
-	margin-bottom: 20px;
+.explorerView {
+	margin-bottom: 50px;
 }
 
 .directory .material-icons {
