@@ -1,4 +1,4 @@
-html, body, .theme-base, .theme-accent {
+html, body, .theme-base, .theme-accent, #app {
 	height: 100%;
 	font-size: 100%;
 }

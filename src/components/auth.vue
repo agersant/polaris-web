@@ -1,47 +1,51 @@
 <template>
   <div class="authForm">
-    AUTH
     <div class="content">
       <img class="logo" src="/assets/logo.png" />
-      <!-- <form name="authForm" onsubmit="{" doLogin }>
+      <form name="authForm" v-on:submit="doLogin">
         <input data-cy="username" type="text" name="username" placeholder="Username" autofocus />
         <input data-cy="password" type="password" name="password" placeholder="Password" />
         <p
-          if="{"
-          badCredentials
-          }
+          v-if="badCredentials"
           data-cy="login-error"
           class="tip error"
         >Incorrect credentials, please try again.</p>
         <input type="submit" value="Login" />
-      </form>-->
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-// export default {
-//   doLogin(e) {
-//     e.preventDefault();
-//     var form = document.forms["authForm"];
-//     var username = encodeURIComponent(form.elements["username"].value);
-//     var password = encodeURIComponent(form.elements["password"].value);
-//     this.badCredentials = false;
-//     utils.tryLogin(username, password).then(
-//       function(res) {
-//         if (res.status == 200) {
-//           route("browse", null, true);
-//         } else if (res.status == 401) {
-//           this.badCredentials = true;
-//           this.update();
-//         }
-//       }.bind(this)
-//     );
-//   }
-// };
+import * as Utils from "/src/utils";
+
+export default {
+  data() {
+    return {
+      badCredentials: false
+    };
+  },
+
+  methods: {
+    doLogin: function(e) {
+      e.preventDefault();
+      var form = document.forms["authForm"];
+      var username = encodeURIComponent(form.elements["username"].value);
+      var password = encodeURIComponent(form.elements["password"].value);
+      this.badCredentials = false;
+      Utils.tryLogin(username, password).then(res => {
+        if (res.status == 200) {
+          this.$router.push("browse");
+        } else if (res.status == 401) {
+          this.badCredentials = true;
+        }
+      });
+    }
+  }
+};
 </script>
 
-<style>
+<style scoped>
 .authForm {
   height: 100%;
   margin: auto;

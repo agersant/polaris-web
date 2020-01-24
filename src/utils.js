@@ -30,7 +30,7 @@ export function loadUserData(key) {
 	}
 	return value;
 }
-
+*/
 export function tryLogin(username, password) {
 	return fetch("api/auth", {
 		method: "POST",
@@ -41,7 +41,7 @@ export function tryLogin(username, password) {
 		credentials: 'same-origin',
 	});
 }
-*/
+
 export function api(endpoint, options) {
 	if (!options) {
 		options = {};
