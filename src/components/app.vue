@@ -1,6 +1,6 @@
 <template>
   <div>
-    <sidebar />
+    <sidebar class="sidebar" />
     <!--
     <router>
       <route path="settings/*">
@@ -47,7 +47,7 @@ player {
   background-color: var(--theme-background);
 }
 
-sidebar {
+.sidebar {
   position: absolute;
   width: 50px;
   height: 100%;
