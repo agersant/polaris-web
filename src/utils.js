@@ -56,7 +56,7 @@ export function api(endpoint, options) {
 			return res;
 		});
 }
-/*
+
 export function getPathTail(path) {
 	if (!path) {
 		return null;
@@ -73,4 +73,3 @@ export function stripFileExtension(path) {
 	}
 	return path.replace(/\.[^/.]+$/, "");
 }
-*/

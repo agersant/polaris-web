@@ -1,35 +1,45 @@
 <template>
-  <div class="browser">
-    <div class="paneHeader">
-      <h2>{ title }</h2>
-      <!--
+	<div class="browser">
+		<div class="paneHeader">
+			<h2>{{ title }}</h2>
+			<!--
 		<div if={ tab == "random" } class="more noselect" onclick={ onClickMoreRandom }><i class="material-icons md-18">refresh</i><span>More</span></div>
 		<search-input if={ tab == "search" } />
 		<breadcrumbs if={ path != null }/>
-      -->
-    </div>
-    <!--
+			-->
+		</div>
 
-	<div class="paneContent" ref="paneContent">
-		<ul if={ viewMode == "explorer" } class="explorerView">
-			<div class="viewActions">
-				<div class="header">{ header }</div>
-				<button if={ tab != "playlist" && items.length > 0 } onclick={ onQueueAll } class="small">
-					Queue All
-				</button>
-				<button if={ tab == "playlist" && items.length > 0 } onclick={ onQueuePlaylist } class="small">
-					Play
-				</button>
-				<button if={ tab == "playlist" } onclick={ onDeletePlaylist } class="danger small" >
-					Delete
-				</button>
-			</div>
-			<li draggable="true" each={ items } onclick={ onClickItem } ondragstart={ onDragItemStart }>
-				<div if={ variant == "Directory" } class="directory"><i class="material-icons">folder</i>{ fields.name }</div>
-				<div if={ variant == "Song" } class="song">{ formatExplorerTrackDetails(this) }</div>
-			</li>
-		</ul>
-
+		<div class="paneContent" ref="paneContent">
+			<ul v-if="viewMode == 'explorer'" class="explorerView">
+				<div class="viewActions">
+					<div class="header">{{ header }}</div>
+					<button
+						v-if="tab != 'playlist' && items.length > 0"
+						v-on:click="onQueueAll"
+						class="small"
+					>Queue All</button>
+					<button
+						v-if="tab == 'playlist' && items.length > 0"
+						v-on:click="onQueuePlaylist"
+						class="small"
+					>Play</button>
+					<button v-if="tab == 'playlist'" v-on:click="onDeletePlaylist" class="danger small">Delete</button>
+				</div>
+				<li
+					draggable="true"
+					v-for="(item, index) in items"
+					v-bind:key="index"
+					v-on:click="onClickItem(item)"
+					v-on:dragstart="onDragItemStart(item)"
+				>
+					<div v-if="item.variant == 'Directory'" class="directory">
+						<i class="material-icons">folder</i>
+						{{ item.fields.name }}
+					</div>
+					<div v-if="item.variant == 'Song'" class="song">{{ formatExplorerTrackDetails(this) }}</div>
+				</li>
+			</ul>
+			<!--
 		<div if={ viewMode == "discography" } class="discographyView">
 			<div class="viewActions" if={ tab != "recent" && tab != "random" }>
 				<div class="header">{ header }</div>
@@ -78,28 +88,208 @@
 				</div>
 			</div>
 		</div>
+			-->
+		</div>
 	</div>
-    -->
-  </div>
 </template>
 
 
 <script>
-/*
-	var self = this;
-	this.savedPositions = new Map();
+import * as Utils from "/src/utils";
+export default {
+	data() {
+		return {
+			items: [],
+			artworkURL: null,
+			header: null,
+			subHeader: null,
+			playlistName: null,
+			path: null,
+			title: "",
+			tab: "",
+			savedPositions: new Map(),
+			viewMode: "" // explorer/discography/album
+		};
+	},
 
-	reset() {
-		this.items = [];
-		this.artworkURL = null;
-		this.header = null;
-		this.subHeader = null;
-		this.playlistName = null;
-		this.path = null;
-		this.title = "";
-		this.viewMode = "explorer"; // explorer/discography/album
+	mounted() {
+		this.reset();
+	},
+
+	methods: {
+		reset() {
+			this.items = [];
+			this.artworkURL = null;
+			this.header = null;
+			this.subHeader = null;
+			this.playlistName = null;
+			this.path = null;
+			this.title = "";
+			this.viewMode = "explorer";
+		},
+
+		browse() {
+			if (this.path) {
+				// TODO
+				// this.savedPositions.set(this.path, this.refs.paneContent.scrollTop);
+			}
+
+			var matchPath = /^.*#browse\/?(.*)$/;
+			var matches = window.location.href.match(matchPath);
+			var path = matches ? matches[1] : "";
+			path = decodeURIComponent(path);
+
+			Utils.api("/browse/" + encodeURIComponent(path))
+				.then(function(res) {
+					return res.json();
+				})
+				.then(data => {
+					this.reset();
+					this.path = path;
+					for (var i = 0; i < data.length; i++) {
+						data[i].fields = data[i].Directory || data[i].Song;
+						data[i].variant = data[i].Directory ? "Directory" : "Song";
+					}
+					this.tab = "browse";
+					this.title = "Music Collection";
+					this.displayItems(data);
+					//this.tags.breadcrumbs.setCurrentPath(path); TODO
+					//this.cleanSavedPositions(); TODO
+					// this.refs.paneContent.scrollTop = this.savedPositions.get(path) || 0; TODO
+				});
+		},
+
+		getViewMode(items) {
+			var onlySongs = true;
+			var onlyDirectories = true;
+			var allSameAlbum = true;
+			var allHaveAlbums = true;
+			var hasAnyPicture = false;
+			var album = null;
+
+			for (var i = 0; i < items.length; i++) {
+				var item = items[i];
+				if (!item.fields.album) {
+					allHaveAlbums = false;
+				} else if (!album) {
+					album = item.fields.album;
+				}
+
+				if (item.fields.artwork) {
+					item.fields.artworkURL = "api/serve/" + encodeURIComponent(item.fields.artwork);
+					hasAnyPicture = true;
+				}
+
+				if (item.variant == "Song") {
+					onlyDirectories = false;
+					item.fields.url = "api/serve/" + encodeURIComponent(item.fields.path);
+					this.header = this.header || item.fields.album;
+					this.artworkURL = this.artworkURL || item.fields.artworkURL;
+					this.subHeader = this.subHeader || item.fields.album_artist || item.fields.artist;
+					allSameAlbum = allSameAlbum && item.fields.album == album;
+				} else {
+					onlySongs = false;
+					var slices = item.fields.path.replace(/\\/g, "/").split("/");
+					slices = slices.filter(function(s) {
+						return s.length > 0;
+					});
+					item.fields.name = slices[slices.length - 1];
+				}
+			}
+
+			this.header = this.header || Utils.getPathTail(this.path) || "All Music";
+
+			if (this.tab != "playlist") {
+				if (this.tab != "search") {
+					if (onlySongs && hasAnyPicture && allSameAlbum && items.length > 0) {
+						return "album";
+					}
+				}
+				if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
+					return "discography";
+				}
+			}
+
+			return "explorer";
+		},
+
+		splitAlbumByDisc(items) {
+			var discs = [];
+			for (var i = 0; i < items.length; i++) {
+				var discNumber = items[i].fields.disc_number || 1;
+				var disc = discs.find(function(d) {
+					return d.discNumber == discNumber;
+				});
+				if (disc == undefined) {
+					disc = {
+						discNumber: discNumber,
+						songs: []
+					};
+					discs.push(disc);
+				}
+				disc.songs.push(items[i]);
+			}
+			for (var i = 0; i < discs.length; i++) {
+				discs[i].songs.sort(function(a, b) {
+					return (a.fields.track_number || 0) - (b.fields.track_number || 0);
+				});
+			}
+			discs.sort(function(a, b) {
+				return a.discNumber - b.discNumber;
+			});
+			return discs;
+		},
+
+		displayItems(items) {
+			this.viewMode = this.getViewMode(items);
+			if (this.viewMode == "album") {
+				this.items = this.splitAlbumByDisc(items);
+			} else {
+				this.items = items;
+			}
+		},
+
+		onClickItem(item) {
+			var variant = item.variant;
+			if (variant == "Directory") {
+				this.$router.push("browse/" + item.fields.path);
+			} else if (variant == "Song") {
+				// TODO
+				// eventBus.trigger("browser:queueTrack", item.fields);
+			}
+		},
+
+		onQueueAll(e) {
+			// TODO
+			if (this.tab != "search") {
+				eventBus.trigger("browser:queueDirectory", this.path);
+			} else {
+				var songItems = [];
+				var directoryItems = [];
+				this.items.forEach(item => {
+					if (item.variant == "Song") {
+						songItems.push(item);
+					} else if (item.variant == "Directory") {
+						directoryItems.push(item);
+					}
+				});
+				eventBus.trigger(
+					"browser:queueTracks",
+					songItems.map(i => i.fields)
+				);
+				directoryItems.forEach(item => {
+					eventBus.trigger("browser:queueDirectory", item.fields.path);
+				});
+			}
+		},
+
+		onDragItemStart(e) {
+			// TODO
+			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
+		}
 	}
-
+};
+/*
 	var r = route.create();
 	r("", browse);
 	r("browse..", browse);
@@ -114,89 +304,6 @@
 	this.on('unmount', function() {
 		r.stop();
 	});
-
-	getViewMode(items) {
-		var onlySongs = true;
-		var onlyDirectories = true;
-		var allSameAlbum = true;
-		var allHaveAlbums = true;
-		var hasAnyPicture = false;
-		var album = null;
-
-		for (var i = 0; i < items.length; i++) {
-			var item = items[i];
-			if (!item.fields.album) {
-				allHaveAlbums = false;
-			} else if (!album) {
-				album = item.fields.album;
-			}
-
-			if (item.fields.artwork) {
-				item.fields.artworkURL = "api/serve/" + encodeURIComponent(item.fields.artwork);
-				hasAnyPicture = true;
-			}
-
-			if (item.variant == "Song") {
-				onlyDirectories = false;
-				item.fields.url = "api/serve/" + encodeURIComponent(item.fields.path);
-				this.header = this.header || item.fields.album;
-				this.artworkURL = this.artworkURL || item.fields.artworkURL;
-				this.subHeader = this.subHeader || item.fields.album_artist || item.fields.artist;
-				allSameAlbum = allSameAlbum && item.fields.album == album;
-			} else {
-				onlySongs = false;
-				var slices = item.fields.path.replace(/\\/g, "/").split("/");
-				slices = slices.filter(function(s) { return s.length > 0; });
-				item.fields.name = slices[slices.length-1];
-			}
-		}
-
-		this.header = this.header || utils.getPathTail(this.path) || "All Music";
-
-		if (this.tab != "playlist") {
-			if (this.tab != "search") {
-				if (onlySongs && hasAnyPicture && allSameAlbum && items.length > 0) {
-					return "album";
-				}
-			}
-			if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
-				return "discography";
-			}
-		}
-
-		return "explorer";
-	}
-
-	splitAlbumByDisc(items) {
-		var discs = [];
-		for (var i = 0; i < items.length; i++) {
-			var discNumber = items[i].fields.disc_number || 1;
-			var disc = discs.find(function(d){ return d.discNumber == discNumber });
-			if (disc == undefined) {
-				disc = {
-					discNumber: discNumber,
-					songs: [],
-				};
-				discs.push(disc);
-			}
-			disc.songs.push(items[i]);
-		}
-		for (var i = 0; i < discs.length; i++) {
-			discs[i].songs.sort(function(a, b){ return (a.fields.track_number || 0) - (b.fields.track_number || 0); });
-		}
-		discs.sort(function(a,b){ return a.discNumber - b.discNumber; });
-		return discs;
-	}
-
-	displayItems(items) {
-		this.viewMode = this.getViewMode(items);
-		if (this.viewMode == "album") {
-			this.items = this.splitAlbumByDisc(items);
-		} else {
-			this.items = items;
-		}
-		this.update();
-	}
 
 	cleanSavedPositions() {
 		for (const path of self.savedPositions.keys()) {
@@ -237,35 +344,6 @@
 			this.tab = "recent";
 			this.title = "Recently Added";
 			this.displayItems(data);
-		}.bind(self));
-	}
-
-	function browse() {
-
-		if (self.path) {
-			self.savedPositions.set(self.path, self.refs.paneContent.scrollTop);
-		}
-
-		var matchPath = /^.*#browse\/?(.*)$/;
-		var matches = window.location.href.match(matchPath);
-		var path = matches ? matches[1] : "";
-		path = decodeURIComponent(path);
-
-		utils.api("/browse/" + encodeURIComponent(path))
-		.then(function(res) { return res.json(); })
-		.then(function(data) {
-			this.reset();
-			this.path = path;
-			for (var i = 0; i < data.length; i++) {
-				data[i].fields = data[i].Directory || data[i].Song;
-				data[i].variant = data[i].Directory ? "Directory" : "Song";
-			}
-			this.tab = "browse";
-			this.title = "Music Collection";
-			this.displayItems(data);
-			this.tags.breadcrumbs.setCurrentPath(path);
-			this.cleanSavedPositions();
-			this.refs.paneContent.scrollTop = this.savedPositions.get(path) || 0;
 		}.bind(self));
 	}
 
@@ -323,41 +401,8 @@
 		route.exec();
 	}
 
-	onClickItem(e) {
-		var variant = e.item.variant;
-		if (variant == "Directory") {
-			route("browse/" + e.item.fields.path);
-		} else if (variant == "Song") {
-			eventBus.trigger("browser:queueTrack", e.item.fields);
-		}
-	}
-
-	onQueueAll(e) {
-		if (this.tab != "search") {
-			eventBus.trigger("browser:queueDirectory", this.path);
-		} else {
-			var songItems = [];
-			var directoryItems = [];
-			this.items.forEach(item => {
-				if (item.variant == "Song") {
-					songItems.push(item);
-				} else if (item.variant == "Directory") {
-					directoryItems.push(item);
-				}
-			});
-			eventBus.trigger("browser:queueTracks", songItems.map(i => i.fields ));
-			directoryItems.forEach(item => {
-				eventBus.trigger("browser:queueDirectory", item.fields.path);
-			});
-		}
-	}
-
 	onQueuePlaylist(e) {
 		eventBus.trigger("browser:queuePlaylist", this.playlistName, this.items.map(i => i.fields ));
-	}
-
-	onDragItemStart(e) {
-		e.dataTransfer.setData("text/json", JSON.stringify(e.item));
 	}
 
 	onDragAlbumStart(e) {
@@ -404,204 +449,204 @@
 
 <style scoped>
 .more {
-  cursor: pointer;
-  height: 20px;
+	cursor: pointer;
+	height: 20px;
 }
 
 .more span {
-  padding-left: 4px;
-  font-size: 0.875rem;
-  vertical-align: top;
+	padding-left: 4px;
+	font-size: 0.875rem;
+	vertical-align: top;
 }
 
 .paneContent {
-  padding-top: 50px;
+	padding-top: 50px;
 }
 
 .viewActions {
-  margin-bottom: 40px;
-  font-size: 0;
+	margin-bottom: 40px;
+	font-size: 0;
 }
 
 .viewActions .header {
-  line-height: 1;
-  margin-bottom: 5px;
-  font-size: 1.25rem;
-  font-family: "Montserrat", "sans-serif";
+	line-height: 1;
+	margin-bottom: 5px;
+	font-size: 1.25rem;
+	font-family: "Montserrat", "sans-serif";
 }
 
 .viewActions .subHeader {
-  line-height: 1;
-  font-size: 1.25rem;
-  margin-bottom: 5px;
-  color: var(--theme-foreground-muted);
+	line-height: 1;
+	font-size: 1.25rem;
+	margin-bottom: 5px;
+	color: var(--theme-foreground-muted);
 }
 
 .viewActions button {
-  display: inline;
+	display: inline;
 }
 
 .explorerView,
 .albumView {
-  margin-bottom: 50px;
+	margin-bottom: 50px;
 }
 
 /*Explorer view*/
 .explorerView .explorerActions {
-  margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 .explorerView .directory .material-icons {
-  vertical-align: bottom;
-  margin-right: 5px;
-  padding-bottom: 3px;
+	vertical-align: bottom;
+	margin-right: 5px;
+	padding-bottom: 3px;
 }
 
 .explorerView .directory,
 .explorerView .song {
-  cursor: default;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	cursor: default;
+	max-width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /*Discography view*/
 .discographyView ul {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
 }
 
 .discographyView .album {
-  font-size: 0;
-  margin-bottom: 20px;
-  cursor: default;
-  width: 23.5%;
-  margin-left: 1%;
-  margin-right: 1%;
+	font-size: 0;
+	margin-bottom: 20px;
+	cursor: default;
+	width: 23.5%;
+	margin-left: 1%;
+	margin-right: 1%;
 }
 
 .discographyView .album:nth-child(4n + 1) {
-  margin-left: 0;
+	margin-left: 0;
 }
 .discographyView .album:nth-child(4n) {
-  margin-right: 0;
+	margin-right: 0;
 }
 
 .discographyView .cover {
-  width: 100%;
-  position: relative;
+	width: 100%;
+	position: relative;
 }
 
 .discographyView .cover:after {
-  /*Hack to make this element stay square when its width changes*/
-  content: "";
-  display: block;
-  padding-bottom: 100%;
+	/*Hack to make this element stay square when its width changes*/
+	content: "";
+	display: block;
+	padding-bottom: 100%;
 }
 
 .discographyView .coverCanvas {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+	position: absolute;
+	width: 100%;
+	height: 100%;
 }
 
 .discographyView img {
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
 }
 
 .discographyView .details {
-  padding: 10px 0;
-  width: 100%;
+	padding: 10px 0;
+	width: 100%;
 }
 
 .discographyView .details .title {
-  font-family: "Montserrat", "sans-serif";
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 10px;
-  font-size: 1rem;
+	font-family: "Montserrat", "sans-serif";
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 10px;
+	font-size: 1rem;
 }
 
 .discographyView .details .artist {
-  margin-bottom: -5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 10px;
-  font-size: 0.875rem;
+	margin-bottom: -5px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 10px;
+	font-size: 0.875rem;
 }
 
 .discographyView .details .year {
-  font-size: 0.875rem;
-  color: var(--theme-foreground-muted);
+	font-size: 0.875rem;
+	color: var(--theme-foreground-muted);
 }
 
 /*Album view*/
 .albumView .details {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
 }
 
 .albumView img {
-  flex-shrink: 0;
-  width: 100%;
-  height: 100%;
-  max-width: 15vw;
-  max-height: 15vw;
-  margin-bottom: 30px;
-  border-radius: 5px;
+	flex-shrink: 0;
+	width: 100%;
+	height: 100%;
+	max-width: 15vw;
+	max-height: 15vw;
+	margin-bottom: 30px;
+	border-radius: 5px;
 }
 
 .albumView .trackList {
-  flex-grow: 1;
-  min-width: 0;
-  cursor: default;
-  margin-left: 20px;
+	flex-grow: 1;
+	min-width: 0;
+	cursor: default;
+	margin-left: 20px;
 }
 
 .albumView .discNumber {
-  font-weight: 600;
-  margin-bottom: 5px;
+	font-weight: 600;
+	margin-bottom: 5px;
 }
 
 .albumView li:not(:first-child) .discNumber {
-  margin-top: 20px;
+	margin-top: 20px;
 }
 
 .albumView .discContent {
-  margin-left: 20px;
+	margin-left: 20px;
 }
 
 .albumView li.song {
-  padding-top: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--theme-border-muted);
-  list-style-type: unset;
-  list-style-position: outside;
+	padding-top: 8px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid var(--theme-border-muted);
+	list-style-type: unset;
+	list-style-position: outside;
 }
 
 .albumView .songName {
-  overflow: hidden;
-  text-overflow: ellipsis;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .albumView li.song.no-track-number {
-  list-style-type: none;
+	list-style-type: none;
 }
 
 .albumView .trackArtist {
-  color: var(--theme-foreground-muted);
+	color: var(--theme-foreground-muted);
 }
 
 .albumView li:first-child {
-  padding-top: 0;
+	padding-top: 0;
 }
 
 .albumView li:last-child {
-  border-bottom: 0;
+	border-bottom: 0;
 }
 </style>
