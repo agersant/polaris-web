@@ -3,7 +3,7 @@
     <li
       v-for="button in buttons"
       v-bind:key="button.target"
-      on:click="onClickTab"
+      v-on:click="onClickButton(button)"
       v-bind:class="{ noselect: 1, selected: button.pattern.test(currentURL) }"
     >
       <i class="noselect material-icons md-18">{{ button.icon }}</i>
@@ -19,45 +19,43 @@ export default {
       buttons: [
         {
           icon: "library_music",
-          target: "browse",
-          pattern: new RegExp("browse")
+          target: "/browse",
+          pattern: new RegExp("(browse|^/$)")
         },
         { icon: "shuffle", target: "random", pattern: new RegExp("random") },
         {
           icon: "new_releases",
-          target: "recent",
+          target: "/recent",
           pattern: new RegExp("recent")
         },
         {
           icon: "playlist_play",
-          target: "playlists",
+          target: "/playlists",
           pattern: new RegExp("playlist")
         },
-        { icon: "search", target: "search", pattern: new RegExp("search") },
+        { icon: "search", target: "/search", pattern: new RegExp("search") },
         {
           icon: "settings",
-          target: "settings/preferences",
+          target: "/settings/preferences",
           pattern: new RegExp("settings")
         }
       ]
     };
   },
 
+  mounted() {
+    this.currentURL = this.$router.currentRoute.path;
+  },
+
   methods: {
-    onClickTab(e) {
-      var newRoute = new RegExp("#" + e.item.url + "$");
-      var currentURL = window.location.href;
-      if (newRoute.test(currentURL)) {
-        route.exec();
-      } else {
-        route(e.item.target);
-      }
+    onClickButton: function(button) {
+      this.$router.push(button.target).catch(err => {});
     }
   },
 
   watch: {
     $route(to, from) {
-      this.currentURL = to || this.buttons[0].target;
+      this.currentURL = to.path || this.buttons[0].target;
     }
   }
 };
