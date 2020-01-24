@@ -2,43 +2,20 @@
 	<div class="browser">
 		<div class="paneHeader">
 			<h2>{{ title }}</h2>
-			<!--
-		<div if={ tab == "random" } class="more noselect" onclick={ onClickMoreRandom }><i class="material-icons md-18">refresh</i><span>More</span></div>
-		<search-input if={ tab == "search" } />
-		<breadcrumbs if={ path != null }/>
-			-->
+			<!--<breadcrumbs if={ path != null }/>-->
 		</div>
 
 		<div class="paneContent" ref="paneContent">
-			<ul v-if="viewMode == 'explorer'" class="explorerView">
-				<div class="viewActions">
-					<div class="header">{{ header }}</div>
-					<button
-						v-if="tab != 'playlist' && items.length > 0"
-						v-on:click="onQueueAll"
-						class="small"
-					>Queue All</button>
-					<button
-						v-if="tab == 'playlist' && items.length > 0"
-						v-on:click="onQueuePlaylist"
-						class="small"
-					>Play</button>
-					<button v-if="tab == 'playlist'" v-on:click="onDeletePlaylist" class="danger small">Delete</button>
-				</div>
-				<li
-					draggable="true"
-					v-for="(item, index) in items"
-					v-bind:key="index"
-					v-on:click="onClickItem(item)"
-					v-on:dragstart="onDragItemStart(item)"
-				>
-					<div v-if="item.variant == 'Directory'" class="directory">
-						<i class="material-icons">folder</i>
-						{{ item.fields.name }}
-					</div>
-					<div v-if="item.variant == 'Song'" class="song">{{ formatExplorerTrackDetails(this) }}</div>
-				</li>
-			</ul>
+			<div class="viewActions">
+				<div class="header">{{ header }}</div>
+				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
+			</div>
+			<explorer
+				v-if="viewMode == 'explorer'"
+				v-bind:items="items"
+				v-on:itemClick="onItemClicked"
+				v-on:itemDragStart="onItemDragStart"
+			></explorer>
 			<!--
 		<div if={ viewMode == "discography" } class="discographyView">
 			<div class="viewActions" if={ tab != "recent" && tab != "random" }>
@@ -95,36 +72,32 @@
 
 
 <script>
+import VueRouter from "vue-router";
 import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
 			items: [],
-			artworkURL: null,
-			header: null,
-			subHeader: null,
-			playlistName: null,
-			path: null,
 			title: "",
-			tab: "",
-			savedPositions: new Map(),
+			header: "",
 			viewMode: "" // explorer/discography/album
 		};
 	},
 
 	mounted() {
 		this.reset();
+		this.browse();
+	},
+
+	watch: {
+		$route(to, from) {
+			this.browse();
+		}
 	},
 
 	methods: {
 		reset() {
 			this.items = [];
-			this.artworkURL = null;
-			this.header = null;
-			this.subHeader = null;
-			this.playlistName = null;
-			this.path = null;
-			this.title = "";
 			this.viewMode = "explorer";
 		},
 
@@ -136,7 +109,10 @@ export default {
 
 			var matchPath = /^.*#browse\/?(.*)$/;
 			var matches = window.location.href.match(matchPath);
-			var path = matches ? matches[1] : "";
+			var path = this.$route.params.pathMatch || "";
+			if (path.startsWith("/")) {
+				path = path.substring(1);
+			}
 			path = decodeURIComponent(path);
 
 			Utils.api("/browse/" + encodeURIComponent(path))
@@ -249,10 +225,28 @@ export default {
 			}
 		},
 
-		onClickItem(item) {
+		formatExplorerTrackDetails(item) {
+			let details = "";
+			if (item.fields.artist) {
+				details += item.fields.artist;
+				details += " - ";
+			}
+			if (item.fields.track_number) {
+				details += item.fields.track_number;
+				details += ". ";
+			}
+			if (item.fields.title) {
+				details += item.fields.title;
+			} else {
+				details += utils.stripFileExtension(utils.getPathTail(item.fields.path));
+			}
+			return details;
+		},
+
+		onItemClicked(item) {
 			var variant = item.variant;
 			if (variant == "Directory") {
-				this.$router.push("browse/" + item.fields.path);
+				this.$router.push("/browse/" + item.fields.path).catch(err => {});
 			} else if (variant == "Song") {
 				// TODO
 				// eventBus.trigger("browser:queueTrack", item.fields);
@@ -283,28 +277,13 @@ export default {
 			}
 		},
 
-		onDragItemStart(e) {
+		onItemDragStart(e) {
 			// TODO
 			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
 		}
 	}
 };
 /*
-	var r = route.create();
-	r("", browse);
-	r("browse..", browse);
-	r("random", random);
-	r("recent", recent);
-	r("playlist..", playlist);
-	r("search..", search);
-	this.on('mount', function() {
-		route.exec();
-	});
-
-	this.on('unmount', function() {
-		r.stop();
-	});
-
 	cleanSavedPositions() {
 		for (const path of self.savedPositions.keys()) {
 			if (!self.path.startsWith(path)) {
@@ -425,25 +404,6 @@ export default {
 			route("playlists/");
 		});
 	}
-
-	formatExplorerTrackDetails(item) {
-		details = "";
-		if (item.fields.artist) {
-			details += item.fields.artist;
-			details += " - ";
-		}
-		if (item.fields.track_number) {
-			details += item.fields.track_number;
-			details += ". ";
-
-		}
-		if (item.fields.title) {
-			details += item.fields.title;
-		} else {
-			details += utils.stripFileExtension(utils.getPathTail(item.fields.path));
-		}
-		return details;
-	}
 	*/
 </script>
 
@@ -489,26 +449,6 @@ export default {
 .explorerView,
 .albumView {
 	margin-bottom: 50px;
-}
-
-/*Explorer view*/
-.explorerView .explorerActions {
-	margin-bottom: 20px;
-}
-
-.explorerView .directory .material-icons {
-	vertical-align: bottom;
-	margin-right: 5px;
-	padding-bottom: 3px;
-}
-
-.explorerView .directory,
-.explorerView .song {
-	cursor: default;
-	max-width: 100%;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 /*Discography view*/

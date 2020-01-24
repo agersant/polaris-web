@@ -5,7 +5,8 @@ import Cookies from 'js-cookie'
 import * as Utils from './utils'
 import Auth from './components/auth'
 import App from './components/app'
-import Browser from './components/browser'
+import Browser from './components/collection/browser'
+import Explorer from './components/collection/layout/explorer'
 import Playlists from './components/playlists'
 import Sidebar from './components/sidebar'
 
@@ -21,6 +22,7 @@ const routes = [
 		component: { template: '<app></app>' },
 		children: [
 			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
+			{ path: '/browse*', component: { template: '<browser></browser>' } },
 			{ path: '*', component: { template: '<browser></browser>' } }
 		]
 	},
@@ -35,6 +37,7 @@ Utils.api('/initial_setup')
 		Vue.component('auth', Auth);
 		Vue.component('app', App);
 		Vue.component('browser', Browser);
+		Vue.component('explorer', Explorer);
 		Vue.component('playlists', Playlists);
 		Vue.component('sidebar', Sidebar);
 
