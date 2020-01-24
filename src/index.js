@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 import * as Utils from './utils'
 import Auth from './components/auth'
 import App from './components/app'
+import Sidebar from './components/sidebar'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,7 @@ Utils.api('/initial_setup')
 
 		Vue.component('auth', Auth);
 		Vue.component('app', App);
+		Vue.component('sidebar', Sidebar);
 
 		new Vue({
 			router,

@@ -1,7 +1,7 @@
 <template>
   <div>
-    MAIN
-    <!-- <menu />
+    <sidebar />
+    <!--
     <router>
       <route path="settings/*">
         <settings />
@@ -15,12 +15,12 @@
     </router>
     <playlist />
     <player />
-    <window-title-updater />
-    -->
+    <window-title-updater />-->
   </div>
 </template>
 
 <script>
+// TODO
 // this.on('mount', function() {
 // 	route.exec();
 // 	this.applyTheme();
@@ -47,7 +47,7 @@ player {
   background-color: var(--theme-background);
 }
 
-menu {
+sidebar {
   position: absolute;
   width: 50px;
   height: 100%;
