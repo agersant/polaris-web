@@ -2,7 +2,7 @@
   <div class="authForm">
     AUTH
     <div class="content">
-      <img class="logo" src="/img/logo.png" />
+      <img class="logo" src="/assets/logo.png" />
       <!-- <form name="authForm" onsubmit="{" doLogin }>
         <input data-cy="username" type="text" name="username" placeholder="Username" autofocus />
         <input data-cy="password" type="password" name="password" placeholder="Password" />
