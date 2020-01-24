@@ -11,7 +11,7 @@
 				<i class="material-icons">folder</i>
 				{{ item.fields.name }}
 			</div>
-			<div v-if="item.variant == 'Song'" class="song">{{ formatExplorerTrackDetails(item) }}</div>
+			<div v-if="item.variant == 'Song'" class="song">{{ formatTrackDetails(item) }}</div>
 		</li>
 	</ul>
 </template>
@@ -27,6 +27,26 @@ export default {
 
 	data: function() {
 		return {};
+	},
+
+	methods: {
+		formatTrackDetails(item) {
+			let details = "";
+			if (item.fields.artist) {
+				details += item.fields.artist;
+				details += " - ";
+			}
+			if (item.fields.track_number) {
+				details += item.fields.track_number;
+				details += ". ";
+			}
+			if (item.fields.title) {
+				details += item.fields.title;
+			} else {
+				details += utils.stripFileExtension(utils.getPathTail(item.fields.path));
+			}
+			return details;
+		}
 	}
 };
 </script>

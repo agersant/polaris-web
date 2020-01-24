@@ -1,7 +1,7 @@
 <template>
 	<div class="browser">
 		<div class="paneHeader">
-			<h2>{{ title }}</h2>
+			<h2>Music Collection</h2>
 			<!--<breadcrumbs if={ path != null }/>-->
 		</div>
 
@@ -41,15 +41,12 @@
 	</div>
 </template>
 
-
 <script>
-import VueRouter from "vue-router";
 import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
 			items: [],
-			title: "",
 			header: "",
 			artworkURL: "",
 			subHeader: "",
@@ -64,7 +61,6 @@ export default {
 
 	watch: {
 		$route(to, from) {
-			this.reset();
 			this.browse();
 		}
 	},
@@ -72,7 +68,6 @@ export default {
 	methods: {
 		reset() {
 			this.items = [];
-			this.title = "";
 			this.header = "";
 			this.subHeader = "";
 			this.artworkURL = "";
@@ -105,7 +100,6 @@ export default {
 						data[i].variant = data[i].Directory ? "Directory" : "Song";
 					}
 					this.tab = "browse";
-					this.title = "Music Collection";
 					this.displayItems(data);
 					//this.tags.breadcrumbs.setCurrentPath(path); TODO
 					//this.cleanSavedPositions(); TODO
@@ -201,24 +195,6 @@ export default {
 			} else {
 				this.items = items;
 			}
-		},
-
-		formatExplorerTrackDetails(item) {
-			let details = "";
-			if (item.fields.artist) {
-				details += item.fields.artist;
-				details += " - ";
-			}
-			if (item.fields.track_number) {
-				details += item.fields.track_number;
-				details += ". ";
-			}
-			if (item.fields.title) {
-				details += item.fields.title;
-			} else {
-				details += utils.stripFileExtension(utils.getPathTail(item.fields.path));
-			}
-			return details;
 		},
 
 		onItemClicked(item) {

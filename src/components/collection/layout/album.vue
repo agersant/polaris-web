@@ -21,7 +21,7 @@
 							v-on:dragstart="$emit('itemDragStart', item)"
 						>
 							<div class="songName">
-								{{ item.fields.title || utils.stripFileExtension(utils.getPathTail(item.fields.path)) }}
+								{{ formatSongTitle(item) }}
 								<span
 									class="trackArtist"
 									v-if="item.fields.artist && item.fields.album_artist && item.fields.artist != item.fields.album_artist"
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import * as Utils from "/src/utils";
 export default {
 	props: {
 		discs: {
@@ -50,6 +51,12 @@ export default {
 
 	data: function() {
 		return {};
+	},
+
+	methods: {
+		formatSongTitle(item) {
+			return item.fields.title || Utils.stripFileExtension(Utils.getPathTail(item.fields.path));
+		}
 	}
 };
 </script>
