@@ -37,15 +37,24 @@ export default {
 		discs: {
 			type: Array,
 			required: true
-		},
-		artworkURL: {
-			type: String,
-			required: true
 		}
 	},
 
 	data: function() {
 		return {};
+	},
+
+	computed: {
+		artworkURL: function() {
+			for (const disc of this.discs) {
+				for (const song of disc.songs) {
+					if (song.fields.artwork) {
+						return "api/serve/" + encodeURIComponent(song.fields.artwork);
+					}
+				}
+			}
+			return "";
+		}
 	},
 
 	methods: {

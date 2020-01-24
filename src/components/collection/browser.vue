@@ -33,7 +33,6 @@
 			<album
 				v-if="viewMode == 'album'"
 				v-bind:discs="items"
-				v-bind:artworkURL="artworkURL"
 				v-on:itemClick="onItemClicked"
 				v-on:itemDragStart="onItemDragStart"
 			></album>
@@ -48,7 +47,6 @@ export default {
 		return {
 			items: [],
 			header: "",
-			artworkURL: "",
 			subHeader: "",
 			viewMode: "" // explorer/discography/album
 		};
@@ -70,7 +68,6 @@ export default {
 			this.items = [];
 			this.header = "";
 			this.subHeader = "";
-			this.artworkURL = "";
 			this.viewMode = "explorer";
 		},
 
@@ -124,7 +121,6 @@ export default {
 				}
 
 				if (item.fields.artwork) {
-					item.fields.artworkURL = "api/serve/" + encodeURIComponent(item.fields.artwork);
 					hasAnyPicture = true;
 				}
 
@@ -132,7 +128,6 @@ export default {
 					onlyDirectories = false;
 					item.fields.url = "api/serve/" + encodeURIComponent(item.fields.path);
 					this.header = this.header || item.fields.album;
-					this.artworkURL = this.artworkURL || item.fields.artworkURL;
 					this.subHeader = this.subHeader || item.fields.album_artist || item.fields.artist;
 					allSameAlbum = allSameAlbum && item.fields.album == album;
 				} else {
