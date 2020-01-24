@@ -11,7 +11,7 @@
 		>
 			<div class="cover">
 				<div class="coverCanvas">
-					<img v-if="album.fields.artwork" v-bind:src="album.fields.artworkURL" />
+					<img v-if="album.fields.artwork" v-bind:src="getArtworkURL(album)" />
 				</div>
 			</div>
 			<div class="details">
@@ -38,6 +38,12 @@ export default {
 
 	data: function() {
 		return {};
+	},
+
+	methods: {
+		getArtworkURL(album) {
+			return "api/serve/" + encodeURIComponent(album.fields.artwork);
+		}
 	}
 };
 </script>
