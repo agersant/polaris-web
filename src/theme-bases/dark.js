@@ -1,4 +1,5 @@
-theming.registerBase("dark", {
+export default {
+	id: "dark",
 	name: "Dark",
 	colors: {
 		"--theme-foreground": "#DDD",
@@ -15,4 +16,4 @@ theming.registerBase("dark", {
 		"--theme-foreground-against-good": "#FFF",
 		"--theme-foreground-against-bad": "#FFF",
 	}
-});
+};

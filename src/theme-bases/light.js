@@ -1,4 +1,5 @@
-theming.registerBase("light", {
+export default {
+	id: "light",
 	name: "Light",
 	colors: {
 		"--theme-foreground": "#3A3A3A",
@@ -15,4 +16,4 @@ theming.registerBase("light", {
 		"--theme-foreground-against-good": "#FFF",
 		"--theme-foreground-against-bad": "#FFF",
 	}
-});
+};

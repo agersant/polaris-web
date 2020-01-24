@@ -20,20 +20,26 @@
 </template>
 
 <script>
-// TODO
-// this.on('mount', function() {
-// 	route.exec();
-// 	this.applyTheme();
-// });
+import * as Utils from "/src/utils";
+import * as Theming from "/src/theming";
 
-// applyTheme() {
-// 	utils.api("/preferences")
-// 	.then(function(res) { return res.json(); })
-// 	.then(function(data) {
-// 		theming.setBase(data.web_theme_base);
-// 		theming.setAccentColor(data.web_theme_accent);
-// 	}.bind(self));
-// }
+export default {
+  mounted() {
+    this.applyTheme();
+  },
+  methods: {
+    applyTheme() {
+      Utils.api("/preferences")
+        .then(function(res) {
+          return res.json();
+        })
+        .then(data => {
+          Theming.setBase(data.web_theme_base);
+          Theming.setAccentColor(data.web_theme_accent);
+        });
+    }
+  }
+};
 </script>
 
 <style scoped>
