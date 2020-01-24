@@ -7,4 +7,4 @@ The first thing you need to start iterating on the Polaris web interface is a wo
 3. Install [Node.js](https://nodejs.org), [Yarn](https://yarnpkg.com/) and [Parcel](https://parceljs.org/)
 4. Within the polaris-web directory, run `yarn install` and then `yarn watch`
 5. Access [http://localhost:5050/](http://localhost:5050/) to open the web UI
-6. Changes you make within `polaris-web/src` are visible upon refresh
+6. Changes you make within `polaris-web/src` are visible immediately
