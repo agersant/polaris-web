@@ -14,7 +14,9 @@
       </route>
     </router>
     <playlist />
-    <player />-->
+    <player />
+    <window-title-updater />
+    -->
   </div>
 </template>
 

@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import Cookies from 'js-cookie'
 
 import * as Utils from './utils'
-import App from './components/app'
 import Auth from './components/auth'
 
 Vue.use(VueRouter)
@@ -20,12 +19,10 @@ Utils.api('/initial_setup')
 	.then(function(res) { return res.json(); })
 	.then(function(data) {
 
-		Vue.component('app', App);
 		Vue.component('auth', Auth);
 
 		new Vue({
-			render: h => h(App),
-			router: router,
+			router,
 		}).$mount('#app')
 
 		if (!data.has_any_users) {
