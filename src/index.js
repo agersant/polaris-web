@@ -4,13 +4,14 @@ import Cookies from 'js-cookie'
 
 import * as Utils from './utils'
 import Auth from './components/auth'
+import App from './components/app'
 
 Vue.use(VueRouter)
 
 const routes = [
 	// { path: '/welcome', component: { template: '<initial-setup/>' } },
 	{ path: '/auth', component: { template: '<auth/>' } },
-	// { path: '/', component: { template: '<main/>' } },
+	{ path: '*', component: { template: '<app/>' } },
 ]
 
 const router = new VueRouter({ routes });
@@ -20,10 +21,11 @@ Utils.api('/initial_setup')
 	.then(function(data) {
 
 		Vue.component('auth', Auth);
+		Vue.component('app', App);
 
 		new Vue({
 			router,
-		}).$mount('#app')
+		}).$mount('#vue-container')
 
 		if (!data.has_any_users) {
 			router.push('welcome').catch(err => { });

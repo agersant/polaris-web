@@ -36,7 +36,7 @@
 // }
 </script>
 
-<style>
+<style scoped>
 playlist,
 browser,
 settings,
