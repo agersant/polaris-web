@@ -1,28 +1,26 @@
 <template>
-	<div>
-		<ul>
-			<li
-				data-cy="album"
-				class="album"
-				draggable="true"
-				v-for="(album, index) in albums"
-				v-bind:key="index"
-				v-on:click="$emit('itemClick', album)"
-				v-on:dragstart="$emit('itemDragStart', album)"
-			>
-				<div class="cover">
-					<div class="coverCanvas">
-						<img v-if="album.fields.artwork" v-bind:src="album.fields.artworkURL" />
-					</div>
+	<ul>
+		<li
+			data-cy="album"
+			class="album"
+			draggable="true"
+			v-for="(album, index) in albums"
+			v-bind:key="index"
+			v-on:click="$emit('itemClick', album)"
+			v-on:dragstart="$emit('itemDragStart', album)"
+		>
+			<div class="cover">
+				<div class="coverCanvas">
+					<img v-if="album.fields.artwork" v-bind:src="album.fields.artworkURL" />
 				</div>
-				<div class="details">
-					<div class="title">{{ album.fields.album }}</div>
-					<div v-if="showArtistName" class="artist">{{ album.fields.artist }}</div>
-					<div class="year">{{ album.fields.year }}</div>
-				</div>
-			</li>
-		</ul>
-	</div>
+			</div>
+			<div class="details">
+				<div class="title">{{ album.fields.album }}</div>
+				<div v-if="showArtistName" class="artist">{{ album.fields.artist }}</div>
+				<div class="year">{{ album.fields.year }}</div>
+			</div>
+		</li>
+	</ul>
 </template>
 
 <script>
