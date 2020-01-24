@@ -1,6 +1,7 @@
 <template>
   <div>
-    <sidebar class="sidebar" />
+    <sidebar class="sidebar"></sidebar>
+    <router-view></router-view>
     <!--
     <router>
       <route path="settings/*">
@@ -42,13 +43,13 @@ export default {
 };
 </script>
 
-<style scoped>
-playlist,
-browser,
-settings,
-search,
-playlists,
-player {
+<style>
+.playlist,
+.browser,
+.settings,
+.search,
+.playlists,
+.player {
   overflow-x: hidden;
   background-color: var(--theme-background);
 }
@@ -59,17 +60,17 @@ player {
   height: 100%;
 }
 
-browser,
-settings,
-search,
-playlists {
+.browser,
+.settings,
+.search,
+.playlists {
   position: absolute;
   width: calc(40% - 50px);
   left: 50px;
   height: 100%;
 }
 
-playlist {
+.playlist {
   position: absolute;
   width: 60%;
   right: 0;
@@ -79,7 +80,7 @@ playlist {
   border-left: 1px solid var(--theme-border-muted);
 }
 
-player {
+.player {
   position: absolute;
   width: 60%;
   bottom: 0;
