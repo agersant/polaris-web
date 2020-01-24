@@ -1,11 +1,6 @@
 <template>
 	<div class="details">
-		<img
-			v-bind:src="artworkURL"
-			draggable="true"
-			v-on:click="$emit('albumClickTODO')"
-			v-on:dragstart="$emit('itemDragStart', 'TODO')"
-		/>
+		<img v-bind:src="artworkURL" draggable="true" v-on:dragstart="$emit('itemDragStart', 'TODO')" />
 		<div class="trackList">
 			<ul>
 				<li v-for="(disc, index) in discs" v-bind:key="index">

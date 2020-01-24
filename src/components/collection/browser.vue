@@ -348,10 +348,6 @@ export default {
 		e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
 	}
 
-	onClickAlbum(e) {
-		eventBus.trigger("browser:queueDirectory", this.path);
-	}
-
 	onDeletePlaylist(e) {
 		utils.api("/playlist/" + encodeURIComponent(this.playlistName), { method: "DELETE" })
 		.then(function(res) {
