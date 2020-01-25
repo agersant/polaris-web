@@ -2,7 +2,7 @@
 	<div class="browser">
 		<div class="paneHeader">
 			<h2>Music Collection</h2>
-			<!--<breadcrumbs if={ path != null }/>-->
+			<breadcrumbs></breadcrumbs>
 		</div>
 
 		<div class="paneContent" ref="paneContent">
@@ -42,7 +42,12 @@
 
 <script>
 import * as Utils from "/src/utils";
+import Breadcrumbs from "./breadcrumbs";
 export default {
+	components: {
+		breadcrumbs: Breadcrumbs
+	},
+
 	data() {
 		return {
 			items: [],
@@ -77,8 +82,6 @@ export default {
 				// this.savedPositions.set(this.path, this.refs.paneContent.scrollTop);
 			}
 
-			var matchPath = /^.*#browse\/?(.*)$/;
-			var matches = window.location.href.match(matchPath);
 			var path = this.$route.params.pathMatch || "";
 			if (path.startsWith("/")) {
 				path = path.substring(1);
@@ -98,7 +101,6 @@ export default {
 					}
 					this.tab = "browse";
 					this.displayItems(data);
-					//this.tags.breadcrumbs.setCurrentPath(path); TODO
 					//this.cleanSavedPositions(); TODO
 					// this.refs.paneContent.scrollTop = this.savedPositions.get(path) || 0; TODO
 				});

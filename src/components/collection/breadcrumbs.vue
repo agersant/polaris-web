@@ -1,0 +1,101 @@
+<template>
+	<ul>
+		<li
+			data-cy="breadcrumb"
+			class="noselect"
+			v-for="component in components"
+			v-bind:key="component.path"
+			v-on:click="onClick(component)"
+		>{{ component.name }}</li>
+	</ul>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			components: []
+		};
+	},
+
+	mounted() {
+		this.updatePath();
+	},
+
+	watch: {
+		$route(to, from) {
+			this.updatePath();
+		}
+	},
+
+	methods: {
+		updatePath() {
+			let path = this.$route.params.pathMatch || "";
+			if (path.startsWith("/")) {
+				path = path.substring(1);
+			}
+			path = decodeURIComponent(path);
+
+			let components = [
+				{
+					name: "All Music",
+					path: ""
+				}
+			];
+
+			let separatorMatcher = /[\\/]/g;
+			let previousLastIndex = 0;
+			while (separatorMatcher.test(path)) {
+				components.push({
+					name: path.substring(previousLastIndex, separatorMatcher.lastIndex - 1),
+					path: path.substring(0, separatorMatcher.lastIndex - 1)
+				});
+				previousLastIndex = separatorMatcher.lastIndex;
+			}
+
+			if (path) {
+				components.push({
+					name: path.substring(previousLastIndex),
+					path: path
+				});
+			}
+
+			this.components = components;
+		},
+
+		onClick(component) {
+			this.$router.push("/browse/" + component.path);
+		}
+	}
+};
+</script>
+
+<style scoped>
+ul {
+	display: flex;
+	font-size: 0.875rem;
+	max-width: 100%;
+}
+
+li {
+	display: inline-block;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 600;
+	color: var(--theme-foreground-against-accent);
+	background-color: var(--theme-accent);
+	cursor: pointer;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 1px;
+	border-radius: 5px;
+	margin-right: 5px;
+	flex-shrink: 0;
+}
+
+li:last-child {
+	flex-shrink: 1;
+	margin-right: 0;
+}
+</style>
