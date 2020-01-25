@@ -28,7 +28,7 @@ export default {
 
 	data() {
 		return {
-			step: "welcome",
+			step: "",
 			config: null
 		};
 	},
@@ -40,6 +40,7 @@ export default {
 			})
 			.then(data => {
 				this.config = data;
+				this.step = "welcome";
 			});
 	},
 
