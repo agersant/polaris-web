@@ -298,11 +298,6 @@ export default {
 		}.bind(self));
 	}
 
-	onClickMoreRandom(e) {
-		e.preventDefault();
-		route.exec();
-	}
-
 	onQueuePlaylist(e) {
 		eventBus.trigger("browser:queuePlaylist", this.playlistName, this.items.map(i => i.fields ));
 	}
