@@ -22,7 +22,7 @@
 
 <script>
 import * as Utils from "/src/utils";
-import * as Theming from "/src/theming";
+import * as Theming from "/src/theming/theming";
 import Sidebar from "./sidebar";
 
 export default {
