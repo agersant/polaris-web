@@ -249,40 +249,6 @@ export default {
 		}
 	}
 
-	function random() {
-		utils.api("/random")
-		.then(function(res) { return res.json(); })
-		.then(function(data) {
-			this.reset();
-			for (var i = 0; i < data.length; i++) {
-				data[i] = {
-					variant: "Directory",
-					fields: data[i],
-				}
-			}
-			this.tab = "random";
-			this.title = "Random Albums";
-			this.displayItems(data);
-		}.bind(self));
-	}
-
-	function recent() {
-		utils.api("/recent")
-		.then(function(res) { return res.json(); })
-		.then(function(data) {
-			this.reset();
-			for (var i = 0; i < data.length; i++) {
-				data[i] = {
-					variant: "Directory",
-					fields: data[i],
-				}
-			}
-			this.tab = "recent";
-			this.title = "Recently Added";
-			this.displayItems(data);
-		}.bind(self));
-	}
-
 	function playlist() {
 		var matchPath = /^.*#playlist\/?(.*)$/;
 		var matches = window.location.href.match(matchPath);
