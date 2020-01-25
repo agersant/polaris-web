@@ -8,3 +8,5 @@ The first thing you need to start iterating on the Polaris web interface is a wo
 4. Within the polaris-web directory, run `yarn install` and then `yarn watch`
 5. Access [http://localhost:5050/](http://localhost:5050/) to open the web UI
 6. Changes you make within `polaris-web/src` are visible immediately
+
+The test suite can be run with `yarn run test`
