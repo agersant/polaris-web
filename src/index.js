@@ -8,12 +8,13 @@ import Auth from './components/auth'
 import Browser from './components/collection/browser'
 import Random from './components/collection/random'
 import Recent from './components/collection/recent'
+import InitialSetup from './components/initial-setup/initial-setup'
 import Playlists from './components/playlists'
 
 Vue.use(VueRouter)
 
 const routes = [
-	// { path: '/welcome', component: { template: '<initial-setup/>' } },
+	{ path: '/welcome', component: { template: '<initial-setup></initial-setup>' } },
 	{
 		path: '/auth', component: { template: '<auth></auth>' }
 	},
@@ -39,6 +40,7 @@ Utils.api('/initial_setup')
 		Vue.component('auth', Auth);
 		Vue.component('app', App);
 		Vue.component('browser', Browser);
+		Vue.component('initial-setup', InitialSetup);
 		Vue.component('playlists', Playlists);
 		Vue.component('recent', Recent);
 		Vue.component('random', Random);
@@ -48,8 +50,8 @@ Utils.api('/initial_setup')
 		}).$mount('#vue-container')
 
 		if (!data.has_any_users) {
-			router.push('welcome').catch(err => { });
+			router.push('/welcome').catch(err => { });
 		} else if (Cookies.get('username') == undefined) {
-			router.push('auth').catch(err => { });
+			router.push('/auth').catch(err => { });
 		}
 	});
