@@ -10,6 +10,11 @@ import Random from './components/collection/random'
 import Recent from './components/collection/recent'
 import InitialSetup from './components/initial-setup/initial-setup'
 import Playlists from './components/playlists'
+import Settings from './components/settings/settings'
+import SettingsCollection from './components/settings/sections/collection'
+import SettingsDDNS from './components/settings/sections/ddns'
+import SettingsPreferences from './components/settings/sections/preferences'
+import SettingsUsers from './components/settings/sections/users'
 
 Vue.use(VueRouter)
 
@@ -22,10 +27,18 @@ const routes = [
 		path: '',
 		component: { template: '<app></app>' },
 		children: [
-			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
 			{ path: '/browse*', component: { template: '<browser></browser>' } },
 			{ path: '/random', component: { template: '<random></random>' } },
 			{ path: '/recent', component: { template: '<recent></recent>' } },
+			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
+			{
+				path: '/settings', component: { template: '<settings></settings>' }, children: [
+					{ path: 'collection', component: { template: '<collection></collection>' } },
+					{ path: 'ddns', component: { template: '<ddns></ddns>' } },
+					{ path: 'users', component: { template: '<users></users>' } },
+					{ path: '*', component: { template: '<preferences></preferences>' } }
+				]
+			},
 			{ path: '*', component: { template: '<browser></browser>' } }
 		]
 	},
@@ -44,6 +57,12 @@ Utils.api('/initial_setup')
 		Vue.component('playlists', Playlists);
 		Vue.component('recent', Recent);
 		Vue.component('random', Random);
+
+		Vue.component('settings', Settings);
+		Vue.component('collection', SettingsCollection);
+		Vue.component('ddns', SettingsDDNS);
+		Vue.component('preferences', SettingsPreferences);
+		Vue.component('users', SettingsUsers);
 
 		new Vue({
 			router,

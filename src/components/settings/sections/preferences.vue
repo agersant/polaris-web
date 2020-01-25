@@ -1,7 +1,7 @@
-<settings-preferences>
-
-
-	<form if={ preferences } onsubmit={ save }>
+<template>
+	<div>
+		PREFERENCES
+		<!-- <form if={ preferences } onsubmit={ save }>
 		<div class="field">
 			<label>Theme</label>
 			<table>
@@ -34,10 +34,12 @@
 				<button onclick={ linkLastFMAccount }>Link Last.fm account</button>
 			</div>
 		</div>
-	</form>
+		</form>-->
+	</div>
+</template>
 
-	<script>
-
+<script>
+/*
 		var self = this;
 		this.preferences = null;
 
@@ -133,20 +135,20 @@
 			e.preventDefault();
 			eventBus.trigger("settings:submitPreferences", this.preferences);
 		}
-	</script>
+		*/
+</script>
 
-	<style>
-		a {
-			text-decoration: underline;
-			color: var(--theme-accent);
-		}
+<style scoped>
+a {
+	text-decoration: underline;
+	color: var(--theme-accent);
+}
 
-		td.accent-color {
-			background-color: var(--theme-accent)
-		}
+td.accent-color {
+	background-color: var(--theme-accent);
+}
 
-		input[type="color"] {
-			opacity: 0;
-		}
-	</style>
-</settings-preferences>
+input[type="color"] {
+	opacity: 0;
+}
+</style>
