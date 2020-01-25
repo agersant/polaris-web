@@ -43,9 +43,15 @@
 <script>
 import * as Utils from "/src/utils";
 import Breadcrumbs from "./breadcrumbs";
+import Album from "./layout/album";
+import Discography from "./layout/discography";
+import Explorer from "./layout/explorer";
 export default {
 	components: {
-		breadcrumbs: Breadcrumbs
+		breadcrumbs: Breadcrumbs,
+		album: Album,
+		discography: Discography,
+		explorer: Explorer
 	},
 
 	data() {

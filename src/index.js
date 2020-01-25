@@ -3,14 +3,10 @@ import VueRouter from 'vue-router'
 import Cookies from 'js-cookie'
 
 import * as Utils from './utils'
-import Album from './components/collection/layout/album'
 import Auth from './components/auth'
 import App from './components/app'
 import Browser from './components/collection/browser'
-import Discography from './components/collection/layout/discography'
-import Explorer from './components/collection/layout/explorer'
 import Playlists from './components/playlists'
-import Sidebar from './components/sidebar'
 
 Vue.use(VueRouter)
 
@@ -36,14 +32,10 @@ Utils.api('/initial_setup')
 	.then(function(res) { return res.json(); })
 	.then(function(data) {
 
-		Vue.component('album', Album);
 		Vue.component('auth', Auth);
 		Vue.component('app', App);
 		Vue.component('browser', Browser);
-		Vue.component('discography', Discography);
-		Vue.component('explorer', Explorer);
 		Vue.component('playlists', Playlists);
-		Vue.component('sidebar', Sidebar);
 
 		new Vue({
 			router,
