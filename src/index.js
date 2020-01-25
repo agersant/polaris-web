@@ -3,9 +3,11 @@ import VueRouter from 'vue-router'
 import Cookies from 'js-cookie'
 
 import * as Utils from './utils'
-import Auth from './components/auth'
 import App from './components/app'
+import Auth from './components/auth'
 import Browser from './components/collection/browser'
+import Random from './components/collection/random'
+import Recent from './components/collection/recent'
 import Playlists from './components/playlists'
 
 Vue.use(VueRouter)
@@ -21,6 +23,8 @@ const routes = [
 		children: [
 			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
 			{ path: '/browse*', component: { template: '<browser></browser>' } },
+			{ path: '/random', component: { template: '<random></random>' } },
+			{ path: '/recent', component: { template: '<recent></recent>' } },
 			{ path: '*', component: { template: '<browser></browser>' } }
 		]
 	},
@@ -36,6 +40,8 @@ Utils.api('/initial_setup')
 		Vue.component('app', App);
 		Vue.component('browser', Browser);
 		Vue.component('playlists', Playlists);
+		Vue.component('recent', Recent);
+		Vue.component('random', Random);
 
 		new Vue({
 			router,
