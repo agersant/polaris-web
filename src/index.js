@@ -1,8 +1,6 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import Cookies from 'js-cookie'
 
-import * as Utils from './utils'
 import App from './components/app'
 import Auth from './components/auth'
 import Browser from './components/collection/browser'
@@ -15,39 +13,14 @@ import SettingsCollection from './components/settings/sections/collection'
 import SettingsDDNS from './components/settings/sections/ddns'
 import SettingsPreferences from './components/settings/sections/preferences'
 import SettingsUsers from './components/settings/sections/users'
-import store from "./store/store"
+import API from "./plugins/api"
+import Router from "./router"
+import Store from "./store/store"
 
-Vue.use(VueRouter)
 
-const routes = [
-	{ path: '/welcome', component: { template: '<initial-setup></initial-setup>' } },
-	{
-		path: '/auth', component: { template: '<auth></auth>' }
-	},
-	{
-		path: '',
-		component: { template: '<app></app>' },
-		children: [
-			{ path: '/browse*', component: { template: '<browser></browser>' } },
-			{ path: '/random', component: { template: '<random></random>' } },
-			{ path: '/recent', component: { template: '<recent></recent>' } },
-			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
-			{
-				path: '/settings', component: { template: '<settings></settings>' }, children: [
-					{ path: 'collection', component: { template: '<collection></collection>' } },
-					{ path: 'ddns', component: { template: '<ddns></ddns>' } },
-					{ path: 'users', component: { template: '<users></users>' } },
-					{ path: '*', component: { template: '<preferences></preferences>' } }
-				]
-			},
-			{ path: '*', component: { template: '<browser></browser>' } } // TODO 404
-		]
-	},
-]
+Vue.use(API)
 
-const router = new VueRouter({ routes });
-
-Utils.api('/initial_setup')
+Vue.prototype.$api.request('/initial_setup')
 	.then(res => res.json())
 	.then(data => {
 
@@ -66,8 +39,8 @@ Utils.api('/initial_setup')
 		Vue.component('users', SettingsUsers);
 
 		new Vue({
-			store,
-			router,
+			store: Store,
+			router: Router,
 		}).$mount('#vue-container')
 
 		if (!data.has_any_users) {

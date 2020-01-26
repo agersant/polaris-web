@@ -1,4 +1,5 @@
 import * as Utils from '/src/utils'
+import { API } from '/src/plugins/api'
 
 const state = {
 	name: null,
@@ -42,7 +43,7 @@ const actions = {
 
 	queueDirectory({ commit, dispatch }, path) {
 		let url = "/flatten/" + encodeURIComponent(path);
-		Utils.api(url)
+		API.request(url)
 			.then(res => res.json())
 			.then(data => {
 				let length = data.length;

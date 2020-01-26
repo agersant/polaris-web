@@ -58,7 +58,6 @@
 <script>
 import Cookies from "js-cookie";
 import * as Theming from "/src/theming/theming";
-import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
@@ -73,7 +72,8 @@ export default {
 
 	methods: {
 		refreshPreferences() {
-			Utils.api("/preferences")
+			this.$api
+				.request("/preferences")
 				.then(res => res.json())
 				.then(data => {
 					this.preferences = data;
@@ -146,11 +146,11 @@ export default {
 		},
 
 		unlinkLastFMAccount(e) {
-			Utils.api("/lastfm/link", { method: "DELETE" }).then(this.refreshPreferences);
+			this.$api.request("/lastfm/link", { method: "DELETE" }).then(this.refreshPreferences);
 		},
 
 		commit() {
-			Utils.api("/preferences", {
+			this.$api.request("/preferences", {
 				method: "PUT",
 				body: JSON.stringify(this.preferences),
 				headers: {

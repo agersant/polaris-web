@@ -44,21 +44,6 @@ export function tryLogin(username, password) {
 	});
 }
 
-export function api(endpoint, options) {
-	if (!options) {
-		options = {};
-	}
-	options.credentials = "same-origin";
-	return fetch("api" + endpoint, options)
-		.then(res => {
-			if (res.status == 401) {
-				// route("auth", null, true); // TODO
-				throw "Authentication error";
-			}
-			return res;
-		});
-}
-
 export function getPathTail(path) {
 	if (!path) {
 		return null;

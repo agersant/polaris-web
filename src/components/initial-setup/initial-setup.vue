@@ -34,7 +34,8 @@ export default {
 	},
 
 	mounted() {
-		Utils.api("/settings")
+		this.$api
+			.request("/settings")
 			.then(res => {
 				return res.json();
 			})
@@ -62,7 +63,7 @@ export default {
 		setMount(mountDir) {
 			this.config.mount_dirs = [mountDir];
 			this.commit().then(res => {
-				Utils.api("/trigger_index", { method: "POST" }).then(this.next);
+				this.$api.request("/trigger_index", { method: "POST" }).then(this.next);
 			});
 		},
 
@@ -72,19 +73,21 @@ export default {
 		},
 
 		commit() {
-			return Utils.api("/settings", {
-				method: "PUT",
-				body: JSON.stringify(this.config),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			}).then(res => {
-				if (!res.ok) {
-					console.log("Error while applying settings");
-					throw res.status;
-				}
-				return res;
-			});
+			return this.$api
+				.request("/settings", {
+					method: "PUT",
+					body: JSON.stringify(this.config),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+				.then(res => {
+					if (!res.ok) {
+						console.log("Error while applying settings");
+						throw res.status;
+					}
+					return res;
+				});
 		},
 		login() {
 			let username = this.config.users[0].name;

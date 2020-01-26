@@ -141,7 +141,7 @@ export default {
 			if (from) {
 				Vue.nextTick(() => {
 					this.$refs.htmlAudio.play();
-					Utils.api("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
+					this.$api.request("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
 				});
 			}
 		}
@@ -221,6 +221,7 @@ export default {
 		},
 
 		skipNext() {
+			this.$api.hello();
 			this.$store.dispatch("playlist/next");
 		},
 
@@ -229,7 +230,7 @@ export default {
 				var duration = this.$refs.htmlAudio.duration;
 				var shouldScrobble = duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
-					Utils.api("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
+					this.$api.request("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
 					this.canScrobble = false;
 				}
 			}

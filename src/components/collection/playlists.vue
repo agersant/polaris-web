@@ -26,8 +26,6 @@
 </template>
 
 <script>
-import * as Utils from "/src/utils";
-
 export default {
 	data() {
 		return {
@@ -41,7 +39,8 @@ export default {
 
 	methods: {
 		loadPlaylists() {
-			Utils.api("/playlists")
+			this.$api
+				.request("/playlists")
 				.then(res => res.json())
 				.then(data => {
 					if (this.dead) {

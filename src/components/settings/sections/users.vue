@@ -52,7 +52,6 @@
 
 <script>
 import Cookies from "js-cookie";
-import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
@@ -62,7 +61,8 @@ export default {
 	},
 
 	mounted() {
-		Utils.api("/settings")
+		this.$api
+			.request("/settings")
 			.then(res => res.json())
 			.then(data => {
 				this.users = data.users;
@@ -105,7 +105,7 @@ export default {
 			let settings = {
 				users: this.users
 			};
-			Utils.api("/settings", {
+			this.$api.request("/settings", {
 				method: "PUT",
 				body: JSON.stringify(settings),
 				headers: {

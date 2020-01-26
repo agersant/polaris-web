@@ -38,7 +38,7 @@
 
 			this.tags["async-button"].setState(this.applyStates.saving);
 
-			utils.api("/playlist/" + encodeURIComponent(this.playlistName),
+			this.$api.request("/playlist/" + encodeURIComponent(this.playlistName),
 				{	method: "PUT"
 				,	body: JSON.stringify(playlist)
 				,	headers: {
