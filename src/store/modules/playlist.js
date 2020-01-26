@@ -55,8 +55,45 @@ const mutations = {
 	},
 
 	play(state, track) {
-		this.currentTrack = track;
+		state.currentTrack = track;
 		// saveLocalPlaylist TODO
+	},
+
+	advance(state, delta) {
+		const playbackOrder = state.playbackOrder;
+		const tracks = state.tracks;
+		const numTracks = tracks.length;
+		const currentTrack = state.currentTrack;
+
+		let newTrack = null;
+		if (numTracks > 0) {
+			if (playbackOrder == "random") {
+				const newTrackIndex = Math.floor(Math.random() * numTracks);
+				newTrack = tracks[newTrackIndex];
+			} else if (playbackOrder == "repeat-track") {
+				newTrack = currentTrack;
+			} else {
+				const currentTrackIndex = tracks.indexOf(currentTrack);
+				if (currentTrackIndex < 0) {
+					newTrack = tracks[0];
+				} else {
+					const newTrackIndex = currentTrackIndex + delta;
+					if (newTrackIndex >= 0 && newTrackIndex < numTracks) {
+						newTrack = tracks[newTrackIndex];
+					} else if (playbackOrder == "repeat-all") {
+						if (delta > 0) {
+							newTrack = tracks[0];
+						} else {
+							newTrack = tracks[numTracks - 1];
+						}
+					}
+				}
+			}
+		}
+
+		if (newTrack != null) {
+			state.currentTrack = newTrack;
+		}
 	}
 }
 

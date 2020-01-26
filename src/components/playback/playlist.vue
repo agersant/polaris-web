@@ -106,6 +106,14 @@ export default {
 		}
 	},
 
+	mounted() {
+		this.$store.subscribe((mutation, state) => {
+			if (mutation.type === "playlist/advance") {
+				this.snapToCurrentTrack();
+			}
+		});
+	},
+
 	methods: {
 		onScroll() {
 			let newOffset = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight) - this.pagePadding);
@@ -116,8 +124,12 @@ export default {
 			this.scrollOffset = newOffset;
 		},
 
-		playTrack(track) {
-			this.$store.commit("playlist/play", track);
+		snapToCurrentTrack() {
+			const currentTrackIndex = this.playlist.tracks.indexOf(this.playlist.currentTrack);
+			if (currentTrackIndex < 0) {
+				return;
+			}
+			this.$refs.scrollElement.scrollTop = (currentTrackIndex - 10) * this.itemHeight;
 		},
 
 		onDragOver(event) {
@@ -140,7 +152,7 @@ export default {
 		},
 
 		onClickTrack(track) {
-			this.playTrack(track);
+			this.$store.commit("playlist/play", track);
 		},
 
 		onClickSave() {
@@ -229,56 +241,12 @@ export default {
 		}
 	}
 
-	advance(currentTrack, delta) {
-		var playbackOrder = this.refs.playbackOrder.selectedOptions[0].value;
-		var numTracks = this.tracks.length;
-
-		var newTrack = null;
-		if (numTracks > 0) {
-			if (playbackOrder == "random") {
-				var newTrackIndex = Math.floor(Math.random() * numTracks);
-				newTrack = this.tracks[newTrackIndex];
-			} else if (playbackOrder == "repeat-track") {
-				newTrack = currentTrack;
-			} else {
-				var currentTrackIndex = this.tracks.indexOf(currentTrack);
-				if (currentTrackIndex < 0) {
-					newTrack = this.tracks[0];
-				} else {
-					var newTrackIndex = currentTrackIndex + delta;
-					if (newTrackIndex >= 0 && newTrackIndex < numTracks) {
-						newTrack = this.tracks[newTrackIndex];
-					} else if (playbackOrder == "repeat-all") {
-						if (delta > 0) {
-							newTrack = this.tracks[0];
-						} else {
-							newTrack = this.tracks[this.tracks.length - 1];
-						}
-					}
-				}
-			}
-		}
-
-		if (newTrack != null) {
-			this.playTrack(newTrack);
-		}
-		this.snapToCurrentTrack();
-	}
-
 	playPrevious(currentTrack) {
 		return this.advance(currentTrack, -1);
 	}
 
 	playNext(currentTrack) {
 		return this.advance(currentTrack, 1);
-	}
-
-	snapToCurrentTrack() {
-		var currentTrackIndex = this.tracks.indexOf(this.currentTrack);
-		if (currentTrackIndex < 0) {
-			return;
-		}
-		this.refs.scrollElement.scrollTop = (currentTrackIndex - 10) * this.itemHeight;
 	}
 
 	updateCurrentTrack(track) {
@@ -378,12 +346,8 @@ td {
 }
 
 .remove,
-playlist .nowPlaying {
+td.nowPlaying {
 	width: 25px;
-}
-
-.remove,
-playlist td.nowPlaying {
 	text-align: center;
 }
 
