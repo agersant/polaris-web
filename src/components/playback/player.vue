@@ -200,8 +200,8 @@ export default {
 					artist: track.info.artist,
 					album: track.info.album
 				});
-				if (track.info.artworkURL) {
-					metadata.artwork = [{ src: track.info.artworkURL }];
+				if (this.artworkURL) {
+					metadata.artwork = [{ src: this.artworkURL }];
 				}
 				navigator.mediaSession.metadata = metadata;
 			}
@@ -221,7 +221,6 @@ export default {
 		},
 
 		skipNext() {
-			this.$api.hello();
 			this.$store.dispatch("playlist/next");
 		},
 

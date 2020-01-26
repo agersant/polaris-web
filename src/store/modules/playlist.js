@@ -46,14 +46,6 @@ const actions = {
 		API.request(url)
 			.then(res => res.json())
 			.then(data => {
-				let length = data.length;
-				// TODO remove this loop, do in-place where it's needed
-				for (let i = 0; i < length; i++) {
-					data[i].url = "api/serve/" + encodeURIComponent(data[i].path);
-					if (data[i].album && data[i].artwork) {
-						data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
-					}
-				}
 				commit("queueTracks", data);
 				dispatch("saveToDisk");
 			});

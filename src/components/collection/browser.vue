@@ -134,7 +134,6 @@ export default {
 
 				if (item.variant == "Song") {
 					onlyDirectories = false;
-					item.fields.url = "api/serve/" + encodeURIComponent(item.fields.path);
 					this.header = this.header || item.fields.album;
 					this.subHeader = this.subHeader || item.fields.album_artist || item.fields.artist;
 					allSameAlbum = allSameAlbum && item.fields.album == album;
