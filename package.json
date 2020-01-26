@@ -6,7 +6,6 @@
   "repository": "https://github.com/agersant/polaris-web.git",
   "author": "Antoine Gersant <antoine.gersant@lesforges.org>",
   "license": "MIT",
-  "private": false,
   "dependencies": {
     "js-cookie": "^2.2.1",
     "vue": "^2.6.11",
