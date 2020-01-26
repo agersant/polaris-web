@@ -1,11 +1,11 @@
 <template>
 	<div class="playlist">
 		<div class="paneHeader">
-			<h2>{{ this.playlistName || "Playlist" }}</h2>
+			<h2>{{ playlist.name || "Playlist" }}</h2>
 			<div class="playlistOperations">
 				<span class="noselect save" v-on:click="onClickSave">
 					<i class="material-icons md-18">save</i>
-					<!-- <playlist-save v-if="saving" v-bind:tracks="tracks" v-bind:name="playlistName" /> -->
+					<!-- <playlist-save v-if="saving" v-bind:tracks="tracks" v-bind:name="playlist.Name" /> -->
 				</span>
 				<span data-cy="clear-playlist" class="noselect delete" v-on:click="onClickClear">
 					<i class="material-icons md-18">delete</i>
@@ -37,7 +37,7 @@
 						data-cy="track"
 						v-for="(track, index) in visibleTracks"
 						v-bind:key="index"
-						v-bind:class="{ nowPlaying: track == currentTrack }"
+						v-bind:class="{ nowPlaying: track == playlist.currentTrack }"
 						v-on:click="onClickTrack(track)"
 					>
 						<td data-cy="remove" class="remove">
@@ -46,7 +46,7 @@
 						<td class="nowPlaying">
 							<i
 								data-cy="now-playing"
-								v-if="track == currentTrack"
+								v-if="track == playlist.currentTrack"
 								class="nowPlaying material-icons md-16"
 							>play_arrow</i>
 						</td>
@@ -63,7 +63,7 @@
 				</tbody>
 			</table>
 			<div v-bind:style="{height: bottomPadding + 'px'}"></div>
-			<div class="help" v-if="tracks.length == 0">
+			<div class="help" v-if="playlist.tracks.length == 0">
 				<i class="material-icons md-48">queue</i>
 				<br />Make a playlist by dragging music from your collection to here.
 			</div>
@@ -72,14 +72,11 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
-			playlistName: null,
-			playbackOrder: "default",
-			currentTrack: null,
-			tracks: [],
 			itemHeight: 30, // Also defined in CSS
 			pageSize: 50,
 			pagePadding: 6,
@@ -89,14 +86,23 @@ export default {
 	},
 
 	computed: {
+		...mapState(["playlist"]),
+		playbackOrder: {
+			set(order) {
+				this.$store.commit("playlist/setPlaybackOrder", order);
+			},
+			get() {
+				return this.playlist.playbackOrder;
+			}
+		},
 		visibleTracks: function() {
-			return this.tracks.slice(this.scrollOffset, this.scrollOffset + this.pageSize);
+			return this.playlist.tracks.slice(this.scrollOffset, this.scrollOffset + this.pageSize);
 		},
 		topPadding: function() {
 			return this.scrollOffset * this.itemHeight;
 		},
 		bottomPadding: function() {
-			return Math.max(0, (this.tracks.length - this.scrollOffset - this.pageSize) * this.itemHeight);
+			return Math.max(0, (this.playlist.tracks.length - this.scrollOffset - this.pageSize) * this.itemHeight);
 		}
 	},
 
@@ -110,47 +116,8 @@ export default {
 			this.scrollOffset = newOffset;
 		},
 
-		clear() {
-			this.playlistName = null;
-			this.tracks = [];
-		},
-
-		queueTrackInternal(track) {
-			let playlistTrack = {};
-			playlistTrack.id = Math.random(); // TODO
-			playlistTrack.info = track;
-			this.tracks.push(playlistTrack);
-			// eventBus.trigger("playlist:queued", playlistTrack); TODO
-		},
-
-		queueTracks(tracks) {
-			for (let i = 0; i < tracks.length; i++) {
-				this.queueTrackInternal(tracks[i]);
-			}
-			// this.saveLocalPlaylist(); TODO
-		},
-
-		queueURL(url) {
-			Utils.api(url)
-				.then(res => res.json())
-				.then(data => {
-					let length = data.length;
-					for (let i = 0; i < length; i++) {
-						data[i].url = "api/serve/" + encodeURIComponent(data[i].path);
-						if (data[i].album && data[i].artwork) {
-							data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
-						}
-					}
-					this.queueTracks(data);
-				});
-		},
-
-		queueDirectory(path) {
-			this.queueURL("/flatten/" + encodeURIComponent(path));
-		},
-
 		playTrack(track) {
-			//	eventBus.trigger("playlist:play", track); TODO
+			this.$store.commit("playlist/play", track);
 		},
 
 		onDragOver(event) {
@@ -163,10 +130,11 @@ export default {
 			item = JSON.parse(item);
 			var variant = item.variant;
 			if (variant == "Song") {
-				this.queueTracks([item.fields]);
+				this.$store.commit("playlist/queueTracks", [item.fields]);
 			} else if (variant == "Directory") {
-				this.queueDirectory(item.fields.path);
+				this.$store.dispatch("playlist/queueDirectory", item.fields.path);
 			} else if (variant == "Playlist") {
+				// TODO
 				this.queuePlaylist(item.fields.name);
 			}
 		},
@@ -180,8 +148,7 @@ export default {
 		},
 
 		onClickClear() {
-			this.clear();
-			// this.saveLocalPlaylist(); TODO
+			this.$store.commit("playlist/clear");
 		},
 
 		formatTrackContext(track) {

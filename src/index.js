@@ -15,6 +15,7 @@ import SettingsCollection from './components/settings/sections/collection'
 import SettingsDDNS from './components/settings/sections/ddns'
 import SettingsPreferences from './components/settings/sections/preferences'
 import SettingsUsers from './components/settings/sections/users'
+import store from "./store/store"
 
 Vue.use(VueRouter)
 
@@ -65,6 +66,7 @@ Utils.api('/initial_setup')
 		Vue.component('users', SettingsUsers);
 
 		new Vue({
+			store,
 			router,
 		}).$mount('#vue-container')
 

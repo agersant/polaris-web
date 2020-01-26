@@ -202,16 +202,15 @@ export default {
 			if (variant == "Directory") {
 				this.$router.push("/browse/" + item.fields.path).catch(err => {});
 			} else if (variant == "Song") {
-				// TODO
-				// eventBus.trigger("browser:queueTrack", item.fields);
+				this.$store.commit("playlist/queueTracks", [item.fields]);
 			}
 		},
 
-		onQueueAll(e) {
-			// TODO
+		onQueueAll() {
 			if (this.tab != "search") {
-				eventBus.trigger("browser:queueDirectory", this.path);
+				this.$store.dispatch("playlist/queueDirectory", this.path);
 			} else {
+				// TODO
 				var songItems = [];
 				var directoryItems = [];
 				this.items.forEach(item => {
@@ -231,9 +230,8 @@ export default {
 			}
 		},
 
-		onItemDragStart(e) {
-			// TODO
-			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
+		onItemDragStart(event, item) {
+			event.dataTransfer.setData("text/json", JSON.stringify(item));
 		}
 	}
 };
