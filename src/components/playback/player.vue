@@ -173,6 +173,28 @@ export default {
 			navigator.mediaSession.setActionHandler("nexttrack", this.skipNext);
 		}
 		*/
+
+		// Global mouse handling
+		let onMouseMove = event => {
+			if (!this.mouseDown) {
+				return;
+			}
+			if (this.adjusting == "volume") {
+				this.volumeMouseMove(event);
+			} else if (this.adjusting == "seek") {
+				this.seekMouseMove(event);
+			}
+		};
+
+		document.body.addEventListener("mousemove", onMouseMove);
+		document.body.addEventListener("mousedown", event => {
+			this.mouseDown = true;
+			onMouseMove(event);
+		});
+		document.body.addEventListener("mouseup", () => {
+			this.mouseDown = false;
+			this.adjusting = null;
+		});
 	},
 
 	methods: {
@@ -192,12 +214,41 @@ export default {
 		skipNext() {
 			this.$store.commit("playlist/advance", 1);
 		},
+
 		seekMouseDown() {
 			this.adjusting = "seek";
 		},
 
 		volumeMouseDown() {
 			this.adjusting = "volume";
+		},
+
+		seekMouseMove(event) {
+			if (this.mouseDown && this.adjusting == "seek") {
+				let x = event.pageX;
+				let o = this.$refs.seekInput;
+				while (o) {
+					x -= o.offsetLeft;
+					o = o.offsetParent;
+				}
+				let progress = Math.min(Math.max(x / this.$refs.seekInput.offsetWidth, 0), 1);
+				this.$refs.htmlAudio.currentTime = progress * this.$refs.htmlAudio.duration;
+				this.trackProgress = progress;
+				this.canScrobble = false;
+			}
+		},
+
+		volumeMouseMove(event) {
+			if (this.mouseDown && this.adjusting == "volume") {
+				let x = event.pageX;
+				let o = this.$refs.volumeInput;
+				while (o) {
+					x -= o.offsetLeft;
+					o = o.offsetParent;
+				}
+				let volume = Math.min(Math.max(x / this.$refs.volumeInput.offsetWidth, 0), 1);
+				this.$refs.htmlAudio.volume = volume;
+			}
 		}
 	}
 };
@@ -234,36 +285,6 @@ export default {
 		this.canScrobble = true;
 	}
 
-	seekMouseMove(e) {
-		if (this.mouseDown && this.adjusting == "seek") {
-			var x = e.pageX;
-			var o = this.refs.seekInput;
-			while (o) {
-				x -= o.offsetLeft;
-				o = o.offsetParent;
-			}
-			var progress = Math.min(Math.max(x / this.refs.seekInput.offsetWidth, 0), 1);
-			this.$refs.htmlAudio.currentTime = progress * this.$refs.htmlAudio.duration;
-			this.trackProgress = progress;
-			this.canScrobble = false;
-		}
-	}
-
-
-
-	volumeMouseMove(e) {
-		if (this.mouseDown && this.adjusting == "volume") {
-			var x = e.pageX;
-			var o = this.refs.volumeInput;
-			while (o) {
-				x -= o.offsetLeft;
-				o = o.offsetParent;
-			}
-			var volume = Math.min(Math.max(x / this.refs.volumeInput.offsetWidth, 0), 1);
-			this.$refs.htmlAudio.volume = volume;
-		}
-	}
-
 	formatPlaybackTime(secondsPlayed) {
 		var minutes = Math.floor(secondsPlayed / 60);
 		var seconds = Math.floor(secondsPlayed) - 60 * minutes;
@@ -285,103 +306,6 @@ export default {
 			}
 		}
 	}
-
-	this.on('mount', function() {
-
-		var volume = utils.loadUserData("volume");
-		if (volume) {
-			this.$refs.htmlAudio.volume = volume;
-		}
-
-		this.$refs.htmlAudio.addEventListener("ended", function() {
-			eventBus.trigger("player:trackFinished", this.currentTrack);
-		}.bind(this));
-
-		this.$refs.htmlAudio.addEventListener("pause", function() {
-			this.paused = this.$refs.htmlAudio.paused;
-			this.update();
-		}.bind(this));
-
-		this.$refs.htmlAudio.addEventListener("playing", function() {
-			this.paused = this.$refs.htmlAudio.paused;
-			this.update();
-		}.bind(this));
-
-		this.$refs.htmlAudio.addEventListener("volumechange", function() {
-			this.volume = this.$refs.htmlAudio.volume;
-			utils.saveUserData("volume", this.volume);
-			this.update();
-		}.bind(this));
-
-		this.$refs.htmlAudio.addEventListener("timeupdate", function() {
-			var currentTime = this.$refs.htmlAudio.currentTime;
-			var duration = this.$refs.htmlAudio.duration;
-			var progress = currentTime / duration;
-			this.trackProgress = progress;
-			this.timeElapsed = this.formatPlaybackTime(currentTime);
-			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
-				navigator.mediaSession.setPositionState({
-					position: currentTime,
-					duration: duration,
-					playbackRate: 1,
-				});
-			}
-			this.updateScrobble();
-			this.update();
-		}.bind(this));
-
-		this.$refs.htmlAudio.addEventListener('error', function(e) {
-			var title = this.formatTrackInfoPrimary(this.currentTrack);
-			var errorText = "'" + title + "' could not be played because ";
-			var artwork = this.currentTrack.info.artworkURL || null;
-
-			switch (e.target.error.code) {
-				case e.target.error.MEDIA_ERR_NETWORK:
-					notify.spawn("Playback Error", artwork, errorText + "of a network error.");
-					break;
-				case e.target.error.MEDIA_ERR_DECODE:
-					notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
-					break;
-				case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-					notify.spawn("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
-					break;
-				default:
-					console.log("Unexpected playback error: " + e.target.error.code);
-					break;
-			}
-
-			eventBus.trigger("player:trackFinished", this.currentTrack);
-		}.bind(this));
-
-		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
-			navigator.mediaSession.setActionHandler('previoustrack', this.skipPrevious);
-			navigator.mediaSession.setActionHandler('nexttrack', this.skipNext );
-		}
-	});
-
-	// Global mouse handling
-	var onMouseMove = function(e) {
-		if (!this.mouseDown) {
-			return;
-		}
-		if (this.adjusting == "volume") {
-			this.volumeMouseMove(e);
-		} else if (this.adjusting == "seek") {
-			this.seekMouseMove(e);
-		}
-	}.bind(this);
-
-	document.body.addEventListener('mousemove', onMouseMove );
-	document.body.addEventListener('mousedown', function(e){
-		this.mouseDown = true;
-		onMouseMove(e);
-	}.bind(this));
-
-	document.body.addEventListener('mouseup', function(){
-		this.mouseDown = false;
-		this.adjusting = null;
-	}.bind(this));
-
 	eventBus.on("playlist:queued", this.onTrackQueued);
 	eventBus.on("playlist:jumpTo", this.jumpTo);
 	eventBus.on("playlist:play", this.play);
