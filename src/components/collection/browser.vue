@@ -35,6 +35,7 @@
 				v-bind:discs="items"
 				v-on:itemClick="onItemClicked"
 				v-on:itemDragStart="onItemDragStart"
+				v-on:currentPathDragStart="onCurrentPathDragStart"
 			></album>
 		</div>
 	</div>
@@ -232,6 +233,16 @@ export default {
 
 		onItemDragStart(event, item) {
 			event.dataTransfer.setData("text/json", JSON.stringify(item));
+		},
+
+		onCurrentPathDragStart(event) {
+			let directoryItem = {
+				variant: "Directory",
+				fields: {
+					path: this.path
+				}
+			};
+			event.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
 		}
 	}
 };
