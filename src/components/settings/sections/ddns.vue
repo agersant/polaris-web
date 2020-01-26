@@ -1,53 +1,73 @@
 <template>
 	<div>
-		DDNS
-		<!-- <p class="explanation">Polaris can automatically broadcast your computer's IP to YDNS to make your server reachable at a fixed URL. You will need to sign up for a <a href="https://ydns.io/" target="_blank">YDNS</a> account before filling out the corresponding settings on this page. If you prefer not to use YDNS, you can ignore these settings and set up any another dynamic DNS service manually.</p>
+		<p class="explanation">
+			Polaris can automatically broadcast your computer's IP to YDNS to make your server reachable at a fixed URL. You will need to sign up for a
+			<a
+				href="https://ydns.io/"
+				target="_blank"
+			>YDNS</a> account before filling out the corresponding settings on this page. If you prefer not to use YDNS, you can ignore these settings and set up any another dynamic DNS service manually.
+		</p>
 
-	<form if={ ydns } onsubmit={ save }>
-		<div class="field">
-			<label for="host">Hostname</label><input type="text" id="host" value={ ydns.host } oninput={ onHostInput } placeholder="yourname.ydns.eu"/>
-			<p class="tip">The URL pointing to your Polaris server.</p>
-			<label for="username">Username</label><input type="text" id="username" oninput={ onUsernameInput } value={ ydns.username } />
-			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
-			<label for="password">Password</label><input type="password" id="password" oninput={ onPasswordInput } value={ ydns.password }/>
-			<p class="tip">You can find this on the YDNS website under <span class="code">Preferences > API</span>.</p>
-		</div>
-		<settings-apply/>
-		</form>-->
+		<form v-if="ddns">
+			<div class="field">
+				<label for="host">Hostname</label>
+				<input
+					type="text"
+					id="host"
+					v-model="ddns.host"
+					v-on:change="commit"
+					placeholder="yourname.ydns.eu"
+				/>
+				<p class="tip">The URL pointing to your Polaris server.</p>
+				<label for="username">Username</label>
+				<input type="text" id="username" v-model="ddns.username" v-on:change="commit" />
+				<p class="tip">
+					You can find this on the YDNS website under
+					<span class="code">Preferences > API</span>.
+				</p>
+				<label for="password">Password</label>
+				<input type="password" id="password" v-model="ddns.password" v-on:change="commit" />
+				<p class="tip">
+					You can find this on the YDNS website under
+					<span class="code">Preferences > API</span>.
+				</p>
+			</div>
+		</form>
 	</div>
 </template>
 
 <script>
-// var self = this;
-// this.config = null;
-// this.ydns = null;
+import * as Utils from "/src/utils";
+export default {
+	data() {
+		return {
+			ddns: {}
+		};
+	},
 
-// this.on('mount', function() {
-// 	utils.api("/settings")
-// 	.then(function(res) { return res.json(); })
-// 	.then(function(data) {
-// 		this.config = data;
-// 		this.ydns = data.ydns;
-// 		this.update();
-// 	}.bind(self));
-// });
+	mounted() {
+		Utils.api("/settings")
+			.then(res => res.json())
+			.then(data => {
+				this.ddns = data.ydns;
+			});
+	},
 
-// onHostInput(e) {
-// 	this.ydns.host = e.target.value;
-// }
-
-// onUsernameInput(e) {
-// 	this.ydns.username = e.target.value;
-// }
-
-// onPasswordInput(e) {
-// 	this.ydns.password = e.target.value;
-// }
-
-// save(e) {
-// 	e.preventDefault();
-// 	eventBus.trigger("settings:submitConfig", this.config);
-// }
+	methods: {
+		commit() {
+			let settings = {
+				ydns: this.ddns
+			};
+			Utils.api("/settings", {
+				method: "PUT",
+				body: JSON.stringify(settings),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			});
+		}
+	}
+};
 </script>
 
 <style scoped>
