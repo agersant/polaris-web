@@ -65,7 +65,6 @@ const mutations = {
 	clear(state) {
 		state.tracks = [];
 		state.name = null;
-		// saveLocalPlaylist TODO
 	},
 
 	queueTracks(state, tracks) {
@@ -73,7 +72,6 @@ const mutations = {
 		if (!state.currentTrack && state.tracks.length > 0) {
 			state.currentTrack = state.tracks[0];
 		}
-		// saveLocalPlaylist TODO
 	},
 
 	removeTrack(state, track) {
@@ -81,17 +79,14 @@ const mutations = {
 		if (trackIndex >= 0) {
 			state.tracks.splice(trackIndex, 1);
 		}
-		// this.saveLocalPlaylist(); TODO
 	},
 
 	setPlaybackOrder(state, order) {
 		state.playbackOrder = order;
-		// utils.saveUserData("playbackOrder", playbackOrder); TODO
 	},
 
 	play(state, track) {
 		state.currentTrack = track;
-		// saveLocalPlaylist TODO
 	},
 
 	advance(state, delta) {
