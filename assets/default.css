@@ -78,7 +78,7 @@ button.small {
 }
 
 input[type="submit"]:disabled, button:disabled {
-	background-color: #AAA;
+	background-color: var(--theme-foreground-muted);
 }
 
 /*Forms*/
