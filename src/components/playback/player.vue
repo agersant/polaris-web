@@ -41,7 +41,7 @@
 				<div class="fill" v-bind:style="{width: (100 * trackProgress) + '%'}"></div>
 				<div class="head" v-bind:style="{left: (100 * trackProgress) + '%'}"></div>
 			</div>
-			<div v-if="playlist.currentTrack" class="trackDuration">{{ timeElapsed }}</div>
+			<div v-if="playlist.currentTrack" class="trackDuration">{{ formattedPlaybackTime }}</div>
 		</div>
 	</div>
 </template>
@@ -49,15 +49,16 @@
 
 <script>
 import { mapState } from "vuex";
+import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
 			volume: 1,
-			trackProgress: 0,
+			secondsPlayed: 0,
 			mouseDown: false,
 			adjusting: null,
 			paused: true,
-			timeElapsed: "0:00" // TODO
+			canScrobble: false
 		};
 	},
 
@@ -78,6 +79,23 @@ export default {
 				return null;
 			}
 			return "api/serve/" + encodeURIComponent(currentTrack.info.artwork);
+		},
+
+		formattedPlaybackTime: function() {
+			const minutes = Math.floor(this.secondsPlayed / 60);
+			let seconds = Math.floor(this.secondsPlayed) - 60 * minutes;
+			if (seconds < 10) {
+				seconds = "0" + seconds;
+			}
+			return minutes + ":" + seconds;
+		},
+
+		trackProgress: function() {
+			if (!this.$refs.htmlAudio) {
+				return 0;
+			}
+			const duration = this.$refs.htmlAudio.duration;
+			return this.secondsPlayed / duration;
 		},
 
 		trackInfoPrimary() {
@@ -111,6 +129,9 @@ export default {
 		this.$refs.htmlAudio.addEventListener("ended", this.skipNext);
 
 		this.$refs.htmlAudio.addEventListener("pause", () => {
+			if (!this.$refs.htmlAudio) {
+				return;
+			}
 			this.paused = this.$refs.htmlAudio.paused;
 		});
 
@@ -124,12 +145,12 @@ export default {
 		});
 
 		this.$refs.htmlAudio.addEventListener("timeupdate", () => {
-			/* TODO
-			var currentTime = this.$refs.htmlAudio.currentTime;
-			var duration = this.$refs.htmlAudio.duration;
-			var progress = currentTime / duration;
-			this.trackProgress = progress;
-			this.timeElapsed = this.formatPlaybackTime(currentTime);
+			if (!this.$refs.htmlAudio) {
+				return;
+			}
+			const currentTime = this.$refs.htmlAudio.currentTime;
+			const duration = this.$refs.htmlAudio.duration;
+			this.secondsPlayed = currentTime;
 			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
 				navigator.mediaSession.setPositionState({
 					position: currentTime,
@@ -138,7 +159,6 @@ export default {
 				});
 			}
 			this.updateScrobble();
-			*/
 		});
 
 		this.$refs.htmlAudio.addEventListener("error", event => {
@@ -209,6 +229,18 @@ export default {
 			this.$store.commit("playlist/advance", 1);
 		},
 
+		updateScrobble() {
+			var currentTime = this.$refs.htmlAudio.currentTime;
+			var duration = this.$refs.htmlAudio.duration;
+			if (this.canScrobble) {
+				var shouldScrobble = duration > 30 && (currentTime > duration / 2 || currentTime > 4 * 60);
+				if (shouldScrobble) {
+					Utils.api("/lastfm/scrobble/" + encodeURIComponent(this.playlist.currentTrack.info.path), { method: "POST" });
+					this.canScrobble = false;
+				}
+			}
+		},
+
 		seekMouseDown() {
 			this.adjusting = "seek";
 		},
@@ -227,7 +259,6 @@ export default {
 				}
 				let progress = Math.min(Math.max(x / this.$refs.seekInput.offsetWidth, 0), 1);
 				this.$refs.htmlAudio.currentTime = progress * this.$refs.htmlAudio.duration;
-				this.trackProgress = progress;
 				this.canScrobble = false;
 			}
 		},
@@ -279,27 +310,6 @@ export default {
 		this.canScrobble = true;
 	}
 
-	formatPlaybackTime(secondsPlayed) {
-		var minutes = Math.floor(secondsPlayed / 60);
-		var seconds = Math.floor(secondsPlayed) - 60 * minutes;
-		if (seconds < 10)
-		{
-			seconds = "0" + seconds;
-		}
-		return minutes + ":" + seconds;
-	}
-
-	updateScrobble() {
-		var currentTime = this.$refs.htmlAudio.currentTime;
-		var duration = this.$refs.htmlAudio.duration;
-		if (this.canScrobble) {
-			var shouldScrobble = duration > 30 && (currentTime > duration/2 || currentTime > 4*60);
-			if (shouldScrobble) {
-				utils.api("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
-				this.canScrobble = false;
-			}
-		}
-	}
 	eventBus.on("playlist:queued", this.onTrackQueued);
 	eventBus.on("playlist:jumpTo", this.jumpTo);
 	eventBus.on("playlist:play", this.play);
