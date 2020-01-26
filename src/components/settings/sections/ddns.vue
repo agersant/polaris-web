@@ -41,7 +41,7 @@ import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
-			ddns: {}
+			ddns: null
 		};
 	},
 
