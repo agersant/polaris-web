@@ -229,15 +229,6 @@ export default {
 /*
 	this.on('mount', function() {
 		this.loadFromDisk();
-		this.refs.scrollElement.onscroll = function() {
-			var newOffset = Math.max(0, Math.floor(this.refs.scrollElement.scrollTop / this.itemHeight) - this.pagePadding );
-			newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
-			if (newOffset == this.scrollOffset) {
-				return;
-			}
-			this.scrollOffset = newOffset;
-			this.update();
-		}.bind(this);
 	});
 
 	loadFromDisk() {
