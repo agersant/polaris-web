@@ -16,6 +16,7 @@
   "scripts": {
     "watch": "parcel watch index.html",
     "test": "parcel build index.html && cypress run",
+    "test-ui": "parcel build index.html && cypress open",
     "production": "parcel build index.html"
   },
   "devDependencies": {
