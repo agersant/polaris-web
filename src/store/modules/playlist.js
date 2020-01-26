@@ -38,6 +38,9 @@ const mutations = {
 
 	queueTracks(state, tracks) {
 		state.tracks = state.tracks.concat(tracks.map(t => { return { info: t } }));
+		if (!state.currentTrack && state.tracks.length > 0) {
+			state.currentTrack = state.tracks[0];
+		}
 		// saveLocalPlaylist TODO
 	},
 

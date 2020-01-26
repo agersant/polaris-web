@@ -130,10 +130,12 @@ export default {
 	},
 
 	beforeDestroy() {
-		if (this.unwatchCurrentTrack) {
-			this.unwatchCurrentTrack();
-			this.unwatchCurrentTrack = null;
+		if (this.watches) {
+			for (let unwatch of this.watches) {
+				unwatch();
+			}
 		}
+		this.watches = [];
 		this.invalid = true;
 	},
 
@@ -144,16 +146,21 @@ export default {
 			this.$refs.htmlAudio.volume = volume;
 		}*/
 
-		this.unwatchCurrentTrack = this.$store.watch(
-			(state, getters) => state.playlist.currentTrack,
-			(to, from) => {
-				if (this.invalid) {
-					return;
+		this.watches = [];
+		this.watches.push(
+			this.$store.watch(
+				(state, getters) => state.playlist.currentTrack,
+				(to, from) => {
+					if (this.invalid) {
+						return;
+					}
+					this.handleCurrentTrackChanged();
+					if (from) {
+						this.$refs.htmlAudio.play();
+						Utils.api("/lastfm/now_playing/" + encodeURIComponent(track.info.path), { method: "PUT" });
+					}
 				}
-				if (from) {
-					this.play();
-				}
-			}
+			)
 		);
 
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
@@ -185,11 +192,24 @@ export default {
 	},
 
 	methods: {
-		play() {
-			const track = this.playlist.currentTrack;
-			this.$refs.htmlAudio.play();
-			Utils.api("/lastfm/now_playing/" + encodeURIComponent(track.info.path), { method: "PUT" });
+		handleCurrentTrackChanged() {
 			this.canScrobble = true;
+			this.updateMediaSession();
+		},
+
+		updateMediaSession() {
+			if (navigator.mediaSession && MediaMetadata) {
+				const track = this.playlist.currentTrack;
+				var metadata = new MediaMetadata({
+					title: track.info.title,
+					artist: track.info.artist,
+					album: track.info.album
+				});
+				if (track.info.artworkURL) {
+					metadata.artwork = [{ src: track.info.artworkURL }];
+				}
+				navigator.mediaSession.metadata = metadata;
+			}
 		},
 
 		togglePlay() {
@@ -309,36 +329,6 @@ export default {
 		}
 	}
 };
-/*
-	jumpTo(track) {
-		this.currentTrack = track;
-		this.albumArt = track.info.artworkURL;
-		this.trackURL = track.info.url;
-		if (navigator.mediaSession && MediaMetadata) {
-			var metadata = new MediaMetadata({
-				title: track.info.title,
-				artist: track.info.artist,
-				album: track.info.album,
-			});
-			if (track.info.artworkURL) {
-				metadata.artwork = [{ src: track.info.artworkURL }];
-			}
-			navigator.mediaSession.metadata = metadata;
-		}
-		this.update();
-		eventBus.trigger("player:playing", this.currentTrack);
-	}
-
-	onTrackQueued(newTrack) {
-		if (!this.currentTrack) {
-			this.jumpTo(newTrack);
-		}
-	}
-
-	eventBus.on("playlist:queued", this.onTrackQueued);
-	eventBus.on("playlist:jumpTo", this.jumpTo);
-	eventBus.on("playlist:play", this.play);
-	*/
 </script>
 
 <style scoped>
