@@ -25,9 +25,11 @@ export default {
 		sidebar: Sidebar,
 		playlist: Playlist
 	},
+
 	mounted() {
 		this.applyTheme();
 	},
+
 	methods: {
 		applyTheme() {
 			Utils.api("/preferences")

@@ -150,20 +150,17 @@ export default {
 
 			this.header = this.header || Utils.getPathTail(this.path) || "All Music";
 
-			if (this.tab != "playlist") {
-				if (this.tab != "search") {
-					if (onlySongs && hasAnyPicture && allSameAlbum && items.length > 0) {
-						return "album";
-					}
-				}
-				if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
-					return "discography";
-				}
+			if (onlySongs && hasAnyPicture && allSameAlbum && items.length > 0) {
+				return "album";
+			}
+			if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
+				return "discography";
 			}
 
 			return "explorer";
 		},
 
+		// TODO move into album
 		splitAlbumByDisc(items) {
 			var discs = [];
 			for (var i = 0; i < items.length; i++) {
