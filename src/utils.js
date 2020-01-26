@@ -48,7 +48,7 @@ export function api(endpoint, options) {
 	}
 	options.credentials = "same-origin";
 	return fetch("api" + endpoint, options)
-		.then((res) => {
+		.then(res => {
 			if (res.status == 401) {
 				// route("auth", null, true); // TODO
 				throw "Authentication error";

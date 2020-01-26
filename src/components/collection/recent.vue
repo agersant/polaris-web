@@ -36,9 +36,7 @@ export default {
 		refresh() {
 			this.items = [];
 			Utils.api("/recent")
-				.then(function(res) {
-					return res.json();
-				})
+				.then(res => res.json())
 				.then(data => {
 					this.items = data.map(a => {
 						return {
@@ -53,24 +51,11 @@ export default {
 			this.$router.push("/browse/" + item.fields.path).catch(err => {});
 		},
 
-		onItemDragStart(e) {
-			// TODO
-			e.dataTransfer.setData("text/json", JSON.stringify(e.item));
+		onItemDragStart(event) {
+			event.dataTransfer.setData("text/json", JSON.stringify(event.item));
 		}
 	}
 };
-/*
-	onDragAlbumStart(e) {
-		// TODO
-		var directoryItem = {
-			variant: "Directory",
-			fields: {
-				path: this.path,
-			},
-		};
-		e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
-	}
-	*/
 </script>
 
 <style scoped>

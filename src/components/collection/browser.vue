@@ -96,9 +96,7 @@ export default {
 			path = decodeURIComponent(path);
 
 			Utils.api("/browse/" + encodeURIComponent(path))
-				.then(function(res) {
-					return res.json();
-				})
+				.then(res => res.json())
 				.then(data => {
 					this.reset();
 					this.path = path;
@@ -262,7 +260,7 @@ export default {
 		playlistName = decodeURIComponent(playlistName);
 
 		utils.api("/playlist/" + encodeURIComponent(playlistName))
-		.then(function(res) { return res.json(); })
+		.then(res => res.json())
 		.then(function(data) {
 			this.reset();
 			for (var i = 0; i < data.length; i++) {
@@ -284,7 +282,7 @@ export default {
 		query = decodeURIComponent(query);
 
 		utils.api("/search/" + encodeURIComponent(query))
-		.then(function(res) { return res.json(); })
+		.then(res => res.json())
 		.then(function(data) {
 			this.reset();
 			for (var i = 0; i < data.length; i++) {
@@ -320,7 +318,7 @@ export default {
 
 	onDeletePlaylist(e) {
 		utils.api("/playlist/" + encodeURIComponent(this.playlistName), { method: "DELETE" })
-		.then(function(res) {
+		.then(res => {
 			route("playlists/");
 		});
 	}

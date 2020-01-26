@@ -48,8 +48,8 @@ const routes = [
 const router = new VueRouter({ routes });
 
 Utils.api('/initial_setup')
-	.then(function(res) { return res.json(); })
-	.then(function(data) {
+	.then(res => res.json())
+	.then(data => {
 
 		Vue.component('auth', Auth);
 		Vue.component('app', App);

@@ -33,9 +33,7 @@ export default {
 	methods: {
 		applyTheme() {
 			Utils.api("/preferences")
-				.then(function(res) {
-					return res.json();
-				})
+				.then(res => res.json())
 				.then(data => {
 					Theming.setBase(data.web_theme_base);
 					Theming.setAccentColor(data.web_theme_accent);
