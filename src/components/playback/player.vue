@@ -141,33 +141,29 @@ export default {
 			*/
 		});
 
-		/* TODO
-		this.$refs.htmlAudio.addEventListener(
-			"error",
-			function(e) {
-				var title = this.formatTrackInfoPrimary(this.currentTrack);
-				var errorText = "'" + title + "' could not be played because ";
-				var artwork = this.currentTrack.info.artworkURL || null;
+		this.$refs.htmlAudio.addEventListener("error", event => {
+			var errorText = "'" + trackInfoPrimary + "' could not be played because ";
+			var artwork = artworkURL || null;
 
-				switch (e.target.error.code) {
-					case e.target.error.MEDIA_ERR_NETWORK:
-						notify.spawn("Playback Error", artwork, errorText + "of a network error.");
-						break;
-					case e.target.error.MEDIA_ERR_DECODE:
-						notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
-						break;
-					case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-						notify.spawn("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
-						break;
-					default:
-						console.log("Unexpected playback error: " + e.target.error.code);
-						break;
-				}
+			const error = event.target.error;
+			switch (error.code) {
+				case error.MEDIA_ERR_NETWORK:
+					notify.spawn("Playback Error", artwork, errorText + "of a network error.");
+					break;
+				case error.MEDIA_ERR_DECODE:
+					notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
+					break;
+				case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+					notify.spawn("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
+					break;
+				default:
+					console.log("Unexpected playback error: " + error.code);
+					break;
+			}
+			this.$store.commit("advance", 1);
+		});
 
-				eventBus.trigger("player:trackFinished", this.currentTrack);
-			}.bind(this)
-		);
-
+		/*
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
 			navigator.mediaSession.setActionHandler("previoustrack", this.skipPrevious);
 			navigator.mediaSession.setActionHandler("nexttrack", this.skipNext);
