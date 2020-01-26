@@ -39,7 +39,7 @@ const routes = [
 					{ path: '*', component: { template: '<preferences></preferences>' } }
 				]
 			},
-			{ path: '*', component: { template: '<browser></browser>' } }
+			{ path: '*', component: { template: '<browser></browser>' } } // TODO 404
 		]
 	},
 ]
