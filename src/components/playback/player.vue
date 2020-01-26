@@ -160,15 +160,13 @@ export default {
 					console.log("Unexpected playback error: " + error.code);
 					break;
 			}
-			this.$store.commit("advance", 1);
+			this.skipNext();
 		});
 
-		/*
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
 			navigator.mediaSession.setActionHandler("previoustrack", this.skipPrevious);
 			navigator.mediaSession.setActionHandler("nexttrack", this.skipNext);
 		}
-		*/
 
 		// Global mouse handling
 		let onMouseMove = event => {
