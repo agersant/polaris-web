@@ -1,136 +1,120 @@
 <template>
-	<p>USERS</p>
-	<!-- <form if={ users } onsubmit={ save }>
+	<form v-if="users">
 		<label>User accounts</label>
 		<ul>
-			<li each={ user in users }>
-				<span class="username" onClick={ toggleEditUser }>
-					{ user.name }
-					<i if={ user == editing } class="noselect material-icons md-18">expand_more</i>
-					<i if={ user != editing } class="noselect material-icons md-18">chevron_right</i>
+			<li v-for="(user, index) in users" v-bind:key="index">
+				<span class="username" v-on:click="toggleEditUser(user)">
+					{{ user.name }}
+					<i
+						class="noselect material-icons md-18"
+					>{{ user == editing ? "expand_more" : "chevron_right" }}</i>
 				</span>
 
-				<div class="edit" if={ user == editing }>
-					<div class="field" if={ user.isNew }>
-						<label for={ "name_" + user.name }>Username</label>
-						<input id={ "name_" + user.name } type="text" value={ user.name } oninput={ onUsernameInput }/>
+				<div class="edit" v-if="user == editing">
+					<div class="field" v-if="user.isNew">
+						<label for="'name_' + user.name">Username</label>
+						<input id="'name_' + user.name" type="text" v-model="user.name" v-on:change="commit" />
 					</div>
 
 					<div class="field">
-						<label for={ "password_" + user.name }>New password</label>
-						<input type="password" id={ "password_" + user.name } value={ user.password } oninput={ onPasswordInput }/>
-						<p if={ !this.validatePassword(user) } class="tip error">The password cannot be blank.</p>
+						<label for="'paswword_' + user.name">Password</label>
+						<input
+							type="password"
+							id="'password_' + user.name"
+							v-model="user.password"
+							v-on:change="commit"
+						/>
+						<p v-if="!validatePassword(user)" class="tip error">The password cannot be blank.</p>
+						<p v-if="!user.isNew" class="tip">Leave blank to preserve current password.</p>
 					</div>
 
 					<div class="field">
-						<label for={ "password_confirm_" + user.name }>Confirm new password</label>
-						<input type="password" id={ "password_confirm_" + user.name } value={ user.password_confirm } oninput={ onPasswordConfirmInput }/>
-						<p if={ !this.validatePasswordConfirmation(user) } class="tip error">The password confirmation does not match the new password.</p>
-					</div>
-
-					<div class="field">
-						<input type="checkbox" id={ "admin_" + user.name } disabled={ isSelf(user) } checked={ user.admin } onchange={ onAdminInput }/><label for={ "admin_" + user.name } class="admin">Administrator</label>
+						<input
+							type="checkbox"
+							id="'admin_' + user.name"
+							v-bind:disabled="isSelf(user)"
+							v-model="user.admin"
+							v-on:change="commit"
+						/>
+						<label for="'admin_' + user.name" class="admin">Administrator</label>
 						<p class="tip">Grants access to all settings.</p>
 					</div>
 
-					<div if={ !isSelf(user) } class="delete_container">
-						<button class="danger delete" onClick={ deleteUser }>Delete { user.name }</button>
+					<div v-if="!isSelf(user)" class="delete_container">
+						<button class="danger delete" v-on:click="deleteUser(index)">Delete {{ user.name }}</button>
 					</div>
 				</div>
 			</li>
 		</ul>
-		<button class="add-user" onClick={ addUser }>Add user</button>
-		<settings-apply disabled={ !validatePasswords() } />
-	</form>-->
+		<button class="add-user" v-on:click="addUser">Add user</button>
+	</form>
 </template>
 
 <script>
-/*
-	var self = this;
-	this.config = null;
-	this.users = null;
+import Cookies from "js-cookie";
+import * as Utils from "/src/utils";
+export default {
+	data() {
+		return {
+			users: [],
+			editing: null
+		};
+	},
 
-	this.on('mount', function() {
-		utils.api("/settings")
-		.then(function(res) { return res.json(); })
-		.then(function(data) {
-			this.config = data;
-			this.users = data.users;
-			this.update();
-		}.bind(self));
-	});
+	mounted() {
+		Utils.api("/settings")
+			.then(res => res.json())
+			.then(data => {
+				this.users = data.users;
+			});
+	},
 
-	isSelf(user) {
-		return user.name == Cookies.get("username");
-	}
+	methods: {
+		isSelf(user) {
+			return user.name == Cookies.get("username");
+		},
 
-	validatePassword(user) {
-		return user.password || !user.isNew;
-	}
+		validatePassword(user) {
+			return user.password || !user.isNew;
+		},
 
-	validatePasswordConfirmation(user) {
-		return !user.password || user.password_confirm === user.password;
-	}
+		addUser() {
+			var newUser = { name: "New User", password: "", isNew: true, admin: false };
+			this.users.push(newUser);
+			this.editing = newUser;
+		},
 
-	validatePasswords() {
-		return this.users.every(function(user) {
-			return this.validatePassword(user) && this.validatePasswordConfirmation(user);
-		}.bind(this));
-	}
-
-	setContent(users) {
-		this.users = users;
-	}
-
-	addUser(e) {
-		e.preventDefault();
-		var newUser = { name: "New User", password: "", isNew: true, admin: false };
-		this.users.push(newUser);
-		this.editing = newUser;
-	}
-
-	toggleEditUser(e) {
-		e.stopPropagation();
-		if (this.editing == e.item.user) {
-			this.editing = null;
-		} else {
-			this.editing = e.item.user;
-		}
-	}
-
-	deleteUser(e) {
-		e.stopPropagation();
-		if (this.users.length == 1) {
-			return;
-		} else {
-			var userIndex = this.users.indexOf(e.item.user);
-			if (userIndex >= 0) {
-				this.users.splice(userIndex, 1);
+		toggleEditUser(user) {
+			if (this.editing == user) {
+				this.editing = null;
+			} else {
+				this.editing = user;
 			}
+		},
+
+		deleteUser(index) {
+			if (this.users.length == 1) {
+				return;
+			} else {
+				this.users.splice(index, 1);
+			}
+			this.commit();
+		},
+
+		commit() {
+			let settings = {
+				users: this.users
+			};
+			Utils.api("/settings", {
+				method: "PUT",
+				body: JSON.stringify(settings),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			});
 		}
 	}
-
-	onUsernameInput(e) {
-		e.item.user.name = e.target.value;
-	}
-
-	onPasswordInput(e) {
-		e.item.user.password = e.target.value;
-	}
-
-	onPasswordConfirmInput(e) {
-		e.item.user.password_confirm = e.target.value;
-	}
-
-	onAdminInput(e) {
-		e.item.user.admin = e.target.checked;
-	}
-
-	save(e) {
-		e.preventDefault();
-		eventBus.trigger("settings:submitConfig", this.config);
-	}
-	*/
+};
 </script>
 
 <style scoped>
@@ -177,7 +161,7 @@ form .edit .field {
 
 input[type="checkbox"] {
 	margin-right: 5px;
-	display: inline;
+	width: auto;
 	position: relative;
 	top: 1px;
 }
