@@ -1,6 +1,16 @@
 <template>
 	<div class="player">
-		<audio ref="htmlAudio" controls v-bind:src="trackURL"></audio>
+		<audio
+			ref="htmlAudio"
+			controls
+			v-bind:src="trackURL"
+			v-on:timeupdate="onTimeUpdate"
+			v-on:error="onPlaybackError"
+			v-on:ended="skipNext"
+			v-on:pause="onPaused"
+			v-on:playing="onPlaying"
+			v-on:volumechange="onVolumeChange"
+		></audio>
 
 		<div v-if="playlist.currentTrack" class="controls noselect">
 			<div class="playback">
@@ -119,6 +129,14 @@ export default {
 		}
 	},
 
+	beforeDestroy() {
+		if (this.unwatchCurrentTrack) {
+			this.unwatchCurrentTrack();
+			this.unwatchCurrentTrack = null;
+		}
+		this.invalid = true;
+	},
+
 	mounted() {
 		/* TODO
 		var volume = utils.loadUserData("volume");
@@ -126,62 +144,17 @@ export default {
 			this.$refs.htmlAudio.volume = volume;
 		}*/
 
-		this.$refs.htmlAudio.addEventListener("ended", this.skipNext);
-
-		this.$refs.htmlAudio.addEventListener("pause", () => {
-			if (!this.$refs.htmlAudio) {
-				return;
+		this.unwatchCurrentTrack = this.$store.watch(
+			(state, getters) => state.playlist.currentTrack,
+			(to, from) => {
+				if (this.invalid) {
+					return;
+				}
+				if (from) {
+					this.play();
+				}
 			}
-			this.paused = this.$refs.htmlAudio.paused;
-		});
-
-		this.$refs.htmlAudio.addEventListener("playing", () => {
-			this.paused = this.$refs.htmlAudio.paused;
-		});
-
-		this.$refs.htmlAudio.addEventListener("volumechange", () => {
-			this.volume = this.$refs.htmlAudio.volume;
-			// utils.saveUserData("volume", this.volume); TODO
-		});
-
-		this.$refs.htmlAudio.addEventListener("timeupdate", () => {
-			if (!this.$refs.htmlAudio) {
-				return;
-			}
-			const currentTime = this.$refs.htmlAudio.currentTime;
-			const duration = this.$refs.htmlAudio.duration;
-			this.secondsPlayed = currentTime;
-			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
-				navigator.mediaSession.setPositionState({
-					position: currentTime,
-					duration: duration,
-					playbackRate: 1
-				});
-			}
-			this.updateScrobble();
-		});
-
-		this.$refs.htmlAudio.addEventListener("error", event => {
-			var errorText = "'" + trackInfoPrimary + "' could not be played because ";
-			var artwork = artworkURL || null;
-
-			const error = event.target.error;
-			switch (error.code) {
-				case error.MEDIA_ERR_NETWORK:
-					notify.spawn("Playback Error", artwork, errorText + "of a network error.");
-					break;
-				case error.MEDIA_ERR_DECODE:
-					notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
-					break;
-				case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-					notify.spawn("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
-					break;
-				default:
-					console.log("Unexpected playback error: " + error.code);
-					break;
-			}
-			this.skipNext();
-		});
+		);
 
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
 			navigator.mediaSession.setActionHandler("previoustrack", this.skipPrevious);
@@ -212,6 +185,13 @@ export default {
 	},
 
 	methods: {
+		play() {
+			const track = this.playlist.currentTrack;
+			this.$refs.htmlAudio.play();
+			Utils.api("/lastfm/now_playing/" + encodeURIComponent(track.info.path), { method: "PUT" });
+			this.canScrobble = true;
+		},
+
 		togglePlay() {
 			if (this.$refs.htmlAudio.paused) {
 				this.$refs.htmlAudio.play();
@@ -230,10 +210,9 @@ export default {
 		},
 
 		updateScrobble() {
-			var currentTime = this.$refs.htmlAudio.currentTime;
-			var duration = this.$refs.htmlAudio.duration;
 			if (this.canScrobble) {
-				var shouldScrobble = duration > 30 && (currentTime > duration / 2 || currentTime > 4 * 60);
+				var duration = this.$refs.htmlAudio.duration;
+				var shouldScrobble = duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
 					Utils.api("/lastfm/scrobble/" + encodeURIComponent(this.playlist.currentTrack.info.path), { method: "POST" });
 					this.canScrobble = false;
@@ -274,6 +253,59 @@ export default {
 				let volume = Math.min(Math.max(x / this.$refs.volumeInput.offsetWidth, 0), 1);
 				this.$refs.htmlAudio.volume = volume;
 			}
+		},
+
+		onPaused(event) {
+			this.paused = event.target.paused;
+		},
+
+		onPlaying(event) {
+			this.paused = event.target.paused;
+		},
+
+		onVolumeChange() {
+			this.volume = event.target.volume;
+			// utils.saveUserData("volume", this.volume); TODO
+		},
+
+		onTimeUpdate(event) {
+			if (this.invalid) {
+				return;
+			}
+			const htmlAudio = event.target;
+			const currentTime = htmlAudio.currentTime;
+			const duration = htmlAudio.duration;
+			this.secondsPlayed = currentTime;
+			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
+				navigator.mediaSession.setPositionState({
+					position: currentTime,
+					duration: duration,
+					playbackRate: 1
+				});
+			}
+			this.updateScrobble();
+		},
+
+		onPlaybackError(event) {
+			var errorText = "'" + trackInfoPrimary + "' could not be played because ";
+			var artwork = artworkURL || null;
+
+			const error = event.target.error;
+			switch (error.code) {
+				case error.MEDIA_ERR_NETWORK:
+					notify.spawn("Playback Error", artwork, errorText + "of a network error.");
+					break;
+				case error.MEDIA_ERR_DECODE:
+					notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
+					break;
+				case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+					notify.spawn("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
+					break;
+				default:
+					console.log("Unexpected playback error: " + error.code);
+					break;
+			}
+			this.skipNext();
 		}
 	}
 };
@@ -301,13 +333,6 @@ export default {
 		if (!this.currentTrack) {
 			this.jumpTo(newTrack);
 		}
-	}
-
-	play(track) {
-		this.jumpTo(track);
-		this.$refs.htmlAudio.play();
-		utils.api("/lastfm/now_playing/" + encodeURIComponent(track.info.path), { method: "PUT" });
-		this.canScrobble = true;
 	}
 
 	eventBus.on("playlist:queued", this.onTrackQueued);
