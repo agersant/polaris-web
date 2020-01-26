@@ -13,7 +13,7 @@
 							v-for="(item, index) in disc.songs"
 							v-bind:key="index"
 							v-on:click="$emit('itemClick', item)"
-							v-on:dragstart="$emit('itemDragStart', item)"
+							v-on:dragstart="event => onItemDragStart(event, item)"
 						>
 							<div class="songName">
 								{{ formatSongTitle(item) }}
@@ -60,6 +60,10 @@ export default {
 	methods: {
 		formatSongTitle(item) {
 			return item.fields.title || Utils.stripFileExtension(Utils.getPathTail(item.fields.path));
+		},
+
+		onItemDragStart(event, item) {
+			event.dataTransfer.setData("text/json", JSON.stringify(item));
 		}
 	}
 };

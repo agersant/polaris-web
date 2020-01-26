@@ -7,7 +7,7 @@
 			v-for="(album, index) in albums"
 			v-bind:key="index"
 			v-on:click="$emit('itemClick', album)"
-			v-on:dragstart="$emit('itemDragStart', album)"
+			v-on:dragstart="event => onItemDragStart(event, album)"
 		>
 			<div class="cover">
 				<div class="coverCanvas">
@@ -43,6 +43,10 @@ export default {
 	methods: {
 		getArtworkURL(album) {
 			return "api/serve/" + encodeURIComponent(album.fields.artwork);
+		},
+
+		onItemDragStart(event, album) {
+			event.dataTransfer.setData("text/json", JSON.stringify(album));
 		}
 	}
 };

@@ -2,19 +2,13 @@
 	<div>
 		<sidebar class="sidebar"></sidebar>
 		<router-view></router-view>
+		<playlist></playlist>
 		<!--
     <router>
-      <route path="settings/*">
-        <settings />
-      </route>
       <route path="playlists..">
         <playlists />
       </route>
-      <route path="..">
-        <browser />
-      </route>
     </router>
-    <playlist />
     <player />
 		<window-title-updater />-->
 	</div>
@@ -24,10 +18,12 @@
 import * as Utils from "/src/utils";
 import * as Theming from "/src/theming/theming";
 import Sidebar from "./sidebar";
+import Playlist from "./playback/playlist";
 
 export default {
 	components: {
-		sidebar: Sidebar
+		sidebar: Sidebar,
+		playlist: Playlist
 	},
 	mounted() {
 		this.applyTheme();
