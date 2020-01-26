@@ -20,17 +20,17 @@ describe('Login', function() {
 
 	it('asks for credentials again after cookies expire', () => {
 		cy.login()
-		cy.visit('/#browse')
+		cy.visit('/#/browse')
 		cy.hash().should('contain', 'browse')
 		cy.clearCookies()
-		cy.visit('/#random')
+		cy.visit('/#/random')
 		cy.hash().should('contain', 'auth')
 		cy.get('[data-cy=username]')
 	})
 
 	it('starts on auth page when returning with bad cookies', () => {
 		cy.login()
-		cy.visit('/#browse')
+		cy.visit('/#/browse')
 		cy.hash().should('contain', 'browse')
 		cy.setCookie('session', 'outdated')
 		cy.visit('/')
