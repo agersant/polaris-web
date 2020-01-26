@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import * as Utils from "/src/utils";
 import Finish from "./steps/finish";
 import Mount from "./steps/mount";
 import User from "./steps/user";
@@ -92,13 +91,7 @@ export default {
 		login() {
 			let username = this.config.users[0].name;
 			let password = this.config.users[0].password;
-			Utils.tryLogin(username, password).then(res => {
-				if (res.status == 200) {
-					this.$router.push("/browse");
-				} else {
-					console.log("Error while signing in");
-				}
-			});
+			this.$api.login(username, password);
 		}
 	}
 };

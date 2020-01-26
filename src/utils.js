@@ -33,17 +33,6 @@ export function loadUserData(key) {
 	return value;
 }
 
-export function tryLogin(username, password) {
-	return fetch("api/auth", {
-		method: "POST",
-		body: JSON.stringify({ username: username, password: password }),
-		headers: {
-			"Content-type": "application/json",
-		},
-		credentials: 'same-origin',
-	});
-}
-
 export function getPathTail(path) {
 	if (!path) {
 		return null;

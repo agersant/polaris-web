@@ -1,4 +1,5 @@
 import Router from "/src/router"
+import Store from "/src/store/store"
 
 export const API = {
 	request(endpoint, options) {
@@ -14,6 +15,23 @@ export const API = {
 				}
 				return res;
 			});
+	},
+
+	login(username, password) {
+		return fetch("api/auth", {
+			method: "POST",
+			body: JSON.stringify({ username: username, password: password }),
+			headers: {
+				"Content-type": "application/json",
+			},
+			credentials: 'same-origin',
+		}).then(res => {
+			if (res.status == 200) {
+				Store.commit("playlist/loadFromDisk");
+				Router.push("/browse").catch(err => { });
+			}
+			return res;
+		});
 	}
 }
 

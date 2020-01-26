@@ -17,7 +17,6 @@ import API from "./plugins/api"
 import Router from "./router"
 import Store from "./store/store"
 
-
 Vue.use(API)
 
 Vue.prototype.$api.request('/initial_setup')
@@ -44,8 +43,10 @@ Vue.prototype.$api.request('/initial_setup')
 		}).$mount('#vue-container')
 
 		if (!data.has_any_users) {
-			router.push('/welcome').catch(err => { });
+			Router.push('/welcome').catch(err => { });
 		} else if (Cookies.get('username') == undefined) {
-			router.push('/auth').catch(err => { });
+			Router.push('/auth').catch(err => { });
+		} else {
+			Store.commit("playlist/loadFromDisk");
 		}
 	});
