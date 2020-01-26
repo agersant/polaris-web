@@ -3,13 +3,13 @@
 		<sidebar class="sidebar"></sidebar>
 		<router-view></router-view>
 		<playlist></playlist>
+		<player></player>
 		<!--
-    <router>
+    <router> TODO
       <route path="playlists..">
         <playlists />
       </route>
     </router>
-    <player />
 		<window-title-updater />-->
 	</div>
 </template>
@@ -18,11 +18,13 @@
 import * as Utils from "/src/utils";
 import * as Theming from "/src/theming/theming";
 import Sidebar from "./sidebar";
+import Player from "./playback/player";
 import Playlist from "./playback/playlist";
 
 export default {
 	components: {
 		sidebar: Sidebar,
+		player: Player,
 		playlist: Playlist
 	},
 

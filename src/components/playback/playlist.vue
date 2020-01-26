@@ -255,11 +255,6 @@ export default {
 		this.update();
 	}
 
-	onChangePlaybackOrder(e) {
-		var playbackOrder = this.refs.playbackOrder.selectedOptions[0].value;
-		utils.saveUserData("playbackOrder", playbackOrder);
-	}
-
 	saveLocalPlaylist() {
 		if (utils.saveUserData("playlist", this.tracks)) {
 			utils.saveUserData("playlistName", this.playlistName);
