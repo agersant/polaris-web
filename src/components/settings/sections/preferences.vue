@@ -31,28 +31,32 @@
 		</div>
 		<div class="field">
 			<label for="lastfm_username">Last.fm scrobbling</label>
-			<!-- <div if="{" preferences.lastfm_username }>
-					<p class="explanation">
-						You are scrobbling music as
-						<a
-							href="https://www.last.fm/user/{preferences.lastfm_username}"
-							target="_blank"
-						>{ preferences.lastfm_username }</a>.
-					</p>
-					<button onclick="{" unlinkLastFMAccount }>Unlink Last.fm account</button>
-				</div>
-				<div if="{" !preferences.lastfm_username }>
-					<p class="explanation">
-						Polaris can automatically submit songs you play to
-						<a href="https://www.last.fm/" target="_blank">Last.fm</a>.
-					</p>
-					<button onclick="{" linkLastFMAccount }>Link Last.fm account</button>
-			</div>-->
+			<div v-if="preferences.lastfm_username">
+				<p class="explanation">
+					You are scrobbling music as
+					<a
+						href="https://www.last.fm/user/{preferences.lastfm_username}"
+						target="_blank"
+					>{{ preferences.lastfm_username }}</a>.
+				</p>
+				<button v-on:click="unlinkLastFMAccount">Unlink Last.fm account</button>
+			</div>
+			<div v-if="!preferences.lastfm_username">
+				<p class="explanation">
+					Polaris can automatically submit songs you play to
+					<a
+						href="https://www.last.fm/"
+						target="_blank"
+					>Last.fm</a>.
+				</p>
+				<button v-on:click="linkLastFMAccount">Link Last.fm account</button>
+			</div>
 		</div>
 	</form>
 </template>
 
 <script>
+import Cookies from "js-cookie";
 import * as Theming from "/src/theming/theming";
 import * as Utils from "/src/utils";
 export default {
@@ -104,34 +108,11 @@ export default {
 			this.commit();
 		},
 
-		commit() {
-			Utils.api("/preferences", {
-				method: "PUT",
-				body: JSON.stringify(this.preferences),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
-		}
-	}
-};
-/*
-
-
-
-		onUsernameInput(e) {
-			this.preferences.lastfm_username = e.target.value;
-		}
-
-		onPasswordInput(e) {
-			this.preferences.lastfm_password = e.target.value;
-		}
-
 		linkLastFMAccount(e) {
-			var apiKey = "02b96c939a2b451c31dfd67add1f696e";
-			var currentURL = new URL(window.location.href);
-			var username = Cookies.get("username");
-			var successPopupContent = btoa(
+			let apiKey = "02b96c939a2b451c31dfd67add1f696e";
+			let currentURL = new URL(window.location.href);
+			let username = Cookies.get("username");
+			let successPopupContent = btoa(
 				`<!doctype html>
 				<html>
 					<head>
@@ -145,29 +126,40 @@ export default {
 					</body>
 				</html>`
 			);
-			var callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent);
-			var url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
-			var windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
-			var lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
-			window.addEventListener("message", function(event) {
-				if (event.source != lastFMPopup) {
-					return;
-				}
-				if (event.data == "polaris-lastfm-auth-success")
-				{
-					lastFMPopup.close();
-					this.refreshPreferences();
-				}
-			}.bind(self), false);
-		}
+			let callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent);
+			let url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
+			let windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
+			let lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
+			window.addEventListener(
+				"message",
+				event => {
+					if (event.source != lastFMPopup) {
+						return;
+					}
+					if (event.data == "polaris-lastfm-auth-success") {
+						lastFMPopup.close();
+						this.refreshPreferences();
+					}
+				},
+				false
+			);
+		},
 
 		unlinkLastFMAccount(e) {
-			utils.api("/lastfm/link", { method: "DELETE" })
-			.then(function(res) {
-				this.refreshPreferences();
-			}.bind(self));
+			Utils.api("/lastfm/link", { method: "DELETE" }).then(this.refreshPreferences);
+		},
+
+		commit() {
+			Utils.api("/preferences", {
+				method: "PUT",
+				body: JSON.stringify(this.preferences),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			});
 		}
-		*/
+	}
+};
 </script>
 
 <style scoped>
