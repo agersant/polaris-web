@@ -151,6 +151,10 @@ export default {
 			this.$store.commit("playlist/clear");
 		},
 
+		onClickRemoveTrack(track) {
+			this.$store.commit("playlist/removeTrack", track);
+		},
+
 		formatTrackContext(track) {
 			let context = "";
 			if (track.info.album_artist || track.info.artist) {
@@ -283,15 +287,6 @@ export default {
 		this.update();
 	}
 
-	onClickRemoveTrack(e) {
-		e.stopPropagation();
-		var trackIndex = this.tracks.indexOf(e.item.track);
-		if (trackIndex >= 0) {
-			this.tracks.splice(trackIndex, 1);
-		}
-		this.saveLocalPlaylist();
-	}
-
 	onChangePlaybackOrder(e) {
 		var playbackOrder = this.refs.playbackOrder.selectedOptions[0].value;
 		utils.saveUserData("playbackOrder", playbackOrder);
@@ -312,10 +307,6 @@ export default {
 		this.update();
 	}
 
-	eventBus.on("browser:queueTrack", this.queueTrack);
-	eventBus.on("browser:queueTracks", this.queueTracks);
-	eventBus.on("browser:queueDirectory", this.queueDirectory);
-	eventBus.on("browser:queuePlaylist", this.queuePlaylist);
 	eventBus.on("player:trackFinished", this.playNext);
 	eventBus.on("player:playPrevious", this.playPrevious);
 	eventBus.on("player:playNext", this.playNext);

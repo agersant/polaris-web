@@ -41,9 +41,17 @@ const mutations = {
 		// saveLocalPlaylist TODO
 	},
 
+	removeTrack(state, track) {
+		var trackIndex = state.tracks.indexOf(track);
+		if (trackIndex >= 0) {
+			state.tracks.splice(trackIndex, 1);
+		}
+		// this.saveLocalPlaylist(); TODO
+	},
+
 	setPlaybackOrder(state, order) {
 		state.playbackOrder = order;
-		// saveLocalPlaylist TODO
+		// utils.saveUserData("playbackOrder", playbackOrder); TODO
 	},
 
 	play(state, track) {
