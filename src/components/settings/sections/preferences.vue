@@ -1,77 +1,123 @@
 <template>
-	<div>
-		PREFERENCES
-		<!-- <form if={ preferences } onsubmit={ save }>
+	<form v-if="preferences">
 		<div class="field">
 			<label>Theme</label>
 			<table>
 				<thead>
 					<th>Mode</th>
 					<th>Color</th>
-					<th/>
+					<th />
 				</thead>
 				<tr>
 					<td>
-						<select ref="base" onchange={ onThemeSelected }>
-							<option each={ theme in theming.listBases() } value={ theme.id } selected={ theming.getCurrentTheme() == theme.id } no-reorder>{ theme.name } </option>
+						<select ref="base" v-on:change="onBaseSelected" v-model="preferences.web_theme_base">
+							<option v-for="base in bases" v-bind:key="base.id" v-bind:value="base.id">{{ base.name }}</option>
 						</select>
 					</td>
 					<td class="accent-color">
-						<input ref="accent" type="color" value={ theming.getCurrentAccentColor() } oninput={ onAccentPreview } onchange={ onAccentSelected }>
+						<input
+							ref="accent"
+							type="color"
+							v-model="preferences.web_theme_accent"
+							v-on:input="onAccentPreview"
+							v-on:change="onAccentSelected"
+						/>
 					</td>
-					<td><i onClick={ resetTheme } class="noselect material-icons md-18">restore</i></td>
+					<td>
+						<i v-on:click="resetTheme" class="noselect material-icons md-18">restore</i>
+					</td>
 				</tr>
 			</table>
 		</div>
 		<div class="field">
 			<label for="lastfm_username">Last.fm scrobbling</label>
-			<div if={ preferences.lastfm_username }>
-				<p class="explanation">You are scrobbling music as <a href="https://www.last.fm/user/{preferences.lastfm_username}" target="_blank">{ preferences.lastfm_username }</a>.</p>
-				<button onclick={ unlinkLastFMAccount }>Unlink Last.fm account</button>
-			</div>
-			<div if={ !preferences.lastfm_username }>
-			<p class="explanation">Polaris can automatically submit songs you play to <a href="https://www.last.fm/" target="_blank">Last.fm</a>.</p>
-				<button onclick={ linkLastFMAccount }>Link Last.fm account</button>
-			</div>
+			<!-- <div if="{" preferences.lastfm_username }>
+					<p class="explanation">
+						You are scrobbling music as
+						<a
+							href="https://www.last.fm/user/{preferences.lastfm_username}"
+							target="_blank"
+						>{ preferences.lastfm_username }</a>.
+					</p>
+					<button onclick="{" unlinkLastFMAccount }>Unlink Last.fm account</button>
+				</div>
+				<div if="{" !preferences.lastfm_username }>
+					<p class="explanation">
+						Polaris can automatically submit songs you play to
+						<a href="https://www.last.fm/" target="_blank">Last.fm</a>.
+					</p>
+					<button onclick="{" linkLastFMAccount }>Link Last.fm account</button>
+			</div>-->
 		</div>
-		</form>-->
-	</div>
+	</form>
 </template>
 
 <script>
+import * as Theming from "/src/theming/theming";
+import * as Utils from "/src/utils";
+export default {
+	data() {
+		return {
+			preferences: null,
+			bases: Theming.listBases()
+		};
+	},
+
+	mounted() {
+		this.refreshPreferences();
+	},
+
+	methods: {
+		refreshPreferences() {
+			Utils.api("/preferences")
+				.then(res => res.json())
+				.then(data => {
+					this.preferences = data;
+					if (!this.preferences.web_theme_base) {
+						this.preferences.web_theme_base = Theming.getCurrentBase();
+					}
+					if (!this.preferences.web_theme_accent) {
+						this.preferences.web_theme_accent = Theming.getCurrentAccentColor();
+					}
+				});
+		},
+
+		onAccentPreview() {
+			Theming.setAccentColor(this.preferences.web_theme_accent);
+		},
+
+		onAccentSelected() {
+			Theming.setAccentColor(this.preferences.web_theme_accent);
+			this.commit();
+		},
+
+		onBaseSelected() {
+			Theming.setBase(this.preferences.web_theme_base);
+			this.commit();
+		},
+
+		resetTheme() {
+			Theming.setBase(null);
+			Theming.setAccentColor(null);
+			this.preferences.web_theme_base = Theming.getCurrentBase();
+			this.preferences.web_theme_accent = Theming.getCurrentAccentColor();
+			this.commit();
+		},
+
+		commit() {
+			Utils.api("/preferences", {
+				method: "PUT",
+				body: JSON.stringify(this.preferences),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			});
+		}
+	}
+};
 /*
-		var self = this;
-		this.preferences = null;
 
-		this.on('mount', function() {
-			this.refreshPreferences();
-		}.bind(self));
 
-		onThemeSelected(e) {
-			this.preferences.web_theme_base = e.target.value;
-			theming.setBase(this.preferences.web_theme_base);
-			this.save(e);
-		}
-
-		onAccentPreview(e) {
-			this.preferences.web_theme_accent = e.target.value;
-			theming.setAccentColor(this.preferences.web_theme_accent);
-		}
-
-		onAccentSelected(e) {
-			this.preferences.web_theme_accent = e.target.value;
-			theming.setAccentColor(this.preferences.web_theme_accent);
-			this.save(e);
-		}
-
-		resetTheme(e) {
-			this.preferences.web_theme_base = null;
-			this.preferences.web_theme_accent = null;
-			theming.setBase(this.preferences.web_theme_base);
-			theming.setAccentColor(this.preferences.web_theme_accent);
-			this.update();
-			this.save(e);
-		}
 
 		onUsernameInput(e) {
 			this.preferences.lastfm_username = e.target.value;
@@ -79,15 +125,6 @@
 
 		onPasswordInput(e) {
 			this.preferences.lastfm_password = e.target.value;
-		}
-
-		refreshPreferences() {
-			utils.api("/preferences")
-			.then(function(res) { return res.json(); })
-			.then(function(data) {
-				this.preferences = data;
-				this.update();
-			}.bind(self));
 		}
 
 		linkLastFMAccount(e) {
@@ -129,11 +166,6 @@
 			.then(function(res) {
 				this.refreshPreferences();
 			}.bind(self));
-		}
-
-		save(e) {
-			e.preventDefault();
-			eventBus.trigger("settings:submitPreferences", this.preferences);
 		}
 		*/
 </script>

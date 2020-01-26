@@ -178,7 +178,6 @@ form .edit .field {
 input[type="checkbox"] {
 	margin-right: 5px;
 	display: inline;
-	width: auto;
 	position: relative;
 	top: 1px;
 }

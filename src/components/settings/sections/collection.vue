@@ -134,7 +134,6 @@
 
 .sleep_duration input {
 	display: inline;
-	width: 50px;
 	text-align: right;
 }
 </style>
