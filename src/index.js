@@ -14,10 +14,12 @@ import SettingsDDNS from './components/settings/sections/ddns'
 import SettingsPreferences from './components/settings/sections/preferences'
 import SettingsUsers from './components/settings/sections/users'
 import API from "./plugins/api"
+import Disk from "./plugins/disk"
 import Router from "./router"
 import Store from "./store/store"
 
 Vue.use(API)
+Vue.use(Disk)
 
 Vue.prototype.$api.request('/initial_setup')
 	.then(res => res.json())

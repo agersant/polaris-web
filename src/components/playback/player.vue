@@ -9,7 +9,6 @@
 			v-on:ended="skipNext"
 			v-on:pause="onPaused"
 			v-on:playing="onPlaying"
-			v-on:volumechange="onVolumeChange"
 		></audio>
 
 		<div v-if="currentTrack" class="controls noselect">
@@ -144,6 +143,11 @@ export default {
 					this.$api.request("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
 				});
 			}
+		},
+
+		volume(to, from) {
+			this.$refs.htmlAudio.volume = to;
+			this.$disk.save("volume", to);
 		}
 	},
 
@@ -152,11 +156,10 @@ export default {
 	},
 
 	mounted() {
-		/* TODO
-		var volume = utils.loadUserData("volume");
+		var volume = this.$disk.load("volume");
 		if (volume) {
-			this.$refs.htmlAudio.volume = volume;
-		}*/
+			this.volume = volume;
+		}
 
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
 			navigator.mediaSession.setActionHandler("previoustrack", this.skipPrevious);
@@ -265,8 +268,7 @@ export default {
 					x -= o.offsetLeft;
 					o = o.offsetParent;
 				}
-				let volume = Math.min(Math.max(x / this.$refs.volumeInput.offsetWidth, 0), 1);
-				this.$refs.htmlAudio.volume = volume;
+				this.volume = Math.min(Math.max(x / this.$refs.volumeInput.offsetWidth, 0), 1);
 			}
 		},
 
@@ -276,11 +278,6 @@ export default {
 
 		onPlaying(event) {
 			this.paused = event.target.paused;
-		},
-
-		onVolumeChange() {
-			this.volume = event.target.volume;
-			// utils.saveUserData("volume", this.volume); TODO
 		},
 
 		onTimeUpdate(event) {

@@ -1,5 +1,6 @@
 import * as Utils from '/src/utils'
 import { API } from '/src/plugins/api'
+import { Disk } from '/src/plugins/disk'
 
 const state = {
 	name: null,
@@ -52,10 +53,10 @@ const actions = {
 	},
 
 	saveToDisk() {
-		if (Utils.saveUserData("playlist", state.tracks)) {
-			Utils.saveUserData("playlistName", state.name);
+		if (Disk.save("playlist", state.tracks)) {
+			Disk.save("playlistName", state.name);
 			let currentTrackIndex = state.tracks.indexOf(state.currentTrack);
-			Utils.saveUserData("currentTrackIndex", currentTrackIndex);
+			Disk.save("currentTrackIndex", currentTrackIndex);
 		}
 	}
 }
@@ -127,19 +128,19 @@ const mutations = {
 	},
 
 	loadFromDisk(state) {
-		let playbackOrder = Utils.loadUserData("playbackOrder");
+		let playbackOrder = Disk.load("playbackOrder");
 		if (playbackOrder) {
 			state.playbackOrder = playbackOrder;
 		}
-		let tracks = Utils.loadUserData("playlist");
+		let tracks = Disk.load("playlist");
 		if (tracks) {
 			state.tracks = tracks;
 		}
-		let currentTrackIndex = Utils.loadUserData("currentTrackIndex");
+		let currentTrackIndex = Disk.load("currentTrackIndex");
 		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < state.tracks.length) {
 			state.currentTrack = state.tracks[currentTrackIndex];
 		}
-		state.name = Utils.loadUserData("playlistName");
+		state.name = Disk.load("playlistName");
 	}
 }
 
