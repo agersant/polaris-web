@@ -89,7 +89,7 @@ export default {
 		...mapState(["playlist"]),
 		playbackOrder: {
 			set(order) {
-				this.$store.commit("playlist/setPlaybackOrder", order);
+				this.$store.dispatch("playlist/setPlaybackOrder", order);
 			},
 			get() {
 				return this.playlist.playbackOrder;
@@ -142,7 +142,7 @@ export default {
 			item = JSON.parse(item);
 			var variant = item.variant;
 			if (variant == "Song") {
-				this.$store.commit("playlist/queueTracks", [item.fields]);
+				this.$store.dispatch("playlist/queueTracks", [item.fields]);
 			} else if (variant == "Directory") {
 				this.$store.dispatch("playlist/queueDirectory", item.fields.path);
 			} else if (variant == "Playlist") {
@@ -152,7 +152,7 @@ export default {
 		},
 
 		onClickTrack(track) {
-			this.$store.commit("playlist/play", track);
+			this.$store.dispatch("playlist/play", track);
 		},
 
 		onClickSave() {
@@ -160,11 +160,11 @@ export default {
 		},
 
 		onClickClear() {
-			this.$store.commit("playlist/clear");
+			this.$store.dispatch("playlist/clear");
 		},
 
 		onClickRemoveTrack(track) {
-			this.$store.commit("playlist/removeTrack", track);
+			this.$store.dispatch("playlist/removeTrack", track);
 		},
 
 		formatTrackContext(track) {
@@ -214,23 +214,6 @@ export default {
 		this.loadFromDisk();
 	});
 
-	loadFromDisk() {
-		var playbackOrder = utils.loadUserData("playbackOrder");
-		if (playbackOrder) {
-			this.refs.playbackOrder.value = playbackOrder;
-		}
-		var tracks = utils.loadUserData("playlist");
-		if (tracks) {
-			this.tracks = tracks;
-		}
-		var currentTrackIndex = utils.loadUserData("currentTrackIndex");
-		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < this.tracks.length) {
-			var newTrack = this.tracks[currentTrackIndex];
-			eventBus.trigger("playlist:jumpTo", newTrack);
-		}
-		this.playlistName = utils.loadUserData("playlistName");
-	}
-
 	queuePlaylist(name, tracks) {
 		this.clear();
 		this.playlistName = name;
@@ -241,28 +224,6 @@ export default {
 		}
 	}
 
-	playPrevious(currentTrack) {
-		return this.advance(currentTrack, -1);
-	}
-
-	playNext(currentTrack) {
-		return this.advance(currentTrack, 1);
-	}
-
-	updateCurrentTrack(track) {
-		this.currentTrack = track;
-		this.saveLocalPlaylist();
-		this.update();
-	}
-
-	saveLocalPlaylist() {
-		if (utils.saveUserData("playlist", this.tracks)) {
-			utils.saveUserData("playlistName", this.playlistName);
-			var currentTrackIndex = this.tracks.indexOf(this.currentTrack);
-			utils.saveUserData("currentTrackIndex", currentTrackIndex);
-		}
-	}
-
 	endSave(playlistName) {
 		this.saving = false;
 		this.playlistName = playlistName;
@@ -270,10 +231,6 @@ export default {
 		this.update();
 	}
 
-	eventBus.on("player:trackFinished", this.playNext);
-	eventBus.on("player:playPrevious", this.playPrevious);
-	eventBus.on("player:playNext", this.playNext);
-	eventBus.on("player:playing", this.updateCurrentTrack);
 	eventBus.on("playlist-save:cancel", this.endSave);
 	eventBus.on("playlist-save:done", this.endSave);
 

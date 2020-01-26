@@ -10,7 +10,37 @@ const state = {
 const getters = {}
 
 const actions = {
-	queueDirectory({ commit, state }, path) {
+	clear({ commit, dispatch }) {
+		commit("clear");
+		dispatch("saveToDisk");
+	},
+
+	removeTrack({ commit, dispatch }, track) {
+		commit("removeTrack", track);
+		dispatch("saveToDisk");
+	},
+
+	setPlaybackOrder({ commit, dispatch }, order) {
+		commit("setPlaybackOrder", order);
+		dispatch("saveToDisk");
+	},
+
+	play({ commit, dispatch }, track) {
+		commit("play", track);
+		dispatch("saveToDisk");
+	},
+
+	next({ commit, dispatch }) {
+		commit("advance", 1);
+		dispatch("saveToDisk");
+	},
+
+	previous({ commit, dispatch }) {
+		commit("advance", -1);
+		dispatch("saveToDisk");
+	},
+
+	queueDirectory({ commit, dispatch }, path) {
 		let url = "/flatten/" + encodeURIComponent(path);
 		Utils.api(url)
 			.then(res => res.json())
@@ -23,9 +53,18 @@ const actions = {
 						data[i].artworkURL = "api/serve/" + encodeURIComponent(data[i].artwork);
 					}
 				}
-				commit('queueTracks', data);
+				commit("queueTracks", data);
+				dispatch("saveToDisk");
 			});
 	},
+
+	saveToDisk() {
+		if (Utils.saveUserData("playlist", state.tracks)) {
+			Utils.saveUserData("playlistName", state.name);
+			let currentTrackIndex = state.tracks.indexOf(state.currentTrack);
+			Utils.saveUserData("currentTrackIndex", currentTrackIndex);
+		}
+	}
 }
 
 const mutations = {
@@ -97,6 +136,22 @@ const mutations = {
 		if (newTrack != null) {
 			state.currentTrack = newTrack;
 		}
+	},
+
+	loadFromDisk(state) {
+		let playbackOrder = Utils.loadUserData("playbackOrder");
+		if (playbackOrder) {
+			state.playbackOrder = playbackOrder;
+		}
+		let tracks = Utils.loadUserData("playlist");
+		if (tracks) {
+			state.tracks = tracks;
+		}
+		let currentTrackIndex = Utils.loadUserData("currentTrackIndex");
+		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < state.tracks.length) {
+			state.currentTrack = state.tracks[currentTrackIndex];
+		}
+		state.name = Utils.loadUserData("playlistName");
 	}
 }
 

@@ -12,7 +12,7 @@
 			v-on:volumechange="onVolumeChange"
 		></audio>
 
-		<div v-if="playlist.currentTrack" class="controls noselect">
+		<div v-if="currentTrack" class="controls noselect">
 			<div class="playback">
 				<div class="control previous" v-on:click="skipPrevious">
 					<i class="material-icons md-18">skip_previous</i>
@@ -38,11 +38,11 @@
 			</div>
 		</div>
 
-		<div v-if="playlist.currentTrack" class="art">
+		<div v-if="currentTrack" class="art">
 			<img v-if="artworkURL" v-bind:src="artworkURL" />
 		</div>
 
-		<div class="currentTrack" v-if="playlist.currentTrack">
+		<div class="currentTrack" v-if="currentTrack">
 			<div class="trackInfo">
 				<div class="primary">{{ trackInfoPrimary }}</div>
 				<div class="secondary">{{ trackInfoSecondary }}</div>
@@ -51,13 +51,14 @@
 				<div class="fill" v-bind:style="{width: (100 * trackProgress) + '%'}"></div>
 				<div class="head" v-bind:style="{left: (100 * trackProgress) + '%'}"></div>
 			</div>
-			<div v-if="playlist.currentTrack" class="trackDuration">{{ formattedPlaybackTime }}</div>
+			<div v-if="currentTrack" class="trackDuration">{{ formattedPlaybackTime }}</div>
 		</div>
 	</div>
 </template>
 
 
 <script>
+import Vue from "vue";
 import { mapState } from "vuex";
 import * as Utils from "/src/utils";
 export default {
@@ -75,20 +76,22 @@ export default {
 	computed: {
 		...mapState(["playlist"]),
 
+		currentTrack: function() {
+			return this.playlist.currentTrack;
+		},
+
 		trackURL: function() {
-			const currentTrack = this.playlist.currentTrack;
-			if (!currentTrack) {
+			if (!this.currentTrack) {
 				return null;
 			}
-			return "api/serve/" + encodeURIComponent(currentTrack.info.path);
+			return "api/serve/" + encodeURIComponent(this.currentTrack.info.path);
 		},
 
 		artworkURL: function() {
-			const currentTrack = this.playlist.currentTrack;
-			if (!currentTrack && currentTrack.info.artwork) {
+			if (!this.currentTrack && this.currentTrack.info.artwork) {
 				return null;
 			}
-			return "api/serve/" + encodeURIComponent(currentTrack.info.artwork);
+			return "api/serve/" + encodeURIComponent(this.currentTrack.info.artwork);
 		},
 
 		formattedPlaybackTime: function() {
@@ -109,7 +112,7 @@ export default {
 		},
 
 		trackInfoPrimary() {
-			const track = this.playlist.currentTrack;
+			const track = this.currentTrack;
 			let result = track.info.artist ? track.info.artist : "Unknown Artist";
 			result += " - ";
 			result += track.info.title || utils.stripFileExtension(utils.getPathTail(track.info.path));
@@ -117,7 +120,7 @@ export default {
 		},
 
 		trackInfoSecondary() {
-			const track = this.playlist.currentTrack;
+			const track = this.currentTrack;
 			let result = track.info.album || "Unknown Album";
 			if (track.info.year) {
 				result += " (" + track.info.year + ")";
@@ -129,13 +132,22 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
-		if (this.watches) {
-			for (let unwatch of this.watches) {
-				unwatch();
+	watch: {
+		currentTrack(to, from) {
+			if (this.invalid) {
+				return;
+			}
+			this.handleCurrentTrackChanged();
+			if (from) {
+				Vue.nextTick(() => {
+					this.$refs.htmlAudio.play();
+					Utils.api("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
+				});
 			}
 		}
-		this.watches = [];
+	},
+
+	beforeDestroy() {
 		this.invalid = true;
 	},
 
@@ -145,23 +157,6 @@ export default {
 		if (volume) {
 			this.$refs.htmlAudio.volume = volume;
 		}*/
-
-		this.watches = [];
-		this.watches.push(
-			this.$store.watch(
-				(state, getters) => state.playlist.currentTrack,
-				(to, from) => {
-					if (this.invalid) {
-						return;
-					}
-					this.handleCurrentTrackChanged();
-					if (from) {
-						this.$refs.htmlAudio.play();
-						Utils.api("/lastfm/now_playing/" + encodeURIComponent(track.info.path), { method: "PUT" });
-					}
-				}
-			)
-		);
 
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
 			navigator.mediaSession.setActionHandler("previoustrack", this.skipPrevious);
@@ -199,7 +194,7 @@ export default {
 
 		updateMediaSession() {
 			if (navigator.mediaSession && MediaMetadata) {
-				const track = this.playlist.currentTrack;
+				const track = this.currentTrack;
 				var metadata = new MediaMetadata({
 					title: track.info.title,
 					artist: track.info.artist,
@@ -222,11 +217,11 @@ export default {
 		},
 
 		skipPrevious() {
-			this.$store.commit("playlist/advance", -1);
+			this.$store.dispatch("playlist/previous");
 		},
 
 		skipNext() {
-			this.$store.commit("playlist/advance", 1);
+			this.$store.dispatch("playlist/next");
 		},
 
 		updateScrobble() {
@@ -234,7 +229,7 @@ export default {
 				var duration = this.$refs.htmlAudio.duration;
 				var shouldScrobble = duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
-					Utils.api("/lastfm/scrobble/" + encodeURIComponent(this.playlist.currentTrack.info.path), { method: "POST" });
+					Utils.api("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
 					this.canScrobble = false;
 				}
 			}

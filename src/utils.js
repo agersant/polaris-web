@@ -1,5 +1,7 @@
-/*export function saveUserData(key, value) {
-	var username = Cookies.get("username");
+import Cookies from 'js-cookie'
+
+export function saveUserData(key, value) {
+	let username = Cookies.get("username");
 	if (!username) {
 		return;
 	}
@@ -20,17 +22,17 @@
 }
 
 export function loadUserData(key) {
-	var username = Cookies.get("username");
+	let username = Cookies.get("username");
 	if (!username) {
 		return;
 	}
-	var value = localStorage[username + "." + key];
+	let value = localStorage[username + "." + key];
 	if (value && value[0] == "[") {
 		value = JSON.parse(value);
 	}
 	return value;
 }
-*/
+
 export function tryLogin(username, password) {
 	return fetch("api/auth", {
 		method: "POST",
