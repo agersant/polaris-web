@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import API from "./api"
 import Router from "./router"
 import Store from "./store/store"
+import EntryPoint from "./components/entry-point"
 
 API.request('/initial_setup')
 	.then(res => res.json())
@@ -20,5 +21,6 @@ API.request('/initial_setup')
 		new Vue({
 			store: Store,
 			router: Router,
-		}).$mount('#vue-container')
+			render: k => k(EntryPoint)
+		}).$mount('#vue-container');
 	});

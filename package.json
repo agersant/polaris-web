@@ -2,7 +2,6 @@
   "name": "polaris-web",
   "version": "1.0.0",
   "description": "Web UI for Polaris",
-  "main": "index.js",
   "repository": "https://github.com/agersant/polaris-web.git",
   "author": "Antoine Gersant <antoine.gersant@lesforges.org>",
   "license": "MIT",
@@ -23,10 +22,6 @@
     "@vue/component-compiler-utils": "^3.1.1",
     "cypress": "^3.8.3",
     "parcel": "^1.12.4",
-    "parcel-bundler": "^1.12.4",
     "vue-template-compiler": "^2.6.11"
-  },
-  "alias": {
-    "vue": "./node_modules/vue/dist/vue.common.js"
   }
 }

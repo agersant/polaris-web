@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import App from './components/app'
 import Auth from './components/auth'
+import NotFound from './components/not-found'
 import Browser from './components/collection/browser'
 import Playlist from './components/collection/playlist/playlist'
 import Playlists from './components/collection/playlist/playlists'
@@ -18,44 +19,28 @@ import SettingsUsers from './components/settings/sections/users'
 
 Vue.use(VueRouter)
 
-Vue.component('auth', Auth);
-Vue.component('app', App);
-Vue.component('browser', Browser);
-Vue.component('initial-setup', InitialSetup);
-Vue.component('playlist', Playlist);
-Vue.component('playlists', Playlists);
-Vue.component('random', Random);
-Vue.component('recent', Recent);
-Vue.component('search', Search);
-
-Vue.component('settings', Settings);
-Vue.component('collection', SettingsCollection);
-Vue.component('ddns', SettingsDDNS);
-Vue.component('preferences', SettingsPreferences);
-Vue.component('users', SettingsUsers);
-
 const routes = [
-	{ path: '/welcome', component: { template: '<initial-setup></initial-setup>' } },
-	{ path: '/auth', component: { template: '<auth></auth>' } },
+	{ path: '/welcome', component: { render: k => k(InitialSetup) } },
+	{ path: '/auth', component: { render: k => k(Auth) } },
 	{
 		path: '',
-		component: { template: '<app></app>' },
+		component: { render: k => k(App) },
 		children: [
-			{ path: '/browse*', component: { template: '<browser></browser>' } },
-			{ path: '/random', component: { template: '<random></random>' } },
-			{ path: '/recent', component: { template: '<recent></recent>' } },
-			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
-			{ path: '/playlist/*', component: { template: '<playlist></playlist>' } },
-			{ path: '/search*', component: { template: '<search></search>' } },
+			{ path: '/browse*', component: { render: k => k(Browser) } },
+			{ path: '/random', component: { render: k => k(Random) } },
+			{ path: '/recent', component: { render: k => k(Recent) } },
+			{ path: '/playlists', component: { render: k => k(Playlists) } },
+			{ path: '/playlist/*', component: { render: k => k(Playlist) } },
+			{ path: '/search*', component: { render: k => k(Search) } },
 			{
-				path: '/settings', component: { template: '<settings></settings>' }, children: [
-					{ path: 'collection', component: { template: '<collection></collection>' } },
-					{ path: 'ddns', component: { template: '<ddns></ddns>' } },
-					{ path: 'users', component: { template: '<users></users>' } },
-					{ path: '*', component: { template: '<preferences></preferences>' } }
+				path: '/settings', component: { render: k => k(Settings) }, children: [
+					{ path: 'collection', component: { render: k => k(SettingsCollection) } },
+					{ path: 'ddns', component: { render: k => k(SettingsDDNS) } },
+					{ path: 'users', component: { render: k => k(SettingsUsers) } },
+					{ path: '*', component: { render: k => k(SettingsPreferences) } }
 				]
 			},
-			{ path: '*', component: { template: '<div>404</div>' } } // TODO 404
+			{ path: '*', component: { render: k => k(NotFound) } }
 		]
 	},
 ]
