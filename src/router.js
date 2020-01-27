@@ -36,9 +36,7 @@ Vue.component('users', SettingsUsers);
 
 const routes = [
 	{ path: '/welcome', component: { template: '<initial-setup></initial-setup>' } },
-	{
-		path: '/auth', component: { template: '<auth></auth>' }
-	},
+	{ path: '/auth', component: { template: '<auth></auth>' } },
 	{
 		path: '',
 		component: { template: '<app></app>' },
@@ -57,7 +55,7 @@ const routes = [
 					{ path: '*', component: { template: '<preferences></preferences>' } }
 				]
 			},
-			{ path: '*', component: { template: '<browser></browser>' } } // TODO 404
+			{ path: '*', component: { template: '<div>404</div>' } } // TODO 404
 		]
 	},
 ]
