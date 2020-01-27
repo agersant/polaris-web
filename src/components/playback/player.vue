@@ -60,6 +60,7 @@
 import Vue from "vue";
 import { mapState } from "vuex";
 import * as Utils from "/src/utils";
+import Disk from "/src/disk";
 export default {
 	data() {
 		return {
@@ -147,7 +148,7 @@ export default {
 
 		volume(to, from) {
 			this.$refs.htmlAudio.volume = to;
-			this.$disk.save("volume", to);
+			Disk.save("volume", to);
 		}
 	},
 
@@ -156,7 +157,7 @@ export default {
 	},
 
 	mounted() {
-		var volume = this.$disk.load("volume");
+		var volume = Disk.load("volume");
 		if (volume) {
 			this.volume = volume;
 		}

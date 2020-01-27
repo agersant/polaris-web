@@ -36,10 +36,4 @@ export const Disk = {
 	}
 }
 
-const DiskPlugin = {
-	install(Vue) {
-		Vue.prototype.$disk = Disk;
-	}
-}
-
-export default DiskPlugin;
+export default Disk;

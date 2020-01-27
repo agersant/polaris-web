@@ -1,5 +1,5 @@
 import { API } from '/src/plugins/api'
-import { Disk } from '/src/plugins/disk'
+import Disk from '/src/disk'
 
 const state = {
 	name: null,
