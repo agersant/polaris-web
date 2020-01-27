@@ -161,8 +161,7 @@ export default {
 			} else if (variant == "Directory") {
 				this.$store.dispatch("playlist/queueDirectory", item.fields.path);
 			} else if (variant == "Playlist") {
-				// TODO
-				this.queuePlaylist(item.fields.name);
+				this.$store.dispatch("playlist/queuePlaylist", item.fields.name);
 			}
 		},
 

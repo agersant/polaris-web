@@ -56,6 +56,18 @@ const actions = {
 			});
 	},
 
+	queuePlaylist({ commit, dispatch }, name) {
+		let url = "/playlist/" + encodeURIComponent(name);
+		API.request(url)
+			.then(res => res.json())
+			.then(data => {
+				commit("clear");
+				commit("queueTracks", data);
+				commit("setName", name);
+				dispatch("saveToDisk");
+			});
+	},
+
 	saveToDisk() {
 		if (Disk.save("playlist", state.tracks)) {
 			Disk.save("playlistName", state.name);

@@ -11,8 +11,8 @@
 					v-bind:key="index"
 					class="noselect"
 					draggable="true"
-					v-on:click="onClickItem"
-					v-on:dragstart="onDragItemStart"
+					v-on:click="onItemClicked(playlist)"
+					v-on:dragstart="event => onItemDragStart(event, playlist)"
 				>{{ playlist.name }}</li>
 			</ul>
 			<div class="help" v-if="playlists.length == 0">
@@ -36,6 +36,7 @@ export default {
 
 	mounted() {
 		this.loadPlaylists();
+		// TODO needs live update when a new playlist is saved
 	},
 
 	methods: {
@@ -43,37 +44,25 @@ export default {
 			API.request("/playlists")
 				.then(res => res.json())
 				.then(data => {
-					if (this.dead) {
-						return;
-					}
 					this.playlists = data;
 				});
+		},
+
+		onItemClicked(playlist) {
+			this.$router.push("/playlist/" + playlist.name);
+		},
+
+		onItemDragStart(event, playlist) {
+			const playlistItem = {
+				variant: "Playlist",
+				fields: {
+					name: playlist.name
+				}
+			};
+			event.dataTransfer.setData("text/json", JSON.stringify(playlistItem));
 		}
 	}
 };
-/*
-	// TODO
-
-	eventBus.on("playlist-save:transmitted", this.load);
-	this.on("unmount", function() {
-		this.dead = true;
-		eventBus.off("playlist-save:transmitted");
-	}.bind(this));
-
-	onClickItem(e) {
-		route("playlist/" + e.item.name);
-	}
-
-	onDragItemStart(e) {
-		var playlistItem = {
-			variant: "Playlist",
-			fields: {
-				name: e.item.name,
-			},
-		};
-		e.dataTransfer.setData("text/json", JSON.stringify(playlistItem));
-	}
-*/
 </script>
 
 <style scoped>
