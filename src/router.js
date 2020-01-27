@@ -4,10 +4,11 @@ import VueRouter from 'vue-router'
 import App from './components/app'
 import Auth from './components/auth'
 import Browser from './components/collection/browser'
-import Random from './components/collection/random'
 import Playlist from './components/collection/playlist/playlist'
 import Playlists from './components/collection/playlist/playlists'
+import Random from './components/collection/random'
 import Recent from './components/collection/recent'
+import Search from './components/collection/search/search'
 import InitialSetup from './components/initial-setup/initial-setup'
 import Settings from './components/settings/settings'
 import SettingsCollection from './components/settings/sections/collection'
@@ -23,8 +24,9 @@ Vue.component('browser', Browser);
 Vue.component('initial-setup', InitialSetup);
 Vue.component('playlist', Playlist);
 Vue.component('playlists', Playlists);
-Vue.component('recent', Recent);
 Vue.component('random', Random);
+Vue.component('recent', Recent);
+Vue.component('search', Search);
 
 Vue.component('settings', Settings);
 Vue.component('collection', SettingsCollection);
@@ -46,6 +48,7 @@ const routes = [
 			{ path: '/recent', component: { template: '<recent></recent>' } },
 			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
 			{ path: '/playlist/*', component: { template: '<playlist></playlist>' } },
+			{ path: '/search*', component: { template: '<search></search>' } },
 			{
 				path: '/settings', component: { template: '<settings></settings>' }, children: [
 					{ path: 'collection', component: { template: '<collection></collection>' } },

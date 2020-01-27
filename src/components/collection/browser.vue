@@ -209,7 +209,7 @@ export default {
 		},
 
 		onItemClicked(item) {
-			var variant = item.variant;
+			const variant = item.variant;
 			if (variant == "Directory") {
 				this.$router.push("/browse/" + item.fields.path).catch(err => {});
 			} else if (variant == "Song") {
@@ -222,27 +222,7 @@ export default {
 		},
 
 		onQueueAll() {
-			if (this.tab != "search") {
-				this.$store.dispatch("playlist/queueDirectory", this.path);
-			} else {
-				// TODO
-				var songItems = [];
-				var directoryItems = [];
-				this.items.forEach(item => {
-					if (item.variant == "Song") {
-						songItems.push(item);
-					} else if (item.variant == "Directory") {
-						directoryItems.push(item);
-					}
-				});
-				eventBus.trigger(
-					"browser:queueTracks",
-					songItems.map(i => i.fields)
-				);
-				directoryItems.forEach(item => {
-					eventBus.trigger("browser:queueDirectory", item.fields.path);
-				});
-			}
+			this.$store.dispatch("playlist/queueDirectory", this.path);
 		},
 
 		onCurrentPathDragStart(event) {
@@ -256,58 +236,6 @@ export default {
 		}
 	}
 };
-/*
-
-
-	function playlist() {
-		var matchPath = /^.*#playlist\/?(.*)$/;
-		var matches = window.location.href.match(matchPath);
-		var playlistName = matches ? matches[1] : "";
-		playlistName = decodeURIComponent(playlistName);
-
-		API.request("/playlist/" + encodeURIComponent(playlistName))
-		.then(res => res.json())
-		.then(function(data) {
-			this.reset();
-			for (var i = 0; i < data.length; i++) {
-				var fields = data[i];
-				data[i] = { fields: fields, variant: "Song" };
-			}
-			this.tab = "playlist";
-			this.title = "Playlists";
-			this.playlistName = playlistName;
-			this.header = playlistName;
-			this.displayItems(data);
-		}.bind(self));
-	}
-
-	function search() {
-		var matchPath = /^.*#search\/?(.*)$/;
-		var matches = window.location.href.match(matchPath);
-		var query = matches ? matches[1] : "";
-		query = decodeURIComponent(query);
-
-		API.request("/search/" + encodeURIComponent(query))
-		.then(res => res.json())
-		.then(function(data) {
-			this.reset();
-			for (var i = 0; i < data.length; i++) {
-				data[i].fields = data[i].Directory || data[i].Song;
-				data[i].variant = data[i].Directory ? "Directory" : "Song";
-			}
-			this.tab = "search";
-			this.title = "Search";
-			if (data.length == 0) {
-				this.header = "No results found";
-			} else if (data.length == 1) {
-				this.header = "1 result found";
-			} else {
-				this.header = data.length + " results found";
-			}
-			this.displayItems(data);
-		}.bind(self));
-	}
-	*/
 </script>
 
 <style scoped>
