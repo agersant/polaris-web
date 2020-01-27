@@ -21,7 +21,7 @@
 
 <script>
 import API from "/src/api";
-import Explorer from "./layout/explorer";
+import Explorer from "/src/components/collection/layout/explorer";
 export default {
 	components: {
 		explorer: Explorer
