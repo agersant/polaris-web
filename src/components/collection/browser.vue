@@ -171,7 +171,7 @@ export default {
 			return "explorer";
 		},
 
-		// TODO move into album
+		// TODO move into album component
 		splitAlbumByDisc(items) {
 			var discs = [];
 			for (var i = 0; i < items.length; i++) {
