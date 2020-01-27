@@ -4,13 +4,6 @@
 		<router-view></router-view>
 		<playlist></playlist>
 		<player></player>
-		<!--
-    <router> TODO
-      <route path="playlists..">
-        <playlists />
-      </route>
-    </router>
-		<window-title-updater />-->
 	</div>
 </template>
 

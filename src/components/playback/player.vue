@@ -195,6 +195,7 @@ export default {
 		handleCurrentTrackChanged() {
 			this.canScrobble = true;
 			this.updateMediaSession();
+			this.updateWindowTitle();
 		},
 
 		updateMediaSession() {
@@ -210,6 +211,14 @@ export default {
 				}
 				navigator.mediaSession.metadata = metadata;
 			}
+		},
+
+		updateWindowTitle() {
+			const info = this.currentTrack.info;
+			let trackInfo = info.artist ? info.artist : "Unknown Artist";
+			trackInfo += " - ";
+			trackInfo += info.title || Utils.stripFileExtension(Utils.getPathTail(info.path));
+			document.title = trackInfo;
 		},
 
 		togglePlay() {
