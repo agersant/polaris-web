@@ -1,7 +1,36 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import App from './components/app'
+import Auth from './components/auth'
+import Browser from './components/collection/browser'
+import Random from './components/collection/random'
+import Playlist from './components/collection/playlist'
+import Playlists from './components/collection/playlists'
+import Recent from './components/collection/recent'
+import InitialSetup from './components/initial-setup/initial-setup'
+import Settings from './components/settings/settings'
+import SettingsCollection from './components/settings/sections/collection'
+import SettingsDDNS from './components/settings/sections/ddns'
+import SettingsPreferences from './components/settings/sections/preferences'
+import SettingsUsers from './components/settings/sections/users'
+
 Vue.use(VueRouter)
+
+Vue.component('auth', Auth);
+Vue.component('app', App);
+Vue.component('browser', Browser);
+Vue.component('initial-setup', InitialSetup);
+Vue.component('playlist', Playlist);
+Vue.component('playlists', Playlists);
+Vue.component('recent', Recent);
+Vue.component('random', Random);
+
+Vue.component('settings', Settings);
+Vue.component('collection', SettingsCollection);
+Vue.component('ddns', SettingsDDNS);
+Vue.component('preferences', SettingsPreferences);
+Vue.component('users', SettingsUsers);
 
 const routes = [
 	{ path: '/welcome', component: { template: '<initial-setup></initial-setup>' } },
@@ -16,6 +45,7 @@ const routes = [
 			{ path: '/random', component: { template: '<random></random>' } },
 			{ path: '/recent', component: { template: '<recent></recent>' } },
 			{ path: '/playlists', component: { template: '<playlists></playlists>' } },
+			{ path: '/playlist/*', component: { template: '<playlist></playlist>' } },
 			{
 				path: '/settings', component: { template: '<settings></settings>' }, children: [
 					{ path: 'collection', component: { template: '<collection></collection>' } },

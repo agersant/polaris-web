@@ -97,7 +97,6 @@ export default {
 			if (newPath.startsWith("/")) {
 				newPath = newPath.substring(1);
 			}
-			newPath = decodeURIComponent(newPath);
 
 			API.request("/browse/" + encodeURIComponent(newPath))
 				.then(res => res.json())
@@ -218,6 +217,10 @@ export default {
 			}
 		},
 
+		onItemDragStart(event, item) {
+			event.dataTransfer.setData("text/json", JSON.stringify(item));
+		},
+
 		onQueueAll() {
 			if (this.tab != "search") {
 				this.$store.dispatch("playlist/queueDirectory", this.path);
@@ -240,10 +243,6 @@ export default {
 					eventBus.trigger("browser:queueDirectory", item.fields.path);
 				});
 			}
-		},
-
-		onItemDragStart(event, item) {
-			event.dataTransfer.setData("text/json", JSON.stringify(item));
 		},
 
 		onCurrentPathDragStart(event) {
@@ -308,32 +307,10 @@ export default {
 			this.displayItems(data);
 		}.bind(self));
 	}
-
-	onQueuePlaylist(e) {
-		eventBus.trigger("browser:queuePlaylist", this.playlistName, this.items.map(i => i.fields ));
-	}
-
-	onDeletePlaylist(e) {
-		API.request("/playlist/" + encodeURIComponent(this.playlistName), { method: "DELETE" })
-		.then(res => {
-			route("playlists/");
-		});
-	}
 	*/
 </script>
 
 <style scoped>
-.more {
-	cursor: pointer;
-	height: 20px;
-}
-
-.more span {
-	padding-left: 4px;
-	font-size: 0.875rem;
-	vertical-align: top;
-}
-
 .paneContent {
 	padding-top: 50px;
 }

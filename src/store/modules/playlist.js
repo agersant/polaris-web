@@ -46,6 +46,11 @@ const actions = {
 		dispatch("saveToDisk");
 	},
 
+	queueTracks({ commit, dispatch }, tracks) {
+		commit("queueTracks", tracks);
+		dispatch("saveToDisk");
+	},
+
 	queueDirectory({ commit, dispatch }, path) {
 		let url = "/flatten/" + encodeURIComponent(path);
 		API.request(url)
