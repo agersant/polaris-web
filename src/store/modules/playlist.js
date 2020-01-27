@@ -26,6 +26,11 @@ const actions = {
 		dispatch("saveToDisk");
 	},
 
+	setName({ commit, dispatch }, name) {
+		commit("setName", name);
+		dispatch("saveToDisk");
+	},
+
 	play({ commit, dispatch }, track) {
 		commit("play", track);
 		dispatch("saveToDisk");
@@ -83,6 +88,10 @@ const mutations = {
 
 	setPlaybackOrder(state, order) {
 		state.playbackOrder = order;
+	},
+
+	setName(state, name) {
+		state.name = name;
 	},
 
 	play(state, track) {

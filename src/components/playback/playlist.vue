@@ -5,7 +5,13 @@
 			<div class="playlistOperations">
 				<span class="noselect save" v-on:click="onClickSave">
 					<i class="material-icons md-18">save</i>
-					<!-- <playlist-save v-if="saving" v-bind:tracks="tracks" v-bind:name="playlist.Name" /> -->
+					<playlist-save
+						v-if="saving"
+						v-bind:tracks="playlist.tracks"
+						v-bind:initialName="playlist.name"
+						v-on:cancel="endSave"
+						v-on:complete="endSave"
+					/>
 				</span>
 				<span data-cy="clear-playlist" class="noselect delete" v-on:click="onClickClear">
 					<i class="material-icons md-18">delete</i>
@@ -74,7 +80,12 @@
 <script>
 import { mapState } from "vuex";
 import * as Utils from "/src/utils";
+import PlaylistSave from "./playlist-save";
 export default {
+	components: {
+		"playlist-save": PlaylistSave
+	},
+
 	data() {
 		return {
 			itemHeight: 30, // Also defined in CSS
@@ -130,6 +141,10 @@ export default {
 				return;
 			}
 			this.$refs.scrollElement.scrollTop = (currentTrackIndex - 10) * this.itemHeight;
+		},
+
+		endSave() {
+			this.saving = false;
 		},
 
 		onDragOver(event) {
@@ -210,10 +225,6 @@ export default {
 	}
 };
 /*
-	this.on('mount', function() {
-		this.loadFromDisk();
-	});
-
 	queuePlaylist(name, tracks) {
 		this.clear();
 		this.playlistName = name;
@@ -223,18 +234,6 @@ export default {
 			this.queueURL('/playlist/' + encodeURIComponent(name));
 		}
 	}
-
-	endSave(playlistName) {
-		this.saving = false;
-		this.playlistName = playlistName;
-		this.saveLocalPlaylist();
-		this.update();
-	}
-
-	eventBus.on("playlist-save:cancel", this.endSave);
-	eventBus.on("playlist-save:done", this.endSave);
-
-	this.clear();
 */
 </script>
 

@@ -1,6 +1,6 @@
 <template>
 	<button
-		v-on:click="onClick"
+		v-on:click="event => $emit('click', event)"
 		v-bind:disabled="disabled || state.disabled"
 		v-bind:type="submit ? 'submit' : 'button'"
 		v-bind:class="{ submit: submit, success: state.success, failure: state.failure }"
@@ -53,12 +53,6 @@ export default {
 		state: function(to, from) {
 			this.previousState = from;
 			this.canAnimate = from != null;
-		}
-	},
-
-	methods: {
-		onClick() {
-			this.$emit("click");
 		}
 	}
 };
