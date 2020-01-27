@@ -35,14 +35,14 @@ jobs:
       run: cargo +nightly build --release
     - name: Run Polaris
       working-directory: polaris
-      run: ./target/release/polaris -d test/db.sqlite -w .. -f &
+      run: ./target/release/polaris -d test/db.sqlite -w ../dist -f &
 
     - name: Install Node.js
       uses: actions/setup-node@v1
-    - name: Setup npm package
-      run: npm init -y && npm install
+    - name: Compile Polaris Web
+      run: npm install && npm run production
     - name: Run Automated Tests
-      uses: cypress-io/github-action@v1
+      run: cypress-io/github-action@v1
       with:
         wait-on: 'http://localhost:5050'
 
