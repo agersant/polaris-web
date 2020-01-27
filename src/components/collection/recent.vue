@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import Discography from "./layout/discography";
 export default {
 	components: {
@@ -34,8 +35,7 @@ export default {
 	methods: {
 		refresh() {
 			this.items = [];
-			this.$api
-				.request("/recent")
+			API.request("/recent")
 				.then(res => res.json())
 				.then(data => {
 					this.items = data.map(a => {

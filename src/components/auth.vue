@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 export default {
 	data() {
 		return {
@@ -31,7 +32,7 @@ export default {
 			var username = encodeURIComponent(form.elements["username"].value);
 			var password = encodeURIComponent(form.elements["password"].value);
 			this.badCredentials = false;
-			this.$api.login(username, password).then(res => {
+			API.login(username, password).then(res => {
 				if (res.status == 401) {
 					this.badCredentials = true;
 				}

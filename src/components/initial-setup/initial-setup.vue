@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import Finish from "./steps/finish";
 import Mount from "./steps/mount";
 import User from "./steps/user";
@@ -33,8 +34,7 @@ export default {
 	},
 
 	mounted() {
-		this.$api
-			.request("/settings")
+		API.request("/settings")
 			.then(res => {
 				return res.json();
 			})
@@ -62,7 +62,7 @@ export default {
 		setMount(mountDir) {
 			this.config.mount_dirs = [mountDir];
 			this.commit().then(res => {
-				this.$api.request("/trigger_index", { method: "POST" }).then(this.next);
+				API.request("/trigger_index", { method: "POST" }).then(this.next);
 			});
 		},
 
@@ -72,26 +72,24 @@ export default {
 		},
 
 		commit() {
-			return this.$api
-				.request("/settings", {
-					method: "PUT",
-					body: JSON.stringify(this.config),
-					headers: {
-						"Content-Type": "application/json"
-					}
-				})
-				.then(res => {
-					if (!res.ok) {
-						console.log("Error while applying settings");
-						throw res.status;
-					}
-					return res;
-				});
+			return API.request("/settings", {
+				method: "PUT",
+				body: JSON.stringify(this.config),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}).then(res => {
+				if (!res.ok) {
+					console.log("Error while applying settings");
+					throw res.status;
+				}
+				return res;
+			});
 		},
 		login() {
 			let username = this.config.users[0].name;
 			let password = this.config.users[0].password;
-			this.$api.login(username, password);
+			API.login(username, password);
 		}
 	}
 };

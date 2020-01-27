@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 export default {
 	data() {
 		return {
@@ -45,8 +46,7 @@ export default {
 	},
 
 	mounted() {
-		this.$api
-			.request("/settings")
+		API.request("/settings")
 			.then(res => res.json())
 			.then(data => {
 				this.ddns = data.ydns;
@@ -58,7 +58,7 @@ export default {
 			let settings = {
 				ydns: this.ddns
 			};
-			this.$api.request("/settings", {
+			API.request("/settings", {
 				method: "PUT",
 				body: JSON.stringify(settings),
 				headers: {

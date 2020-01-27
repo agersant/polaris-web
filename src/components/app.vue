@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import * as Theming from "/src/theming/theming";
 import Sidebar from "./sidebar";
 import Player from "./playback/player";
@@ -33,8 +34,7 @@ export default {
 
 	methods: {
 		applyTheme() {
-			this.$api
-				.request("/preferences")
+			API.request("/preferences")
 				.then(res => res.json())
 				.then(data => {
 					Theming.setBase(data.web_theme_base);

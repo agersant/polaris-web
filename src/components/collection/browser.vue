@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import * as Utils from "/src/utils";
 import Breadcrumbs from "./breadcrumbs";
 import Album from "./layout/album";
@@ -95,8 +96,7 @@ export default {
 			}
 			path = decodeURIComponent(path);
 
-			this.$api
-				.request("/browse/" + encodeURIComponent(path))
+			API.request("/browse/" + encodeURIComponent(path))
 				.then(res => res.json())
 				.then(data => {
 					this.reset();
@@ -259,7 +259,7 @@ export default {
 		var playlistName = matches ? matches[1] : "";
 		playlistName = decodeURIComponent(playlistName);
 
-		this.$api.request("/playlist/" + encodeURIComponent(playlistName))
+		API.request("/playlist/" + encodeURIComponent(playlistName))
 		.then(res => res.json())
 		.then(function(data) {
 			this.reset();
@@ -281,7 +281,7 @@ export default {
 		var query = matches ? matches[1] : "";
 		query = decodeURIComponent(query);
 
-		this.$api.request("/search/" + encodeURIComponent(query))
+		API.request("/search/" + encodeURIComponent(query))
 		.then(res => res.json())
 		.then(function(data) {
 			this.reset();
@@ -317,7 +317,7 @@ export default {
 	}
 
 	onDeletePlaylist(e) {
-		this.$api.request("/playlist/" + encodeURIComponent(this.playlistName), { method: "DELETE" })
+		API.request("/playlist/" + encodeURIComponent(this.playlistName), { method: "DELETE" })
 		.then(res => {
 			route("playlists/");
 		});

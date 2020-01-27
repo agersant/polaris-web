@@ -13,13 +13,11 @@ import SettingsCollection from './components/settings/sections/collection'
 import SettingsDDNS from './components/settings/sections/ddns'
 import SettingsPreferences from './components/settings/sections/preferences'
 import SettingsUsers from './components/settings/sections/users'
-import API from "./plugins/api"
+import API from "./api"
 import Router from "./router"
 import Store from "./store/store"
 
-Vue.use(API)
-
-Vue.prototype.$api.request('/initial_setup')
+API.request('/initial_setup')
 	.then(res => res.json())
 	.then(data => {
 

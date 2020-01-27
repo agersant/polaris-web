@@ -1,4 +1,4 @@
-import { API } from '/src/plugins/api'
+import API from '/src/API'
 import Disk from '/src/disk'
 
 const state = {

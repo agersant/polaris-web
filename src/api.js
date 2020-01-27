@@ -35,10 +35,4 @@ export const API = {
 	}
 }
 
-const APIPlugin = {
-	install(Vue) {
-		Vue.prototype.$api = API;
-	}
-}
-
-export default APIPlugin;
+export default API;

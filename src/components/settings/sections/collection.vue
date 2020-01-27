@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import StateButton from "/src/components/state-button";
 export default {
 	components: {
@@ -78,8 +79,7 @@ export default {
 
 	mounted() {
 		this.reindexState = this.reindexStates.ready;
-		this.$api
-			.request("/settings")
+		API.request("/settings")
 			.then(res => res.json())
 			.then(data => {
 				this.settings = data;
@@ -122,7 +122,7 @@ export default {
 
 		reindex() {
 			this.reindexState = this.reindexStates.applying;
-			this.$api.request("/trigger_index", { method: "POST" }).then(res => {
+			API.request("/trigger_index", { method: "POST" }).then(res => {
 				if (res.status != 200) {
 					this.reindexState = this.reindexStates.failure;
 					console.log("Index trigger error: " + res.status);
@@ -136,7 +136,7 @@ export default {
 		},
 
 		commit() {
-			this.$api.request("/settings", {
+			API.request("/settings", {
 				method: "PUT",
 				body: JSON.stringify(this.settings),
 				headers: {

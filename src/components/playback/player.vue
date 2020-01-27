@@ -59,8 +59,9 @@
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
-import * as Utils from "/src/utils";
+import API from "/src/api";
 import Disk from "/src/disk";
+import * as Utils from "/src/utils";
 export default {
 	data() {
 		return {
@@ -141,7 +142,7 @@ export default {
 			if (from) {
 				Vue.nextTick(() => {
 					this.$refs.htmlAudio.play();
-					this.$api.request("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
+					API.request("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
 				});
 			}
 		},
@@ -233,7 +234,7 @@ export default {
 				var duration = this.$refs.htmlAudio.duration;
 				var shouldScrobble = duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
-					this.$api.request("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
+					API.request("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
 					this.canScrobble = false;
 				}
 			}

@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import Cookies from "js-cookie";
 export default {
 	data() {
@@ -61,8 +62,7 @@ export default {
 	},
 
 	mounted() {
-		this.$api
-			.request("/settings")
+		API.request("/settings")
 			.then(res => res.json())
 			.then(data => {
 				this.users = data.users;
@@ -105,7 +105,7 @@ export default {
 			let settings = {
 				users: this.users
 			};
-			this.$api.request("/settings", {
+			API.request("/settings", {
 				method: "PUT",
 				body: JSON.stringify(settings),
 				headers: {

@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 export default {
 	data() {
 		return {
@@ -39,8 +40,7 @@ export default {
 
 	methods: {
 		loadPlaylists() {
-			this.$api
-				.request("/playlists")
+			API.request("/playlists")
 				.then(res => res.json())
 				.then(data => {
 					if (this.dead) {
