@@ -1,4 +1,4 @@
-import API from '/src/API'
+import API from '/src/api'
 import Disk from '/src/disk'
 
 const state = {
