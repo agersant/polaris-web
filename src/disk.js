@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-export const Disk = {
+export default {
 
 	save(key, value) {
 		let username = Cookies.get("username");
@@ -35,5 +35,3 @@ export const Disk = {
 		return value;
 	}
 }
-
-export default Disk;

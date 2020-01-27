@@ -1,7 +1,7 @@
 import Router from "/src/router"
 import Store from "/src/store/store"
 
-export const API = {
+export default {
 	request(endpoint, options) {
 		if (!options) {
 			options = {};
@@ -34,5 +34,3 @@ export const API = {
 		});
 	}
 }
-
-export default API;
