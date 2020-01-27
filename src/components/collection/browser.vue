@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import API from "/src/api";
 import * as Utils from "/src/utils";
 import Breadcrumbs from "./breadcrumbs";
@@ -66,6 +67,8 @@ export default {
 	},
 
 	mounted() {
+		this.savedPositions = new Map();
+		this.path = null;
 		this.reset();
 		this.browse();
 	},
@@ -77,6 +80,7 @@ export default {
 	},
 
 	methods: {
+		// TODO can eventually remove this
 		reset() {
 			this.items = [];
 			this.header = "";
@@ -86,30 +90,39 @@ export default {
 
 		browse() {
 			if (this.path) {
-				// TODO
-				// this.savedPositions.set(this.path, this.refs.paneContent.scrollTop);
+				this.savedPositions.set(this.path, this.$refs.paneContent.scrollTop);
 			}
 
-			var path = this.$route.params.pathMatch || "";
-			if (path.startsWith("/")) {
-				path = path.substring(1);
+			let newPath = this.$route.params.pathMatch || "";
+			if (newPath.startsWith("/")) {
+				newPath = newPath.substring(1);
 			}
-			path = decodeURIComponent(path);
+			newPath = decodeURIComponent(newPath);
 
-			API.request("/browse/" + encodeURIComponent(path))
+			API.request("/browse/" + encodeURIComponent(newPath))
 				.then(res => res.json())
 				.then(data => {
 					this.reset();
-					this.path = path;
+					this.path = newPath;
 					for (var i = 0; i < data.length; i++) {
 						data[i].fields = data[i].Directory || data[i].Song;
 						data[i].variant = data[i].Directory ? "Directory" : "Song";
 					}
 					this.tab = "browse";
 					this.displayItems(data);
-					//this.cleanSavedPositions(); TODO
-					// this.refs.paneContent.scrollTop = this.savedPositions.get(path) || 0; TODO
+					this.cleanSavedPositions();
+					Vue.nextTick(() => {
+						this.$refs.paneContent.scrollTop = this.savedPositions.get(newPath) || 0;
+					});
 				});
+		},
+
+		cleanSavedPositions() {
+			for (const path of this.savedPositions.keys()) {
+				if (!this.path.startsWith(path)) {
+					this.savedPositions.delete(path);
+				}
+			}
 		},
 
 		getViewMode(items) {
@@ -245,13 +258,7 @@ export default {
 	}
 };
 /*
-	cleanSavedPositions() {
-		for (const path of self.savedPositions.keys()) {
-			if (!self.path.startsWith(path)) {
-				self.savedPositions.delete(path);
-			}
-		}
-	}
+
 
 	function playlist() {
 		var matchPath = /^.*#playlist\/?(.*)$/;
@@ -304,16 +311,6 @@ export default {
 
 	onQueuePlaylist(e) {
 		eventBus.trigger("browser:queuePlaylist", this.playlistName, this.items.map(i => i.fields ));
-	}
-
-	onDragAlbumStart(e) {
-		var directoryItem = {
-			variant: "Directory",
-			fields: {
-				path: this.path,
-			},
-		};
-		e.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
 	}
 
 	onDeletePlaylist(e) {
