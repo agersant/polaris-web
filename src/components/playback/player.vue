@@ -301,6 +301,7 @@ export default {
 		},
 
 		onPlaybackError(event) {
+			// TODO port notify
 			var errorText = "'" + trackInfoPrimary + "' could not be played because ";
 			var artwork = artworkURL || null;
 
