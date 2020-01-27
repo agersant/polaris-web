@@ -42,7 +42,7 @@ jobs:
     - name: Compile Polaris Web
       run: npm install && npm run production
     - name: Run Automated Tests
-      run: cypress-io/github-action@v1
+      uses: cypress-io/github-action@v1
       with:
         wait-on: 'http://localhost:5050'
 
