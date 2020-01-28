@@ -68,6 +68,7 @@ export default {
 		return {
 			volume: 1,
 			secondsPlayed: 0,
+			duration: 1,
 			mouseDown: false,
 			adjusting: null,
 			paused: true,
@@ -106,11 +107,13 @@ export default {
 		},
 
 		trackProgress: function() {
-			if (!this.$refs.htmlAudio) {
+			if (isNaN(this.duration)) {
 				return 0;
 			}
-			const duration = this.$refs.htmlAudio.duration;
-			return this.secondsPlayed / duration;
+			if (this.duration == 0) {
+				return 1;
+			}
+			return this.secondsPlayed / this.duration;
 		},
 
 		trackInfoPrimary() {
@@ -142,8 +145,16 @@ export default {
 			this.handleCurrentTrackChanged();
 			if (from) {
 				Vue.nextTick(() => {
-					this.$refs.htmlAudio.play();
-					API.request("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
+					this.$refs.htmlAudio
+						.play()
+						.then(() => {
+							this.secondsPlayed = 0;
+							API.request("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
+						})
+						.catch(() => {})
+						.finally(() => {
+							this.paused = this.$refs.htmlAudio.paused;
+						});
 				});
 			}
 		},
@@ -194,6 +205,9 @@ export default {
 
 	methods: {
 		handleCurrentTrackChanged() {
+			if (this.adjusting == "seek") {
+				this.adjusting = null;
+			}
 			this.canScrobble = true;
 			this.updateMediaSession();
 			this.updateWindowTitle();
@@ -224,11 +238,15 @@ export default {
 
 		togglePlay() {
 			if (this.$refs.htmlAudio.paused) {
-				this.$refs.htmlAudio.play();
+				this.$refs.htmlAudio
+					.play()
+					.catch(() => {})
+					.finally(() => {
+						this.paused = this.$refs.htmlAudio.paused;
+					});
 			} else {
 				this.$refs.htmlAudio.pause();
 			}
-			this.paused = this.$refs.htmlAudio.paused;
 		},
 
 		skipPrevious() {
@@ -241,8 +259,7 @@ export default {
 
 		updateScrobble() {
 			if (this.canScrobble) {
-				var duration = this.$refs.htmlAudio.duration;
-				var shouldScrobble = duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
+				var shouldScrobble = this.duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
 					API.request("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
 					this.canScrobble = false;
@@ -267,7 +284,7 @@ export default {
 					o = o.offsetParent;
 				}
 				let progress = Math.min(Math.max(x / this.$refs.seekInput.offsetWidth, 0), 1);
-				this.$refs.htmlAudio.currentTime = progress * this.$refs.htmlAudio.duration;
+				this.$refs.htmlAudio.currentTime = progress * this.duration;
 				this.canScrobble = false;
 			}
 		},
@@ -300,6 +317,7 @@ export default {
 			const currentTime = htmlAudio.currentTime;
 			const duration = htmlAudio.duration;
 			this.secondsPlayed = currentTime;
+			this.duration = duration;
 			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
 				navigator.mediaSession.setPositionState({
 					position: currentTime,
