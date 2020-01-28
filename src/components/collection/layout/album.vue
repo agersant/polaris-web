@@ -38,7 +38,7 @@
 import * as Utils from "/src/utils";
 export default {
 	props: {
-		discs: {
+		items: {
 			type: Array,
 			required: true
 		}
@@ -49,6 +49,36 @@ export default {
 	},
 
 	computed: {
+		discs: function() {
+			var discs = [];
+			for (var i = 0; i < this.items.length; i++) {
+				var discNumber = this.items[i].fields.disc_number || 1;
+				var disc = discs.find(function(d) {
+					return d.discNumber == discNumber;
+				});
+				if (disc == undefined) {
+					disc = {
+						discNumber: discNumber,
+						songs: []
+					};
+					discs.push(disc);
+				}
+				disc.songs.push(this.items[i]);
+			}
+
+			for (var i = 0; i < discs.length; i++) {
+				discs[i].songs.sort(function(a, b) {
+					return (a.fields.track_number || 0) - (b.fields.track_number || 0);
+				});
+			}
+
+			discs.sort(function(a, b) {
+				return a.discNumber - b.discNumber;
+			});
+
+			return discs;
+		},
+
 		artworkURL: function() {
 			for (const disc of this.discs) {
 				for (const song of disc.songs) {

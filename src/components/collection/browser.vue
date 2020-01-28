@@ -10,12 +10,6 @@
 				<div class="header">{{ header }}</div>
 				<div v-if="subHeader" class="subHeader">{{ subHeader }}</div>
 				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
-				<!--<button if={ tab == "playlist" && items.length > 0 } onclick={ onQueuePlaylist } class="small">
-					Play
-				</button>
-				<button if={ tab == "playlist" } onclick={ onDeletePlaylist } class="danger small" >
-					Delete
-				</button>-->
 			</div>
 			<explorer
 				v-if="viewMode == 'explorer'"
@@ -32,7 +26,7 @@
 			></discography>
 			<album
 				v-if="viewMode == 'album'"
-				v-bind:discs="items"
+				v-bind:items="items"
 				v-on:itemClick="onItemClicked"
 				v-on:itemDragStart="onItemDragStart"
 				v-on:currentPathDragStart="onCurrentPathDragStart"
@@ -59,18 +53,75 @@ export default {
 
 	data() {
 		return {
-			items: [],
-			header: "",
-			subHeader: "",
-			viewMode: "" // explorer/discography/album
+			items: []
 		};
 	},
 
 	mounted() {
 		this.savedPositions = new Map();
 		this.path = null;
-		this.reset();
 		this.browse();
+	},
+
+	computed: {
+		header() {
+			let header = "";
+			for (let item of this.items) {
+				if (item.variant == "Song") {
+					if (header && item.fields.album && header != item.fields.album) {
+						header = null;
+						break;
+					} else {
+						header = header || item.fields.album;
+					}
+				}
+			}
+			return header || Utils.getPathTail(this.path) || "All Music";
+		},
+
+		subHeader() {
+			let subHeader = "";
+			for (let item of this.items) {
+				if (item.variant == "Song") {
+					subHeader = subHeader || item.fields.album_artist || item.fields.artist;
+				}
+			}
+			return subHeader;
+		},
+
+		viewMode() {
+			let onlySongs = true;
+			let onlyDirectories = true;
+			let allSameAlbum = true;
+			let allHaveAlbums = true;
+			let hasAnyPicture = false;
+			let album = null;
+
+			for (let item of this.items) {
+				if (!item.fields.album) {
+					allHaveAlbums = false;
+				} else if (!album) {
+					album = item.fields.album;
+				}
+				if (item.fields.artwork) {
+					hasAnyPicture = true;
+				}
+				if (item.variant == "Song") {
+					onlyDirectories = false;
+					allSameAlbum = allSameAlbum && item.fields.album == album;
+				} else {
+					onlySongs = false;
+				}
+			}
+
+			if (onlySongs && hasAnyPicture && allSameAlbum && this.items.length > 0) {
+				return "album";
+			}
+			if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
+				return "discography";
+			}
+			return "explorer";
+		}
 	},
 
 	watch: {
@@ -80,14 +131,6 @@ export default {
 	},
 
 	methods: {
-		// TODO can eventually remove this
-		reset() {
-			this.items = [];
-			this.header = "";
-			this.subHeader = "";
-			this.viewMode = "explorer";
-		},
-
 		browse() {
 			if (this.path) {
 				this.savedPositions.set(this.path, this.$refs.paneContent.scrollTop);
@@ -101,14 +144,13 @@ export default {
 			API.request("/browse/" + encodeURIComponent(newPath))
 				.then(res => res.json())
 				.then(data => {
-					this.reset();
 					this.path = newPath;
 					for (var i = 0; i < data.length; i++) {
 						data[i].fields = data[i].Directory || data[i].Song;
 						data[i].variant = data[i].Directory ? "Directory" : "Song";
 					}
 					this.tab = "browse";
-					this.displayItems(data);
+					this.items = data;
 					this.cleanSavedPositions();
 					Vue.nextTick(() => {
 						this.$refs.paneContent.scrollTop = this.savedPositions.get(newPath) || 0;
@@ -121,90 +163,6 @@ export default {
 				if (!this.path.startsWith(path)) {
 					this.savedPositions.delete(path);
 				}
-			}
-		},
-
-		getViewMode(items) {
-			var onlySongs = true;
-			var onlyDirectories = true;
-			var allSameAlbum = true;
-			var allHaveAlbums = true;
-			var hasAnyPicture = false;
-			var album = null;
-
-			for (var i = 0; i < items.length; i++) {
-				var item = items[i];
-				if (!item.fields.album) {
-					allHaveAlbums = false;
-				} else if (!album) {
-					album = item.fields.album;
-				}
-
-				if (item.fields.artwork) {
-					hasAnyPicture = true;
-				}
-
-				if (item.variant == "Song") {
-					onlyDirectories = false;
-					this.header = this.header || item.fields.album;
-					this.subHeader = this.subHeader || item.fields.album_artist || item.fields.artist;
-					allSameAlbum = allSameAlbum && item.fields.album == album;
-				} else {
-					onlySongs = false;
-					var slices = item.fields.path.replace(/\\/g, "/").split("/");
-					slices = slices.filter(function(s) {
-						return s.length > 0;
-					});
-					item.fields.name = slices[slices.length - 1];
-				}
-			}
-
-			this.header = this.header || Utils.getPathTail(this.path) || "All Music";
-
-			if (onlySongs && hasAnyPicture && allSameAlbum && items.length > 0) {
-				return "album";
-			}
-			if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
-				return "discography";
-			}
-
-			return "explorer";
-		},
-
-		// TODO move into album component
-		splitAlbumByDisc(items) {
-			var discs = [];
-			for (var i = 0; i < items.length; i++) {
-				var discNumber = items[i].fields.disc_number || 1;
-				var disc = discs.find(function(d) {
-					return d.discNumber == discNumber;
-				});
-				if (disc == undefined) {
-					disc = {
-						discNumber: discNumber,
-						songs: []
-					};
-					discs.push(disc);
-				}
-				disc.songs.push(items[i]);
-			}
-			for (var i = 0; i < discs.length; i++) {
-				discs[i].songs.sort(function(a, b) {
-					return (a.fields.track_number || 0) - (b.fields.track_number || 0);
-				});
-			}
-			discs.sort(function(a, b) {
-				return a.discNumber - b.discNumber;
-			});
-			return discs;
-		},
-
-		displayItems(items) {
-			this.viewMode = this.getViewMode(items);
-			if (this.viewMode == "album") {
-				this.items = this.splitAlbumByDisc(items);
-			} else {
-				this.items = items;
 			}
 		},
 

@@ -9,7 +9,7 @@
 		>
 			<div v-if="item.variant == 'Directory'" class="directory">
 				<i class="material-icons">folder</i>
-				{{ item.fields.name }}
+				{{ formatDirectoryName(item) }}
 			</div>
 			<div v-if="item.variant == 'Song'" class="song">{{ formatTrackDetails(item) }}</div>
 		</li>
@@ -46,6 +46,14 @@ export default {
 				details += utils.stripFileExtension(utils.getPathTail(item.fields.path));
 			}
 			return details;
+		},
+
+		formatDirectoryName(item) {
+			var slices = item.fields.path.replace(/\\/g, "/").split("/");
+			slices = slices.filter(function(s) {
+				return s.length > 0;
+			});
+			return slices[slices.length - 1];
 		}
 	}
 };
