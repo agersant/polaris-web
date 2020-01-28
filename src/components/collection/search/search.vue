@@ -57,15 +57,10 @@ export default {
 			API.request(url)
 				.then(res => res.json())
 				.then(data => {
-					// TODO this is duplicated with browser
+					// TODO this is duplicated with browser. Move within API.
 					for (let i = 0; i < data.length; i++) {
 						data[i].fields = data[i].Directory || data[i].Song;
 						data[i].variant = data[i].Directory ? "Directory" : "Song";
-						let slices = data[i].fields.path.replace(/\\/g, "/").split("/");
-						slices = slices.filter(function(s) {
-							return s.length > 0;
-						});
-						data[i].fields.name = slices[slices.length - 1];
 					}
 					this.results = data;
 				});
