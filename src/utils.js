@@ -1,3 +1,5 @@
+// TODO rename this to formatting and potentially move track formatting functions here
+
 export function getPathTail(path) {
 	if (!path) {
 		return null;

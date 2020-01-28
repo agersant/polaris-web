@@ -62,6 +62,7 @@ import { mapState } from "vuex";
 import API from "/src/api";
 import Disk from "/src/disk";
 import * as Utils from "/src/utils";
+import notify from "/src/notify";
 export default {
 	data() {
 		return {
@@ -310,20 +311,18 @@ export default {
 		},
 
 		onPlaybackError(event) {
-			// TODO port notify
-			var errorText = "'" + trackInfoPrimary + "' could not be played because ";
-			var artwork = artworkURL || null;
-
+			var errorText = "'" + this.trackInfoPrimary + "' could not be played because ";
+			var artwork = this.artworkURL || null;
 			const error = event.target.error;
 			switch (error.code) {
 				case error.MEDIA_ERR_NETWORK:
-					notify.spawn("Playback Error", artwork, errorText + "of a network error.");
+					notify("Playback Error", artwork, errorText + "of a network error.");
 					break;
 				case error.MEDIA_ERR_DECODE:
-					notify.spawn("Playback Error", artwork, errorText + "of a decoding error.");
+					notify("Playback Error", artwork, errorText + "of a decoding error.");
 					break;
 				case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-					notify.spawn("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
+					notify("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
 					break;
 				default:
 					console.log("Unexpected playback error: " + error.code);
