@@ -47,7 +47,7 @@
 						v-on:click="onClickTrack(track)"
 					>
 						<td data-cy="remove" class="remove">
-							<div class="remove noselect" v-on:click="onClickRemoveTrack(track)">[-]</div>
+							<div class="remove noselect" v-on:click.stop="onClickRemoveTrack(track)">[-]</div>
 						</td>
 						<td class="nowPlaying">
 							<i
