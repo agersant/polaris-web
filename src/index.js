@@ -5,8 +5,7 @@ import Router from "./router"
 import Store from "./store/store"
 import EntryPoint from "./components/entry-point"
 
-API.request('/initial_setup')
-	.then(res => res.json())
+API.initialSetup()
 	.then(data => {
 		if (!data.has_any_users) {
 			Router.push('/welcome').catch(err => { });

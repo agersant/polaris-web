@@ -1,20 +1,36 @@
 import Router from "/src/router"
 import Store from "/src/store/store"
 
+let decodeItems = function(items) {
+	let decoded = [];
+	for (let item of items) {
+		decoded.push({
+			fields: item.Directory || item.Song,
+			variant: item.Directory ? "Directory" : "Song",
+		});
+	}
+	return decoded;
+}
+
+let request = function(endpoint, options) {
+	if (!options) {
+		options = {};
+	}
+	options.credentials = "same-origin";
+	return fetch("api" + endpoint, options)
+		.then(res => {
+			if (res.status == 401) {
+				Router.push("/auth").catch(err => { });
+				throw "Authentication error";
+			}
+			return res;
+		});
+}
+
 export default {
-	request(endpoint, options) {
-		if (!options) {
-			options = {};
-		}
-		options.credentials = "same-origin";
-		return fetch("api" + endpoint, options)
-			.then(res => {
-				if (res.status == 401) {
-					Router.push("/auth").catch(err => { });
-					throw "Authentication error";
-				}
-				return res;
-			});
+	initialSetup() {
+		return request('/initial_setup')
+			.then(res => res.json());
 	},
 
 	login(username, password) {
@@ -32,5 +48,103 @@ export default {
 			}
 			return res;
 		});
-	}
+	},
+
+	getPreferences() {
+		return request("/preferences")
+			.then(res => res.json());
+	},
+
+	putPreferences(preferences) {
+		return request("/preferences", {
+			method: "PUT",
+			body: JSON.stringify(preferences),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	getSettings() {
+		return request("/settings")
+			.then(res => res.json());
+	},
+
+	putSettings(settings) {
+		return request("/settings", {
+			method: "PUT",
+			body: JSON.stringify(settings),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	triggerIndex() {
+		return request("/trigger_index", { method: "POST" });
+	},
+
+	browse(path) {
+		return request("/browse/" + encodeURIComponent(path))
+			.then(res => res.json())
+			.then(decodeItems);
+	},
+
+	flatten(path) {
+		return request("/flatten/" + encodeURIComponent(path))
+			.then(res => res.json());
+	},
+
+	random() {
+		return request("/random")
+			.then(res => res.json());
+	},
+
+	recent() {
+		return request("/recent")
+			.then(res => res.json());
+	},
+
+	search(query) {
+		return request("/search/" + encodeURIComponent(query))
+			.then(res => res.json())
+			.then(decodeItems);
+	},
+
+	playlists() {
+		return request("/playlists")
+			.then(res => res.json());
+	},
+
+	getPlaylist(name) {
+		return request("/playlist/" + encodeURIComponent(name))
+			.then(res => res.json());
+	},
+
+	putPlaylist(name, tracks) {
+		let playlist = { tracks: tracks };
+		return request("/playlist/" + encodeURIComponent(name), {
+			method: "PUT",
+			body: JSON.stringify(playlist),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	deletePlaylist(name) {
+		return request("/playlist/" + encodeURIComponent(name), { method: "DELETE" });
+	},
+
+	lastFMNowPlaying(path) {
+		return request("/lastfm/now_playing/" + encodeURIComponent(path), { method: "PUT" });
+	},
+
+	lastFMScrobble(path) {
+		return request("/lastfm/scrobble/" + encodeURIComponent(path), { method: "POST" });
+	},
+
+	lastFMUnlink() {
+		return request("/lastfm/link", { method: "DELETE" });
+	},
 }

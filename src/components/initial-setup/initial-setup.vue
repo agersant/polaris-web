@@ -34,14 +34,10 @@ export default {
 	},
 
 	mounted() {
-		API.request("/settings")
-			.then(res => {
-				return res.json();
-			})
-			.then(data => {
-				this.config = data;
-				this.step = "welcome";
-			});
+		API.getSettings().then(data => {
+			this.config = data;
+			this.step = "welcome";
+		});
 	},
 
 	methods: {
@@ -61,9 +57,9 @@ export default {
 
 		setMount(mountDir) {
 			this.config.mount_dirs = [mountDir];
-			this.commit().then(res => {
-				API.request("/trigger_index", { method: "POST" }).then(this.next);
-			});
+			this.commit()
+				.then(API.triggerIndex)
+				.then(this.next);
 		},
 
 		setUser(user) {
@@ -72,13 +68,7 @@ export default {
 		},
 
 		commit() {
-			return API.request("/settings", {
-				method: "PUT",
-				body: JSON.stringify(this.config),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			}).then(res => {
+			return API.putSettings(this.config).then(res => {
 				if (!res.ok) {
 					console.log("Error while applying settings");
 					throw res.status;

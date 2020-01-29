@@ -39,16 +39,14 @@ export default {
 	methods: {
 		refresh() {
 			this.items = [];
-			API.request("/random")
-				.then(res => res.json())
-				.then(data => {
-					this.items = data.map(a => {
-						return {
-							fields: a,
-							variant: "Directory"
-						};
-					});
+			API.random().then(data => {
+				this.items = data.map(a => {
+					return {
+						fields: a,
+						variant: "Directory"
+					};
 				});
+			});
 		},
 
 		onItemClicked(item) {

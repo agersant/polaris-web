@@ -27,12 +27,10 @@ export default {
 
 	methods: {
 		applyTheme() {
-			API.request("/preferences")
-				.then(res => res.json())
-				.then(data => {
-					Theming.setBase(data.web_theme_base);
-					Theming.setAccentColor(data.web_theme_accent);
-				});
+			API.getPreferences().then(data => {
+				Theming.setBase(data.web_theme_base);
+				Theming.setAccentColor(data.web_theme_accent);
+			});
 		}
 	}
 };

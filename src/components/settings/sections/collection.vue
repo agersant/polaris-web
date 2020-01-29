@@ -79,12 +79,10 @@ export default {
 
 	mounted() {
 		this.reindexState = this.reindexStates.ready;
-		API.request("/settings")
-			.then(res => res.json())
-			.then(data => {
-				this.settings = data;
-				this.reindexPeriod = Math.round(data.reindex_every_n_seconds / 60);
-			});
+		API.getSettings().then(data => {
+			this.settings = data;
+			this.reindexPeriod = Math.round(data.reindex_every_n_seconds / 60);
+		});
 	},
 
 	methods: {
@@ -122,7 +120,7 @@ export default {
 
 		reindex() {
 			this.reindexState = this.reindexStates.applying;
-			API.request("/trigger_index", { method: "POST" }).then(res => {
+			API.triggerIndex().then(res => {
 				if (res.status != 200) {
 					this.reindexState = this.reindexStates.failure;
 					console.log("Index trigger error: " + res.status);
@@ -136,13 +134,7 @@ export default {
 		},
 
 		commit() {
-			API.request("/settings", {
-				method: "PUT",
-				body: JSON.stringify(this.settings),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
+			API.putSettings(this.settings);
 		}
 	}
 };

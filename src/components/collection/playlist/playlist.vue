@@ -47,13 +47,11 @@ export default {
 	methods: {
 		listTracks() {
 			this.name = this.$route.params.pathMatch;
-			API.request("/playlist/" + encodeURIComponent(this.name))
-				.then(res => res.json())
-				.then(data => {
-					this.tracks = data.map(d => {
-						return { fields: d, variant: "Song" };
-					});
+			API.getPlaylist(this.name).then(data => {
+				this.tracks = data.map(d => {
+					return { fields: d, variant: "Song" };
 				});
+			});
 		},
 
 		play() {
@@ -61,7 +59,7 @@ export default {
 		},
 
 		deletePlaylist() {
-			API.request("/playlist/" + encodeURIComponent(this.name), { method: "DELETE" }).then(res => {
+			API.deletePlaylist(this.name).then(() => {
 				this.$router.push("/playlists");
 			});
 		},

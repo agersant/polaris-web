@@ -149,7 +149,7 @@ export default {
 						.play()
 						.then(() => {
 							this.secondsPlayed = 0;
-							API.request("/lastfm/now_playing/" + encodeURIComponent(to.info.path), { method: "PUT" });
+							API.lastFMNowPlaying(to.info.path);
 						})
 						.catch(() => {})
 						.finally(() => {
@@ -261,7 +261,7 @@ export default {
 			if (this.canScrobble) {
 				var shouldScrobble = this.duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
-					API.request("/lastfm/scrobble/" + encodeURIComponent(this.currentTrack.info.path), { method: "POST" });
+					API.lastFMScrobble(this.currentTrack.info.path);
 					this.canScrobble = false;
 				}
 			}

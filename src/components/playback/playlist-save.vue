@@ -71,16 +71,8 @@ export default {
 
 		save() {
 			this.saveState = this.saveStates.saving;
-
-			let playlist = {};
-			playlist.tracks = this.tracks.map(t => t.info.path);
-			API.request("/playlist/" + encodeURIComponent(this.name), {
-				method: "PUT",
-				body: JSON.stringify(playlist),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			}).then(res => {
+			let tracks = this.tracks.map(t => t.info.path);
+			API.putPlaylist(this.name, tracks).then(res => {
 				let status = res.ok ? "success" : "failure";
 				this.saveState = this.saveStates[status];
 				setTimeout(() => {

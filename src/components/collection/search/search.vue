@@ -53,17 +53,9 @@ export default {
 			}
 			this.query = query;
 
-			const url = "/search/" + encodeURIComponent(this.query);
-			API.request(url)
-				.then(res => res.json())
-				.then(data => {
-					// TODO this is duplicated with browser. Move within API.
-					for (let i = 0; i < data.length; i++) {
-						data[i].fields = data[i].Directory || data[i].Song;
-						data[i].variant = data[i].Directory ? "Directory" : "Song";
-					}
-					this.results = data;
-				});
+			API.search(this.query).then(results => {
+				this.results = results;
+			});
 		},
 
 		queueAll() {

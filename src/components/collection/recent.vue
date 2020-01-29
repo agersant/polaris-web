@@ -35,16 +35,14 @@ export default {
 	methods: {
 		refresh() {
 			this.items = [];
-			API.request("/recent")
-				.then(res => res.json())
-				.then(data => {
-					this.items = data.map(a => {
-						return {
-							fields: a,
-							variant: "Directory"
-						};
-					});
+			API.recent().then(data => {
+				this.items = data.map(a => {
+					return {
+						fields: a,
+						variant: "Directory"
+					};
 				});
+			});
 		},
 
 		onItemClicked(item) {

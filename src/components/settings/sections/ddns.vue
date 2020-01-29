@@ -46,11 +46,9 @@ export default {
 	},
 
 	mounted() {
-		API.request("/settings")
-			.then(res => res.json())
-			.then(data => {
-				this.ddns = data.ydns;
-			});
+		API.getSettings().then(data => {
+			this.ddns = data.ydns;
+		});
 	},
 
 	methods: {
@@ -58,13 +56,7 @@ export default {
 			let settings = {
 				ydns: this.ddns
 			};
-			API.request("/settings", {
-				method: "PUT",
-				body: JSON.stringify(settings),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
+			API.putSettings(settings);
 		}
 	}
 };

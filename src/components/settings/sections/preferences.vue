@@ -73,17 +73,15 @@ export default {
 
 	methods: {
 		refreshPreferences() {
-			API.request("/preferences")
-				.then(res => res.json())
-				.then(data => {
-					this.preferences = data;
-					if (!this.preferences.web_theme_base) {
-						this.preferences.web_theme_base = Theming.getCurrentBase();
-					}
-					if (!this.preferences.web_theme_accent) {
-						this.preferences.web_theme_accent = Theming.getCurrentAccentColor();
-					}
-				});
+			API.getPreferences().then(data => {
+				this.preferences = data;
+				if (!this.preferences.web_theme_base) {
+					this.preferences.web_theme_base = Theming.getCurrentBase();
+				}
+				if (!this.preferences.web_theme_accent) {
+					this.preferences.web_theme_accent = Theming.getCurrentAccentColor();
+				}
+			});
 		},
 
 		onAccentPreview() {
@@ -146,17 +144,11 @@ export default {
 		},
 
 		unlinkLastFMAccount(e) {
-			API.request("/lastfm/link", { method: "DELETE" }).then(this.refreshPreferences);
+			API.lastFMUnlink().then(this.refreshPreferences);
 		},
 
 		commit() {
-			API.request("/preferences", {
-				method: "PUT",
-				body: JSON.stringify(this.preferences),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
+			API.putPreferences(this.preferences);
 		}
 	}
 };

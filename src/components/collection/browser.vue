@@ -141,21 +141,15 @@ export default {
 				newPath = newPath.substring(1);
 			}
 
-			API.request("/browse/" + encodeURIComponent(newPath))
-				.then(res => res.json())
-				.then(data => {
-					this.path = newPath;
-					for (var i = 0; i < data.length; i++) {
-						data[i].fields = data[i].Directory || data[i].Song;
-						data[i].variant = data[i].Directory ? "Directory" : "Song";
-					}
-					this.tab = "browse";
-					this.items = data;
-					this.cleanSavedPositions();
-					Vue.nextTick(() => {
-						this.$refs.paneContent.scrollTop = this.savedPositions.get(newPath) || 0;
-					});
+			API.browse(newPath).then(items => {
+				this.path = newPath;
+				this.tab = "browse";
+				this.items = items;
+				this.cleanSavedPositions();
+				Vue.nextTick(() => {
+					this.$refs.paneContent.scrollTop = this.savedPositions.get(newPath) || 0;
 				});
+			});
 		},
 
 		cleanSavedPositions() {

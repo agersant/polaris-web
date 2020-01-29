@@ -62,11 +62,9 @@ export default {
 	},
 
 	mounted() {
-		API.request("/settings")
-			.then(res => res.json())
-			.then(data => {
-				this.users = data.users;
-			});
+		API.getSettings().then(data => {
+			this.users = data.users;
+		});
 	},
 
 	methods: {
@@ -105,13 +103,7 @@ export default {
 			let settings = {
 				users: this.users
 			};
-			API.request("/settings", {
-				method: "PUT",
-				body: JSON.stringify(settings),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
+			API.putSettings(settings);
 		}
 	}
 };

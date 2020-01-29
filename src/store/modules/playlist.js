@@ -52,25 +52,20 @@ const actions = {
 	},
 
 	queueDirectory({ commit, dispatch }, path) {
-		let url = "/flatten/" + encodeURIComponent(path);
-		API.request(url)
-			.then(res => res.json())
-			.then(data => {
-				commit("queueTracks", data);
+		API.flatten(path)
+			.then(items => {
+				commit("queueTracks", items);
 				dispatch("saveToDisk");
 			});
 	},
 
 	queuePlaylist({ commit, dispatch }, name) {
-		let url = "/playlist/" + encodeURIComponent(name);
-		API.request(url)
-			.then(res => res.json())
-			.then(data => {
-				commit("clear");
-				commit("queueTracks", data);
-				commit("setName", name);
-				dispatch("saveToDisk");
-			});
+		API.getPlaylist(name).then(data => {
+			commit("clear");
+			commit("queueTracks", data);
+			commit("setName", name);
+			dispatch("saveToDisk");
+		});
 	},
 
 	saveToDisk() {

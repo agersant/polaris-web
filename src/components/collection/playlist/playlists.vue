@@ -41,11 +41,9 @@ export default {
 
 	methods: {
 		loadPlaylists() {
-			API.request("/playlists")
-				.then(res => res.json())
-				.then(data => {
-					this.playlists = data;
-				});
+			API.playlists().then(data => {
+				this.playlists = data;
+			});
 		},
 
 		onItemClicked(playlist) {
