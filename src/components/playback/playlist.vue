@@ -223,17 +223,6 @@ export default {
 		}
 	}
 };
-/*
-	queuePlaylist(name, tracks) {
-		this.clear();
-		this.playlistName = name;
-		if (tracks) {
-			this.queueTracks(tracks);
-		} else {
-			this.queueURL('/playlist/' + encodeURIComponent(name));
-		}
-	}
-*/
 </script>
 
 <style scoped>
