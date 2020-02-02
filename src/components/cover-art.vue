@@ -20,7 +20,7 @@ export default {
 
 	mounted() {
 		this.resizeHandler = window.addEventListener("resize", this.resize);
-		this.$refs.image.addEventListener("load", this.resize);
+		this.loadHandler = this.$refs.image.addEventListener("load", this.resize);
 		Vue.nextTick(this.resize);
 	},
 
@@ -29,10 +29,18 @@ export default {
 			window.removeEventListener(this.resizeHandler);
 			this.resizeHandler = null;
 		}
+		if (this.loadHandler && this.$refs.image) {
+			this.$refs.image.removeEventListener(this.loadHandler);
+			this.loadHandler = null;
+		}
 	},
 
 	methods: {
 		resize() {
+			if (!this.$refs.image) {
+				return;
+			}
+
 			let sourceWidth = this.$refs.image.naturalWidth;
 			let sourceHeight = this.$refs.image.naturalHeight;
 			if (sourceWidth == 0 || sourceHeight == 0) {
