@@ -202,7 +202,6 @@ export default {
 				details += track.info.track_number;
 				details += ". ";
 			}
-			console.log(track);
 			details += Format.title(track.info);
 			return details;
 		},
