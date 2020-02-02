@@ -19,9 +19,3 @@ export default {
 	}
 };
 </script>
-
-<style scoped>
-.paneContent {
-	padding-top: 50px;
-}
-</style>

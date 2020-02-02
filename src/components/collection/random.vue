@@ -72,10 +72,6 @@ export default {
 	vertical-align: top;
 }
 
-.paneContent {
-	padding-top: 50px;
-}
-
 .viewActions {
 	margin-bottom: 40px;
 	font-size: 0;

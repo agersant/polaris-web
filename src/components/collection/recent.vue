@@ -67,8 +67,4 @@ export default {
 	font-size: 0.875rem;
 	vertical-align: top;
 }
-
-.paneContent {
-	padding-top: 50px;
-}
 </style>

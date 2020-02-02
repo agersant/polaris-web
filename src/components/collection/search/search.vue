@@ -92,10 +92,6 @@ export default {
 
 <style scoped>
 /*TODO this whole style block is copy pasta from browser*/
-.paneContent {
-	padding-top: 50px;
-}
-
 .viewActions {
 	margin-bottom: 40px;
 	font-size: 0;

@@ -106,6 +106,7 @@ export default {
 	position: relative;
 	height: calc(100% - 100px);
 	top: 100px;
+	padding-top: 50px;
 	padding-left: 50px;
 	padding-right: 50px;
 	overflow-x: hidden;

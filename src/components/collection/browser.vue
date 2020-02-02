@@ -191,10 +191,6 @@ export default {
 </script>
 
 <style scoped>
-.paneContent {
-	padding-top: 50px;
-}
-
 .viewActions {
 	margin-bottom: 40px;
 	font-size: 0;
