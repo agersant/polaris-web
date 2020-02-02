@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import * as Format from "/src/format";
 export default {
 	props: {
@@ -85,7 +86,7 @@ export default {
 			for (const disc of this.discs) {
 				for (const song of disc.songs) {
 					if (song.fields.artwork) {
-						return "api/serve/" + encodeURIComponent(song.fields.artwork);
+						return API.makeThumbnailURL(song.fields.artwork);
 					}
 				}
 			}

@@ -93,14 +93,14 @@ export default {
 			if (!this.currentTrack) {
 				return null;
 			}
-			return "api/serve/" + encodeURIComponent(this.currentTrack.info.path);
+			return API.makeAudioURL(this.currentTrack.info.path);
 		},
 
 		artworkURL: function() {
 			if (!this.currentTrack || !this.currentTrack.info.artwork) {
 				return null;
 			}
-			return "api/serve/" + encodeURIComponent(this.currentTrack.info.artwork);
+			return API.makeThumbnailURL(this.currentTrack.info.artwork);
 		},
 
 		formattedPlaybackTime: function() {

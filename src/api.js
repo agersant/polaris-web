@@ -28,6 +28,14 @@ let request = function(endpoint, options) {
 }
 
 export default {
+	makeAudioURL(path) {
+		return "api/audio/" + encodeURIComponent(path);
+	},
+
+	makeThumbnailURL(path) {
+		return "api/thumbnail/" + encodeURIComponent(path) + "?pad=false";
+	},
+
 	initialSetup() {
 		return request('/initial_setup')
 			.then(res => res.json());

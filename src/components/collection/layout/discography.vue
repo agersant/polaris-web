@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import API from "/src/api";
 import CoverArt from "/src/components/cover-art";
 export default {
 	components: {
@@ -45,7 +46,7 @@ export default {
 
 	methods: {
 		getArtworkURL(album) {
-			return "api/serve/" + encodeURIComponent(album.fields.artwork);
+			return API.makeThumbnailURL(album.fields.artwork);
 		},
 
 		onItemDragStart(event, album) {
