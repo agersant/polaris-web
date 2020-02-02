@@ -39,7 +39,7 @@ jobs:
 
     - name: Install Node.js
       uses: actions/setup-node@v1
-    - name: Compile Polaris Web
+    - name: Build Polaris Web
       run: npm install && npm run production
     - name: Run Automated Tests
       uses: cypress-io/github-action@v1
