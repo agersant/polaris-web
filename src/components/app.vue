@@ -37,7 +37,8 @@ export default {
 </script>
 
 <style>
-.pane {
+.pane,
+.player {
 	overflow-x: hidden;
 	background-color: var(--theme-background);
 }
