@@ -61,7 +61,7 @@ import Vue from "vue";
 import { mapState } from "vuex";
 import API from "/src/api";
 import Disk from "/src/disk";
-import * as Utils from "/src/utils";
+import * as Format from "/src/format";
 import notify from "/src/notify";
 export default {
 	data() {
@@ -98,12 +98,7 @@ export default {
 		},
 
 		formattedPlaybackTime: function() {
-			const minutes = Math.floor(this.secondsPlayed / 60);
-			let seconds = Math.floor(this.secondsPlayed) - 60 * minutes;
-			if (seconds < 10) {
-				seconds = "0" + seconds;
-			}
-			return minutes + ":" + seconds;
+			return Format.duration(this.secondsPlayed);
 		},
 
 		trackProgress: function() {
@@ -120,7 +115,7 @@ export default {
 			const track = this.currentTrack;
 			let result = track.info.artist ? track.info.artist : "Unknown Artist";
 			result += " - ";
-			result += track.info.title || utils.stripFileExtension(utils.getPathTail(track.info.path));
+			result += Format.title(track);
 			return result;
 		},
 
@@ -232,7 +227,7 @@ export default {
 			const info = this.currentTrack.info;
 			let trackInfo = info.artist ? info.artist : "Unknown Artist";
 			trackInfo += " - ";
-			trackInfo += info.title || Utils.stripFileExtension(Utils.getPathTail(info.path));
+			trackInfo += Format.title(info);
 			document.title = trackInfo;
 		},
 

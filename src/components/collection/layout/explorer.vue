@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import * as Format from "/src/format";
 export default {
 	props: {
 		items: {
@@ -40,11 +41,7 @@ export default {
 				details += item.fields.track_number;
 				details += ". ";
 			}
-			if (item.fields.title) {
-				details += item.fields.title;
-			} else {
-				details += utils.stripFileExtension(utils.getPathTail(item.fields.path));
-			}
+			details += Format.title(item.fields);
 			return details;
 		},
 

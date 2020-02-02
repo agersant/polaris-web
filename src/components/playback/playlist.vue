@@ -79,7 +79,7 @@
 
 <script>
 import { mapState } from "vuex";
-import * as Utils from "/src/utils";
+import * as Format from "/src/format";
 import PlaylistSave from "./playlist-save";
 export default {
 	components: {
@@ -202,24 +202,14 @@ export default {
 				details += track.info.track_number;
 				details += ". ";
 			}
-			if (track.info.title) {
-				details += track.info.title;
-			} else {
-				details += Utils.stripFileExtension(Utils.getPathTail(track.info.path));
-			}
+			console.log(track);
+			details += Format.title(track.info);
 			return details;
 		},
 
 		formatTrackDuration(track) {
 			let durationInSeconds = parseInt(track.info.duration, 10);
-			if (isNaN(durationInSeconds)) {
-				return "";
-			}
-			let date = new Date(null);
-			date.setSeconds(durationInSeconds);
-			let formatted = date.toISOString().substr(11, 8);
-			formatted = formatted.replace(/^[0:]{1,4}/, "");
-			return formatted;
+			return Format.duration(durationInSeconds);
 		}
 	}
 };

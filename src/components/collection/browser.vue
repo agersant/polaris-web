@@ -38,7 +38,7 @@
 <script>
 import Vue from "vue";
 import API from "/src/api";
-import * as Utils from "/src/utils";
+import * as Format from "/src/format";
 import Breadcrumbs from "./breadcrumbs";
 import Album from "./layout/album";
 import Discography from "./layout/discography";
@@ -76,7 +76,7 @@ export default {
 					}
 				}
 			}
-			return header || Utils.getPathTail(this.path) || "All Music";
+			return header || Format.getPathTail(this.path) || "All Music";
 		},
 
 		subHeader() {

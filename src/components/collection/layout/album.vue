@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import * as Utils from "/src/utils";
+import * as Format from "/src/format";
 export default {
 	props: {
 		items: {
@@ -93,7 +93,7 @@ export default {
 
 	methods: {
 		formatSongTitle(item) {
-			return item.fields.title || Utils.stripFileExtension(Utils.getPathTail(item.fields.path));
+			return Format.title(item.fields);
 		}
 	}
 };
