@@ -39,6 +39,7 @@
 
 		<div v-if="currentTrack" class="art">
 			<cover-art v-if="artworkURL" v-bind:url="artworkURL"></cover-art>
+			<div v-if="!artworkURL" class="missing-art"></div>
 		</div>
 
 		<div class="currentTrack" v-if="currentTrack">
@@ -96,7 +97,7 @@ export default {
 		},
 
 		artworkURL: function() {
-			if (!this.currentTrack && this.currentTrack.info.artwork) {
+			if (!this.currentTrack || !this.currentTrack.info.artwork) {
 				return null;
 			}
 			return "api/serve/" + encodeURIComponent(this.currentTrack.info.artwork);
@@ -369,6 +370,12 @@ audio {
 	width: 120px;
 	height: 120px;
 	position: relative;
+}
+
+.missing-art {
+	height: 100%;
+	border-radius: 5px;
+	background: repeating-linear-gradient(-45deg, var(--theme-background-muted), var(--theme-background-muted) 8px, var(--theme-background) 8px, var(--theme-background) 16px);
 }
 
 .currentTrack {
