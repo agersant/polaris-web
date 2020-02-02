@@ -69,7 +69,7 @@ jobs:
     name: Make Release
     needs: test
     runs-on: ubuntu-16.04
-    if: endsWith(github.ref, 'master')
+    if: github.ref == 'refs/heads/master'
 
     steps:
     - name: Retrieve Build Output
