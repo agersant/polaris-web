@@ -10,9 +10,7 @@
 			v-on:dragstart="event => onItemDragStart(event, album)"
 		>
 			<div class="cover">
-				<div class="coverCanvas">
-					<img v-if="album.fields.artwork" v-bind:src="getArtworkURL(album)" />
-				</div>
+				<cover-art v-if="album.fields.artwork" v-bind:url="getArtworkURL(album)"></cover-art>
 			</div>
 			<div class="details">
 				<div class="title">{{ album.fields.album }}</div>
@@ -24,7 +22,12 @@
 </template>
 
 <script>
+import CoverArt from "/src/components/cover-art";
 export default {
+	components: {
+		"cover-art": CoverArt
+	},
+
 	props: {
 		albums: {
 			type: Array,
@@ -85,18 +88,6 @@ ul {
 	content: "";
 	display: block;
 	padding-bottom: 100%;
-}
-
-.coverCanvas {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-}
-
-img {
-	width: 100%;
-	height: 100%;
-	border-radius: 5px;
 }
 
 .details {

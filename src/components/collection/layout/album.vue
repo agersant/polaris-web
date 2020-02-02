@@ -1,10 +1,12 @@
 <template>
 	<div class="details">
-		<img
-			v-bind:src="artworkURL"
-			draggable="true"
-			v-on:dragstart="event => $emit('currentPathDragStart', event)"
-		/>
+		<div class="coverArt">
+			<img
+				v-bind:src="artworkURL"
+				draggable="true"
+				v-on:dragstart="event => $emit('currentPathDragStart', event)"
+			/>
+		</div>
 		<div class="trackList">
 			<ul>
 				<li v-for="(disc, index) in discs" v-bind:key="index">
@@ -107,13 +109,17 @@ export default {
 	margin-bottom: 50px;
 }
 
-img {
+.coverArt {
 	flex-shrink: 0;
-	width: 100%;
-	height: 100%;
-	max-width: 15vw;
-	max-height: 15vw;
+	width: 12vw;
+	display: flex;
+	justify-content: start;
+	align-items: start;
 	margin-bottom: 30px;
+}
+
+img {
+	width: 100%;
 	border-radius: 5px;
 }
 

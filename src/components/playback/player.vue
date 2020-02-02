@@ -38,7 +38,7 @@
 		</div>
 
 		<div v-if="currentTrack" class="art">
-			<img v-if="artworkURL" v-bind:src="artworkURL" />
+			<cover-art v-if="artworkURL" v-bind:url="artworkURL"></cover-art>
 		</div>
 
 		<div class="currentTrack" v-if="currentTrack">
@@ -63,7 +63,12 @@ import API from "/src/api";
 import Disk from "/src/disk";
 import * as Format from "/src/format";
 import notify from "/src/notify";
+import CoverArt from "/src/components/cover-art";
 export default {
+	components: {
+		"cover-art": CoverArt
+	},
+
 	data() {
 		return {
 			volume: 1,
@@ -363,13 +368,7 @@ audio {
 .art {
 	width: 120px;
 	height: 120px;
-	border-radius: 5px;
-}
-
-.art img {
-	width: 100%;
-	height: 100%;
-	border-radius: 5px;
+	position: relative;
 }
 
 .currentTrack {
