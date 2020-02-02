@@ -113,4 +113,27 @@ export default {
 	overflow-y: auto;
 	box-sizing: border-box;
 }
+
+.viewActions {
+	margin-bottom: 40px;
+	font-size: 0;
+}
+
+.viewActions .header {
+	line-height: 1;
+	margin-bottom: 5px;
+	font-size: 1.25rem;
+	font-family: "Montserrat", "sans-serif";
+}
+
+.viewActions .subHeader {
+	line-height: 1;
+	font-size: 1.25rem;
+	margin-bottom: 5px;
+	color: var(--theme-foreground-muted);
+}
+
+.viewActions button {
+	display: inline;
+}
 </style>

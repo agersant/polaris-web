@@ -71,20 +71,4 @@ export default {
 	font-size: 0.875rem;
 	vertical-align: top;
 }
-
-.viewActions {
-	margin-bottom: 40px;
-	font-size: 0;
-}
-
-.viewActions .header {
-	line-height: 1;
-	margin-bottom: 5px;
-	font-size: 1.25rem;
-	font-family: "Montserrat", "sans-serif";
-}
-
-.viewActions button {
-	display: inline;
-}
 </style>
