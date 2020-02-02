@@ -72,10 +72,12 @@ jobs:
     if: github.ref == 'refs/heads/master'
 
     steps:
-    - name: Retrieve Build Output
+    - name: Retrieve Build
       uses: actions/download-artifact@v1
       with:
         name: dist
+    - name: Compress Build
+      run: zip -r web.zip dist
     - name: Generate build number
       uses: einaregilsson/build-number@v2
       with:
@@ -96,6 +98,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist.zip
+        asset_path: web.zip
         asset_name: web.zip
         asset_content_type: application/gzip
