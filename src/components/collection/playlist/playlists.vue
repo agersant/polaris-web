@@ -5,9 +5,9 @@
 		</div>
 
 		<div class="paneContent">
-			<ul v-if="playlists.length > 0">
+			<ul v-if="playlists.listing.length > 0">
 				<li
-					v-for="(playlist, index) in playlists"
+					v-for="(playlist, index) in playlists.listing"
 					v-bind:key="index"
 					class="noselect"
 					draggable="true"
@@ -15,7 +15,7 @@
 					v-on:dragstart="event => onItemDragStart(event, playlist)"
 				>{{ playlist.name }}</li>
 			</ul>
-			<div class="help" v-if="playlists.length == 0">
+			<div class="help" v-if="playlists.listing.length == 0">
 				<i class="material-icons md-48">playlist_add</i>
 				<br />Save a playlist by pressing the
 				<i class="save material-icons md-20">save</i> button above it.
@@ -26,26 +26,22 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import API from "/src/api";
 export default {
 	data() {
-		return {
-			playlists: []
-		};
+		return {};
+	},
+
+	computed: {
+		...mapState(["playlists"])
 	},
 
 	mounted() {
-		this.loadPlaylists();
-		// TODO needs live update when a new playlist is saved
+		this.$store.dispatch("playlists/refresh");
 	},
 
 	methods: {
-		loadPlaylists() {
-			API.playlists().then(data => {
-				this.playlists = data;
-			});
-		},
-
 		onItemClicked(playlist) {
 			this.$router.push("/playlist/" + playlist.name);
 		},

@@ -75,6 +75,7 @@ export default {
 			API.putPlaylist(this.name, tracks).then(res => {
 				let status = res.ok ? "success" : "failure";
 				this.saveState = this.saveStates[status];
+				this.$store.dispatch("playlists/refresh");
 				setTimeout(() => {
 					if (res.ok) {
 						this.$emit("complete");
