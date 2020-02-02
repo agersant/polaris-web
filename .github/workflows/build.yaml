@@ -59,3 +59,43 @@ jobs:
         name: cypress-videos
         path: cypress/videos
 
+    - name: Upload Build
+      uses: actions/upload-artifact@v1
+      with:
+        name: dist
+        path: dist
+
+ release:
+    name: Make Release
+    needs: test
+    runs-on: ubuntu-16.04
+    if: endsWith(github.ref, 'master')
+
+    steps:
+    - name: Retrieve Build Output
+      uses: actions/download-artifact@v1
+      with:
+        name: dist
+    - name: Generate build number
+      uses: einaregilsson/build-number@v2
+      with:
+        token: ${{secrets.GITHUB_TOKEN}}
+    - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: build-${{ env.BUILD_NUMBER }}
+          release_name: Polaris Web Build ${{ env.BUILD_NUMBER }}
+          draft: false
+          prerelease: false
+    - name: Upload Release Content
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist.zip
+        asset_name: web.zip
+        asset_content_type: application/gzip
