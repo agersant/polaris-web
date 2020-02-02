@@ -62,7 +62,7 @@ jobs:
     - name: Upload Build
       uses: actions/upload-artifact@v1
       with:
-        name: dist
+        name: web
         path: dist
 
   release:
@@ -75,9 +75,9 @@ jobs:
     - name: Retrieve Build
       uses: actions/download-artifact@v1
       with:
-        name: dist
+        name: web
     - name: Compress Build
-      run: zip -r web.zip dist
+      run: zip -r web.zip web
     - name: Generate build number
       uses: einaregilsson/build-number@v2
       with:
