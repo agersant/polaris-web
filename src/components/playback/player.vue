@@ -115,7 +115,7 @@ export default {
 			const track = this.currentTrack;
 			let result = track.info.artist ? track.info.artist : "Unknown Artist";
 			result += " - ";
-			result += Format.title(track);
+			result += Format.title(track.info);
 			return result;
 		},
 
