@@ -1,5 +1,5 @@
 <template>
-	<div class="playlist">
+	<div class="right pane">
 		<div class="paneHeader">
 			<h2>{{ playlist.name || "Playlist" }}</h2>
 			<div class="playlistOperations">
@@ -309,5 +309,9 @@ tr.nowPlaying td * {
 .material-icons.nowPlaying {
 	vertical-align: middle;
 	padding-bottom: 2px;
+}
+
+.help {
+	margin-top: 50px;
 }
 </style>

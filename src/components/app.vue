@@ -37,12 +37,7 @@ export default {
 </script>
 
 <style>
-.playlist,
-.browser,
-.settings,
-.search,
-.playlists,
-.player {
+.pane {
 	overflow-x: hidden;
 	background-color: var(--theme-background);
 }
@@ -53,17 +48,14 @@ export default {
 	height: 100%;
 }
 
-.browser,
-.settings,
-.search,
-.playlists {
+.pane.left {
 	position: absolute;
 	width: calc(40% - 50px);
 	left: 50px;
 	height: 100%;
 }
 
-.playlist {
+.pane.right {
 	position: absolute;
 	width: 60%;
 	right: 0;

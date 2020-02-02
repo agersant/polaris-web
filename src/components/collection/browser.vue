@@ -1,5 +1,5 @@
 <template>
-	<div class="browser">
+	<div class="left pane">
 		<div class="paneHeader">
 			<h2>Music Collection</h2>
 			<breadcrumbs></breadcrumbs>

@@ -1,5 +1,5 @@
 <template>
-	<div class="browser">
+	<div class="left pane">
 		<div class="paneHeader">
 			<h2>Search</h2>
 			<search-input></search-input>

@@ -1,5 +1,5 @@
 <template>
-	<div class="playlists">
+	<div class="left pane">
 		<div class="paneHeader">
 			<h2>Playlists</h2>
 		</div>
@@ -75,10 +75,6 @@ li:not(:first-child) {
 li {
 	cursor: pointer;
 	padding-bottom: 6px;
-}
-
-.help {
-	margin-top: -50px;
 }
 
 .help i.save {

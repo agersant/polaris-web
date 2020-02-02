@@ -1,5 +1,5 @@
 <template>
-	<div class="browser">
+	<div class="left pane">
 		<div class="paneHeader">
 			<h2>Random</h2>
 			<div class="more noselect" v-on:click="refresh">
