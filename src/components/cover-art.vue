@@ -21,7 +21,7 @@ export default {
 	mounted() {
 		this.resizeHandler = window.addEventListener("resize", this.resize);
 		this.loadHandler = this.$refs.image.addEventListener("load", this.resize);
-		Vue.nextTick(this.resize);
+		this.resize();
 	},
 
 	unmounted() {
@@ -65,6 +65,7 @@ export default {
 				height = sourceHeight * (availableWidth / sourceWidth);
 			}
 
+			this.$refs.image.style.setProperty("visibility", "initial");
 			this.$refs.image.style.setProperty("width", width + "px");
 			this.$refs.image.style.setProperty("height", height + "px");
 		}
@@ -84,6 +85,7 @@ export default {
 }
 
 img {
+	visibility: hidden;
 	border-radius: 5px;
 }
 </style>
