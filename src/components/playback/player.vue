@@ -360,6 +360,7 @@ export default {
 	flex-flow: row nowrap;
 	align-items: center;
 	justify-content: center;
+	overflow: hidden;
 }
 
 audio {
