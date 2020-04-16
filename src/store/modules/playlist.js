@@ -73,6 +73,7 @@ const actions = {
 			Disk.save("playlistName", state.name);
 			let currentTrackIndex = state.tracks.indexOf(state.currentTrack);
 			Disk.save("currentTrackIndex", currentTrackIndex);
+			Disk.save("playbackOrder", state.playbackOrder);
 		}
 	}
 }
