@@ -30,7 +30,7 @@ describe('Playlist', function() {
 		cy.contains('Music Collection')
 		cy.contains('Test').click()
 		cy.contains('Queue All').click()
-		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 12)
+		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 13)
 	})
 
 	it('can drag and drop an individual track', () => {
@@ -56,7 +56,7 @@ describe('Playlist', function() {
 		cy.visit('/')
 		cy.contains('Music Collection')
 		cy.contains('Test').drag('[data-cy=playlist]')
-		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 12)
+		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 13)
 	})
 
 	it('can remove a track', () => {
@@ -65,7 +65,7 @@ describe('Playlist', function() {
 		cy.contains('Test').click()
 		cy.contains('Queue All').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').first().find('[data-cy=remove]').click()
-		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 11)
+		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 12)
 	})
 
 	it('can clear the playlist', () => {
