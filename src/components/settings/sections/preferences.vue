@@ -1,5 +1,5 @@
 <template>
-	<form v-if="preferences">
+	<form v-if="preferences" v-on:submit.prevent>
 		<div class="field">
 			<label>Theme</label>
 			<table>

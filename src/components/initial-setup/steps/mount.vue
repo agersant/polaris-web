@@ -27,7 +27,7 @@
 				data-cy="submit-mount-points"
 				class="submit"
 				v-bind:disabled="!validate()"
-				v-on:click.prevent="proceed"
+				v-bind:submit="true"
 			>Next</button>
 		</form>
 	</div>

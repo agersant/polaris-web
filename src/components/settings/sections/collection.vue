@@ -1,5 +1,5 @@
 <template>
-	<form v-if="settings">
+	<form v-if="settings" v-on:submit.prevent>
 		<div class="field">
 			<label for="art_pattern">Album art pattern</label>
 			<input
@@ -7,6 +7,7 @@
 				id="art_pattern"
 				v-model="settings.album_art_pattern"
 				v-on:change="onAlbumArtPatternChanged"
+				v-on:keypress.enter.prevent
 				placeholder="Folder.(jpg|png)"
 			/>
 			<p class="tip">The regular expression used to detect album art files.</p>
@@ -22,7 +23,12 @@
 				</thead>
 				<tr v-for="(mountPoint, index) in settings.mount_dirs" v-bind:key="index">
 					<td>
-						<input type="text" v-model="mountPoint.source" v-on:change="commit" />
+						<input
+							type="text"
+							v-model="mountPoint.source"
+							v-on:change="commit"
+							v-on:keypress.enter.prevent
+						/>
 					</td>
 					<td>
 						<input type="text" v-model="mountPoint.name" v-on:change="commit" />

@@ -1,5 +1,5 @@
 <template>
-	<form v-if="users">
+	<form v-if="users" v-on:submit.prevent>
 		<label>User accounts</label>
 		<ul>
 			<li v-for="(user, index) in users" v-bind:key="index">
@@ -13,7 +13,13 @@
 				<div class="edit" v-if="user == editing">
 					<div class="field" v-if="user.isNew">
 						<label for="'name_' + user.name">Username</label>
-						<input id="'name_' + user.name" type="text" v-model="user.name" v-on:change="commit" />
+						<input
+							id="'name_' + user.name"
+							type="text"
+							v-model="user.name"
+							v-on:change="commit"
+							v-on:keypress.enter.prevent
+						/>
 					</div>
 
 					<div class="field">
@@ -23,6 +29,7 @@
 							id="'password_' + user.name"
 							v-model="user.password"
 							v-on:change="commit"
+							v-on:keypress.enter.prevent
 						/>
 						<p v-if="!validatePassword(user)" class="tip error">The password cannot be blank.</p>
 						<p v-if="!user.isNew" class="tip">Leave blank to preserve current password.</p>
@@ -35,6 +42,7 @@
 							v-bind:disabled="isSelf(user)"
 							v-model="user.admin"
 							v-on:change="commit"
+							v-on:keypress.enter.prevent
 						/>
 						<label for="'admin_' + user.name" class="admin">Administrator</label>
 						<p class="tip">Grants access to all settings.</p>
