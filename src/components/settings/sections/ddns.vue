@@ -8,7 +8,7 @@
 			>YDNS</a> account before filling out the corresponding settings on this page. If you prefer not to use YDNS, you can ignore these settings and set up any another dynamic DNS service manually.
 		</p>
 
-		<form v-if="ddns">
+		<form v-if="ddns" v-on:submit.prevent>
 			<div class="field">
 				<label for="host">Hostname</label>
 				<input

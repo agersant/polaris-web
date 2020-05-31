@@ -1,7 +1,7 @@
 <template>
-	<form name="searchForm">
+	<form name="searchForm" v-on:submit.prevent="find">
 		<input type="search" v-model="query" />
-		<button class="submit" v-on:click.prevent="find">Find</button>
+		<button class="submit" v-bind:submit="true">Find</button>
 	</form>
 </template>
 

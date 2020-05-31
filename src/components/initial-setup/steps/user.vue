@@ -23,7 +23,7 @@
 				data-cy="submit-user"
 				class="submit"
 				v-bind:disabled="!validate()"
-				v-on:click.prevent="proceed"
+				v-bind:submit="true"
 			>Next</button>
 		</form>
 	</div>
