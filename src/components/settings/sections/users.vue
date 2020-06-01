@@ -27,6 +27,7 @@
 						<input
 							type="password"
 							id="'password_' + user.name"
+							autocomplete="new-password"
 							v-model="user.password"
 							v-on:change="commit"
 							v-on:keypress.enter.prevent
