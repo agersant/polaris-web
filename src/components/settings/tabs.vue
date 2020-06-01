@@ -52,7 +52,7 @@ export default {
 span {
 	cursor: pointer;
 	color: var(--theme-foreground-muted);
-	line-height: 1rem;
+	line-height: 1;
 	font-size: 1rem;
 }
 

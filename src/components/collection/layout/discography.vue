@@ -97,11 +97,12 @@ ul {
 }
 
 .details .title {
-	font-family: "Montserrat", "sans-serif";
 	overflow: hidden;
 	text-overflow: ellipsis;
 	padding-right: 10px;
 	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.25;
 }
 
 .details .artist {

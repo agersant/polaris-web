@@ -164,7 +164,6 @@ form td:nth-child(2) {
 }
 
 form th {
-	font-family: "Montserrat", "sans-serif";
 	text-align: left;
 	color: var(--theme-foreground-muted);
 	font-size: 0.8125rem;
