@@ -115,8 +115,7 @@ export default {
 .viewActions .header {
 	line-height: 1;
 	margin-bottom: 5px;
-	font-size: 1.25rem;
-	font-family: "Montserrat", "sans-serif";
+	font-size: 1.5rem;
 }
 
 .viewActions .subHeader {
