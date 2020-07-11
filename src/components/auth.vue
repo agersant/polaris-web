@@ -29,8 +29,8 @@ export default {
 		doLogin: function(e) {
 			e.preventDefault();
 			var form = document.forms["authForm"];
-			var username = encodeURIComponent(form.elements["username"].value);
-			var password = encodeURIComponent(form.elements["password"].value);
+			var username = form.elements["username"].value;
+			var password = form.elements["password"].value;
 			this.badCredentials = false;
 			API.login(username, password).then(res => {
 				if (res.status == 401) {
