@@ -176,6 +176,10 @@ export default {
 			this.volume = volume;
 		}
 
+		if (this.playlist.elapsedSeconds) {
+			this.$refs.htmlAudio.currentTime = this.playlist.elapsedSeconds;
+		}
+
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
 			navigator.mediaSession.setActionHandler("previoustrack", this.skipPrevious);
 			navigator.mediaSession.setActionHandler("nexttrack", this.skipNext);
@@ -326,6 +330,7 @@ export default {
 					playbackRate: 1,
 				});
 			}
+			this.$store.dispatch("playlist/setElapsedSeconds", currentTime);
 			this.updateScrobble();
 		},
 

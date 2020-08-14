@@ -5,7 +5,8 @@ const state = {
 	name: null,
 	tracks: [],
 	currentTrack: null,
-	playbackOrder: "default"
+	playbackOrder: "default",
+	elapsedSeconds: 0,
 }
 
 const getters = {}
@@ -28,6 +29,11 @@ const actions = {
 
 	setName({ commit, dispatch }, name) {
 		commit("setName", name);
+		dispatch("saveToDisk");
+	},
+
+	setElapsedSeconds({ commit, dispatch }, seconds) {
+		commit("setElapsedSeconds", seconds);
 		dispatch("saveToDisk");
 	},
 
@@ -74,6 +80,7 @@ const actions = {
 			let currentTrackIndex = state.tracks.indexOf(state.currentTrack);
 			Disk.save("currentTrackIndex", currentTrackIndex);
 			Disk.save("playbackOrder", state.playbackOrder);
+			Disk.save("elapsedSeconds", state.elapsedSeconds);
 		}
 	}
 }
@@ -107,8 +114,15 @@ const mutations = {
 		state.name = name;
 	},
 
+	setElapsedSeconds(state, seconds) {
+		state.elapsedSeconds = seconds;
+	},
+
 	play(state, track) {
-		state.currentTrack = track;
+		if (track != state.currentTrack) {
+			state.currentTrack = track;
+			state.elapsedSeconds = 0;
+		}
 	},
 
 	advance(state, delta) {
@@ -143,8 +157,9 @@ const mutations = {
 			}
 		}
 
-		if (newTrack != null) {
+		if (newTrack != null && newTrack != state.currentTrack) {
 			state.currentTrack = newTrack;
+			state.elapsedSeconds = 0;
 		}
 	},
 
@@ -160,6 +175,10 @@ const mutations = {
 		let currentTrackIndex = Disk.load("currentTrackIndex");
 		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < state.tracks.length) {
 			state.currentTrack = state.tracks[currentTrackIndex];
+		}
+		let elapsedSeconds = Disk.load("elapsedSeconds");
+		if (state.currentTrack && elapsedSeconds) {
+			state.elapsedSeconds = elapsedSeconds;
 		}
 		state.name = Disk.load("playlistName");
 	}
