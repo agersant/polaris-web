@@ -67,7 +67,7 @@ import notify from "/src/notify";
 import CoverArt from "/src/components/cover-art";
 export default {
 	components: {
-		"cover-art": CoverArt
+		"cover-art": CoverArt,
 	},
 
 	data() {
@@ -78,36 +78,36 @@ export default {
 			mouseDown: false,
 			adjusting: null,
 			paused: true,
-			canScrobble: false
+			canScrobble: false,
 		};
 	},
 
 	computed: {
 		...mapState(["playlist"]),
 
-		currentTrack: function() {
+		currentTrack: function () {
 			return this.playlist.currentTrack;
 		},
 
-		trackURL: function() {
+		trackURL: function () {
 			if (!this.currentTrack) {
 				return null;
 			}
 			return API.makeAudioURL(this.currentTrack.info.path);
 		},
 
-		artworkURL: function() {
+		artworkURL: function () {
 			if (!this.currentTrack || !this.currentTrack.info.artwork) {
 				return null;
 			}
 			return API.makeThumbnailURL(this.currentTrack.info.artwork);
 		},
 
-		formattedPlaybackTime: function() {
+		formattedPlaybackTime: function () {
 			return Format.duration(this.secondsPlayed);
 		},
 
-		trackProgress: function() {
+		trackProgress: function () {
 			if (isNaN(this.duration)) {
 				return 0;
 			}
@@ -135,7 +135,7 @@ export default {
 				result += " #" + track.info.track_number;
 			}
 			return result;
-		}
+		},
 	},
 
 	watch: {
@@ -163,7 +163,7 @@ export default {
 		volume(to, from) {
 			this.$refs.htmlAudio.volume = to;
 			Disk.save("volume", to);
-		}
+		},
 	},
 
 	beforeDestroy() {
@@ -182,7 +182,7 @@ export default {
 		}
 
 		// Global mouse handling
-		let onMouseMove = event => {
+		let onMouseMove = (event) => {
 			if (!this.mouseDown) {
 				return;
 			}
@@ -194,7 +194,7 @@ export default {
 		};
 
 		document.body.addEventListener("mousemove", onMouseMove);
-		document.body.addEventListener("mousedown", event => {
+		document.body.addEventListener("mousedown", (event) => {
 			this.mouseDown = true;
 			onMouseMove(event);
 		});
@@ -220,7 +220,7 @@ export default {
 				var metadata = new MediaMetadata({
 					title: track.info.title,
 					artist: track.info.artist,
-					album: track.info.album
+					album: track.info.album,
 				});
 				if (this.artworkURL) {
 					metadata.artwork = [{ src: this.artworkURL }];
@@ -323,7 +323,7 @@ export default {
 				navigator.mediaSession.setPositionState({
 					position: currentTime,
 					duration: duration,
-					playbackRate: 1
+					playbackRate: 1,
 				});
 			}
 			this.updateScrobble();
@@ -348,8 +348,8 @@ export default {
 					break;
 			}
 			this.skipNext();
-		}
-	}
+		},
+	},
 };
 </script>
 
