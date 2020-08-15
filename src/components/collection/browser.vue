@@ -14,22 +14,22 @@
 			<explorer
 				v-if="viewMode == 'explorer'"
 				v-bind:items="items"
-				v-on:itemClick="onItemClicked"
-				v-on:itemDragStart="onItemDragStart"
+				v-on:item-click="onItemClicked"
+				v-on:item-drag-start="onItemDragStart"
 			></explorer>
 			<discography
 				v-if="viewMode == 'discography'"
 				v-bind:showArtistName="false"
 				v-bind:albums="items"
-				v-on:itemClick="onItemClicked"
-				v-on:itemDragStart="onItemDragStart"
+				v-on:item-click="onItemClicked"
+				v-on:item-drag-start="onItemDragStart"
 			></discography>
 			<album
 				v-if="viewMode == 'album'"
 				v-bind:items="items"
-				v-on:itemClick="onItemClicked"
-				v-on:itemDragStart="onItemDragStart"
-				v-on:currentPathDragStart="onCurrentPathDragStart"
+				v-on:item-click="onItemClicked"
+				v-on:item-drag-start="onItemDragStart"
+				v-on:current-path-drag-start="onCurrentPathDragStart"
 			></album>
 		</div>
 	</div>

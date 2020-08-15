@@ -11,8 +11,8 @@
 			<discography
 				v-bind:showArtistName="false"
 				v-bind:albums="items"
-				v-on:itemClick="onItemClicked"
-				v-on:itemDragStart="onItemDragStart"
+				v-on:item-click="onItemClicked"
+				v-on:item-drag-start="onItemDragStart"
 			></discography>
 		</div>
 	</div>

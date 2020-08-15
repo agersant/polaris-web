@@ -4,7 +4,7 @@
 			<img
 				v-bind:src="artworkURL"
 				draggable="true"
-				v-on:dragstart="event => $emit('currentPathDragStart', event)"
+				v-on:dragstart="event => $emit('current-path-drag-start', event)"
 			/>
 		</div>
 		<div class="trackList">
@@ -18,8 +18,8 @@
 							v-bind:class="{ song: 1, 'no-track-number': !item.fields.track_number }"
 							v-for="(item, index) in disc.songs"
 							v-bind:key="index"
-							v-on:click="$emit('itemClick', item)"
-							v-on:dragstart="event => $emit('itemDragStart', event, item)"
+							v-on:click="$emit('item-click', item)"
+							v-on:dragstart="event => $emit('item-drag-start', event, item)"
 						>
 							<div class="songName">
 								{{ formatSongTitle(item) }}

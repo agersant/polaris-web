@@ -6,7 +6,7 @@
 			draggable="true"
 			v-for="(album, index) in albums"
 			v-bind:key="index"
-			v-on:click="$emit('itemClick', album)"
+			v-on:click="$emit('item-click', album)"
 			v-on:dragstart="event => onItemDragStart(event, album)"
 		>
 			<div class="cover">

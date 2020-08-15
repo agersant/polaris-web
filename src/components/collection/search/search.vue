@@ -11,8 +11,8 @@
 			</div>
 			<explorer
 				v-bind:items="results"
-				v-on:itemClick="onItemClicked"
-				v-on:itemDragStart="onItemDragStart"
+				v-on:item-click="onItemClicked"
+				v-on:item-drag-start="onItemDragStart"
 			></explorer>
 		</div>
 	</div>
