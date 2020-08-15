@@ -15,7 +15,7 @@ export default {
 	data() {
 		return {
 			tabs: [],
-			currentTab: ""
+			currentTab: "",
 		};
 	},
 
@@ -32,19 +32,19 @@ export default {
 	watch: {
 		$route(to, from) {
 			this.updateCurrentTab();
-		}
+		},
 	},
 
 	methods: {
 		updateCurrentTab() {
 			let pathEnd = this.$route.path.split("/").pop();
-			this.currentTab = this.tabs.find(tab => pathEnd.includes(tab.path));
+			this.currentTab = this.tabs.find((tab) => pathEnd.includes(tab.path));
 		},
 
 		onClickTab(tab) {
 			this.$router.push("/settings/" + tab.path);
-		}
-	}
+		},
+	},
 };
 </script>
 

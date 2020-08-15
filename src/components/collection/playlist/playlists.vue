@@ -34,7 +34,7 @@ export default {
 	},
 
 	computed: {
-		...mapState(["playlists"])
+		...mapState(["playlists"]),
 	},
 
 	mounted() {
@@ -50,12 +50,12 @@ export default {
 			const playlistItem = {
 				variant: "Playlist",
 				fields: {
-					name: playlist.name
-				}
+					name: playlist.name,
+				},
 			};
 			event.dataTransfer.setData("text/json", JSON.stringify(playlistItem));
-		}
-	}
+		},
+	},
 };
 </script>
 

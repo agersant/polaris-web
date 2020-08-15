@@ -24,13 +24,13 @@ import API from "/src/api";
 import Explorer from "/src/components/collection/layout/explorer";
 export default {
 	components: {
-		explorer: Explorer
+		explorer: Explorer,
 	},
 
 	data() {
 		return {
 			name: "",
-			tracks: null
+			tracks: null,
 		};
 	},
 
@@ -41,14 +41,14 @@ export default {
 	watch: {
 		$route(to, from) {
 			this.listTracks();
-		}
+		},
 	},
 
 	methods: {
 		listTracks() {
 			this.name = this.$route.params.pathMatch;
-			API.getPlaylist(this.name).then(data => {
-				this.tracks = data.map(d => {
+			API.getPlaylist(this.name).then((data) => {
+				this.tracks = data.map((d) => {
 					return { fields: d, variant: "Song" };
 				});
 			});
@@ -70,7 +70,7 @@ export default {
 
 		onItemDragStart(event, item) {
 			event.dataTransfer.setData("text/json", JSON.stringify(item));
-		}
-	}
+		},
+	},
 };
 </script>

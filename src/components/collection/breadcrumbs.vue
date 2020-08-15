@@ -14,7 +14,7 @@
 export default {
 	data() {
 		return {
-			components: []
+			components: [],
 		};
 	},
 
@@ -25,7 +25,7 @@ export default {
 	watch: {
 		$route(to, from) {
 			this.updatePath();
-		}
+		},
 	},
 
 	methods: {
@@ -39,8 +39,8 @@ export default {
 			let components = [
 				{
 					name: "All Music",
-					path: ""
-				}
+					path: "",
+				},
 			];
 
 			let separatorMatcher = /[\\/]/g;
@@ -48,7 +48,7 @@ export default {
 			while (separatorMatcher.test(path)) {
 				components.push({
 					name: path.substring(previousLastIndex, separatorMatcher.lastIndex - 1),
-					path: path.substring(0, separatorMatcher.lastIndex - 1)
+					path: path.substring(0, separatorMatcher.lastIndex - 1),
 				});
 				previousLastIndex = separatorMatcher.lastIndex;
 			}
@@ -56,7 +56,7 @@ export default {
 			if (path) {
 				components.push({
 					name: path.substring(previousLastIndex),
-					path: path
+					path: path,
 				});
 			}
 
@@ -65,8 +65,8 @@ export default {
 
 		onClick(component) {
 			this.$router.push("/browse/" + component.path);
-		}
-	}
+		},
+	},
 };
 </script>
 
