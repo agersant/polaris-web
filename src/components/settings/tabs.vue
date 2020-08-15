@@ -42,7 +42,7 @@ export default {
 		},
 
 		onClickTab(tab) {
-			this.$router.push("/settings/" + tab.path);
+			this.$router.push("/settings/" + tab.path).catch((err) => {});
 		},
 	},
 };

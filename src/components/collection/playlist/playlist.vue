@@ -60,7 +60,7 @@ export default {
 
 		deletePlaylist() {
 			API.deletePlaylist(this.name).then(() => {
-				this.$router.push("/playlists");
+				this.$router.push("/playlists").catch((err) => {});
 			});
 		},
 

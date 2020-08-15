@@ -64,7 +64,7 @@ export default {
 		},
 
 		onClick(component) {
-			this.$router.push("/browse/" + component.path);
+			this.$router.push("/browse/" + component.path).catch((err) => {});
 		},
 	},
 };
