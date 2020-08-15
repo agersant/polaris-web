@@ -38,11 +38,11 @@ export default {
 	methods: {
 		updateCurrentTab() {
 			let pathEnd = this.$route.path.split("/").pop();
-			this.currentTab = this.tabs.find((tab) => pathEnd.includes(tab.path));
+			this.currentTab = this.tabs.find(tab => pathEnd.includes(tab.path));
 		},
 
 		onClickTab(tab) {
-			this.$router.push("/settings/" + tab.path).catch((err) => {});
+			this.$router.push("/settings/" + tab.path).catch(err => {});
 		},
 	},
 };

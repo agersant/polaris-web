@@ -23,12 +23,12 @@ import API from "/src/api";
 import Discography from "./layout/discography";
 export default {
 	components: {
-		discography: Discography
+		discography: Discography,
 	},
 
 	data() {
 		return {
-			items: []
+			items: [],
 		};
 	},
 
@@ -43,7 +43,7 @@ export default {
 				this.items = data.map(a => {
 					return {
 						fields: a,
-						variant: "Directory"
+						variant: "Directory",
 					};
 				});
 			});
@@ -55,8 +55,8 @@ export default {
 
 		onItemDragStart(event) {
 			event.dataTransfer.setData("text/json", JSON.stringify(event.item));
-		}
-	}
+		},
+	},
 };
 </script>
 

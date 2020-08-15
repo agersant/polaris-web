@@ -20,26 +20,26 @@ export default {
 				{
 					icon: "library_music",
 					target: "/browse",
-					pattern: new RegExp("(browse|^/$)")
+					pattern: new RegExp("(browse|^/$)"),
 				},
 				{ icon: "shuffle", target: "/random", pattern: new RegExp("random") },
 				{
 					icon: "new_releases",
 					target: "/recent",
-					pattern: new RegExp("recent")
+					pattern: new RegExp("recent"),
 				},
 				{
 					icon: "playlist_play",
 					target: "/playlists",
-					pattern: new RegExp("playlist")
+					pattern: new RegExp("playlist"),
 				},
 				{ icon: "search", target: "/search", pattern: new RegExp("search") },
 				{
 					icon: "settings",
 					target: "/settings/preferences",
-					pattern: new RegExp("settings")
-				}
-			]
+					pattern: new RegExp("settings"),
+				},
+			],
 		};
 	},
 
@@ -48,16 +48,16 @@ export default {
 	},
 
 	methods: {
-		onClickButton: function(button) {
+		onClickButton: function (button) {
 			this.$router.push(button.target).catch(err => {});
-		}
+		},
 	},
 
 	watch: {
 		$route(to, from) {
 			this.currentURL = to.path || this.buttons[0].target;
-		}
-	}
+		},
+	},
 };
 </script>
 

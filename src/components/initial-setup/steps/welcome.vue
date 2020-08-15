@@ -11,7 +11,7 @@ export default {
 	methods: {
 		proceed() {
 			this.$emit("proceed");
-		}
-	}
+		},
+	},
 };
 </script>

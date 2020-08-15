@@ -22,11 +22,11 @@ export default {
 	props: {
 		items: {
 			type: Array,
-			required: true
-		}
+			required: true,
+		},
 	},
 
-	data: function() {
+	data: function () {
 		return {};
 	},
 
@@ -47,12 +47,12 @@ export default {
 
 		formatDirectoryName(item) {
 			var slices = item.fields.path.replace(/\\/g, "/").split("/");
-			slices = slices.filter(function(s) {
+			slices = slices.filter(function (s) {
 				return s.length > 0;
 			});
 			return slices[slices.length - 1];
-		}
-	}
+		},
+	},
 };
 </script>
 

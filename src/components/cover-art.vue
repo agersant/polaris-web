@@ -10,8 +10,8 @@ export default {
 	props: {
 		url: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	data() {
@@ -68,8 +68,8 @@ export default {
 			this.$refs.image.style.setProperty("visibility", "initial");
 			this.$refs.image.style.setProperty("width", width + "px");
 			this.$refs.image.style.setProperty("height", height + "px");
-		}
-	}
+		},
+	},
 };
 </script>
 

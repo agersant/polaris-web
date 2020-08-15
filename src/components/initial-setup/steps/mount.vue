@@ -38,7 +38,7 @@ export default {
 	data() {
 		return {
 			name: "",
-			source: ""
+			source: "",
 		};
 	},
 
@@ -50,10 +50,10 @@ export default {
 		proceed() {
 			let mountPoint = {
 				name: this.name,
-				source: this.source
+				source: this.source,
 			};
 			this.$emit("proceed", mountPoint);
-		}
-	}
+		},
+	},
 };
 </script>

@@ -9,15 +9,15 @@
 export default {
 	data() {
 		return {
-			query: ""
+			query: "",
 		};
 	},
 
 	methods: {
 		find() {
 			this.$router.push("/search/" + encodeURIComponent(this.query)).catch(err => {});
-		}
-	}
+		},
+	},
 };
 </script>
 

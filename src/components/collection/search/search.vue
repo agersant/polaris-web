@@ -25,13 +25,13 @@ import SearchInput from "/src/components/collection/search/search-input";
 export default {
 	components: {
 		explorer: Explorer,
-		"search-input": SearchInput
+		"search-input": SearchInput,
 	},
 
 	data() {
 		return {
 			query: null,
-			results: null
+			results: null,
 		};
 	},
 
@@ -42,7 +42,7 @@ export default {
 	watch: {
 		$route(to, from) {
 			this.search();
-		}
+		},
 	},
 
 	methods: {
@@ -85,7 +85,7 @@ export default {
 
 		onItemDragStart(event, item) {
 			event.dataTransfer.setData("text/json", JSON.stringify(item));
-		}
-	}
+		},
+	},
 };
 </script>

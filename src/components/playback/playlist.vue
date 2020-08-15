@@ -83,7 +83,7 @@ import * as Format from "/src/format";
 import PlaylistSave from "./playlist-save";
 export default {
 	components: {
-		"playlist-save": PlaylistSave
+		"playlist-save": PlaylistSave,
 	},
 
 	data() {
@@ -92,7 +92,7 @@ export default {
 			pageSize: 50,
 			pagePadding: 6,
 			scrollOffset: 0,
-			saving: false
+			saving: false,
 		};
 	},
 
@@ -104,17 +104,17 @@ export default {
 			},
 			get() {
 				return this.playlist.playbackOrder;
-			}
+			},
 		},
-		visibleTracks: function() {
+		visibleTracks: function () {
 			return this.playlist.tracks.slice(this.scrollOffset, this.scrollOffset + this.pageSize);
 		},
-		topPadding: function() {
+		topPadding: function () {
 			return this.scrollOffset * this.itemHeight;
 		},
-		bottomPadding: function() {
+		bottomPadding: function () {
 			return Math.max(0, (this.playlist.tracks.length - this.scrollOffset - this.pageSize) * this.itemHeight);
-		}
+		},
 	},
 
 	mounted() {
@@ -209,8 +209,8 @@ export default {
 		formatTrackDuration(track) {
 			let durationInSeconds = parseInt(track.info.duration, 10);
 			return Format.duration(durationInSeconds);
-		}
-	}
+		},
+	},
 };
 </script>
 

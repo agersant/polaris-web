@@ -35,7 +35,7 @@ export default {
 		return {
 			username: "",
 			password: "",
-			password_confirm: ""
+			password_confirm: "",
 		};
 	},
 
@@ -47,7 +47,7 @@ export default {
 		proceed() {
 			let user = { name: this.username, password: this.password, admin: true };
 			this.$emit("proceed", user);
-		}
-	}
+		},
+	},
 };
 </script>

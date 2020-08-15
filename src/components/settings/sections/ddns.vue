@@ -41,7 +41,7 @@ import API from "/src/api";
 export default {
 	data() {
 		return {
-			ddns: null
+			ddns: null,
 		};
 	},
 
@@ -54,11 +54,11 @@ export default {
 	methods: {
 		commit() {
 			let settings = {
-				ydns: this.ddns
+				ydns: this.ddns,
 			};
 			API.putSettings(settings);
-		}
-	}
+		},
+	},
 };
 </script>
 

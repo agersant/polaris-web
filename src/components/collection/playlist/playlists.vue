@@ -43,7 +43,7 @@ export default {
 
 	methods: {
 		onItemClicked(playlist) {
-			this.$router.push("/playlist/" + playlist.name).catch((err) => {});
+			this.$router.push("/playlist/" + playlist.name).catch(err => {});
 		},
 
 		onItemDragStart(event, playlist) {

@@ -18,7 +18,7 @@ export default {
 	components: {
 		sidebar: Sidebar,
 		player: Player,
-		playlist: Playlist
+		playlist: Playlist,
 	},
 
 	mounted() {
@@ -31,8 +31,8 @@ export default {
 				Theming.setBase(data.web_theme_base);
 				Theming.setAccentColor(data.web_theme_accent);
 			});
-		}
-	}
+		},
+	},
 };
 </script>
 

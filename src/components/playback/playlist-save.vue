@@ -19,14 +19,14 @@ import API from "/src/api";
 import StateButton from "/src/components/state-button";
 export default {
 	components: {
-		"state-button": StateButton
+		"state-button": StateButton,
 	},
 
 	props: {
 		tracks: {
 			type: Array,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	data() {
@@ -35,9 +35,9 @@ export default {
 				ready: { name: "Save" },
 				saving: { name: "Saving…", disabled: true },
 				success: { name: "Saved!", disabled: true, success: true },
-				failure: { name: "Error :(", disabled: true, failure: true }
+				failure: { name: "Error :(", disabled: true, failure: true },
 			},
-			saveState: null
+			saveState: null,
 		};
 	},
 
@@ -49,8 +49,8 @@ export default {
 			},
 			get() {
 				return this.playlist.name;
-			}
-		}
+			},
+		},
 	},
 
 	created() {
@@ -79,8 +79,8 @@ export default {
 					}
 				}, 1000);
 			});
-		}
-	}
+		},
+	},
 };
 </script>
 

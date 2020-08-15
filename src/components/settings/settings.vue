@@ -15,7 +15,7 @@
 import Tabs from "./tabs";
 export default {
 	components: {
-		tabs: Tabs
-	}
+		tabs: Tabs,
+	},
 };
 </script>

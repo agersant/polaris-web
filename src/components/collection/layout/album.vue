@@ -43,26 +43,26 @@ export default {
 	props: {
 		items: {
 			type: Array,
-			required: true
-		}
+			required: true,
+		},
 	},
 
-	data: function() {
+	data: function () {
 		return {};
 	},
 
 	computed: {
-		discs: function() {
+		discs: function () {
 			var discs = [];
 			for (var i = 0; i < this.items.length; i++) {
 				var discNumber = this.items[i].fields.disc_number || 1;
-				var disc = discs.find(function(d) {
+				var disc = discs.find(function (d) {
 					return d.discNumber == discNumber;
 				});
 				if (disc == undefined) {
 					disc = {
 						discNumber: discNumber,
-						songs: []
+						songs: [],
 					};
 					discs.push(disc);
 				}
@@ -70,19 +70,19 @@ export default {
 			}
 
 			for (var i = 0; i < discs.length; i++) {
-				discs[i].songs.sort(function(a, b) {
+				discs[i].songs.sort(function (a, b) {
 					return (a.fields.track_number || 0) - (b.fields.track_number || 0);
 				});
 			}
 
-			discs.sort(function(a, b) {
+			discs.sort(function (a, b) {
 				return a.discNumber - b.discNumber;
 			});
 
 			return discs;
 		},
 
-		artworkURL: function() {
+		artworkURL: function () {
 			for (const disc of this.discs) {
 				for (const song of disc.songs) {
 					if (song.fields.artwork) {
@@ -91,14 +91,14 @@ export default {
 				}
 			}
 			return "";
-		}
+		},
 	},
 
 	methods: {
 		formatSongTitle(item) {
 			return Format.title(item.fields);
-		}
-	}
+		},
+	},
 };
 </script>
 

@@ -47,8 +47,8 @@ export default {
 	methods: {
 		listTracks() {
 			this.name = this.$route.params.pathMatch;
-			API.getPlaylist(this.name).then((data) => {
-				this.tracks = data.map((d) => {
+			API.getPlaylist(this.name).then(data => {
+				this.tracks = data.map(d => {
 					return { fields: d, variant: "Song" };
 				});
 			});
@@ -60,7 +60,7 @@ export default {
 
 		deletePlaylist() {
 			API.deletePlaylist(this.name).then(() => {
-				this.$router.push("/playlists").catch((err) => {});
+				this.$router.push("/playlists").catch(err => {});
 			});
 		},
 

@@ -21,12 +21,12 @@ import API from "/src/api";
 export default {
 	data() {
 		return {
-			badCredentials: false
+			badCredentials: false,
 		};
 	},
 
 	methods: {
-		doLogin: function(e) {
+		doLogin: function (e) {
 			e.preventDefault();
 			var form = document.forms["authForm"];
 			var username = form.elements["username"].value;
@@ -37,8 +37,8 @@ export default {
 					this.badCredentials = true;
 				}
 			});
-		}
-	}
+		},
+	},
 };
 </script>
 

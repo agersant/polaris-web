@@ -24,37 +24,37 @@ export default {
 	props: {
 		submit: {
 			type: Boolean,
-			required: true
+			required: true,
 		},
 		states: {
 			type: Object,
-			required: true
+			required: true,
 		},
 		state: {
 			type: Object,
-			default: function() {
+			default: function () {
 				return {};
-			}
+			},
 		},
 		disabled: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 
 	data() {
 		return {
 			canAnimate: false,
-			previousState: null
+			previousState: null,
 		};
 	},
 
 	watch: {
-		state: function(to, from) {
+		state: function (to, from) {
 			this.previousState = from;
 			this.canAnimate = from != null;
-		}
-	}
+		},
+	},
 };
 </script>
 

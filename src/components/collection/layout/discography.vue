@@ -26,21 +26,21 @@ import API from "/src/api";
 import CoverArt from "/src/components/cover-art";
 export default {
 	components: {
-		"cover-art": CoverArt
+		"cover-art": CoverArt,
 	},
 
 	props: {
 		albums: {
 			type: Array,
-			required: true
+			required: true,
 		},
 		showArtistName: {
 			type: Boolean,
-			required: true
-		}
+			required: true,
+		},
 	},
 
-	data: function() {
+	data: function () {
 		return {};
 	},
 
@@ -51,8 +51,8 @@ export default {
 
 		onItemDragStart(event, album) {
 			event.dataTransfer.setData("text/json", JSON.stringify(album));
-		}
-	}
+		},
+	},
 };
 </script>
 

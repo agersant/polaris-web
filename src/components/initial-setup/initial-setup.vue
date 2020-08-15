@@ -23,13 +23,13 @@ export default {
 		finish: Finish,
 		mount: Mount,
 		user: User,
-		welcome: Welcome
+		welcome: Welcome,
 	},
 
 	data() {
 		return {
 			step: "",
-			config: null
+			config: null,
 		};
 	},
 
@@ -57,9 +57,7 @@ export default {
 
 		setMount(mountDir) {
 			this.config.mount_dirs = [mountDir];
-			this.commit()
-				.then(API.triggerIndex)
-				.then(this.next);
+			this.commit().then(API.triggerIndex).then(this.next);
 		},
 
 		setUser(user) {
@@ -80,8 +78,8 @@ export default {
 			let username = this.config.users[0].name;
 			let password = this.config.users[0].password;
 			API.login(username, password);
-		}
-	}
+		},
+	},
 };
 </script>
 

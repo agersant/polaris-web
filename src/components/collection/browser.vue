@@ -48,12 +48,12 @@ export default {
 		breadcrumbs: Breadcrumbs,
 		album: Album,
 		discography: Discography,
-		explorer: Explorer
+		explorer: Explorer,
 	},
 
 	data() {
 		return {
-			items: []
+			items: [],
 		};
 	},
 
@@ -121,13 +121,13 @@ export default {
 				return "discography";
 			}
 			return "explorer";
-		}
+		},
 	},
 
 	watch: {
 		$route(to, from) {
 			this.browse();
-		}
+		},
 	},
 
 	methods: {
@@ -181,11 +181,11 @@ export default {
 			let directoryItem = {
 				variant: "Directory",
 				fields: {
-					path: this.path
-				}
+					path: this.path,
+				},
 			};
 			event.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
-		}
-	}
+		},
+	},
 };
 </script>

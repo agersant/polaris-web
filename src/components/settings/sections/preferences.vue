@@ -63,7 +63,7 @@ export default {
 	data() {
 		return {
 			preferences: null,
-			bases: Theming.listBases()
+			bases: Theming.listBases(),
 		};
 	},
 
@@ -149,8 +149,8 @@ export default {
 
 		commit() {
 			API.putPreferences(this.preferences);
-		}
-	}
+		},
+	},
 };
 </script>
 

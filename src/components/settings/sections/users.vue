@@ -66,7 +66,7 @@ export default {
 	data() {
 		return {
 			users: [],
-			editing: null
+			editing: null,
 		};
 	},
 
@@ -110,11 +110,11 @@ export default {
 
 		commit() {
 			let settings = {
-				users: this.users
+				users: this.users,
 			};
 			API.putSettings(settings);
-		}
-	}
+		},
+	},
 };
 </script>
 

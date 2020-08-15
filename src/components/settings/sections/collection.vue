@@ -66,7 +66,7 @@ import API from "/src/api";
 import StateButton from "/src/components/state-button";
 export default {
 	components: {
-		"state-button": StateButton
+		"state-button": StateButton,
 	},
 
 	data() {
@@ -77,9 +77,9 @@ export default {
 				ready: { name: "Scan now" },
 				applying: { name: "Hold on…", disabled: true },
 				success: { name: "On it!", disabled: true, success: true },
-				failure: { name: "Error :(", disabled: true, failure: true }
+				failure: { name: "Error :(", disabled: true, failure: true },
 			},
-			reindexState: null
+			reindexState: null,
 		};
 	},
 
@@ -141,8 +141,8 @@ export default {
 
 		commit() {
 			API.putSettings(this.settings);
-		}
-	}
+		},
+	},
 };
 </script>
 

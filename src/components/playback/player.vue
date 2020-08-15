@@ -186,7 +186,7 @@ export default {
 		}
 
 		// Global mouse handling
-		let onMouseMove = (event) => {
+		let onMouseMove = event => {
 			if (!this.mouseDown) {
 				return;
 			}
@@ -198,7 +198,7 @@ export default {
 		};
 
 		document.body.addEventListener("mousemove", onMouseMove);
-		document.body.addEventListener("mousedown", (event) => {
+		document.body.addEventListener("mousedown", event => {
 			this.mouseDown = true;
 			onMouseMove(event);
 		});
