@@ -6,6 +6,7 @@
 			v-for="component in components"
 			v-bind:key="component.path"
 			v-on:click="onClick(component)"
+			v-bind:style="{ 'flex-shrink': Math.max(0, component.name.length - 9) }"
 		>{{ component.name }}</li>
 	</ul>
 </template>
@@ -79,7 +80,6 @@ ul {
 
 li {
 	display: inline-block;
-	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-weight: 600;
@@ -91,11 +91,9 @@ li {
 	padding-top: 1px;
 	border-radius: 5px;
 	margin-right: 5px;
-	flex-shrink: 0;
 }
 
 li:last-child {
-	flex-shrink: 1;
 	margin-right: 0;
 }
 </style>
