@@ -12,7 +12,7 @@
 				v-bind:showArtistName="false"
 				v-bind:albums="items"
 				v-on:item-click="onItemClicked"
-				v-on:item-drag-start="onItemDragStart"
+				v-on:items-drag-start="onItemsDragStart"
 			></discography>
 		</div>
 	</div>
@@ -53,8 +53,8 @@ export default {
 			this.$router.push("/browse/" + item.fields.path).catch(err => {});
 		},
 
-		onItemDragStart(event) {
-			event.dataTransfer.setData("text/json", JSON.stringify(event.item));
+		onItemsDragStart(event) {
+			event.dataTransfer.setData("text/json", JSON.stringify(event.items));
 		},
 	},
 };

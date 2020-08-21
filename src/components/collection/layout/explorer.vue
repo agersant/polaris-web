@@ -5,7 +5,7 @@
 			v-for="(item, index) in items"
 			v-bind:key="index"
 			v-on:click="$emit('item-click', item)"
-			v-on:dragstart="event => $emit('item-drag-start', event, item)"
+			v-on:dragstart="event => $emit('items-drag-start', event, [item])"
 		>
 			<div v-if="item.variant == 'Directory'" class="directory">
 				<i class="material-icons">folder</i>

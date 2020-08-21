@@ -10,7 +10,12 @@
 		<div class="trackList">
 			<ul>
 				<li v-for="(disc, index) in discs" v-bind:key="index">
-					<div class="discNumber" v-if="discs.length > 1">Disc {{ disc.discNumber }}</div>
+					<div
+						draggable="true"
+						class="discNumber"
+						v-if="discs.length > 1"
+						v-on:dragstart="event => $emit('items-drag-start', event, disc.songs)"
+					>Disc {{ disc.discNumber }}</div>
 					<ol class="discContent">
 						<li
 							draggable="true"
@@ -19,15 +24,15 @@
 							v-for="(item, index) in disc.songs"
 							v-bind:key="index"
 							v-on:click="$emit('item-click', item)"
-							v-on:dragstart="event => $emit('item-drag-start', event, item)"
+							v-on:dragstart="event => $emit('items-drag-start', event, [item])"
 						>
-							<div class="songName">
+							<span class="songName">
 								{{ formatSongTitle(item) }}
 								<span
 									class="trackArtist"
 									v-if="item.fields.artist && item.fields.album_artist && item.fields.artist != item.fields.album_artist"
 								>({{ item.fields.artist }})</span>
-							</div>
+							</span>
 						</li>
 					</ol>
 				</li>
@@ -133,7 +138,13 @@ img {
 
 .discNumber {
 	font-weight: 600;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
+	padding: 10px;
+	padding-top: 5px;
+	padding-bottom: 2px;
+	color: var(--theme-background);
+	background-color: var(--theme-foreground-muted);
+	border-radius: 3px;
 }
 
 li:not(:first-child) .discNumber {
@@ -141,20 +152,28 @@ li:not(:first-child) .discNumber {
 }
 
 .discContent {
-	margin-left: 20px;
+	padding-left: 25px;
 }
 
 li.song {
-	padding-top: 8px;
-	padding-bottom: 6px;
-	border-bottom: 1px solid var(--theme-border-muted);
-	list-style-type: unset;
+	padding-left: 10px;
+	padding-top: 6px;
+	list-style-type: decimal;
 	list-style-position: outside;
 }
 
 .songName {
+	width: 100%;
+	display: inline-block;
+	vertical-align: text-top;
+	padding-bottom: 3px;
+	border-bottom: 1px solid var(--theme-border-muted);
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+li.song:last-child .songName {
+	border-bottom: none;
 }
 
 li.song.no-track-number {

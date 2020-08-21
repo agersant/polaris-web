@@ -7,7 +7,7 @@
 			v-for="(album, index) in albums"
 			v-bind:key="index"
 			v-on:click="$emit('item-click', album)"
-			v-on:dragstart="event => onItemDragStart(event, album)"
+			v-on:dragstart="event => $emit('items-drag-start', event, [album])"
 		>
 			<div class="cover">
 				<cover-art v-if="album.fields.artwork" v-bind:url="getArtworkURL(album)"></cover-art>
@@ -47,10 +47,6 @@ export default {
 	methods: {
 		getArtworkURL(album) {
 			return API.makeThumbnailURL(album.fields.artwork);
-		},
-
-		onItemDragStart(event, album) {
-			event.dataTransfer.setData("text/json", JSON.stringify(album));
 		},
 	},
 };

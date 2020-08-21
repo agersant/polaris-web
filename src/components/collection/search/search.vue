@@ -12,7 +12,7 @@
 			<explorer
 				v-bind:items="results"
 				v-on:item-click="onItemClicked"
-				v-on:item-drag-start="onItemDragStart"
+				v-on:items-drag-start="onItemsDragStart"
 			></explorer>
 		</div>
 	</div>
@@ -83,8 +83,8 @@ export default {
 			}
 		},
 
-		onItemDragStart(event, item) {
-			event.dataTransfer.setData("text/json", JSON.stringify(item));
+		onItemsDragStart(event, items) {
+			event.dataTransfer.setData("text/json", JSON.stringify(items));
 		},
 	},
 };

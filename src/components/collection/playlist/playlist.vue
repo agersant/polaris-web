@@ -13,7 +13,7 @@
 			<explorer
 				v-bind:items="tracks"
 				v-on:item-click="onItemClicked"
-				v-on:item-drag-start="onItemDragStart"
+				v-on:items-drag-start="onItemsDragStart"
 			></explorer>
 		</div>
 	</div>
@@ -68,8 +68,8 @@ export default {
 			this.$store.dispatch("playlist/queueTracks", [item.fields]);
 		},
 
-		onItemDragStart(event, item) {
-			event.dataTransfer.setData("text/json", JSON.stringify(item));
+		onItemsDragStart(event, items) {
+			event.dataTransfer.setData("text/json", JSON.stringify(items));
 		},
 	},
 };

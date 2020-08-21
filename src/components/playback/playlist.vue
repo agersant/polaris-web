@@ -153,15 +153,17 @@ export default {
 		},
 
 		onDrop(event) {
-			var item = event.dataTransfer.getData("text/json");
-			item = JSON.parse(item);
-			var variant = item.variant;
-			if (variant == "Song") {
-				this.$store.dispatch("playlist/queueTracks", [item.fields]);
-			} else if (variant == "Directory") {
-				this.$store.dispatch("playlist/queueDirectory", item.fields.path);
-			} else if (variant == "Playlist") {
-				this.$store.dispatch("playlist/queuePlaylist", item.fields.name);
+			var items = event.dataTransfer.getData("text/json");
+			items = JSON.parse(items);
+			for (const item of items) {
+				var variant = item.variant;
+				if (variant == "Song") {
+					this.$store.dispatch("playlist/queueTracks", [item.fields]);
+				} else if (variant == "Directory") {
+					this.$store.dispatch("playlist/queueDirectory", item.fields.path);
+				} else if (variant == "Playlist") {
+					this.$store.dispatch("playlist/queuePlaylist", item.fields.name);
+				}
 			}
 		},
 

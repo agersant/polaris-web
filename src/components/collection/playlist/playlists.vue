@@ -12,7 +12,7 @@
 					class="noselect"
 					draggable="true"
 					v-on:click="onItemClicked(playlist)"
-					v-on:dragstart="event => onItemDragStart(event, playlist)"
+					v-on:dragstart="event => onPlaylistDragStart(event, playlist)"
 				>{{ playlist.name }}</li>
 			</ul>
 			<div class="help" v-if="playlists.listing.length == 0">
@@ -46,14 +46,14 @@ export default {
 			this.$router.push("/playlist/" + playlist.name).catch(err => {});
 		},
 
-		onItemDragStart(event, playlist) {
+		onPlaylistDragStart(event, playlist) {
 			const playlistItem = {
 				variant: "Playlist",
 				fields: {
 					name: playlist.name,
 				},
 			};
-			event.dataTransfer.setData("text/json", JSON.stringify(playlistItem));
+			event.dataTransfer.setData("text/json", JSON.stringify([playlistItem]));
 		},
 	},
 };

@@ -15,20 +15,20 @@
 				v-if="viewMode == 'explorer'"
 				v-bind:items="items"
 				v-on:item-click="onItemClicked"
-				v-on:item-drag-start="onItemDragStart"
+				v-on:items-drag-start="onItemsDragStart"
 			></explorer>
 			<discography
 				v-if="viewMode == 'discography'"
 				v-bind:showArtistName="false"
 				v-bind:albums="items"
 				v-on:item-click="onItemClicked"
-				v-on:item-drag-start="onItemDragStart"
+				v-on:items-drag-start="onItemsDragStart"
 			></discography>
 			<album
 				v-if="viewMode == 'album'"
 				v-bind:items="items"
 				v-on:item-click="onItemClicked"
-				v-on:item-drag-start="onItemDragStart"
+				v-on:items-drag-start="onItemsDragStart"
 				v-on:current-path-drag-start="onCurrentPathDragStart"
 			></album>
 		</div>
@@ -169,8 +169,8 @@ export default {
 			}
 		},
 
-		onItemDragStart(event, item) {
-			event.dataTransfer.setData("text/json", JSON.stringify(item));
+		onItemsDragStart(event, items) {
+			event.dataTransfer.setData("text/json", JSON.stringify(items));
 		},
 
 		onQueueAll() {
@@ -184,7 +184,7 @@ export default {
 					path: this.path,
 				},
 			};
-			event.dataTransfer.setData("text/json", JSON.stringify(directoryItem));
+			event.dataTransfer.setData("text/json", JSON.stringify([directoryItem]));
 		},
 	},
 };
