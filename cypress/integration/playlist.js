@@ -87,4 +87,14 @@ describe('Playlist', function() {
 		cy.get('[data-cy=playlist]').find('[data-cy=now-playing]').parents('[data-cy=track]').contains('なぜ (Why?)')
 	})
 
+	it('shows total duration', () => {
+		cy.visit('/')
+		cy.contains('Music Collection')
+		cy.contains('Test').click()
+		cy.contains('Tobokegao').click()
+		cy.contains('Picnic').click()
+		cy.contains('Queue All').click()
+		cy.get('[data-cy=playlist]').find('[data-cy=playlist-duration]').should('equal', '21s')
+	})
+
 });

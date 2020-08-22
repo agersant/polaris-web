@@ -2,7 +2,7 @@
 	<div class="right pane">
 		<div class="paneHeader">
 			<h2>{{ playlist.name || "Playlist" }}</h2>
-			<div class="playlistOperations">
+			<div class="playlistDetails">
 				<span class="noselect save" v-on:click="onClickSave">
 					<i class="material-icons md-18">save</i>
 					<playlist-save
@@ -25,6 +25,12 @@
 						<option value="repeat-all">Repeat All</option>
 					</select>
 				</span>
+				<div
+					data-cy="playlist-duration"
+					class="totalDuration"
+					v-if="duration > 0"
+					v-bind:style="{ right: scrollbarWidth + 'px' }"
+				>{{ formatPlaylistDuration(duration) }}</div>
 			</div>
 		</div>
 
@@ -92,6 +98,7 @@ export default {
 			pageSize: 50,
 			pagePadding: 6,
 			scrollOffset: 0,
+			scrollbarWidth: 0,
 			saving: false,
 		};
 	},
@@ -115,6 +122,26 @@ export default {
 		bottomPadding: function () {
 			return Math.max(0, (this.playlist.tracks.length - this.scrollOffset - this.pageSize) * this.itemHeight);
 		},
+		duration: function () {
+			return this.playlist.tracks.reduce((acc, track) => {
+				const durationInSeconds = parseInt(track.info.duration, 10);
+				if (!durationInSeconds) {
+					return acc;
+				}
+				return acc + durationInSeconds;
+			}, 0);
+		},
+	},
+
+	created() {
+		window.addEventListener("resize", this.updateScrollbarWidth);
+	},
+	destroyed() {
+		window.removeEventListener("resize", this.updateScrollbarWidth);
+	},
+
+	updated() {
+		this.$nextTick(this.updateScrollbarWidth);
 	},
 
 	mounted() {
@@ -123,6 +150,7 @@ export default {
 				this.snapToCurrentTrack();
 			}
 		});
+		this.updateScrollbarWidth();
 	},
 
 	methods: {
@@ -133,6 +161,10 @@ export default {
 				return;
 			}
 			this.scrollOffset = newOffset;
+		},
+
+		updateScrollbarWidth() {
+			this.scrollbarWidth = this.$refs.scrollElement.offsetWidth - this.$refs.scrollElement.clientWidth;
 		},
 
 		snapToCurrentTrack() {
@@ -212,6 +244,10 @@ export default {
 			let durationInSeconds = parseInt(track.info.duration, 10);
 			return Format.duration(durationInSeconds);
 		},
+
+		formatPlaylistDuration(durationInSeconds) {
+			return Format.longDuration(durationInSeconds);
+		},
 	},
 };
 </script>
@@ -219,6 +255,7 @@ export default {
 <style scoped>
 .paneHeader {
 	overflow: visible !important;
+	padding-right: 30px;
 }
 
 .paneContent {
@@ -226,23 +263,30 @@ export default {
 	overflow-anchor: none;
 }
 
-.playlistOperations {
+.playlistDetails {
 	display: flex;
-	flex-grow: 1;
-	flex-shrink: 1;
 	min-height: 0;
 }
 
-.playlistOperations .save,
-.playlistOperations .delete {
+.playlistDetails .save,
+.playlistDetails .delete {
 	cursor: pointer;
 	padding-right: 8px;
 }
 
-.playlistOperations span.playbackOrder {
+.playlistDetails span.playbackOrder {
 	color: var(--theme-foreground-muted);
 	font-size: 0.875rem;
 	align-self: center;
+}
+
+.playlistDetails .totalDuration {
+	flex-grow: 1;
+	text-align: right;
+	color: var(--theme-foreground);
+	font-size: 0.875rem;
+	align-self: flex-start;
+	position: relative; /*for dynamic offsetting compensating scrollbar*/
 }
 
 tr:not(:hover) .remove {

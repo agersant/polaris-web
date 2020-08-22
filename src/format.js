@@ -26,6 +26,20 @@ export function duration(seconds) {
 	return formatted;
 }
 
+export function longDuration(totalSeconds) {
+	if (isNaN(totalSeconds)) {
+		return "";
+	}
+	let hours = Math.floor(totalSeconds / 3600);
+	let minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+	let seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+	let output = "";
+	if (hours > 0) { output += hours + "h "; }
+	if (hours > 0 || minutes > 0) { output += minutes + "m "; }
+	output += seconds + "s";
+	return output;
+}
+
 export function title(track) {
 	return track.title || stripFileExtension(getPathTail(track.path));
 }
