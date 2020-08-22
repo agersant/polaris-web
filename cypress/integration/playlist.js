@@ -1,7 +1,6 @@
 describe('Playlist', function() {
 
 	beforeEach(function() {
-		cy.clearLocalStorage();
 		cy.completeInitialSetup()
 		cy.login()
 	})
