@@ -21,6 +21,7 @@ describe('Playlist', function() {
 		cy.contains('Test').click()
 		cy.contains('Tobokegao').click()
 		cy.contains('Picnic').click()
+		cy.get('[data-cy=browser-header]').should('have.text', 'Picnic')
 		cy.contains('Queue All').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 7)
 	})
@@ -28,7 +29,6 @@ describe('Playlist', function() {
 	it('can use queue all button for multiple albums', () => {
 		cy.visit('/')
 		cy.contains('Music Collection')
-		cy.contains('Test').click()
 		cy.contains('Queue All').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 13)
 	})
@@ -62,7 +62,6 @@ describe('Playlist', function() {
 	it('can remove a track', () => {
 		cy.visit('/')
 		cy.contains('Music Collection')
-		cy.contains('Test').click()
 		cy.contains('Queue All').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').first().find('[data-cy=remove]').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 12)
@@ -71,7 +70,6 @@ describe('Playlist', function() {
 	it('can clear the playlist', () => {
 		cy.visit('/')
 		cy.contains('Music Collection')
-		cy.contains('Test').click()
 		cy.contains('Queue All').click()
 		cy.get('[data-cy=clear-playlist]').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 0)
@@ -80,7 +78,6 @@ describe('Playlist', function() {
 	it('can jump to a track', () => {
 		cy.visit('/')
 		cy.contains('Music Collection')
-		cy.contains('Test').click()
 		cy.contains('Queue All').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').last().click()
 		cy.get('[data-cy=playlist]').find('[data-cy=now-playing]').parents('[data-cy=track]').contains('なぜ (Why?)')
@@ -92,6 +89,7 @@ describe('Playlist', function() {
 		cy.contains('Test').click()
 		cy.contains('Tobokegao').click()
 		cy.contains('Picnic').click()
+		cy.get('[data-cy=browser-header]').should('have.text', 'Picnic')
 		cy.contains('Queue All').click()
 		cy.get('[data-cy=playlist-duration]').should('have.text', '21s')
 	})

@@ -7,7 +7,7 @@
 
 		<div class="paneContent" ref="paneContent">
 			<div class="viewActions">
-				<div class="header">{{ header }}</div>
+				<div data-cy="browser-header" class="header">{{ header }}</div>
 				<div v-if="subHeader" class="subHeader">{{ subHeader }}</div>
 				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
 			</div>
