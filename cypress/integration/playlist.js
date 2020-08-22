@@ -94,7 +94,7 @@ describe('Playlist', function() {
 		cy.contains('Tobokegao').click()
 		cy.contains('Picnic').click()
 		cy.contains('Queue All').click()
-		cy.get('[data-cy=playlist]').find('[data-cy=playlist-duration]').should('equal', '21s')
+		cy.get('[data-cy=playlist-duration]').should('have.text', '21s')
 	})
 
 });
