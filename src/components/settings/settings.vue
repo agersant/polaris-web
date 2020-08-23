@@ -4,7 +4,6 @@
 			<h2>Settings</h2>
 			<tabs></tabs>
 		</div>
-
 		<div class="paneContent">
 			<router-view></router-view>
 		</div>
@@ -19,3 +18,11 @@ export default {
 	},
 };
 </script>
+
+<style scoped>
+.paneHeader {
+	padding-bottom: 0px;
+	justify-content: space-between;
+	overflow: visible;
+}
+</style>

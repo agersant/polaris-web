@@ -52,16 +52,29 @@ export default {
 span {
 	cursor: pointer;
 	color: var(--theme-foreground-muted);
-	line-height: 1;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 2px;
 	font-size: 1rem;
+	border: 1px solid var(--theme-background-muted);
+	border-bottom: 1px solid var(--theme-border-muted);
+	background-color: var(--theme-background-muted);
 }
 
-span + span {
-	margin-left: 20px;
+span:first-child {
+	border-radius: 3px 0 0 0;
 }
 
-.selected {
+span:last-child {
+	border-radius: 0 3px 0 0;
+}
+
+span.selected {
 	color: var(--theme-accent);
-	border-bottom: 1px solid var(--theme-accent);
+	font-weight: 400;
+	border: 1px solid var(--theme-border-muted);
+	border-bottom: 1px solid var(--theme-background);
+	border-radius: 3px 3px 0 0;
+	background-color: var(--theme-background);
 }
 </style>
