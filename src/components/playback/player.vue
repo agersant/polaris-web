@@ -27,7 +27,7 @@
 				</div>
 			</div>
 			<div class="volume">
-				<div class="icon">
+				<div class="icon" v-on:click="toggleMute">
 					<i v-if="volume == 0" class="material-icons">volume_off</i>
 					<i v-if="volume > 0" class="material-icons">volume_down</i>
 				</div>
@@ -73,6 +73,7 @@ export default {
 	data() {
 		return {
 			volume: 1,
+			unmutedVolume: 1,
 			secondsPlayed: 0,
 			duration: 1,
 			mouseDown: false,
@@ -171,9 +172,12 @@ export default {
 	},
 
 	mounted() {
-		var volume = Disk.load("volume");
-		if (volume) {
+		var volume = parseFloat(Disk.load("volume"));
+		if (!isNaN(volume)) {
 			this.volume = volume;
+			if (volume > 0) {
+				this.unmutedVolume = volume;
+			}
 		}
 
 		if (this.playlist.elapsedSeconds) {
@@ -187,8 +191,11 @@ export default {
 
 		// Global mouse handling
 		let onMouseMove = event => {
-			if (!this.mouseDown) {
-				return;
+			if (event.buttons != undefined) {
+				const isLeftClickDown = (event.buttons & 1) == 1;
+				if (!isLeftClickDown) {
+					return;
+				}
 			}
 			if (this.adjusting == "volume") {
 				this.volumeMouseMove(event);
@@ -199,11 +206,12 @@ export default {
 
 		document.body.addEventListener("mousemove", onMouseMove);
 		document.body.addEventListener("mousedown", event => {
-			this.mouseDown = true;
 			onMouseMove(event);
 		});
 		document.body.addEventListener("mouseup", () => {
-			this.mouseDown = false;
+			if (this.adjusting == "volume" && this.volume != 0) {
+				this.unmutedVolume = this.volume;
+			}
 			this.adjusting = null;
 		});
 	},
@@ -239,6 +247,14 @@ export default {
 			trackInfo += " - ";
 			trackInfo += Format.title(info);
 			document.title = trackInfo;
+		},
+
+		toggleMute() {
+			if (this.volume != 0) {
+				this.volume = 0;
+			} else {
+				this.volume = this.unmutedVolume;
+			}
 		},
 
 		togglePlay() {
@@ -281,7 +297,7 @@ export default {
 		},
 
 		seekMouseMove(event) {
-			if (this.mouseDown && this.adjusting == "seek") {
+			if (this.adjusting == "seek") {
 				let x = event.pageX;
 				let o = this.$refs.seekInput;
 				while (o) {
@@ -295,7 +311,7 @@ export default {
 		},
 
 		volumeMouseMove(event) {
-			if (this.mouseDown && this.adjusting == "volume") {
+			if (this.adjusting == "volume") {
 				let x = event.pageX;
 				let o = this.$refs.volumeInput;
 				while (o) {
