@@ -153,6 +153,6 @@ export default {
 
 .sleep_duration input {
 	width: 50px;
-	text-align: right;
+	text-align: center;
 }
 </style>
