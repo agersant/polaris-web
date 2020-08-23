@@ -16,6 +16,9 @@
 				<span data-cy="clear-playlist" class="noselect delete" v-on:click="onClickClear">
 					<i class="material-icons md-18">delete</i>
 				</span>
+				<span data-cy="shuffle-playlist" class="noselect shuffle" v-on:click="onClickShuffle">
+					<i class="material-icons md-18">shuffle</i>
+				</span>
 				<span class="playbackOrder">
 					Order:
 					<select v-model="playbackOrder">
@@ -211,6 +214,11 @@ export default {
 			this.$store.dispatch("playlist/clear");
 		},
 
+		onClickShuffle() {
+			this.$store.dispatch("playlist/shuffle");
+			this.snapToCurrentTrack();
+		},
+
 		onClickRemoveTrack(track) {
 			this.$store.dispatch("playlist/removeTrack", track);
 		},
@@ -269,9 +277,15 @@ export default {
 }
 
 .playlistDetails .save,
-.playlistDetails .delete {
+.playlistDetails .delete,
+.playlistDetails .shuffle {
 	cursor: pointer;
 	padding-right: 8px;
+}
+
+.playlistDetails .shuffle {
+	padding-left: 8px;
+	border-left: 1px solid var(--theme-border-muted);
 }
 
 .playlistDetails span.playbackOrder {

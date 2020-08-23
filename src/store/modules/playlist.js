@@ -17,6 +17,11 @@ const actions = {
 		dispatch("saveToDisk");
 	},
 
+	shuffle({ commit, dispatch }) {
+		commit("shuffle");
+		dispatch("saveToDisk");
+	},
+
 	removeTrack({ commit, dispatch }, track) {
 		commit("removeTrack", track);
 		dispatch("saveToDisk");
@@ -90,6 +95,15 @@ const mutations = {
 	clear(state) {
 		state.tracks = [];
 		state.name = null;
+	},
+
+	shuffle(state) {
+		let shuffled = [...state.tracks];
+		for (let i = shuffled.length - 1; i > 0; i--) {
+			let j = Math.floor(Math.random() * (i + 1));
+			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+		}
+		state.tracks = shuffled;
 	},
 
 	queueTracks(state, tracks) {
