@@ -71,6 +71,7 @@ describe('Playlist', function() {
 		cy.visit('/')
 		cy.contains('Music Collection')
 		cy.contains('Queue All').click()
+		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 13)
 		cy.get('[data-cy=clear-playlist]').click()
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 0)
 	})
