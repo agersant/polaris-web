@@ -5,7 +5,7 @@
 			<breadcrumbs></breadcrumbs>
 		</div>
 
-		<div class="paneContent" ref="paneContent">
+		<div data-cy="browser" class="paneContent" ref="paneContent">
 			<div class="viewActions">
 				<div data-cy="browser-header" class="header">{{ header }}</div>
 				<div v-if="subHeader" class="subHeader">{{ subHeader }}</div>
