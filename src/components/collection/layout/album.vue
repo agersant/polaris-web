@@ -4,7 +4,7 @@
 			<img
 				v-bind:src="artworkURL"
 				draggable="true"
-				v-on:dragstart="event => $emit('current-path-drag-start', event)"
+				v-on:dragstart="event => $emit('items-drag-start', event, songs)"
 			/>
 		</div>
 		<div class="trackList">
@@ -85,6 +85,10 @@ export default {
 			});
 
 			return discs;
+		},
+
+		songs: function () {
+			return this.discs.map(d => d.songs).flat();
 		},
 
 		artworkURL: function () {

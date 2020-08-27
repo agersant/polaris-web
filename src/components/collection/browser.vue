@@ -29,7 +29,6 @@
 				v-bind:items="items"
 				v-on:item-click="onItemClicked"
 				v-on:items-drag-start="onItemsDragStart"
-				v-on:current-path-drag-start="onCurrentPathDragStart"
 			></album>
 		</div>
 	</div>
@@ -174,17 +173,19 @@ export default {
 		},
 
 		onQueueAll() {
-			this.$store.dispatch("playlist/queueDirectory", this.path);
-		},
-
-		onCurrentPathDragStart(event) {
-			let directoryItem = {
-				variant: "Directory",
-				fields: {
-					path: this.path,
-				},
-			};
-			event.dataTransfer.setData("text/json", JSON.stringify([directoryItem]));
+			if (this.viewMode == "album") {
+				let sortedTracks = [...this.items]
+					.map(i => i.fields)
+					.sort((a, b) => {
+						if (a.disc_number != b.disc_number) {
+							return (a.disc_number || 1) - (b.disc_number || 1);
+						}
+						return (a.track_number || 0) - (b.track_number || 0);
+					});
+				this.$store.dispatch("playlist/queueTracks", sortedTracks);
+			} else {
+				this.$store.dispatch("playlist/queueDirectory", this.path);
+			}
 		},
 	},
 };
