@@ -4,7 +4,7 @@
 			<img
 				v-bind:src="artworkURL"
 				draggable="true"
-				v-on:dragstart="event => $emit('items-drag-start', event, songs)"
+				v-on:dragstart="event => $emit('items-drag-start', event, items)"
 			/>
 		</div>
 		<div class="trackList">
@@ -58,7 +58,7 @@ export default {
 
 	computed: {
 		discs: function () {
-			return this.songs.reduce((discs, item) => {
+			return this.items.reduce((discs, item) => {
 				let disc = discs[discs.length - 1];
 				let discNumber = item.fields.disc_number;
 				if (!disc || disc.discNumber != discNumber) {
@@ -71,17 +71,6 @@ export default {
 				disc.songs.push(item);
 				return discs;
 			}, []);
-		},
-
-		songs: function () {
-			return this.items.sort((a, b) => {
-				const discA = a.fields.disc_number || 0;
-				const discB = b.fields.disc_number || 0;
-				if (discA != discB) {
-					return discA - discB;
-				}
-				return (a.fields.track_number || 0) - (b.fields.track_number || 0);
-			});
 		},
 
 		artworkURL: function () {
