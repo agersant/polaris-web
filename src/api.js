@@ -3,7 +3,7 @@ import Store from "/src/store/store"
 
 let decodeItems = function(items) {
 	let decoded = [];
-	for (let item of items) {
+	for (const item of items) {
 		decoded.push({
 			fields: item.Directory || item.Song,
 			variant: item.Directory ? "Directory" : "Song",
