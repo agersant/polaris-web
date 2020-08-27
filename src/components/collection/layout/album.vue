@@ -13,7 +13,7 @@
 					<div
 						draggable="true"
 						class="discNumber"
-						v-if="discs.length > 1 && disc.discNumber > 0"
+						v-if="discs.length > 1 && disc.discNumber"
 						v-on:dragstart="event => $emit('items-drag-start', event, disc.songs)"
 					>Disc {{ disc.discNumber }}</div>
 					<ol class="discContent">
@@ -60,7 +60,7 @@ export default {
 		discs: function () {
 			return this.songs.reduce((discs, item) => {
 				let disc = discs[discs.length - 1];
-				let discNumber = item.fields.disc_number || 0;
+				let discNumber = item.fields.disc_number;
 				if (!disc || disc.discNumber != discNumber) {
 					disc = {
 						discNumber: discNumber,
