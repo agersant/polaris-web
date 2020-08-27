@@ -13,7 +13,7 @@
 					<div
 						draggable="true"
 						class="discNumber"
-						v-if="discs.length > 1"
+						v-if="discs.length > 1 && disc.discNumber > 0"
 						v-on:dragstart="event => $emit('items-drag-start', event, disc.songs)"
 					>Disc {{ disc.discNumber }}</div>
 					<ol class="discContent">
@@ -58,37 +58,30 @@ export default {
 
 	computed: {
 		discs: function () {
-			var discs = [];
-			for (var i = 0; i < this.items.length; i++) {
-				var discNumber = this.items[i].fields.disc_number || 1;
-				var disc = discs.find(function (d) {
-					return d.discNumber == discNumber;
-				});
-				if (disc == undefined) {
+			return this.songs.reduce((discs, item) => {
+				let disc = discs[discs.length - 1];
+				let discNumber = item.fields.disc_number || 0;
+				if (!disc || disc.discNumber != discNumber) {
 					disc = {
 						discNumber: discNumber,
 						songs: [],
 					};
 					discs.push(disc);
 				}
-				disc.songs.push(this.items[i]);
-			}
-
-			for (var i = 0; i < discs.length; i++) {
-				discs[i].songs.sort(function (a, b) {
-					return (a.fields.track_number || 0) - (b.fields.track_number || 0);
-				});
-			}
-
-			discs.sort(function (a, b) {
-				return a.discNumber - b.discNumber;
-			});
-
-			return discs;
+				disc.songs.push(item);
+				return discs;
+			}, []);
 		},
 
 		songs: function () {
-			return this.discs.map(d => d.songs).flat();
+			return this.items.sort((a, b) => {
+				const discA = a.fields.disc_number || 0;
+				const discB = b.fields.disc_number || 0;
+				if (discA != discB) {
+					return discA - discB;
+				}
+				return (a.fields.track_number || 0) - (b.fields.track_number || 0);
+			});
 		},
 
 		artworkURL: function () {
