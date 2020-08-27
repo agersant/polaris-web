@@ -172,7 +172,7 @@ export default {
 	},
 
 	mounted() {
-		var volume = parseFloat(Disk.load("volume"));
+		const volume = parseFloat(Disk.load("volume"));
 		if (!isNaN(volume)) {
 			this.volume = volume;
 			if (volume > 0) {
@@ -229,7 +229,7 @@ export default {
 		updateMediaSession() {
 			if (navigator.mediaSession && MediaMetadata) {
 				const track = this.currentTrack;
-				var metadata = new MediaMetadata({
+				let metadata = new MediaMetadata({
 					title: track.info.title,
 					artist: track.info.artist,
 					album: track.info.album,
@@ -280,7 +280,7 @@ export default {
 
 		updateScrobble() {
 			if (this.canScrobble) {
-				var shouldScrobble = this.duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
+				const shouldScrobble = this.duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
 					API.lastFMScrobble(this.currentTrack.info.path);
 					this.canScrobble = false;
@@ -351,8 +351,8 @@ export default {
 		},
 
 		onPlaybackError(event) {
-			var errorText = "'" + this.trackInfoPrimary + "' could not be played because ";
-			var artwork = this.artworkURL || null;
+			const errorText = "'" + this.trackInfoPrimary + "' could not be played because ";
+			const artwork = this.artworkURL || null;
 			const error = event.target.error;
 			switch (error.code) {
 				case error.MEDIA_ERR_NETWORK:

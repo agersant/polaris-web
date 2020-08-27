@@ -188,10 +188,10 @@ export default {
 		},
 
 		onDrop(event) {
-			var items = event.dataTransfer.getData("text/json");
+			const items = event.dataTransfer.getData("text/json");
 			items = JSON.parse(items);
 			for (const item of items) {
-				var variant = item.variant;
+				const variant = item.variant;
 				if (variant == "Song") {
 					this.$store.dispatch("playlist/queueTracks", [item.fields]);
 				} else if (variant == "Directory") {

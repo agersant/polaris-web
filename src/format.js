@@ -3,7 +3,7 @@ export function getPathTail(path) {
 		return null;
 	}
 	path = path.replace(/\\/g, "/");
-	var slices = path.split("/");
+	let slices = path.split("/");
 	slices = slices.filter(s => s.length > 0);
 	return slices[slices.length - 1] || "";
 }

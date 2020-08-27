@@ -3,11 +3,11 @@ import Brown from "./theme-bases/brown"
 import Dark from "./theme-bases/dark"
 import Light from "./theme-bases/light"
 
-var bases = new Map();
-var defaultBase;
-var currentBase;
-var defaulAccentColor = "#44C8F1";
-var currentAccentColor;
+let bases = new Map();
+let defaultBase;
+let currentBase;
+const defaultAccentColor = "#44C8F1";
+let currentAccentColor;
 
 registerBase(Light);
 registerBase(Dark);
@@ -24,7 +24,7 @@ export function registerBase(content) {
 }
 
 export function listBases() {
-	var result = Array.from(bases, ([id, content]) => {
+	let result = Array.from(bases, ([id, content]) => {
 		return { id: id, name: content.name, }
 	});
 	result.sort(function(a, b) { return a.name > b.name ? 1 : -1; });
@@ -32,11 +32,10 @@ export function listBases() {
 }
 
 export function setBase(id) {
-	var entry = bases.get(id);
 	if (!bases.get(id)) {
 		id = defaultBase;
 	}
-	entry = bases.get(id);
+	const entry = bases.get(id);
 	currentBase = id;
 
 	const baseNode = document.querySelector("div.theme-base");
@@ -48,7 +47,7 @@ export function setBase(id) {
 
 export function setAccentColor(color) {
 	if (!color) {
-		color = defaulAccentColor;
+		color = defaultAccentColor;
 	}
 	currentAccentColor = color;
 	const accentNode = document.querySelector("div.theme-accent");

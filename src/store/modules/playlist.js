@@ -114,7 +114,7 @@ const mutations = {
 	},
 
 	removeTrack(state, track) {
-		var trackIndex = state.tracks.indexOf(track);
+		const trackIndex = state.tracks.indexOf(track);
 		if (trackIndex >= 0) {
 			state.tracks.splice(trackIndex, 1);
 		}

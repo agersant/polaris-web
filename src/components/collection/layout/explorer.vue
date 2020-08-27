@@ -46,7 +46,7 @@ export default {
 		},
 
 		formatDirectoryName(item) {
-			var slices = item.fields.path.replace(/\\/g, "/").split("/");
+			let slices = item.fields.path.replace(/\\/g, "/").split("/");
 			slices = slices.filter(function (s) {
 				return s.length > 0;
 			});

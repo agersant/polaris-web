@@ -86,7 +86,7 @@ export default {
 		},
 
 		addUser() {
-			var newUser = { name: "New User", password: "", isNew: true, admin: false };
+			const newUser = { name: "New User", password: "", isNew: true, admin: false };
 			this.users.push(newUser);
 			this.editing = newUser;
 		},

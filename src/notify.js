@@ -3,7 +3,7 @@ const maxRecentNotifications = 1;
 let recentNotificationTimes = [];
 
 let areWeSpammy = function() {
-	var now = Date.now();
+	const now = Date.now();
 	recentNotificationTimes = recentNotificationTimes.filter(function(t) { return (now - t) < recentThreshold });
 	return recentNotificationTimes.length >= maxRecentNotifications;
 };
@@ -38,7 +38,7 @@ export default function(title, icon, body) {
 		return;
 	}
 
-	var options = { body: body, };
+	let options = { body: body, };
 	if (icon) {
 		options.icon = icon;
 	}

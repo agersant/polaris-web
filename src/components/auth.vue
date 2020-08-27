@@ -28,9 +28,9 @@ export default {
 	methods: {
 		doLogin: function (e) {
 			e.preventDefault();
-			var form = document.forms["authForm"];
-			var username = form.elements["username"].value;
-			var password = form.elements["password"].value;
+			const form = document.forms["authForm"];
+			const username = form.elements["username"].value;
+			const password = form.elements["password"].value;
 			this.badCredentials = false;
 			API.login(username, password).then(res => {
 				if (res.status == 401) {
