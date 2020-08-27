@@ -188,7 +188,7 @@ export default {
 		},
 
 		onDrop(event) {
-			const items = event.dataTransfer.getData("text/json");
+			let items = event.dataTransfer.getData("text/json");
 			items = JSON.parse(items);
 			for (const item of items) {
 				const variant = item.variant;
