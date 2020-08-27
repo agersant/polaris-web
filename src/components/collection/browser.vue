@@ -25,6 +25,7 @@
 				v-on:items-drag-start="onItemsDragStart"
 			></discography>
 			<album
+				ref="album"
 				v-if="viewMode == 'album'"
 				v-bind:items="items"
 				v-on:item-click="onItemClicked"
@@ -174,14 +175,7 @@ export default {
 
 		onQueueAll() {
 			if (this.viewMode == "album") {
-				let sortedTracks = [...this.items]
-					.map(i => i.fields)
-					.sort((a, b) => {
-						if (a.disc_number != b.disc_number) {
-							return (a.disc_number || 1) - (b.disc_number || 1);
-						}
-						return (a.track_number || 0) - (b.track_number || 0);
-					});
+				const sortedTracks = this.$refs.album.songs.map(i => i.fields);
 				this.$store.dispatch("playlist/queueTracks", sortedTracks);
 			} else {
 				this.$store.dispatch("playlist/queueDirectory", this.path);
