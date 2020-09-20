@@ -35,7 +35,7 @@ jobs:
       run: cargo +nightly build --release
     - name: Run Polaris
       working-directory: polaris
-      run: ./target/release/polaris -d test/db.sqlite -w ../dist -f &
+      run: ./target/release/polaris -d db.sqlite -w ../dist -f &
 
     - name: Install Node.js
       uses: actions/setup-node@v1
