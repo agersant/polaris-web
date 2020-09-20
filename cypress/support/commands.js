@@ -48,7 +48,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 					admin: true
 				}],
 				mount_dirs: [{
-					source: 'test/collection',
+					source: 'test-data/small-collection',
 					name: 'Test'
 				}]
 			})
