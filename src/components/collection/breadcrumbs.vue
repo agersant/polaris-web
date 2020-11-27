@@ -7,7 +7,9 @@
 			v-bind:key="component.path"
 			v-on:click="onClick(component)"
 			v-bind:style="{ 'flex-shrink': Math.max(0, component.name.length - 9) }"
-		>{{ component.name }}</li>
+		>
+			{{ component.name }}
+		</li>
 	</ul>
 </template>
 
@@ -31,7 +33,7 @@ export default {
 
 	methods: {
 		updatePath() {
-			let path = this.$route.params.pathMatch || "";
+			let path = this.$route.params.pathMatch + this.$route.hash || "";
 			if (path.startsWith("/")) {
 				path = path.substring(1);
 			}

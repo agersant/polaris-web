@@ -11,25 +11,9 @@
 				<div v-if="subHeader" class="subHeader">{{ subHeader }}</div>
 				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
 			</div>
-			<explorer
-				v-if="viewMode == 'explorer'"
-				v-bind:items="items"
-				v-on:item-click="onItemClicked"
-				v-on:items-drag-start="onItemsDragStart"
-			></explorer>
-			<discography
-				v-if="viewMode == 'discography'"
-				v-bind:showArtistName="false"
-				v-bind:albums="items"
-				v-on:item-click="onItemClicked"
-				v-on:items-drag-start="onItemsDragStart"
-			></discography>
-			<album
-				v-if="viewMode == 'album'"
-				v-bind:items="items"
-				v-on:item-click="onItemClicked"
-				v-on:items-drag-start="onItemsDragStart"
-			></album>
+			<explorer v-if="viewMode == 'explorer'" v-bind:items="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></explorer>
+			<discography v-if="viewMode == 'discography'" v-bind:showArtistName="false" v-bind:albums="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></discography>
+			<album v-if="viewMode == 'album'" v-bind:items="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></album>
 		</div>
 	</div>
 </template>
@@ -135,7 +119,7 @@ export default {
 				this.savedPositions.set(this.path, this.$refs.paneContent.scrollTop);
 			}
 
-			let newPath = this.$route.params.pathMatch || "";
+			let newPath = this.$route.params.pathMatch + this.$route.hash || "";
 			if (newPath.startsWith("/")) {
 				newPath = newPath.substring(1);
 			}
