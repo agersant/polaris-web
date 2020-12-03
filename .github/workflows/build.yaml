@@ -81,7 +81,7 @@ jobs:
     - name: Compress Build
       run: zip -r web.zip web
     - name: Generate build number
-      uses: einaregilsson/build-number@v2
+      uses: einaregilsson/build-number@v3
       with:
         token: ${{secrets.GITHUB_TOKEN}}
     - name: Create Release
