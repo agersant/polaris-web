@@ -5,13 +5,7 @@
 			<div class="playlistDetails">
 				<span class="noselect save" v-on:click="onClickSave">
 					<i class="material-icons md-18">save</i>
-					<playlist-save
-						v-if="saving"
-						v-bind:tracks="playlist.tracks"
-						v-bind:initialName="playlist.name"
-						v-on:cancel="endSave"
-						v-on:complete="endSave"
-					/>
+					<playlist-save v-if="saving" v-bind:tracks="playlist.tracks" v-bind:initialName="playlist.name" v-on:cancel="endSave" v-on:complete="endSave" />
 				</span>
 				<span data-cy="clear-playlist" class="noselect delete" v-on:click="onClickClear">
 					<i class="material-icons md-18">delete</i>
@@ -28,56 +22,31 @@
 						<option value="repeat-all">Repeat All</option>
 					</select>
 				</span>
-				<div
-					data-cy="playlist-duration"
-					class="totalDuration"
-					v-if="duration > 0"
-					v-bind:style="{ right: scrollbarWidth + 'px' }"
-				>{{ formatPlaylistDuration(duration) }}</div>
+				<div data-cy="playlist-duration" class="totalDuration" v-if="duration > 0" v-bind:style="{ right: scrollbarWidth + 'px' }">{{ formatPlaylistDuration(duration) }}</div>
 			</div>
 		</div>
 
-		<div
-			data-cy="playlist"
-			class="paneContent"
-			ref="scrollElement"
-			v-on:scroll="onScroll"
-			v-on:dragover="onDragOver"
-			v-on:drop.prevent="onDrop"
-		>
-			<div v-bind:style="{height: topPadding + 'px'}"></div>
+		<div data-cy="playlist" class="paneContent" ref="scrollElement" v-on:scroll="onScroll" v-on:dragover="onDragOver" v-on:drop.prevent="onDrop">
+			<div v-bind:style="{ height: topPadding + 'px' }"></div>
 			<table>
 				<tbody>
-					<tr
-						data-cy="track"
-						v-for="(track, index) in visibleTracks"
-						v-bind:key="index"
-						v-bind:class="{ nowPlaying: track == playlist.currentTrack }"
-						v-on:click="onClickTrack(track)"
-					>
+					<tr data-cy="track" v-for="(track, index) in visibleTracks" v-bind:key="index" v-bind:class="{ nowPlaying: track == playlist.currentTrack }" v-on:click="onClickTrack(track)">
 						<td data-cy="remove" class="remove">
 							<div class="remove noselect" v-on:click.stop="onClickRemoveTrack(track)">[-]</div>
 						</td>
 						<td class="nowPlaying">
-							<i
-								data-cy="now-playing"
-								v-if="track == playlist.currentTrack"
-								class="nowPlaying material-icons md-16"
-							>play_arrow</i>
+							<i data-cy="now-playing" v-if="track == playlist.currentTrack" class="nowPlaying material-icons md-16">play_arrow</i>
 						</td>
 						<td class="text">{{ formatTrackContext(track) }}</td>
 						<td class="text song">
 							{{ formatTrackDetails(track) }}
-							<span
-								class="trackArtist"
-								v-if="track.info.album_artist && track.info.artist && track.info.album_artist != track.info.artist"
-							>({{ track.info.artist }})</span>
+							<span class="trackArtist" v-if="track.info.album_artist && track.info.artist && track.info.album_artist != track.info.artist">({{ track.info.artist }})</span>
 						</td>
 						<td class="text duration">{{ formatTrackDuration(track) }}</td>
 					</tr>
 				</tbody>
 			</table>
-			<div v-bind:style="{height: bottomPadding + 'px'}"></div>
+			<div v-bind:style="{ height: bottomPadding + 'px' }"></div>
 			<div class="help" v-if="playlist.tracks.length == 0">
 				<i class="material-icons md-48">queue</i>
 				<br />Make a playlist by dragging music from your collection to here.
@@ -189,6 +158,7 @@ export default {
 
 		onDrop(event) {
 			let items = event.dataTransfer.getData("text/json");
+			console.log(items);
 			items = JSON.parse(items);
 			for (const item of items) {
 				const variant = item.variant;

@@ -43,13 +43,27 @@ describe('Playlist', function() {
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').contains('ブルーベリーパイ (Blueberry Pie)')
 	})
 
-	it('can drag and drop an album', () => {
+	it('can drag and drop an album from browser', () => {
 		cy.visit('/')
 		cy.contains('Music Collection')
 		cy.get('[data-cy=browser]').contains('Test').click()
 		cy.get('[data-cy=browser]').contains('Tobokegao').click()
 		cy.get('[data-cy=browser]').contains('Picnic').drag('[data-cy=playlist]')
 		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 7)
+	})
+
+	it('can drag and drop an album from random', () => {
+		cy.visit('/#/random')
+		cy.contains('Random')
+		cy.get('[data-cy=album]').contains('Hunted').drag('[data-cy=playlist]')
+		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 5)
+	})
+
+	it('can drag and drop an album from recent', () => {
+		cy.visit('/#/recent')
+		cy.contains('Recent')
+		cy.get('[data-cy=album]').contains('Hunted').drag('[data-cy=playlist]')
+		cy.get('[data-cy=playlist]').find('[data-cy=track]').should('have.length', 5)
 	})
 
 	it('can drag and drop multiple albums', () => {

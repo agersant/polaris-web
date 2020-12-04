@@ -8,12 +8,7 @@
 			</div>
 		</div>
 		<div class="paneContent" ref="paneContent">
-			<discography
-				v-bind:showArtistName="false"
-				v-bind:albums="items"
-				v-on:item-click="onItemClicked"
-				v-on:items-drag-start="onItemsDragStart"
-			></discography>
+			<discography v-bind:showArtistName="false" v-bind:albums="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></discography>
 		</div>
 	</div>
 </template>
@@ -53,8 +48,8 @@ export default {
 			this.$router.push("/browse/" + item.fields.path).catch(err => {});
 		},
 
-		onItemsDragStart(event) {
-			event.dataTransfer.setData("text/json", JSON.stringify(event.items));
+		onItemsDragStart(event, items) {
+			event.dataTransfer.setData("text/json", JSON.stringify(items));
 		},
 	},
 };
