@@ -20,9 +20,11 @@ jobs:
       with:
         path: polaris/target
         key: polaris-binary-${{ hashFiles('polaris-version') }}
+    - name: Copy rust-toolchain file
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: cp polaris/rust-toolchain .
     - name: Install Rust toolchain
       if: steps.cache.outputs.cache-hit != 'true'
-      working-directory: polaris
       uses: actions-rs/toolchain@v1
       with:
         profile: minimal
