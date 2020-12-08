@@ -24,15 +24,11 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: nightly
         profile: minimal
-    - name: Install libsqlite3-dev
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: sudo apt-get install libsqlite3-dev
     - name: Build Polaris
       working-directory: polaris
       if: steps.cache.outputs.cache-hit != 'true'
-      run: cargo +nightly build --release
+      run: cargo build --release
     - name: Run Polaris
       working-directory: polaris
       run: ./target/release/polaris -d db.sqlite -w ../dist -f &
