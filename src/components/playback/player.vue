@@ -1,15 +1,6 @@
 <template>
 	<div class="player">
-		<audio
-			ref="htmlAudio"
-			controls
-			v-bind:src="trackURL"
-			v-on:timeupdate="onTimeUpdate"
-			v-on:error="onPlaybackError"
-			v-on:ended="skipNext"
-			v-on:pause="onPaused"
-			v-on:playing="onPlaying"
-		></audio>
+		<audio ref="htmlAudio" controls v-bind:src="trackURL" v-on:timeupdate="onTimeUpdate" v-on:error="onPlaybackError" v-on:ended="skipNext" v-on:pause="onPaused" v-on:playing="onPlaying"></audio>
 
 		<div v-if="currentTrack" class="controls noselect">
 			<div class="playback">
@@ -32,7 +23,7 @@
 					<i v-if="volume > 0" class="material-icons">volume_down</i>
 				</div>
 				<div class="bar" ref="volumeInput" v-on:mousedown="volumeMouseDown">
-					<div class="fill" v-bind:style="{width: (100 * volume) + '%'}"></div>
+					<div class="fill" v-bind:style="{ width: 100 * volume + '%' }"></div>
 				</div>
 			</div>
 		</div>
@@ -48,8 +39,8 @@
 				<div class="secondary">{{ trackInfoSecondary }}</div>
 			</div>
 			<div class="seekBar" ref="seekInput" v-on:mousedown="seekMouseDown">
-				<div class="fill" v-bind:style="{width: (100 * trackProgress) + '%'}"></div>
-				<div class="head" v-bind:style="{left: (100 * trackProgress) + '%'}"></div>
+				<div class="fill" v-bind:style="{ width: 100 * trackProgress + '%' }"></div>
+				<div class="head" v-bind:style="{ left: 100 * trackProgress + '%' }"></div>
 			</div>
 			<div v-if="currentTrack" class="trackDuration">{{ formattedPlaybackTime }}</div>
 		</div>
@@ -94,14 +85,14 @@ export default {
 			if (!this.currentTrack) {
 				return null;
 			}
-			return API.makeAudioURL(this.currentTrack.info.path);
+			return API.makeAudioURL(this.currentTrack.path);
 		},
 
 		artworkURL: function () {
-			if (!this.currentTrack || !this.currentTrack.info.artwork) {
+			if (!this.currentTrack || !this.currentTrack.artwork) {
 				return null;
 			}
-			return API.makeThumbnailURL(this.currentTrack.info.artwork);
+			return API.makeThumbnailURL(this.currentTrack.artwork);
 		},
 
 		formattedPlaybackTime: function () {
@@ -120,20 +111,20 @@ export default {
 
 		trackInfoPrimary() {
 			const track = this.currentTrack;
-			let result = track.info.artist ? track.info.artist : "Unknown Artist";
+			let result = track.artist ? track.artist : "Unknown Artist";
 			result += " - ";
-			result += Format.title(track.info);
+			result += Format.title(track);
 			return result;
 		},
 
 		trackInfoSecondary() {
 			const track = this.currentTrack;
-			let result = track.info.album || "Unknown Album";
-			if (track.info.year) {
-				result += " (" + track.info.year + ")";
+			let result = track.album || "Unknown Album";
+			if (track.year) {
+				result += " (" + track.year + ")";
 			}
-			if (track.info.track_number) {
-				result += " #" + track.info.track_number;
+			if (track.track_number) {
+				result += " #" + track.track_number;
 			}
 			return result;
 		},
@@ -151,7 +142,7 @@ export default {
 						.play()
 						.then(() => {
 							this.secondsPlayed = 0;
-							API.lastFMNowPlaying(to.info.path);
+							API.lastFMNowPlaying(to.path);
 						})
 						.catch(() => {})
 						.finally(() => {
@@ -230,9 +221,9 @@ export default {
 			if (navigator.mediaSession && MediaMetadata) {
 				const track = this.currentTrack;
 				let metadata = new MediaMetadata({
-					title: track.info.title,
-					artist: track.info.artist,
-					album: track.info.album,
+					title: track.title,
+					artist: track.artist,
+					album: track.album,
 				});
 				if (this.artworkURL) {
 					metadata.artwork = [{ src: this.artworkURL }];
@@ -242,7 +233,7 @@ export default {
 		},
 
 		updateWindowTitle() {
-			const info = this.currentTrack.info;
+			const info = this.currentTrack;
 			let trackInfo = info.artist ? info.artist : "Unknown Artist";
 			trackInfo += " - ";
 			trackInfo += Format.title(info);
@@ -282,7 +273,7 @@ export default {
 			if (this.canScrobble) {
 				const shouldScrobble = this.duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
 				if (shouldScrobble) {
-					API.lastFMScrobble(this.currentTrack.info.path);
+					API.lastFMScrobble(this.currentTrack.path);
 					this.canScrobble = false;
 				}
 			}

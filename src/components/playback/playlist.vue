@@ -40,7 +40,7 @@
 						<td class="text">{{ formatTrackContext(track) }}</td>
 						<td class="text song">
 							{{ formatTrackDetails(track) }}
-							<span class="trackArtist" v-if="track.info.album_artist && track.info.artist && track.info.album_artist != track.info.artist">({{ track.info.artist }})</span>
+							<span class="trackArtist" v-if="track.album_artist && track.artist && track.album_artist != track.artist">({{ track.artist }})</span>
 						</td>
 						<td class="text duration">{{ formatTrackDuration(track) }}</td>
 					</tr>
@@ -96,7 +96,7 @@ export default {
 		},
 		duration: function () {
 			return this.playlist.tracks.reduce((acc, track) => {
-				const durationInSeconds = parseInt(track.info.duration, 10);
+				const durationInSeconds = parseInt(track.duration, 10);
 				if (!durationInSeconds) {
 					return acc;
 				}
@@ -194,31 +194,31 @@ export default {
 
 		formatTrackContext(track) {
 			let context = "";
-			if (track.info.album_artist || track.info.artist) {
-				context += track.info.album_artist || track.info.artist;
+			if (track.album_artist || track.artist) {
+				context += track.album_artist || track.artist;
 			} else {
 				context += "Unknown Artist";
 			}
 			context += " - ";
-			context += track.info.album ? track.info.album : "Unknown Album";
-			if (track.info.year) {
-				context += " (" + track.info.year + ")";
+			context += track.album ? track.album : "Unknown Album";
+			if (track.year) {
+				context += " (" + track.year + ")";
 			}
 			return context;
 		},
 
 		formatTrackDetails(track) {
 			let details = "";
-			if (track.info.track_number) {
-				details += track.info.track_number;
+			if (track.track_number) {
+				details += track.track_number;
 				details += ". ";
 			}
-			details += Format.title(track.info);
+			details += Format.title(track);
 			return details;
 		},
 
 		formatTrackDuration(track) {
-			let durationInSeconds = parseInt(track.info.duration, 10);
+			let durationInSeconds = parseInt(track.duration, 10);
 			return Format.duration(durationInSeconds);
 		},
 

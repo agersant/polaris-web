@@ -107,7 +107,7 @@ const mutations = {
 	},
 
 	queueTracks(state, tracks) {
-		state.tracks = state.tracks.concat(tracks.map(t => { return { info: t } }));
+		state.tracks = state.tracks.concat(tracks);
 		if (!state.currentTrack && state.tracks.length > 0) {
 			state.currentTrack = state.tracks[0];
 		}
