@@ -233,11 +233,11 @@ export default {
 		},
 
 		updateWindowTitle() {
-			const info = this.currentTrack;
-			let trackInfo = info.artist ? info.artist : "Unknown Artist";
-			trackInfo += " - ";
-			trackInfo += Format.title(info);
-			document.title = trackInfo;
+			const track = this.currentTrack;
+			let windowTitle = track.artist ? track.artist : "Unknown Artist";
+			windowTitle += " - ";
+			windowTitle += Format.title(track);
+			document.title = windowTitle;
 		},
 
 		toggleMute() {
