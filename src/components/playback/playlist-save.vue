@@ -66,7 +66,7 @@ export default {
 
 		save() {
 			this.saveState = this.saveStates.saving;
-			let tracks = this.tracks.map(t => t.info.path);
+			let tracks = this.tracks.map(t => t.path);
 			API.putPlaylist(this.name, tracks).then(res => {
 				let status = res.ok ? "success" : "failure";
 				this.saveState = this.saveStates[status];

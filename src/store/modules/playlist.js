@@ -93,7 +93,7 @@ const actions = {
 const mutations = {
 
 	clear(state) {
-		state.tracks = [];
+		state.tracks = Object.freeze([]);
 		state.name = null;
 	},
 
@@ -103,11 +103,11 @@ const mutations = {
 			let j = Math.floor(Math.random() * (i + 1));
 			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
 		}
-		state.tracks = shuffled;
+		state.tracks = Object.freeze(shuffled);
 	},
 
 	queueTracks(state, tracks) {
-		state.tracks = state.tracks.concat(tracks.map(t => { return { info: t } }));
+		state.tracks = Object.freeze(state.tracks.concat(tracks));
 		if (!state.currentTrack && state.tracks.length > 0) {
 			state.currentTrack = state.tracks[0];
 		}
@@ -116,7 +116,9 @@ const mutations = {
 	removeTrack(state, track) {
 		const trackIndex = state.tracks.indexOf(track);
 		if (trackIndex >= 0) {
-			state.tracks.splice(trackIndex, 1);
+			let newTracks = [...state.tracks];
+			newTracks.splice(trackIndex, 1);
+			state.tracks = Object.freeze(newTracks);
 		}
 	},
 
@@ -184,7 +186,7 @@ const mutations = {
 		}
 		let tracks = Disk.load("playlist");
 		if (tracks) {
-			state.tracks = tracks;
+			state.tracks = Object.freeze(tracks);
 		}
 		let currentTrackIndex = Disk.load("currentTrackIndex");
 		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < state.tracks.length) {
