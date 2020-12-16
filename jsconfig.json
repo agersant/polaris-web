@@ -1,0 +1,6 @@
+// config for VSCode Vetur extension
+{
+	"include": [
+		"./src/**/*"
+	]
+}
