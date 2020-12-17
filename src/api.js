@@ -58,6 +58,35 @@ export default {
 		});
 	},
 
+	users() {
+		return request("/users")
+			.then(res => res.json());
+	},
+
+	createUser(name, password, isAdmin) {
+		return request("/user", {
+			method: "POST",
+			body: JSON.stringify({ name: name, password: password, is_admin: isAdmin }),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	updateUser(name, password, isAdmin) {
+		return request("/user/" + name, {
+			method: "PUT",
+			body: JSON.stringify({ new_password: password, new_is_admin: isAdmin }),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	deleteUser(name) {
+		return request("/user/" + name, { method: "DELETE", });
+	},
+
 	getPreferences() {
 		return request("/preferences")
 			.then(res => res.json());
