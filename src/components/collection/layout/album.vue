@@ -1,21 +1,14 @@
 <template>
 	<div class="details">
 		<div class="coverArt">
-			<img
-				v-bind:src="artworkURL"
-				draggable="true"
-				v-on:dragstart="event => $emit('items-drag-start', event, items)"
-			/>
+			<img v-bind:src="artworkURL" draggable="true" v-on:dragstart="event => $emit('items-drag-start', event, items)" />
 		</div>
 		<div class="trackList">
 			<ul>
 				<li v-for="(disc, index) in discs" v-bind:key="index">
-					<div
-						draggable="true"
-						class="discNumber"
-						v-if="discs.length > 1 && disc.discNumber"
-						v-on:dragstart="event => $emit('items-drag-start', event, disc.songs)"
-					>Disc {{ disc.discNumber }}</div>
+					<div draggable="true" class="discNumber" v-if="discs.length > 1 && disc.discNumber" v-on:dragstart="event => $emit('items-drag-start', event, disc.songs)">
+						Disc {{ disc.discNumber }}
+					</div>
 					<ol class="discContent">
 						<li
 							draggable="true"
@@ -28,10 +21,7 @@
 						>
 							<span class="songName">
 								{{ formatSongTitle(item) }}
-								<span
-									class="trackArtist"
-									v-if="item.fields.artist && item.fields.album_artist && item.fields.artist != item.fields.album_artist"
-								>({{ item.fields.artist }})</span>
+								<span class="trackArtist" v-if="item.fields.artist && item.fields.album_artist && item.fields.artist != item.fields.album_artist">({{ item.fields.artist }})</span>
 							</span>
 						</li>
 					</ol>
@@ -103,7 +93,7 @@ export default {
 
 .coverArt {
 	flex-shrink: 0;
-	width: 12vw;
+	width: 40%;
 	display: flex;
 	justify-content: start;
 	align-items: start;

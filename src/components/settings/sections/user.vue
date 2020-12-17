@@ -15,7 +15,7 @@
 					<input type="password" autocomplete="new-password" v-model="newPassword" placeholder="New password" />
 					<state-button v-bind:disabled="!newPassword" v-bind:submit="true" v-bind:states="passwordEditingStates" v-bind:state="passwordEditingState" />
 				</form>
-				<button class="danger delete" v-bind:disabled="isSelf(user)" v-on:click="deleteUser(user)">Delete {{ user.name }}</button>
+				<button class="danger delete" v-bind:disabled="isSelf(user)" v-on:click="deleteUser(user)">Delete</button>
 			</div>
 		</div>
 	</div>

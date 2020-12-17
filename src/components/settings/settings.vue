@@ -1,5 +1,5 @@
 <template>
-	<div class="left pane">
+	<div class="pane">
 		<div class="paneHeader">
 			<h2>Settings</h2>
 			<tabs></tabs>

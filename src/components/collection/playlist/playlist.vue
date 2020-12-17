@@ -1,5 +1,5 @@
 <template>
-	<div class="left pane">
+	<div class="pane">
 		<div class="paneHeader">
 			<h2>Playlists</h2>
 		</div>
@@ -10,11 +10,7 @@
 				<button v-on:click="deletePlaylist" class="danger small">Delete</button>
 			</div>
 
-			<explorer
-				v-bind:items="tracks"
-				v-on:item-click="onItemClicked"
-				v-on:items-drag-start="onItemsDragStart"
-			></explorer>
+			<explorer v-bind:items="tracks" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></explorer>
 		</div>
 	</div>
 </template>

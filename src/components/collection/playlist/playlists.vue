@@ -1,5 +1,5 @@
 <template>
-	<div class="left pane">
+	<div class="pane">
 		<div class="paneHeader">
 			<h2>Playlists</h2>
 		</div>
@@ -13,12 +13,13 @@
 					draggable="true"
 					v-on:click="onItemClicked(playlist)"
 					v-on:dragstart="event => onPlaylistDragStart(event, playlist)"
-				>{{ playlist.name }}</li>
+				>
+					{{ playlist.name }}
+				</li>
 			</ul>
 			<div class="help" v-if="playlists.listing.length == 0">
 				<i class="material-icons md-48">playlist_add</i>
-				<br />Save a playlist by pressing the
-				<i class="save material-icons md-20">save</i> button above it.
+				<br />Save a playlist by pressing the <i class="save material-icons md-20">save</i> button above it.
 				<br />
 			</div>
 		</div>
