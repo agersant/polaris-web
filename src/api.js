@@ -132,6 +132,21 @@ export default {
 		});
 	},
 
+	getDDNSConfig() {
+		return request("/ddns")
+			.then(res => res.json());
+	},
+
+	putDDNSConfig(config) {
+		return request("/ddns", {
+			method: "PUT",
+			body: JSON.stringify(config),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
 	triggerIndex() {
 		return request("/trigger_index", { method: "POST" });
 	},
