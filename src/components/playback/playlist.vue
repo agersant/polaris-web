@@ -1,5 +1,5 @@
 <template>
-	<div class="right pane">
+	<div class="pane">
 		<div class="paneHeader">
 			<h2>{{ playlist.name || "Playlist" }}</h2>
 			<div class="playlistDetails">

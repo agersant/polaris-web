@@ -12,15 +12,15 @@ describe('Initial Setup', function() {
 
     cy.contains('Music Sources')
     cy.get('[data-cy=submit-mount-points]').should('be.disabled')
-    cy.get('input#source').type('test-data/small-collection')
-    cy.get('input#name').type('Test')
+    cy.get('[data-cy=source]').type('test-data/small-collection')
+    cy.get('[data-cy=name').type('Test')
     cy.get('[data-cy=submit-mount-points]').click()
 
     cy.contains('User Account')
     cy.get('[data-cy=submit-user]').should('be.disabled')
-    cy.get('input#username').type('testUser')
-    cy.get('input#password').type('testPassword')
-    cy.get('input#password_confirm').type('testPassword')
+    cy.get('[data-cy=create-username]').type('testUser')
+    cy.get('[data-cy=create-password]').type('testPassword')
+    cy.get('[data-cy=create-password-confirm]').type('testPassword')
     cy.get('[data-cy=submit-user]').click()
 
     cy.hash().should('contain', 'browse')

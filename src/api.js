@@ -58,6 +58,35 @@ export default {
 		});
 	},
 
+	users() {
+		return request("/users")
+			.then(res => res.json());
+	},
+
+	createUser(name, password, isAdmin) {
+		return request("/user", {
+			method: "POST",
+			body: JSON.stringify({ name: name, password: password, admin: isAdmin }),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	updateUser(name, password, isAdmin) {
+		return request("/user/" + name, {
+			method: "PUT",
+			body: JSON.stringify({ new_password: password, new_is_admin: isAdmin }),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	deleteUser(name) {
+		return request("/user/" + name, { method: "DELETE", });
+	},
+
 	getPreferences() {
 		return request("/preferences")
 			.then(res => res.json());
@@ -82,6 +111,36 @@ export default {
 		return request("/settings", {
 			method: "PUT",
 			body: JSON.stringify(settings),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	getMountDirs() {
+		return request("/mount_dirs")
+			.then(res => res.json());
+	},
+
+	putMountDirs(mountDirs) {
+		return request("/mount_dirs", {
+			method: "PUT",
+			body: JSON.stringify(mountDirs),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
+	getDDNSConfig() {
+		return request("/ddns")
+			.then(res => res.json());
+	},
+
+	putDDNSConfig(config) {
+		return request("/ddns", {
+			method: "PUT",
+			body: JSON.stringify(config),
 			headers: {
 				"Content-Type": "application/json"
 			}

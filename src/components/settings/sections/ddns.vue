@@ -2,22 +2,14 @@
 	<div>
 		<p class="explanation">
 			Polaris can automatically broadcast your computer's IP to YDNS to make your server reachable at a fixed URL. You will need to sign up for a
-			<a
-				href="https://ydns.io/"
-				target="_blank"
-			>YDNS</a> account before filling out the corresponding settings on this page. If you prefer not to use YDNS, you can ignore these settings and set up any another dynamic DNS service manually.
+			<a href="https://ydns.io/" target="_blank">YDNS</a> account before filling out the corresponding settings on this page. If you prefer not to use YDNS, you can ignore these settings and set
+			up any another dynamic DNS service manually.
 		</p>
 
 		<form v-if="ddns" v-on:submit.prevent>
 			<div class="field">
 				<label for="host">Hostname</label>
-				<input
-					type="text"
-					id="host"
-					v-model="ddns.host"
-					v-on:change="commit"
-					placeholder="yourname.ydns.eu"
-				/>
+				<input type="text" id="host" v-model="ddns.host" v-on:change="commit" placeholder="yourname.ydns.eu" />
 				<p class="tip">The URL pointing to your Polaris server.</p>
 				<label for="username">Username</label>
 				<input type="text" id="username" v-model="ddns.username" v-on:change="commit" />
@@ -46,17 +38,14 @@ export default {
 	},
 
 	mounted() {
-		API.getSettings().then(data => {
-			this.ddns = data.ydns;
+		API.getDDNSConfig().then(data => {
+			this.ddns = data;
 		});
 	},
 
 	methods: {
 		commit() {
-			let settings = {
-				ydns: this.ddns,
-			};
-			API.putSettings(settings);
+			API.putDDNSConfig(this.ddns);
 		},
 	},
 };

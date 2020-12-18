@@ -1,9 +1,13 @@
 <template>
-	<div>
+	<div class="app">
 		<sidebar class="sidebar"></sidebar>
-		<router-view></router-view>
-		<playlist></playlist>
-		<player></player>
+		<div class="left-pane">
+			<router-view></router-view>
+		</div>
+		<div class="right-pane">
+			<playlist></playlist>
+			<player></player>
+		</div>
 	</div>
 </template>
 
@@ -37,51 +41,52 @@ export default {
 </script>
 
 <style>
+.app {
+	display: flex;
+	height: 100%;
+}
+
+.sidebar {
+	width: 50px;
+	flex-shrink: 0;
+}
+
+.left-pane {
+	height: 100%;
+	flex-shrink: 0;
+	width: max(550px, min(900px, calc(40% - 50px)));
+}
+
+.right-pane {
+	height: 100%;
+	flex-grow: 1;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	border-left: 1px solid var(--theme-border-muted);
+}
+
+.pane {
+	height: 100%;
+}
+
+.player {
+	height: 160px;
+	box-sizing: border-box;
+	border-top: 1px solid var(--theme-border-muted);
+}
+
 .pane,
 .player {
 	overflow-x: hidden;
 	background-color: var(--theme-background);
 }
 
-.sidebar {
-	position: absolute;
-	width: 50px;
-	height: 100%;
-}
-
-.pane.left {
-	position: absolute;
-	width: calc(40% - 50px);
-	left: 50px;
-	height: 100%;
-}
-
-.pane.right {
-	position: absolute;
-	width: 60%;
-	right: 0;
-	height: calc(100% - 160px);
-	z-index: 1;
-	box-sizing: border-box;
-	border-left: 1px solid var(--theme-border-muted);
-}
-
-.player {
-	position: absolute;
-	width: 60%;
-	bottom: 0;
-	right: 0;
-	height: 160px;
-	box-sizing: border-box;
-	border-left: 1px solid var(--theme-border-muted);
-	border-top: 1px solid var(--theme-border-muted);
-}
-
 .paneHeader {
 	display: flex;
 	flex-direction: column;
-	width: inherit;
-	position: fixed;
+	width: 100%;
 	height: 100px;
 	z-index: 1;
 	box-sizing: border-box;
@@ -96,9 +101,7 @@ export default {
 
 .paneContent {
 	width: 100%;
-	position: relative;
 	height: calc(100% - 100px);
-	top: 100px;
 	padding-top: 50px;
 	padding-left: 50px;
 	padding-right: 50px;

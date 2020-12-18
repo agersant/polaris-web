@@ -1,5 +1,5 @@
 <template>
-	<div class="left pane">
+	<div class="pane">
 		<div class="paneHeader">
 			<h2>Search</h2>
 			<search-input></search-input>
@@ -9,11 +9,7 @@
 				<div class="header">{{ results.length }} results found for '{{ query }}'</div>
 				<button v-if="results.length > 0" v-on:click="queueAll" class="small">Queue All</button>
 			</div>
-			<explorer
-				v-bind:items="results"
-				v-on:item-click="onItemClicked"
-				v-on:items-drag-start="onItemsDragStart"
-			></explorer>
+			<explorer v-bind:items="results" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></explorer>
 		</div>
 	</div>
 </template>
