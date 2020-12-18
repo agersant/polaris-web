@@ -1,15 +1,8 @@
 <template>
-	<form v-if="settings" v-on:submit.prevent>
+	<form v-if="settings && mountDirs" v-on:submit.prevent>
 		<div class="field">
 			<label for="art_pattern">Album art pattern</label>
-			<input
-				type="text"
-				id="art_pattern"
-				v-model="settings.album_art_pattern"
-				v-on:change="onAlbumArtPatternChanged"
-				v-on:keypress.enter.prevent
-				placeholder="Folder.(jpg|png)"
-			/>
+			<input type="text" id="art_pattern" v-model="settings.album_art_pattern" v-on:change="onAlbumArtPatternChanged" v-on:keypress.enter.prevent placeholder="Folder.(jpg|png)" />
 			<p class="tip">The regular expression used to detect album art files.</p>
 			<p v-if="!validateAlbumArtPattern()" class="tip error">Please enter a valid regular expression.</p>
 		</div>
@@ -21,42 +14,26 @@
 					<th>Name</th>
 					<th />
 				</thead>
-				<tr v-for="(mountPoint, index) in settings.mount_dirs" v-bind:key="index">
+				<tr v-for="(mountDir, index) in mountDirs" v-bind:key="index">
 					<td>
-						<input
-							type="text"
-							v-model="mountPoint.source"
-							v-on:change="commit"
-							v-on:keypress.enter.prevent
-						/>
+						<input type="text" v-model="mountDir.source" v-on:change="commitMountDirs" v-on:keypress.enter.prevent />
 					</td>
 					<td>
-						<input type="text" v-model="mountPoint.name" v-on:change="commit" />
+						<input type="text" v-model="mountDir.name" v-on:change="commitMountDirs" />
 					</td>
 					<td>
-						<i v-on:click="deleteMountPoint(index)" class="noselect material-icons md-18">delete</i>
+						<i v-on:click="deleteMountDir(index)" class="noselect material-icons md-18">delete</i>
 					</td>
 				</tr>
 			</table>
-			<button v-on:click="addMountPoint">Add more</button>
+			<button v-on:click="addMountDir">Add more</button>
 		</div>
 		<div class="field sleep_duration">
 			<label for="sleep_duration">
 				Scan collection every
-				<input
-					type="text"
-					id="sleep_duration"
-					v-model="reindexPeriod"
-					v-on:change="onReindexPeriodChanged"
-				/> minutes
+				<input type="text" id="sleep_duration" v-model="reindexPeriod" v-on:change="onReindexPeriodChanged" /> minutes
 			</label>
-			<state-button
-				ref="reindex"
-				v-bind:submit="false"
-				v-bind:states="reindexStates"
-				v-bind:state="reindexState"
-				v-on:click="reindex"
-			/>
+			<state-button ref="reindex" v-bind:submit="false" v-bind:states="reindexStates" v-bind:state="reindexState" v-on:click="reindex" />
 		</div>
 	</form>
 </template>
@@ -72,6 +49,7 @@ export default {
 	data() {
 		return {
 			settings: null,
+			mountDirs: null,
 			reindexPeriod: 0,
 			reindexStates: {
 				ready: { name: "Scan now" },
@@ -89,12 +67,15 @@ export default {
 			this.settings = data;
 			this.reindexPeriod = Math.round(data.reindex_every_n_seconds / 60);
 		});
+		API.getMountDirs().then(data => {
+			this.mountDirs = data;
+		});
 	},
 
 	methods: {
 		onAlbumArtPatternChanged() {
 			if (this.validateAlbumArtPattern()) {
-				this.commit();
+				this.commitSettings();
 			}
 		},
 
@@ -113,15 +94,16 @@ export default {
 				return;
 			}
 			this.settings.reindex_every_n_seconds = periodInSeconds;
-			this.commit();
+			this.commitSettings();
 		},
 
-		addMountPoint() {
-			this.settings.mount_dirs.push({ name: "", source: "" });
+		addMountDir() {
+			this.mountDirs.push({ name: "", source: "" });
 		},
 
-		deleteMountPoint(index) {
-			this.settings.mount_dirs.splice(index, 1);
+		deleteMountDir(index) {
+			this.mountDirs.splice(index, 1);
+			this.commitMountDirs();
 		},
 
 		reindex() {
@@ -139,8 +121,12 @@ export default {
 			});
 		},
 
-		commit() {
+		commitSettings() {
 			API.putSettings(this.settings);
+		},
+
+		commitMountDirs() {
+			API.putMountDirs(this.mountDirs);
 		},
 	},
 };

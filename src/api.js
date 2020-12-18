@@ -117,6 +117,21 @@ export default {
 		});
 	},
 
+	getMountDirs() {
+		return request("/mount_dirs")
+			.then(res => res.json());
+	},
+
+	putMountDirs(mountDirs) {
+		return request("/mount_dirs", {
+			method: "PUT",
+			body: JSON.stringify(mountDirs),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+	},
+
 	triggerIndex() {
 		return request("/trigger_index", { method: "POST" });
 	},
