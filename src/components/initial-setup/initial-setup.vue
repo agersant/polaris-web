@@ -4,15 +4,16 @@
 			<img src="/assets/logo_no_text.png" />
 		</div>
 		<div class="step">
-			<welcome v-if="step == 'welcome'" v-on:proceed="next"></welcome>
-			<mount v-if="step == 'mount'" v-on:proceed="setMount"></mount>
-			<user v-if="step == 'user'" v-on:proceed="setUser"></user>
+			<welcome v-if="step == 'welcome'" v-on:proceed="ackWelcome"></welcome>
+			<mount v-if="step == 'mount'"></mount>
+			<user v-if="step == 'user'"></user>
 			<finish v-if="step == 'finish'"></finish>
 		</div>
 	</div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import API from "/src/api";
 import Finish from "./steps/finish";
 import Mount from "./steps/mount";
@@ -28,56 +29,48 @@ export default {
 
 	data() {
 		return {
-			step: "",
-			config: null,
+			didAckWelcome: false,
 		};
 	},
 
 	mounted() {
-		API.getSettings().then(data => {
-			this.config = data;
-			this.step = "welcome";
-		});
+		this.$store.dispatch("mountDirs/refresh");
+		this.$store.dispatch("users/refresh");
+	},
+
+	computed: {
+		...mapState(["mountDirs", "users"]),
+
+		step() {
+			if (!this.didAckWelcome || !this.mountDirs || !this.users) {
+				return "welcome";
+			}
+			if (!this.mountDirs.listing.length) {
+				return "mount";
+			}
+			if (!this.users.listing.some(u => u.is_admin)) {
+				return "user";
+			}
+			return "finish";
+		},
+	},
+
+	watch: {
+		step(to, from) {
+			if (to == "finish") {
+				setTimeout(this.exit.bind(this), 2000);
+			}
+		},
 	},
 
 	methods: {
-		next() {
-			if (!this.config) {
-				return;
-			}
-			if (!this.config.mount_dirs || !this.config.mount_dirs.length) {
-				this.step = "mount";
-			} else if (!this.config.users || !this.config.users.length) {
-				this.step = "user";
-			} else {
-				this.step = "finish";
-				setTimeout(this.login.bind(this), 2000);
-			}
+		ackWelcome() {
+			this.didAckWelcome = true;
 		},
 
-		setMount(mountDir) {
-			this.config.mount_dirs = [mountDir];
-			this.commit().then(API.triggerIndex).then(this.next);
-		},
-
-		setUser(user) {
-			this.config.users = [user];
-			this.commit().then(this.next);
-		},
-
-		commit() {
-			return API.putSettings(this.config).then(res => {
-				if (!res.ok) {
-					console.log("Error while applying settings");
-					throw res.status;
-				}
-				return res;
-			});
-		},
-		login() {
-			let username = this.config.users[0].name;
-			let password = this.config.users[0].password;
-			API.login(username, password);
+		exit() {
+			// TODO, remove auto-routing from API.login() and refresh initial_setup (store) from here
+			// to drive away from first-time flow
 		},
 	},
 };

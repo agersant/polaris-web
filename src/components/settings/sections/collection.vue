@@ -46,6 +46,8 @@ export default {
 		"state-button": StateButton,
 	},
 
+	// TODO Consider using mountDirs store (and adding a settings store?)
+
 	data() {
 		return {
 			settings: null,

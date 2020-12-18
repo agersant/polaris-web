@@ -1,7 +1,7 @@
 Cypress.Commands.add('wipeInitialSetup', () => {
 
 	let wipe = () => {
-		cy.request('PUT', '/api/settings', {
+		cy.request('PUT', '/api/config', {
 			users: [],
 			mount_dirs: []
 		})
@@ -41,7 +41,7 @@ Cypress.Commands.add('completeInitialSetup', () => {
 				return
 			}
 
-			cy.request('PUT', '/api/settings', {
+			cy.request('PUT', '/api/config', {
 				users: [{
 					name: 'testUser',
 					password: 'testPassword',

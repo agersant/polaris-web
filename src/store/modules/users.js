@@ -15,7 +15,12 @@ const actions = {
 
 	create({ dispatch }, newUser) {
 		return API.createUser(newUser.name, newUser.password, newUser.isAdmin).then(() => {
-			dispatch("refresh");
+			if (state.listing.length > 0) {
+				return dispatch("refresh");
+			} else {
+				// TODO user user store to login (when it exists)
+				return API.login(newUser.name, newUser.password).then(() => dispatch("refresh"));
+			}
 		});
 	},
 

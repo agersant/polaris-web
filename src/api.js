@@ -66,7 +66,7 @@ export default {
 	createUser(name, password, isAdmin) {
 		return request("/user", {
 			method: "POST",
-			body: JSON.stringify({ name: name, password: password, is_admin: isAdmin }),
+			body: JSON.stringify({ name: name, password: password, admin: isAdmin }),
 			headers: {
 				"Content-Type": "application/json"
 			}
