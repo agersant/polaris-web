@@ -15,13 +15,7 @@
 						</select>
 					</td>
 					<td class="accent-color">
-						<input
-							ref="accent"
-							type="color"
-							v-model="preferences.web_theme_accent"
-							v-on:input="onAccentPreview"
-							v-on:change="onAccentSelected"
-						/>
+						<input ref="accent" type="color" v-model="preferences.web_theme_accent" v-on:input="onAccentPreview" v-on:change="onAccentSelected" />
 					</td>
 					<td>
 						<i v-on:click="resetTheme" class="noselect material-icons md-18">restore</i>
@@ -34,20 +28,15 @@
 			<div v-if="preferences.lastfm_username">
 				<p class="explanation">
 					You are scrobbling music as
-					<a
-						href="https://www.last.fm/user/{preferences.lastfm_username}"
-						target="_blank"
-					>{{ preferences.lastfm_username }}</a>.
+					<a href="https://www.last.fm/user/{preferences.lastfm_username}" target="_blank">{{ preferences.lastfm_username }}</a
+					>.
 				</p>
 				<button v-on:click="unlinkLastFMAccount">Unlink Last.fm account</button>
 			</div>
 			<div v-if="!preferences.lastfm_username">
 				<p class="explanation">
 					Polaris can automatically submit songs you play to
-					<a
-						href="https://www.last.fm/"
-						target="_blank"
-					>Last.fm</a>.
+					<a href="https://www.last.fm/" target="_blank">Last.fm</a>.
 				</p>
 				<button v-on:click="linkLastFMAccount">Link Last.fm account</button>
 			</div>
@@ -124,6 +113,7 @@ export default {
 					</body>
 				</html>`
 			);
+			// TODO use link_token
 			let callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent);
 			let url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
 			let windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
