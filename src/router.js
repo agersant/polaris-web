@@ -61,15 +61,17 @@ router.beforeEach((to, from, next) => {
 	const isLoggedIn = Store.getters['user/isLoggedIn'];
 	const isInitialSetupComplete = Store.getters['initialSetup/isComplete'];
 
-	// Default entry-point
-	if (to.path == "/") {
-		return next('/browse');
-	}
-
 	// Re-route to initial-setup if needed
 	if (to.matched.some(record => record.meta.requiresInitialSetupComplete)) {
 		if (!isInitialSetupComplete) {
 			return next('/welcome');
+		}
+	}
+
+	// Re-route to auth if needed
+	if (to.matched.some(record => record.meta.requiresAuth)) {
+		if (!isLoggedIn) {
+			return next('/auth');
 		}
 	}
 
@@ -80,18 +82,16 @@ router.beforeEach((to, from, next) => {
 		}
 	}
 
-	// Re-route unauthenticated users to auth
-	if (to.matched.some(record => record.meta.requiresAuth)) {
-		if (!isLoggedIn) {
-			return next('/auth');
-		}
-	}
-
-	// Re-route authenticated users to default
+	// Re-route away from auth if logged in
 	if (to.matched.some(record => record.meta.requiresAnonymous)) {
 		if (isLoggedIn) {
 			return next('/');
 		}
+	}
+
+	// Default entry-point
+	if (to.path == "/") {
+		return next('/browse');
 	}
 
 	next();

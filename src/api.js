@@ -1,4 +1,5 @@
 import Store from "/src/store/store"
+import Router from "/src/router"
 
 let decodeItems = function(items) {
 	let decoded = [];
@@ -25,6 +26,7 @@ let request = function(endpoint, options) {
 		.then(res => {
 			if (res.status == 401) {
 				Store.dispatch("user/logout");
+				Router.push("/");
 				throw res;
 			}
 			return res;
