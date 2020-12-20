@@ -26,7 +26,7 @@ let request = function(endpoint, options) {
 		.then(res => {
 			if (res.status == 401) {
 				Store.dispatch("user/logout");
-				Router.push("/");
+				Router.push("/").catch(err => { });
 				throw res;
 			}
 			return res;

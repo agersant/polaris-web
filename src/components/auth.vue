@@ -30,7 +30,7 @@ export default {
 			this.badCredentials = false;
 			this.$store
 				.dispatch("user/login", { username: username, password: password })
-				.then(() => this.$router.push("/"))
+				.then(() => this.$router.push("/").catch(err => {}))
 				.catch(res => {
 					if (res.status == 401) {
 						this.badCredentials = true;
