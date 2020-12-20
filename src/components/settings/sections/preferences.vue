@@ -85,47 +85,12 @@ export default {
 			this.$store.dispatch("user/saveTheme");
 		},
 
-		linkLastFMAccount(e) {
-			let apiKey = "02b96c939a2b451c31dfd67add1f696e";
-			let currentURL = new URL(window.location.href);
-			let username = Cookies.get("username");
-			let successPopupContent = btoa(
-				`<!doctype html>
-				<html>
-					<head>
-						<title>Polaris</title>
-						<meta charset="UTF-8">
-					</head>
-					<body>
-						<script type="text/javascript">
-							window.opener.postMessage("polaris-lastfm-auth-success", "*");
-						<\/script>
-					</body>
-				</html>`
-			);
-			// TODO use link_token
-			let callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent);
-			let url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
-			let windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
-			let lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
-			window.addEventListener(
-				"message",
-				event => {
-					if (event.source != lastFMPopup) {
-						return;
-					}
-					if (event.data == "polaris-lastfm-auth-success") {
-						lastFMPopup.close();
-						this.$store.dispatch("user/refreshPreferences");
-					}
-				},
-				false
-			);
+		linkLastFMAccount() {
+			this.$store.dispatch("user/linkLastFM");
 		},
 
-		unlinkLastFMAccount(e) {
-			// TODO
-			API.lastFMUnlink().then(this.refreshPreferences);
+		unlinkLastFMAccount() {
+			this.$store.dispatch("user/unlinkLastFM");
 		},
 	},
 };

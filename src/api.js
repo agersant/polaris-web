@@ -226,6 +226,12 @@ export default {
 		return request("/lastfm/scrobble/" + encodeURIComponent(path), { method: "POST" });
 	},
 
+	lastFMGetLinkToken() {
+		return request("/lastfm/link_token/")
+			.then(res => res.json())
+			.then(res => res.value);
+	},
+
 	lastFMUnlink() {
 		return request("/lastfm/link", { method: "DELETE" });
 	},

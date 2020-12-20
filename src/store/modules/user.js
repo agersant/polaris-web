@@ -54,6 +54,51 @@ const actions = {
 		return API.putPreferences(themeBase, themeAccent).then(() => {
 			dispatch("refreshPreferences")
 		});
+	},
+
+	linkLastFM({ dispatch }) {
+
+		API.lastFMGetLinkToken().then(linkToken => {
+			const apiKey = "02b96c939a2b451c31dfd67add1f696e";
+			const currentURL = new URL(window.location.href);
+			const successPopupContent = btoa(
+				`<!doctype html>
+				<html>
+					<head>
+						<title>Polaris</title>
+						<meta charset="UTF-8">
+					</head>
+					<body>
+						<script type="text/javascript">
+							window.opener.postMessage("polaris-lastfm-auth-success", "*");
+						<\/script>
+					</body>
+				</html>`
+			);
+
+			let callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent) + "&auth_token=" + linkToken;
+			let url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
+			let windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
+			let lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
+			window.addEventListener(
+				"message",
+				event => {
+					if (event.source != lastFMPopup) {
+						return;
+					}
+					if (event.data == "polaris-lastfm-auth-success") {
+						lastFMPopup.close();
+						dispatch("refreshPreferences");
+					}
+				},
+				false
+			);
+		});
+
+	},
+
+	unlinkLastFM({ dispatch }) {
+		API.lastFMUnlink().then(() => dispatch("refreshPreferences"));
 	}
 }
 
