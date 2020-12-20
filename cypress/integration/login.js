@@ -8,6 +8,7 @@ describe('Login', function() {
 		cy.visit('/')
 		cy.get('[data-cy=username]').type('testUser')
 		cy.get('[data-cy=password]').type('badPassword{enter}')
+
 		cy.get('[data-cy=login-error]')
 	})
 
@@ -15,24 +16,62 @@ describe('Login', function() {
 		cy.visit('/')
 		cy.get('[data-cy=username]').type('testUser')
 		cy.get('[data-cy=password]').type('testPassword{enter}')
+
 		cy.hash().should('contain', 'browse')
 	})
 
-	it('asks for credentials again after cookies expire', () => {
-		cy.login()
-		cy.visit('/#/browse')
+	it('remembers login between visits', () => {
+		cy.visit('/')
+		cy.get('[data-cy=username]').type('testUser')
+		cy.get('[data-cy=password]').type('testPassword{enter}')
+
 		cy.hash().should('contain', 'browse')
-		cy.clearCookies()
+		cy.visit('/')
+		cy.hash().should('contain', 'browse')
+	})
+
+	it('asks for credentials after logging out', () => {
+		cy.visit('/')
+		cy.get('[data-cy=username]').type('testUser')
+		cy.get('[data-cy=password]').type('testPassword{enter}')
+
+		cy.hash().should('contain', 'browse')
+		cy.get('[data-cy=logout]').click()
+		cy.hash().should('contain', 'auth')
+		cy.get('[data-cy=username]')
+	})
+
+	it('asks for credentials again when returning after logging out', () => {
+		cy.visit('/')
+		cy.get('[data-cy=username]').type('testUser')
+		cy.get('[data-cy=password]').type('testPassword{enter}')
+
+		cy.hash().should('contain', 'browse')
+		cy.get('[data-cy=logout]').click()
 		cy.visit('/#/random')
 		cy.hash().should('contain', 'auth')
 		cy.get('[data-cy=username]')
 	})
 
-	it('starts on auth page when returning with bad cookies', () => {
-		cy.login()
-		cy.visit('/#/browse')
+	it('starts on auth page when returning with cleared local storage', () => {
+		cy.visit('/')
+		cy.get('[data-cy=username]').type('testUser')
+		cy.get('[data-cy=password]').type('testPassword{enter}')
+
 		cy.hash().should('contain', 'browse')
-		cy.setCookie('session', 'outdated')
+		cy.clearLocalStorage();
+		cy.visit('/')
+		cy.hash().should('contain', 'auth')
+		cy.get('[data-cy=username]')
+	})
+
+	it('starts on auth page when returning with bad auth token', () => {
+		cy.visit('/')
+		cy.get('[data-cy=username]').type('testUser')
+		cy.get('[data-cy=password]').type('testPassword{enter}')
+
+		cy.hash().should('contain', 'browse')
+		cy.window().then(window => window.localStorage.setItem("authToken", "badToken"))
 		cy.visit('/')
 		cy.hash().should('contain', 'auth')
 		cy.get('[data-cy=username]')

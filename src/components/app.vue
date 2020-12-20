@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import API from "/src/api";
-import * as Theming from "/src/theming/theming";
 import Sidebar from "./sidebar";
 import Player from "./playback/player";
 import Playlist from "./playback/playlist";
@@ -23,19 +21,6 @@ export default {
 		sidebar: Sidebar,
 		player: Player,
 		playlist: Playlist,
-	},
-
-	mounted() {
-		this.applyTheme();
-	},
-
-	methods: {
-		applyTheme() {
-			API.getPreferences().then(data => {
-				Theming.setBase(data.web_theme_base);
-				Theming.setAccentColor(data.web_theme_accent);
-			});
-		},
 	},
 };
 </script>

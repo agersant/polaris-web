@@ -5,11 +5,7 @@
 			<form name="authForm" v-on:submit="doLogin">
 				<input data-cy="username" type="text" name="username" placeholder="Username" autofocus />
 				<input data-cy="password" type="password" name="password" placeholder="Password" />
-				<p
-					v-if="badCredentials"
-					data-cy="login-error"
-					class="tip error"
-				>Incorrect credentials, please try again.</p>
+				<p v-if="badCredentials" data-cy="login-error" class="tip error">Incorrect credentials, please try again.</p>
 				<input type="submit" value="Login" />
 			</form>
 		</div>
@@ -32,11 +28,14 @@ export default {
 			const username = form.elements["username"].value;
 			const password = form.elements["password"].value;
 			this.badCredentials = false;
-			API.login(username, password).then(res => {
-				if (res.status == 401) {
-					this.badCredentials = true;
-				}
-			});
+			this.$store
+				.dispatch("user/login", { username: username, password: password })
+				.then(() => this.$router.push("/").catch(err => {}))
+				.catch(res => {
+					if (res.status == 401) {
+						this.badCredentials = true;
+					}
+				});
 		},
 	},
 };

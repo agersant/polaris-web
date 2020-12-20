@@ -14,9 +14,9 @@ const actions = {
 	},
 
 	set({ dispatch }, mountDirs) {
-		return API.putMountDirs(mountDirs).then(() => {
-			dispatch("refresh");
-		});
+		return API.putMountDirs(mountDirs)
+			.then(() => dispatch("refresh"))
+			.then(() => dispatch("initialSetup/refresh", null, { root: true }));
 	},
 }
 

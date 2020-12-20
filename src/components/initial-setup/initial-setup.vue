@@ -69,8 +69,7 @@ export default {
 		},
 
 		exit() {
-			// TODO, remove auto-routing from API.login() and refresh initial_setup (store) from here
-			// to drive away from first-time flow
+			this.$router.push("/").catch(err => {});
 		},
 	},
 };

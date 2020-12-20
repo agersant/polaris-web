@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import Store from "/src/store/store"
 import App from './components/app'
 import Auth from './components/auth'
 import NotFound from './components/not-found'
@@ -20,11 +21,20 @@ import SettingsUsers from './components/settings/sections/users'
 Vue.use(VueRouter)
 
 const routes = [
-	{ path: '/welcome', component: { render: k => k(InitialSetup) } },
-	{ path: '/auth', component: { render: k => k(Auth) } },
+	{
+		path: '/welcome',
+		component: { render: k => k(InitialSetup) },
+		meta: { requiresInitialSetupIncomplete: true },
+	},
+	{
+		path: '/auth',
+		component: { render: k => k(Auth) },
+		meta: { requiresAnonymous: true, requiresInitialSetupComplete: true },
+	},
 	{
 		path: '',
 		component: { render: k => k(App) },
+		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: '/browse*', component: { render: k => k(Browser) } },
 			{ path: '/random', component: { render: k => k(Random) } },
@@ -45,4 +55,46 @@ const routes = [
 	},
 ]
 
-export default new VueRouter({ routes });
+const router = new VueRouter({ routes });
+
+router.beforeEach((to, from, next) => {
+	const isLoggedIn = Store.getters['user/isLoggedIn'];
+	const isInitialSetupComplete = Store.getters['initialSetup/isComplete'];
+
+	// Re-route to initial-setup if needed
+	if (to.matched.some(record => record.meta.requiresInitialSetupComplete)) {
+		if (!isInitialSetupComplete) {
+			return next('/welcome');
+		}
+	}
+
+	// Re-route to auth if needed
+	if (to.matched.some(record => record.meta.requiresAuth)) {
+		if (!isLoggedIn) {
+			return next('/auth');
+		}
+	}
+
+	// Re-route away from initial-setup if complete
+	if (to.matched.some(record => record.meta.requiresInitialSetupIncomplete)) {
+		if (isInitialSetupComplete) {
+			return next('/');
+		}
+	}
+
+	// Re-route away from auth if logged in
+	if (to.matched.some(record => record.meta.requiresAnonymous)) {
+		if (isLoggedIn) {
+			return next('/');
+		}
+	}
+
+	// Default entry-point
+	if (to.path == "/") {
+		return next('/browse');
+	}
+
+	next();
+})
+
+export default router;

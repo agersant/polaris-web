@@ -1,30 +1,28 @@
-Cypress.Commands.add('wipeInitialSetup', () => {
+const getAuthToken = () => {
+	return cy.request('POST', '/api/auth', {
+		username: 'testUser',
+		password: 'testPassword'
+	})
+}
 
-	let wipe = () => {
-		cy.request('PUT', '/api/config', {
-			users: [],
-			mount_dirs: []
+const triggerIndex = () => {
+	getAuthToken().then(response => {
+		const authToken = response.body.token;
+		cy.request({
+			method: 'POST',
+			url: '/api/trigger_index',
+			headers: { Authorization: 'Bearer ' + authToken }
 		})
-		cy.clearCookies()
-	}
+	})
+}
 
-	cy.request('GET', '/api/initial_setup')
-		.then((r) => {
-			if (!r.body.has_any_users) {
-				wipe()
-			} else {
-				cy.request('POST', '/api/auth', {
-					username: 'testUser',
-					password: 'testPassword'
-				}).then(wipe)
-			}
+const waitForCollectionIndex = () => {
+	getAuthToken().then(response => {
+		const authToken = response.body.token;
+		cy.request({
+			url: '/api/browse',
+			headers: { Authorization: 'Bearer ' + authToken }
 		})
-})
-
-Cypress.Commands.add('completeInitialSetup', () => {
-
-	const waitForCollectionIndex = () => {
-		cy.request('/api/browse')
 			.then((resp) => {
 				if (resp.status == 200) {
 					if (resp.body != []) {
@@ -33,36 +31,68 @@ Cypress.Commands.add('completeInitialSetup', () => {
 				}
 				waitForCollectionIndex()
 			})
-	}
+	});
+}
+
+const wipeConfig = (authToken) => {
+	cy.request({
+		method: 'PUT',
+		url: '/api/config',
+		headers: { Authorization: 'Bearer ' + authToken },
+		body: {
+			users: [],
+			mount_dirs: []
+		}
+	})
+}
+
+const populateConfig = () => {
+	cy.request('PUT', '/api/config', {
+		users: [{
+			name: 'testUser',
+			password: 'testPassword',
+			admin: true
+		}],
+		mount_dirs: [{
+			source: 'test-data/small-collection',
+			name: 'Test'
+		}]
+	})
+}
+
+Cypress.Commands.add('wipeInitialSetup', () => {
+	cy.request('GET', '/api/initial_setup')
+		.then(response => {
+			if (response.body.has_any_users) {
+				getAuthToken().then(response => wipeConfig(response.body.token))
+			} else {
+				wipeConfig(null)
+			}
+		})
+})
+
+Cypress.Commands.add('completeInitialSetup', () => {
 
 	cy.request('/api/initial_setup')
-		.then((r) => {
-			if (r.body.has_any_users) {
+		.then(response => {
+			if (response.body.has_any_users) {
 				return
 			}
-
-			cy.request('PUT', '/api/config', {
-				users: [{
-					name: 'testUser',
-					password: 'testPassword',
-					admin: true
-				}],
-				mount_dirs: [{
-					source: 'test-data/small-collection',
-					name: 'Test'
-				}]
-			})
+			populateConfig()
 		})
 
-	cy.login()
-	cy.request('POST', '/api/trigger_index')
+	triggerIndex()
 	waitForCollectionIndex()
-	cy.clearCookies()
 })
+
 
 Cypress.Commands.add('login', () => {
 	cy.request('POST', '/api/auth', {
 		username: 'testUser',
 		password: 'testPassword'
+	}).then((resp) => {
+		window.localStorage.setItem('username', resp.body.username)
+		window.localStorage.setItem('authToken', resp.body.token)
+		window.localStorage.setItem('isAdmin', resp.body.is_admin)
 	})
 })

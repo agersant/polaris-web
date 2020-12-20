@@ -1,14 +1,16 @@
 <template>
-	<ul>
-		<li
-			v-for="button in buttons"
-			v-bind:key="button.target"
-			v-on:click="onClickButton(button)"
-			v-bind:class="{ noselect: 1, selected: button.pattern.test(currentURL) }"
-		>
-			<i class="noselect material-icons md-18">{{ button.icon }}</i>
-		</li>
-	</ul>
+	<div>
+		<ul class="main-nav">
+			<li v-for="button in buttons" v-bind:key="button.target" v-on:click="onClickButton(button)" v-bind:class="{ noselect: 1, selected: button.pattern.test(currentURL) }">
+				<i class="noselect material-icons md-18">{{ button.icon }}</i>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<i v-on:click="onClickLogout" v-bind:class="{ noselect: 1 }" data-cy="logout" class="noselect material-icons md-18">exit_to_app</i>
+			</li>
+		</ul>
+	</div>
 </template>
 
 <script>
@@ -51,6 +53,10 @@ export default {
 		onClickButton: function (button) {
 			this.$router.push(button.target).catch(err => {});
 		},
+
+		onClickLogout: function () {
+			this.$store.dispatch("user/logout").then(() => this.$router.push("/").catch(err => {}));
+		},
 	},
 
 	watch: {
@@ -62,10 +68,19 @@ export default {
 </script>
 
 <style scoped>
+div {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
 ul {
 	text-align: center;
-	height: 100%;
 	background-color: var(--theme-menu-background);
+}
+
+ul.main-nav {
+	flex-grow: 1;
 }
 
 li {
