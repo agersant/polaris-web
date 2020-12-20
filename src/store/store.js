@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import InitialSetup from './modules/initial-setup'
 import MountDirs from './modules/mount-dirs'
 import Playlist from './modules/playlist'
 import Playlists from './modules/playlists'
@@ -12,6 +13,7 @@ const debug = process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
 	modules: {
+		initialSetup: InitialSetup,
 		mountDirs: MountDirs,
 		playlist: Playlist,
 		playlists: Playlists,

@@ -20,7 +20,8 @@ const actions = {
 			} else {
 				const credentials = { username: newUser.name, password: newUser.password };
 				return dispatch("user/login", credentials, { root: true })
-					.then(() => dispatch("refresh"));
+					.then(() => dispatch("refresh"))
+					.then(() => dispatch("initialSetup/refresh", null, { root: true }));
 			}
 		});
 	},

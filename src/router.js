@@ -21,16 +21,20 @@ import SettingsUsers from './components/settings/sections/users'
 Vue.use(VueRouter)
 
 const routes = [
-	{ path: '/welcome', component: { render: k => k(InitialSetup) } },
+	{
+		path: '/welcome',
+		component: { render: k => k(InitialSetup) },
+		meta: { requiresInitialSetupIncomplete: true },
+	},
 	{
 		path: '/auth',
 		component: { render: k => k(Auth) },
-		meta: { requiresAnonymous: true },
+		meta: { requiresAnonymous: true, requiresInitialSetupComplete: true },
 	},
 	{
 		path: '',
 		component: { render: k => k(App) },
-		meta: { requiresAuth: true },
+		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: '/browse*', component: { render: k => k(Browser) } },
 			{ path: '/random', component: { render: k => k(Random) } },
@@ -55,26 +59,38 @@ const router = new VueRouter({ routes });
 
 router.beforeEach((to, from, next) => {
 	const isLoggedIn = Store.getters['user/isLoggedIn'];
+	const isInitialSetupComplete = Store.getters['initialSetup/isComplete'];
 
 	// Default entry-point
 	if (to.path == "/") {
-		next('/browse');
-		return;
+		return next('/browse');
+	}
+
+	// Re-route to initial-setup if needed
+	if (to.matched.some(record => record.meta.requiresInitialSetupComplete)) {
+		if (!isInitialSetupComplete) {
+			return next('/welcome');
+		}
+	}
+
+	// Re-route away from initial-setup if complete
+	if (to.matched.some(record => record.meta.requiresInitialSetupIncomplete)) {
+		if (isInitialSetupComplete) {
+			return next('/');
+		}
 	}
 
 	// Re-route unauthenticated users to auth
 	if (to.matched.some(record => record.meta.requiresAuth)) {
 		if (!isLoggedIn) {
-			next('/auth');
-			return;
+			return next('/auth');
 		}
 	}
 
 	// Re-route authenticated users to default
 	if (to.matched.some(record => record.meta.requiresAnonymous)) {
 		if (isLoggedIn) {
-			next('/');
-			return;
+			return next('/');
 		}
 	}
 
