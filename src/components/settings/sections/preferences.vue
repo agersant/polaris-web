@@ -1,5 +1,5 @@
 <template>
-	<form v-if="preferences" v-on:submit.prevent>
+	<form v-on:submit.prevent>
 		<div class="field">
 			<label>Theme</label>
 			<table>
@@ -10,12 +10,12 @@
 				</thead>
 				<tr>
 					<td>
-						<select ref="base" v-on:change="onBaseSelected" v-model="preferences.web_theme_base">
+						<select ref="base" v-on:input="onBaseSelected" v-bind:value="themeBase()">
 							<option v-for="base in bases" v-bind:key="base.id" v-bind:value="base.id">{{ base.name }}</option>
 						</select>
 					</td>
 					<td class="accent-color">
-						<input ref="accent" type="color" v-model="preferences.web_theme_accent" v-on:input="onAccentPreview" v-on:change="onAccentSelected" />
+						<input ref="accent" type="color" v-bind:value="themeAccent()" v-on:input="onAccentHovered" v-on:change="onAccentSelected" />
 					</td>
 					<td>
 						<i v-on:click="resetTheme" class="noselect material-icons md-18">restore</i>
@@ -25,15 +25,15 @@
 		</div>
 		<div class="field">
 			<label for="lastfm_username">Last.fm scrobbling</label>
-			<div v-if="preferences.lastfm_username">
+			<div v-if="lastFMUsername()">
 				<p class="explanation">
 					You are scrobbling music as
-					<a href="https://www.last.fm/user/{preferences.lastfm_username}" target="_blank">{{ preferences.lastfm_username }}</a
+					<a href="https://www.last.fm/user/{lastFMUsername()}" target="_blank">{{ lastFMUsername() }}</a
 					>.
 				</p>
 				<button v-on:click="unlinkLastFMAccount">Unlink Last.fm account</button>
 			</div>
-			<div v-if="!preferences.lastfm_username">
+			<div v-if="!lastFMUsername()">
 				<p class="explanation">
 					Polaris can automatically submit songs you play to
 					<a href="https://www.last.fm/" target="_blank">Last.fm</a>.
@@ -46,53 +46,43 @@
 
 <script>
 import Cookies from "js-cookie";
+import { mapGetters } from "vuex";
 import API from "/src/api";
 import * as Theming from "/src/theming/theming";
 export default {
 	data() {
 		return {
-			preferences: null,
+			...mapGetters({
+				themeBase: "user/themeBase",
+				themeAccent: "user/themeAccent",
+				lastFMUsername: "user/lastFMUsername",
+			}),
 			bases: Theming.listBases(),
 		};
 	},
 
-	mounted() {
-		this.refreshPreferences();
-	},
-
 	methods: {
-		refreshPreferences() {
-			API.getPreferences().then(data => {
-				this.preferences = data;
-				if (!this.preferences.web_theme_base) {
-					this.preferences.web_theme_base = Theming.getCurrentBase();
-				}
-				if (!this.preferences.web_theme_accent) {
-					this.preferences.web_theme_accent = Theming.getCurrentAccentColor();
-				}
-			});
-		},
-
-		onAccentPreview() {
-			Theming.setAccentColor(this.preferences.web_theme_accent);
+		onAccentHovered(event) {
+			this.$store.commit("user/previewThemeAccent", event.target.value);
 		},
 
 		onAccentSelected() {
-			Theming.setAccentColor(this.preferences.web_theme_accent);
-			this.commit();
+			this.saveTheme();
 		},
 
-		onBaseSelected() {
-			Theming.setBase(this.preferences.web_theme_base);
-			this.commit();
+		onBaseSelected(event) {
+			this.$store.commit("user/previewThemeBase", event.target.value);
+			this.saveTheme();
 		},
 
 		resetTheme() {
-			Theming.setBase(null);
-			Theming.setAccentColor(null);
-			this.preferences.web_theme_base = Theming.getCurrentBase();
-			this.preferences.web_theme_accent = Theming.getCurrentAccentColor();
-			this.commit();
+			this.$store.commit("user/previewThemeBase", Theming.getDefaultBase());
+			this.$store.commit("user/previewThemeAccent", Theming.getDefaultAccent());
+			this.saveTheme();
+		},
+
+		saveTheme() {
+			this.$store.dispatch("user/saveTheme");
 		},
 
 		linkLastFMAccount(e) {
@@ -126,7 +116,7 @@ export default {
 					}
 					if (event.data == "polaris-lastfm-auth-success") {
 						lastFMPopup.close();
-						this.refreshPreferences();
+						this.$store.dispatch("user/refreshPreferences");
 					}
 				},
 				false
@@ -134,11 +124,8 @@ export default {
 		},
 
 		unlinkLastFMAccount(e) {
+			// TODO
 			API.lastFMUnlink().then(this.refreshPreferences);
-		},
-
-		commit() {
-			API.putPreferences(this.preferences);
 		},
 	},
 };

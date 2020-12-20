@@ -5,9 +5,6 @@ import Light from "./theme-bases/light"
 
 let bases = new Map();
 let defaultBase;
-let currentBase;
-const defaultAccentColor = "#44C8F1";
-let currentAccentColor;
 
 registerBase(Light);
 registerBase(Dark);
@@ -18,8 +15,6 @@ export function registerBase(content) {
 	bases.set(content.id, content);
 	if (!defaultBase) {
 		defaultBase = content.id;
-		setBase(null);
-		setAccentColor(null);
 	}
 }
 
@@ -31,33 +26,23 @@ export function listBases() {
 	return result;
 }
 
-export function setBase(id) {
-	if (!bases.get(id)) {
-		id = defaultBase;
-	}
-	const entry = bases.get(id);
-	currentBase = id;
+export function getDefaultBase() {
+	return defaultBase;
+}
 
-	const baseNode = document.querySelector("div.theme-base");
-	baseNode.style.cssText = null;
-	Object.entries(entry.colors).forEach(([key, value]) => {
-		baseNode.style.setProperty(key, value);
+export function getDefaultAccent() {
+	return "#44C8F1";
+}
+
+export function getThemeColors(baseName, accent) {
+	let style = {};
+
+	style["--theme-accent"] = accent;
+
+	let base = bases.get(baseName);
+	Object.entries(base.colors).forEach(([key, value]) => {
+		style[key] = value;
 	});
-}
 
-export function setAccentColor(color) {
-	if (!color) {
-		color = defaultAccentColor;
-	}
-	currentAccentColor = color;
-	const accentNode = document.querySelector("div.theme-accent");
-	accentNode.style.setProperty("--theme-accent", color);
-}
-
-export function getCurrentBase() {
-	return currentBase;
-}
-
-export function getCurrentAccentColor() {
-	return currentAccentColor;
+	return style;
 }

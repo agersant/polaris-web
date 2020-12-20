@@ -18,7 +18,7 @@ let request = function(endpoint, options) {
 
 	options.headers = options.headers || {};
 	if (Store.getters['user/isLoggedIn']) {
-		options.headers["Authorization"] = "Bearer " + Store.getters['user/getAuthToken'];
+		options.headers["Authorization"] = "Bearer " + getAuthToken();
 	}
 
 	return fetch("api" + endpoint, options)
@@ -32,7 +32,7 @@ let request = function(endpoint, options) {
 }
 
 let getAuthToken = function() {
-	return Store.getters['user/getAuthToken'];
+	return Store.getters['user/authToken'];
 }
 
 export default {
@@ -90,10 +90,22 @@ export default {
 
 	getPreferences() {
 		return request("/preferences")
-			.then(res => res.json());
+			.then(res => res.json())
+			.then(p => {
+				const preferences = {
+					lastFMUsername: p.lastfm_username,
+					themeBase: p.web_theme_base,
+					themeAccent: p.web_theme_accent
+				};
+				return preferences;
+			});
 	},
 
-	putPreferences(preferences) {
+	putPreferences(themeBase, themeAccent) {
+		const preferences = {
+			web_theme_base: themeBase,
+			web_theme_accent: themeAccent,
+		};
 		return request("/preferences", {
 			method: "PUT",
 			body: JSON.stringify(preferences),

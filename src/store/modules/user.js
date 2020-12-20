@@ -1,4 +1,5 @@
 import API from '/src/api'
+import * as Theming from '/src/theming/theming'
 
 const STORAGE_USERNAME = 'username'
 const STORAGE_AUTH_TOKEN = 'authToken'
@@ -8,15 +9,23 @@ const state = {
 	name: localStorage.getItem(STORAGE_USERNAME),
 	authToken: localStorage.getItem(STORAGE_AUTH_TOKEN),
 	isAdmin: localStorage.getItem(STORAGE_IS_ADMIN),
+	lastFMUsername: null,
+	themeBase: null,
+	themeAccent: null,
+	themeBasePreview: null,
+	themeAccentPreview: null,
 }
 
 const getters = {
 	isLoggedIn: state => !!state.authToken,
-	getAuthToken: state => state.authToken,
+	authToken: state => state.authToken,
+	lastFMUsername: state => state.lastFMUsername,
+	themeBase: state => state.themeBasePreview || state.themeBase || Theming.getDefaultBase(),
+	themeAccent: state => state.themeAccentPreview || state.themeAccent || Theming.getDefaultAccent(),
 }
 
 const actions = {
-	login({ commit }, { username, password }) {
+	login({ commit, dispatch }, { username, password }) {
 		return API.login(username, password).then(authorization => {
 			commit("login", {
 				username: authorization.username,
@@ -25,12 +34,26 @@ const actions = {
 			});
 			const payload = null;
 			commit("playlist/loadFromDisk", payload, { root: true });
-			// TODO load preferences (for theme)
+			return dispatch("refreshPreferences");
 		});
 	},
 
 	logout({ commit }) {
 		commit("logout");
+	},
+
+	refreshPreferences({ commit }) {
+		return API.getPreferences().then(preferences => {
+			commit("setPreferences", preferences)
+		});
+	},
+
+	saveTheme({ dispatch }) {
+		let themeBase = this.getters["user/themeBase"];
+		let themeAccent = this.getters["user/themeAccent"];
+		return API.putPreferences(themeBase, themeAccent).then(() => {
+			dispatch("refreshPreferences")
+		});
 	}
 }
 
@@ -42,6 +65,9 @@ const mutations = {
 		state.name = username;
 		state.authToken = authToken;
 		state.isAdmin = isAdmin;
+		state.themeBase = null;
+		state.themeAccent = null;
+		state.themeAccentPreview = null;
 	},
 
 	logout(state) {
@@ -51,6 +77,23 @@ const mutations = {
 		state.name = null;
 		state.authToken = null;
 		state.isAdmin = null;
+		state.themeBase = null;
+		state.themeAccent = null;
+		state.themeAccentPreview = null;
+	},
+
+	setPreferences(state, preferences) {
+		state.lastFMUsername = preferences.lastFMUsername;
+		state.themeBase = preferences.themeBase;
+		state.themeAccent = preferences.themeAccent;
+	},
+
+	previewThemeBase(state, themeBase) {
+		state.themeBasePreview = themeBase;
+	},
+
+	previewThemeAccent(state, themeAccent) {
+		state.themeAccentPreview = themeAccent;
 	}
 }
 
