@@ -112,6 +112,7 @@ const mutations = {
 		state.isAdmin = isAdmin;
 		state.themeBase = null;
 		state.themeAccent = null;
+		state.themeBasePreview = null;
 		state.themeAccentPreview = null;
 	},
 
@@ -124,6 +125,7 @@ const mutations = {
 		state.isAdmin = null;
 		state.themeBase = null;
 		state.themeAccent = null;
+		state.themeBasePreview = null;
 		state.themeAccentPreview = null;
 	},
 
