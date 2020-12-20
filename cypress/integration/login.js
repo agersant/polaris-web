@@ -18,21 +18,21 @@ describe('Login', function() {
 		cy.hash().should('contain', 'browse')
 	})
 
-	it('asks for credentials again after cookies expire', () => {
+	it('asks for credentials again after losing auth token', () => {
 		cy.login()
 		cy.visit('/#/browse')
 		cy.hash().should('contain', 'browse')
-		cy.clearCookies()
+		cy.logout()
 		cy.visit('/#/random')
 		cy.hash().should('contain', 'auth')
 		cy.get('[data-cy=username]')
 	})
 
-	it('starts on auth page when returning with bad cookies', () => {
+	it('starts on auth page when returning with bad auth token', () => {
 		cy.login()
 		cy.visit('/#/browse')
 		cy.hash().should('contain', 'browse')
-		cy.setCookie('session', 'outdated')
+		window.localStorage.setItem("authToken", "badToken")
 		cy.visit('/')
 		cy.hash().should('contain', 'auth')
 		cy.get('[data-cy=username]')

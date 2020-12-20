@@ -5,7 +5,7 @@ Cypress.Commands.add('wipeInitialSetup', () => {
 			users: [],
 			mount_dirs: []
 		})
-		cy.clearCookies()
+		cy.logout()
 	}
 
 	cy.request('GET', '/api/initial_setup')
@@ -57,12 +57,22 @@ Cypress.Commands.add('completeInitialSetup', () => {
 	cy.login()
 	cy.request('POST', '/api/trigger_index')
 	waitForCollectionIndex()
-	cy.clearCookies()
+	cy.logout()
 })
 
 Cypress.Commands.add('login', () => {
 	cy.request('POST', '/api/auth', {
 		username: 'testUser',
 		password: 'testPassword'
+	}).then((resp) => {
+		window.localStorage.setItem('username', resp.body.username)
+		window.localStorage.setItem('authToken', resp.body.token)
+		window.localStorage.setItem('isAdmin', resp.body.is_admin)
 	})
+})
+
+Cypress.Commands.add('logout', () => {
+	cy.clearLocalStorage('username')
+	cy.clearLocalStorage('authToken')
+	cy.clearLocalStorage('isAdmin')
 })

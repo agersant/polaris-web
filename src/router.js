@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import Store from "/src/store/store"
 import App from './components/app'
 import Auth from './components/auth'
 import NotFound from './components/not-found'
@@ -21,10 +22,15 @@ Vue.use(VueRouter)
 
 const routes = [
 	{ path: '/welcome', component: { render: k => k(InitialSetup) } },
-	{ path: '/auth', component: { render: k => k(Auth) } },
+	{
+		path: '/auth',
+		component: { render: k => k(Auth) },
+		meta: { requiresAnonymous: true },
+	},
 	{
 		path: '',
 		component: { render: k => k(App) },
+		meta: { requiresAuth: true },
 		children: [
 			{ path: '/browse*', component: { render: k => k(Browser) } },
 			{ path: '/random', component: { render: k => k(Random) } },
@@ -45,4 +51,34 @@ const routes = [
 	},
 ]
 
-export default new VueRouter({ routes });
+const router = new VueRouter({ routes });
+
+router.beforeEach((to, from, next) => {
+	const isLoggedIn = Store.getters['user/isLoggedIn'];
+
+	// Default entry-point
+	if (to.path == "/") {
+		next('/browse');
+		return;
+	}
+
+	// Re-route unauthenticated users to auth
+	if (to.matched.some(record => record.meta.requiresAuth)) {
+		if (!isLoggedIn) {
+			next('/auth');
+			return;
+		}
+	}
+
+	// Re-route authenticated users to default
+	if (to.matched.some(record => record.meta.requiresAnonymous)) {
+		if (isLoggedIn) {
+			next('/');
+			return;
+		}
+	}
+
+	next();
+})
+
+export default router;

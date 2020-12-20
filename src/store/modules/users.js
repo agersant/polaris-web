@@ -18,8 +18,9 @@ const actions = {
 			if (state.listing.length > 0) {
 				return dispatch("refresh");
 			} else {
-				// TODO user user store to login (when it exists)
-				return API.login(newUser.name, newUser.password).then(() => dispatch("refresh"));
+				const credentials = { username: newUser.name, password: newUser.password };
+				return dispatch("user/login", credentials, { root: true })
+					.then(() => dispatch("refresh"));
 			}
 		});
 	},

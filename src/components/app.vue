@@ -26,7 +26,8 @@ export default {
 	},
 
 	mounted() {
-		this.applyTheme();
+		// TODO use store for preferences
+		// this.applyTheme();
 	},
 
 	methods: {

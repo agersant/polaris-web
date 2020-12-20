@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import MountDirs from './modules/mount-dirs'
 import Playlist from './modules/playlist'
 import Playlists from './modules/playlists'
+import User from './modules/user'
 import Users from './modules/users'
 
 Vue.use(Vuex)
@@ -14,6 +15,7 @@ export default new Vuex.Store({
 		mountDirs: MountDirs,
 		playlist: Playlist,
 		playlists: Playlists,
+		user: User,
 		users: Users,
 	},
 	strict: debug,

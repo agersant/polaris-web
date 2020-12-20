@@ -1,4 +1,3 @@
-import Router from "/src/router"
 import Store from "/src/store/store"
 
 let decodeItems = function(items) {
@@ -16,24 +15,33 @@ let request = function(endpoint, options) {
 	if (!options) {
 		options = {};
 	}
-	options.credentials = "same-origin";
+
+	options.headers = options.headers || {};
+	if (Store.getters['user/isLoggedIn']) {
+		options.headers["Authorization"] = "Bearer " + Store.getters['user/getAuthToken'];
+	}
+
 	return fetch("api" + endpoint, options)
 		.then(res => {
 			if (res.status == 401) {
-				Router.push("/auth").catch(err => { });
-				throw "Authentication error";
+				Store.dispatch("user/logout");
+				throw res;
 			}
 			return res;
 		});
 }
 
+let getAuthToken = function() {
+	return Store.getters['user/getAuthToken'];
+}
+
 export default {
 	makeAudioURL(path) {
-		return "api/audio/" + encodeURIComponent(path);
+		return "api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
 	},
 
 	makeThumbnailURL(path) {
-		return "api/thumbnail/" + encodeURIComponent(path) + "?pad=false";
+		return "api/thumbnail/" + encodeURIComponent(path) + "?pad=false&auth_token=" + getAuthToken();
 	},
 
 	initialSetup() {
@@ -42,20 +50,13 @@ export default {
 	},
 
 	login(username, password) {
-		return fetch("api/auth", {
+		return request("/auth", {
 			method: "POST",
 			body: JSON.stringify({ username: username, password: password }),
 			headers: {
 				"Content-type": "application/json",
 			},
-			credentials: 'same-origin',
-		}).then(res => {
-			if (res.status == 200) {
-				Store.commit("playlist/loadFromDisk");
-				Router.push("/browse").catch(err => { });
-			}
-			return res;
-		});
+		}).then(res => res.json());
 	},
 
 	users() {
