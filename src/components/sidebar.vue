@@ -6,8 +6,8 @@
 			</li>
 		</ul>
 		<ul>
-			<li>
-				<i v-on:click="onClickLogout" v-bind:class="{ noselect: 1 }" data-cy="logout" class="noselect material-icons md-18">exit_to_app</i>
+			<li v-on:click="onClickLogout" v-bind:class="{ noselect: 1 }" data-cy="logout">
+				<i class="noselect material-icons md-18">exit_to_app</i>
 			</li>
 		</ul>
 	</div>
