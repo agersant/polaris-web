@@ -1,13 +1,16 @@
 import API from '/src/api'
 import Disk from '/src/disk'
 
-const state = {
-	name: null,
-	tracks: [],
-	currentTrack: null,
-	playbackOrder: "default",
-	elapsedSeconds: 0,
+const reset = (state) => {
+	state.name = null;
+	state.tracks = Object.freeze([]);
+	state.currentTrack = null;
+	state.playbackOrder = "default";
+	state.elapsedSeconds = 0;
+	return state;
 }
+
+const state = reset({});
 
 const getters = {}
 
@@ -180,6 +183,7 @@ const mutations = {
 	},
 
 	loadFromDisk(state) {
+		reset(state);
 		let playbackOrder = Disk.load("playbackOrder");
 		if (playbackOrder) {
 			state.playbackOrder = playbackOrder;

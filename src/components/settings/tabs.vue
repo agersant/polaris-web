@@ -1,16 +1,10 @@
 <template>
 	<div>
-		<span
-			v-for="tab in tabs"
-			v-bind:key="tab.name"
-			v-on:click="onClickTab(tab)"
-			v-bind:class="{noselect: 1, selected: currentTab == tab }"
-		>{{ tab.name }}</span>
+		<span v-for="tab in tabs" v-bind:key="tab.name" v-on:click="onClickTab(tab)" v-bind:class="{ noselect: 1, selected: currentTab == tab }">{{ tab.name }}</span>
 	</div>
 </template>
 
 <script>
-import Cookies from "js-cookie";
 export default {
 	data() {
 		return {
@@ -21,7 +15,7 @@ export default {
 
 	mounted() {
 		this.tabs = [{ name: "Preferences", path: "preferences" }];
-		if (Cookies.get("admin") == "true") {
+		if (this.$store.getters["user/isAdmin"]) {
 			this.tabs.push({ name: "Collection", path: "collection" });
 			this.tabs.push({ name: "Users", path: "users" });
 			this.tabs.push({ name: "Dynamic DNS", path: "ddns" });

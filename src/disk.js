@@ -1,9 +1,9 @@
-import Cookies from 'js-cookie'
+import Store from "/src/store/store"
 
 export default {
 
 	save(key, value) {
-		let username = Cookies.get("username");
+		const username = Store.getters['user/name'];
 		if (!username) {
 			return;
 		}
@@ -24,7 +24,7 @@ export default {
 	},
 
 	load(key) {
-		let username = Cookies.get("username");
+		const username = Store.getters['user/name'];
 		if (!username) {
 			return;
 		}

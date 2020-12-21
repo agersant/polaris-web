@@ -5,19 +5,24 @@ const STORAGE_USERNAME = 'username'
 const STORAGE_AUTH_TOKEN = 'authToken'
 const STORAGE_IS_ADMIN = 'isAdmin'
 
-const state = {
-	name: localStorage.getItem(STORAGE_USERNAME),
-	authToken: localStorage.getItem(STORAGE_AUTH_TOKEN),
-	isAdmin: localStorage.getItem(STORAGE_IS_ADMIN),
-	lastFMUsername: null,
-	themeBase: null,
-	themeAccent: null,
-	themeBasePreview: null,
-	themeAccentPreview: null,
+const reset = (state) => {
+	state.name = localStorage.getItem(STORAGE_USERNAME);
+	state.authToken = localStorage.getItem(STORAGE_AUTH_TOKEN);
+	state.isAdmin = localStorage.getItem(STORAGE_IS_ADMIN) == 'true';
+	state.lastFMUsername = null;
+	state.themeBase = null;
+	state.themeAccent = null;
+	state.themeBasePreview = null;
+	state.themeAccentPreview = null;
+	return state;
 }
+
+const state = reset({});
 
 const getters = {
 	isLoggedIn: state => !!state.authToken,
+	isAdmin: state => state.isAdmin,
+	name: state => state.name,
 	authToken: state => state.authToken,
 	lastFMUsername: state => state.lastFMUsername,
 	themeBase: state => state.themeBasePreview || state.themeBase || Theming.getDefaultBase(),
@@ -107,26 +112,14 @@ const mutations = {
 		localStorage[STORAGE_USERNAME] = username;
 		localStorage[STORAGE_AUTH_TOKEN] = authToken;
 		localStorage[STORAGE_IS_ADMIN] = isAdmin;
-		state.name = username;
-		state.authToken = authToken;
-		state.isAdmin = isAdmin;
-		state.themeBase = null;
-		state.themeAccent = null;
-		state.themeBasePreview = null;
-		state.themeAccentPreview = null;
+		reset(state);
 	},
 
 	logout(state) {
 		localStorage.removeItem(STORAGE_USERNAME);
 		localStorage.removeItem(STORAGE_AUTH_TOKEN);
 		localStorage.removeItem(STORAGE_IS_ADMIN);
-		state.name = null;
-		state.authToken = null;
-		state.isAdmin = null;
-		state.themeBase = null;
-		state.themeAccent = null;
-		state.themeBasePreview = null;
-		state.themeAccentPreview = null;
+		reset(state);
 	},
 
 	setPreferences(state, preferences) {

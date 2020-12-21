@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import Cookies from "js-cookie";
 import StateButton from "/src/components/state-button";
 export default {
 	components: {
@@ -52,7 +51,7 @@ export default {
 
 	methods: {
 		isSelf(user) {
-			return user.name == Cookies.get("username");
+			return user.name == this.$store.getters["user/name"];
 		},
 
 		onIsAdminChanged(user) {

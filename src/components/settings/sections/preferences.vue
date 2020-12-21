@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import Cookies from "js-cookie";
 import { mapGetters } from "vuex";
 import API from "/src/api";
 import * as Theming from "/src/theming/theming";
