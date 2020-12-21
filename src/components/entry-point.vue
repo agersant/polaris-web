@@ -1,7 +1,7 @@
 <template>
 	<div v-bind:style="theme">
 		<router-view></router-view>
-	<div>
+	</div>
 </template>
 
 <script>
