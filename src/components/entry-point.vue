@@ -19,6 +19,7 @@ export default {
 	created() {
 		if (this.$store.getters["user/isLoggedIn"]) {
 			this.$store.dispatch("user/refreshPreferences");
+			this.$store.commit("playlist/loadFromDisk");
 		}
 	},
 };
