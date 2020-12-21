@@ -91,6 +91,7 @@ Cypress.Commands.add('login', () => {
 		username: 'testUser',
 		password: 'testPassword'
 	}).then((resp) => {
+		window.localStorage.clear() // TODO: This is a workaround for https://github.com/cypress-io/cypress/issues/2695
 		window.localStorage.setItem('username', resp.body.username)
 		window.localStorage.setItem('authToken', resp.body.token)
 		window.localStorage.setItem('isAdmin', resp.body.is_admin)
