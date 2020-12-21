@@ -66,7 +66,7 @@ export default {
 
 		endPasswordEdit(user) {
 			this.passwordEditingState = this.passwordEditingStates.applying;
-			this.$store.dispatch("users/update", { username: user.name, newPassword: user.password }).then(res => {
+			this.$store.dispatch("users/update", { username: user.name, newPassword: this.newPassword }).then(res => {
 				if (res.status != 200) {
 					this.passwordEditingState = this.passwordEditingStates.failure;
 				} else {
