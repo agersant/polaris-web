@@ -6,8 +6,8 @@
 		<div class="trackList">
 			<ul>
 				<li v-for="(disc, index) in discs" v-bind:key="index">
-					<div draggable="true" class="discNumber" v-if="discs.length > 1 && disc.discNumber" v-on:dragstart="event => $emit('items-drag-start', event, disc.songs)">
-						Disc {{ disc.discNumber }}
+					<div draggable="true" class="discNumber" v-if="discs.length > 1" v-on:dragstart="event => onDiscDragStart(event, disc)">
+						Disc {{ disc.discNumber || '?' }}
 					</div>
 					<ol class="discContent">
 						<li
@@ -76,6 +76,11 @@ export default {
 	},
 
 	methods: {
+		onDiscDragStart(event, disc) {
+			const songs = this.discs.filter(d => d.discNumber == disc.discNumber).map(d => d.songs).flat();
+			this.$emit('items-drag-start', event, songs)
+		},
+
 		formatSongTitle(item) {
 			return Format.title(item.fields);
 		},
