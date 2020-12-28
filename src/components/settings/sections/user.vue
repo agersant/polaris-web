@@ -5,7 +5,7 @@
 		</div>
 		<div class="details">
 			<div class="admin">
-				<input type="checkbox" id="'admin_' + user.name" v-bind:disabled="isSelf(user)" v-bind:value="user.is_admin" v-on:input="onIsAdminChanged(user)" />
+				<input type="checkbox" id="'admin_' + user.name" v-bind:disabled="isSelf(user)" v-bind:checked="user.is_admin" v-on:input="onIsAdminChanged" />
 				<label for="'admin_' + user.name" class="admin">Administrator</label>
 				<p class="tip">Grants access to all settings.</p>
 			</div>
@@ -54,8 +54,9 @@ export default {
 			return user.name == this.$store.getters["user/name"];
 		},
 
-		onIsAdminChanged(user) {
-			this.$store.dispatch("users/update", { username: user.name, newIsAdmin: user.is_admin });
+		onIsAdminChanged(event) {
+			const newIsAdmin = event.target.checked;
+			this.$store.dispatch("users/update", { username: this.user.name, newIsAdmin: newIsAdmin });
 		},
 
 		beginPasswordEdit(user) {
