@@ -67,8 +67,7 @@ export default {
 	data() {
 		return {
 			itemHeight: 30, // Also defined in CSS
-			pageSize: 50,
-			pagePadding: 6,
+			pageSize: 0,
 			scrollOffset: 0,
 			scrollbarWidth: 0,
 			saving: false,
@@ -106,10 +105,10 @@ export default {
 	},
 
 	created() {
-		window.addEventListener("resize", this.updateScrollbarWidth);
+		window.addEventListener("resize", this.onResize);
 	},
 	destroyed() {
-		window.removeEventListener("resize", this.updateScrollbarWidth);
+		window.removeEventListener("resize", this.onResize);
 	},
 
 	updated() {
@@ -122,17 +121,26 @@ export default {
 				this.snapToCurrentTrack();
 			}
 		});
-		this.updateScrollbarWidth();
+		this.onResize();
 	},
 
 	methods: {
+		onResize() {
+			this.updatePageSize();
+			this.updateScrollbarWidth();
+		},
+
 		onScroll() {
-			let newOffset = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight) - this.pagePadding);
+			let newOffset = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight));
 			newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
 			if (newOffset == this.scrollOffset) {
 				return;
 			}
 			this.scrollOffset = newOffset;
+		},
+
+		updatePageSize() {
+			this.pageSize = Math.ceil(this.$refs.scrollElement.clientHeight / this.itemHeight) + 1;
 		},
 
 		updateScrollbarWidth() {
