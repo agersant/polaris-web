@@ -140,7 +140,7 @@ export default {
 		},
 
 		updateMaxVisibleItems() {
-			this.maxVisibleItems = Math.ceil(this.$refs.scrollElement.clientHeight / this.itemHeight) + 1;
+			this.maxVisibleItems = Math.ceil(this.$refs.scrollElement.clientHeight / this.itemHeight) + 2;
 		},
 
 		updateScrollbarWidth() {
