@@ -84,14 +84,17 @@ export default {
 				return this.playlist.playbackOrder;
 			},
 		},
+		firstRenderedItem: function() {
+			return 2 * Math.floor(this.numScrolledItems / 2); // Preserve odd/even row indices
+		},
 		visibleTracks: function () {
-			return this.playlist.tracks.slice(this.numScrolledItems, this.numScrolledItems + this.maxVisibleItems);
+			return this.playlist.tracks.slice(this.firstRenderedItem, this.firstRenderedItem + this.maxVisibleItems);
 		},
 		topPadding: function () {
-			return this.numScrolledItems * this.itemHeight;
+			return this.firstRenderedItem * this.itemHeight;
 		},
 		bottomPadding: function () {
-			return Math.max(0, (this.playlist.tracks.length - this.numScrolledItems - this.maxVisibleItems) * this.itemHeight);
+			return Math.max(0, (this.playlist.tracks.length - this.visibleTracks.length) * this.itemHeight - this.topPadding);
 		},
 		duration: function () {
 			return this.playlist.tracks.reduce((acc, track) => {
@@ -131,12 +134,7 @@ export default {
 		},
 
 		onScroll() {
-			let newNumScrolledItems = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight));
-			newNumScrolledItems = 2 * Math.floor(newNumScrolledItems / 2); // Preserve odd/even row indices
-			if (newNumScrolledItems == this.numScrolledItems) {
-				return;
-			}
-			this.numScrolledItems = newNumScrolledItems;
+			this.numScrolledItems = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight));
 		},
 
 		updateMaxVisibleItems() {
