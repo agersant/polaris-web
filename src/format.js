@@ -30,12 +30,17 @@ export function longDuration(totalSeconds) {
 	if (isNaN(totalSeconds)) {
 		return "";
 	}
-	let hours = Math.floor(totalSeconds / 3600);
-	let minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-	let seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+	let seconds = totalSeconds;
+	let days = Math.floor(seconds / 3600 / 24);
+	seconds -= days * 3600 * 24;
+	let hours = Math.floor(seconds / 3600);
+	seconds -= hours * 3600;
+	let minutes = Math.floor(seconds / 60);
+	seconds -= minutes * 60;
 	let output = "";
-	if (hours > 0) { output += hours + "h "; }
-	if (hours > 0 || minutes > 0) { output += minutes + "m "; }
+	if (totalSeconds >= 3600 * 24) { output += days + "d "; }
+	if (totalSeconds >= 3600) { output += hours + "h "; }
+	if (totalSeconds >= 60) { output += minutes + "m "; }
 	output += seconds + "s";
 	return output;
 }
