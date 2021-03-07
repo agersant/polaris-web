@@ -141,7 +141,7 @@ export default {
 					this.$refs.htmlAudio
 						.play()
 						.then(() => {
-							this.secondsPlayed = 0;
+							this.$refs.htmlAudio.currentTime = 0;
 							API.lastFMNowPlaying(to.path);
 						})
 						.catch(() => {})
