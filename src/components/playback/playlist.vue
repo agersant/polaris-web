@@ -66,9 +66,9 @@ export default {
 
 	data() {
 		return {
-			itemHeight: 30, // Also defined in CSS
-			maxVisibleItems: 0,
-			numScrolledItems: 0,
+			trackHeight: 30, // Also defined in CSS
+			maxVisibleTracks: 0,
+			numScrolledTracks: 0,
 			scrollbarWidth: 0,
 			saving: false,
 		};
@@ -84,14 +84,17 @@ export default {
 				return this.playlist.playbackOrder;
 			},
 		},
+		firstRenderedIndex: function() {
+			return 2 * Math.floor(this.numScrolledTracks / 2); // Preserve odd/even row indices
+		},
 		visibleTracks: function () {
-			return this.playlist.tracks.slice(this.numScrolledItems, this.numScrolledItems + this.maxVisibleItems);
+			return this.playlist.tracks.slice(this.firstRenderedIndex, this.firstRenderedIndex + this.maxVisibleTracks);
 		},
 		topPadding: function () {
-			return this.numScrolledItems * this.itemHeight;
+			return this.firstRenderedIndex * this.trackHeight;
 		},
 		bottomPadding: function () {
-			return Math.max(0, (this.playlist.tracks.length - this.numScrolledItems - this.maxVisibleItems) * this.itemHeight);
+			return Math.max(0, (this.playlist.tracks.length - this.visibleTracks.length) * this.trackHeight - this.topPadding);
 		},
 		duration: function () {
 			return this.playlist.tracks.reduce((acc, track) => {
@@ -126,21 +129,16 @@ export default {
 
 	methods: {
 		onResize() {
-			this.updateMaxVisibleItems();
+			this.updateMaxVisibleTracks();
 			this.updateScrollbarWidth();
 		},
 
 		onScroll() {
-			let newNumScrolledItems = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight));
-			newNumScrolledItems = 2 * Math.floor(newNumScrolledItems / 2); // Preserve odd/even row indices
-			if (newNumScrolledItems == this.numScrolledItems) {
-				return;
-			}
-			this.numScrolledItems = newNumScrolledItems;
+			this.numScrolledTracks = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.trackHeight));
 		},
 
-		updateMaxVisibleItems() {
-			this.maxVisibleItems = Math.ceil(this.$refs.scrollElement.clientHeight / this.itemHeight) + 2;
+		updateMaxVisibleTracks() {
+			this.maxVisibleTracks = Math.ceil(this.$refs.scrollElement.clientHeight / this.trackHeight) + 2;
 		},
 
 		updateScrollbarWidth() {
@@ -152,7 +150,7 @@ export default {
 			if (currentTrackIndex < 0) {
 				return;
 			}
-			this.$refs.scrollElement.scrollTop = (currentTrackIndex - 10) * this.itemHeight;
+			this.$refs.scrollElement.scrollTop = (currentTrackIndex - 10) * this.trackHeight;
 		},
 
 		endSave() {
