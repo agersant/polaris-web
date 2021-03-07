@@ -17,59 +17,59 @@ const getters = {}
 const actions = {
 	clear({ commit, dispatch }) {
 		commit("clear");
-		dispatch("saveToDisk");
+		dispatch("savePlaylist");
 	},
 
 	shuffle({ commit, dispatch }) {
 		commit("shuffle");
-		dispatch("saveToDisk");
+		dispatch("savePlaylist");
 	},
 
 	removeTrack({ commit, dispatch }, track) {
 		commit("removeTrack", track);
-		dispatch("saveToDisk");
+		dispatch("savePlaylist");
 	},
 
 	setPlaybackOrder({ commit, dispatch }, order) {
 		commit("setPlaybackOrder", order);
-		dispatch("saveToDisk");
+		dispatch("savePlaybackState");
 	},
 
 	setName({ commit, dispatch }, name) {
 		commit("setName", name);
-		dispatch("saveToDisk");
+		dispatch("savePlaylist");
 	},
 
 	setElapsedSeconds({ commit, dispatch }, seconds) {
 		commit("setElapsedSeconds", seconds);
-		dispatch("saveToDisk");
+		dispatch("savePlaybackState");
 	},
 
 	play({ commit, dispatch }, track) {
 		commit("play", track);
-		dispatch("saveToDisk");
+		dispatch("savePlaybackState");
 	},
 
 	next({ commit, dispatch }) {
 		commit("advance", 1);
-		dispatch("saveToDisk");
+		dispatch("savePlaybackState");
 	},
 
 	previous({ commit, dispatch }) {
 		commit("advance", -1);
-		dispatch("saveToDisk");
+		dispatch("savePlaybackState");
 	},
 
 	queueTracks({ commit, dispatch }, tracks) {
 		commit("queueTracks", tracks);
-		dispatch("saveToDisk");
+		dispatch("savePlaylist");
 	},
 
 	queueDirectory({ commit, dispatch }, path) {
 		API.flatten(path)
 			.then(items => {
 				commit("queueTracks", items);
-				dispatch("saveToDisk");
+				dispatch("savePlaylist");
 			});
 	},
 
@@ -78,20 +78,25 @@ const actions = {
 			commit("clear");
 			commit("queueTracks", data);
 			commit("setName", name);
-			dispatch("saveToDisk");
+			dispatch("savePlaylist");
 		});
 	},
 
-	saveToDisk() {
+	savePlaylist({ dispatch }) {
 		if (Disk.save("playlist", state.tracks)) {
 			Disk.save("playlistName", state.name);
-			let currentTrackIndex = state.tracks.indexOf(state.currentTrack);
-			Disk.save("currentTrackIndex", currentTrackIndex);
-			Disk.save("playbackOrder", state.playbackOrder);
-			Disk.save("elapsedSeconds", state.elapsedSeconds);
+			dispatch("savePlaybackState");
 		}
+	},
+
+	savePlaybackState() {
+		let currentTrackIndex = state.tracks.indexOf(state.currentTrack);
+		Disk.save("currentTrackIndex", currentTrackIndex);
+		Disk.save("playbackOrder", state.playbackOrder);
+		Disk.save("elapsedSeconds", state.elapsedSeconds);
 	}
 }
+
 
 const mutations = {
 
