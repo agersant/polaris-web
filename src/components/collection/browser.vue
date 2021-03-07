@@ -148,7 +148,7 @@ export default {
 			if (variant == "Directory") {
 				this.$router.push("/browse/" + item.fields.path).catch(err => {});
 			} else if (variant == "Song") {
-				this.$store.dispatch("playlist/queueTracks", [item.fields]);
+				this.$store.dispatch("playlist/queueTracks", [{...item.fields}]);
 			}
 		},
 
@@ -158,7 +158,9 @@ export default {
 
 		onQueueAll() {
 			if (this.viewMode == "album") {
-				const tracks = this.items.map(i => i.fields);
+				const tracks = this.items.map(i => {
+					return {...i.fields};
+				});
 				this.$store.dispatch("playlist/queueTracks", tracks);
 			} else {
 				this.$store.dispatch("playlist/queueDirectory", this.path);
