@@ -67,9 +67,8 @@ export default {
 	data() {
 		return {
 			itemHeight: 30, // Also defined in CSS
-			pageSize: 50,
-			pagePadding: 6,
-			scrollOffset: 0,
+			maxVisibleItems: 0,
+			numScrolledItems: 0,
 			scrollbarWidth: 0,
 			saving: false,
 		};
@@ -86,13 +85,13 @@ export default {
 			},
 		},
 		visibleTracks: function () {
-			return this.playlist.tracks.slice(this.scrollOffset, this.scrollOffset + this.pageSize);
+			return this.playlist.tracks.slice(this.numScrolledItems, this.numScrolledItems + this.maxVisibleItems);
 		},
 		topPadding: function () {
-			return this.scrollOffset * this.itemHeight;
+			return this.numScrolledItems * this.itemHeight;
 		},
 		bottomPadding: function () {
-			return Math.max(0, (this.playlist.tracks.length - this.scrollOffset - this.pageSize) * this.itemHeight);
+			return Math.max(0, (this.playlist.tracks.length - this.numScrolledItems - this.maxVisibleItems) * this.itemHeight);
 		},
 		duration: function () {
 			return this.playlist.tracks.reduce((acc, track) => {
@@ -106,10 +105,10 @@ export default {
 	},
 
 	created() {
-		window.addEventListener("resize", this.updateScrollbarWidth);
+		window.addEventListener("resize", this.onResize);
 	},
 	destroyed() {
-		window.removeEventListener("resize", this.updateScrollbarWidth);
+		window.removeEventListener("resize", this.onResize);
 	},
 
 	updated() {
@@ -122,17 +121,26 @@ export default {
 				this.snapToCurrentTrack();
 			}
 		});
-		this.updateScrollbarWidth();
+		this.onResize();
 	},
 
 	methods: {
+		onResize() {
+			this.updateMaxVisibleItems();
+			this.updateScrollbarWidth();
+		},
+
 		onScroll() {
-			let newOffset = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight) - this.pagePadding);
-			newOffset = 2 * Math.floor(newOffset / 2); // Preserve odd/even row indices
-			if (newOffset == this.scrollOffset) {
+			let newNumScrolledItems = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.itemHeight));
+			newNumScrolledItems = 2 * Math.floor(newNumScrolledItems / 2); // Preserve odd/even row indices
+			if (newNumScrolledItems == this.numScrolledItems) {
 				return;
 			}
-			this.scrollOffset = newOffset;
+			this.numScrolledItems = newNumScrolledItems;
+		},
+
+		updateMaxVisibleItems() {
+			this.maxVisibleItems = Math.ceil(this.$refs.scrollElement.clientHeight / this.itemHeight) + 2;
 		},
 
 		updateScrollbarWidth() {
