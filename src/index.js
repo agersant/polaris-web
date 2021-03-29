@@ -1,12 +1,13 @@
-import Vue from 'vue'
-import Router from "./router"
-import Store from "./store/store"
+import { createApp } from "vue"
+import router from "./router"
+import store from "./store/store"
 import EntryPoint from "./components/entry-point"
 
 Store.dispatch("initialSetup/refresh").then(() => {
-	Vue.createApp({
-		store: Store,
-		router: Router,
+	const app = createApp({
 		render: k => k(EntryPoint)
-	}).mount('#vue-container')
+	});
+	app.use(store);
+	app.use(router);
+	app.mount('#vue-container');
 });

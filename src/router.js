@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter } from 'vue-router'
 
 import Store from "/src/store/store"
 import App from './components/app'
@@ -17,8 +16,6 @@ import SettingsCollection from './components/settings/sections/collection'
 import SettingsDDNS from './components/settings/sections/ddns'
 import SettingsPreferences from './components/settings/sections/preferences'
 import SettingsUsers from './components/settings/sections/users'
-
-Vue.use(VueRouter)
 
 const routes = [
 	{
@@ -55,7 +52,7 @@ const routes = [
 	},
 ]
 
-const router = new VueRouter({ routes });
+const router = createRouter({ routes });
 
 router.beforeEach((to, from, next) => {
 	const isLoggedIn = Store.getters['user/isLoggedIn'];
