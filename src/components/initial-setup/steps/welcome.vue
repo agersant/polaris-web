@@ -8,6 +8,7 @@
 
 <script>
 export default {
+	emits: ['proceed'],
 	methods: {
 		proceed() {
 			this.$emit("proceed");
