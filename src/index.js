@@ -4,9 +4,9 @@ import Store from "./store/store"
 import EntryPoint from "./components/entry-point"
 
 Store.dispatch("initialSetup/refresh").then(() => {
-	new Vue({
+	Vue.createApp({
 		store: Store,
 		router: Router,
 		render: k => k(EntryPoint)
-	}).$mount('#vue-container')
+	}).mount('#vue-container')
 });

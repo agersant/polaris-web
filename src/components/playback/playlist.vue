@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import { nextTick } from "vue";
 import { mapState } from "vuex";
 import * as Format from "/src/format";
 import PlaylistSave from "./playlist-save";
@@ -115,7 +116,7 @@ export default {
 	},
 
 	updated() {
-		this.$nextTick(this.updateScrollbarWidth);
+		nextTick(this.updateScrollbarWidth);
 	},
 
 	mounted() {

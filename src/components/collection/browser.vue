@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import Vue from "vue";
+import { nextTick} from "vue";
 import API from "/src/api";
 import * as Format from "/src/format";
 import Breadcrumbs from "./breadcrumbs";
@@ -129,7 +129,7 @@ export default {
 				this.tab = "browse";
 				this.items = items;
 				this.cleanSavedPositions();
-				Vue.nextTick(() => {
+				nextTick(() => {
 					this.$refs.paneContent.scrollTop = this.savedPositions.get(newPath) || 0;
 				});
 			});

@@ -49,7 +49,7 @@
 
 
 <script>
-import Vue from "vue";
+import { nextTick } from "vue";
 import { mapState } from "vuex";
 import API from "/src/api";
 import Disk from "/src/disk";
@@ -137,7 +137,7 @@ export default {
 			}
 			this.handleCurrentTrackChanged();
 			if (from) {
-				Vue.nextTick(() => {
+				nextTick(() => {
 					this.$refs.htmlAudio
 						.play()
 						.then(() => {
