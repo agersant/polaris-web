@@ -39,11 +39,11 @@ let getAuthToken = function() {
 
 export default {
 	makeAudioURL(path) {
-		return "api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
+		return "/api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
 	},
 
 	makeThumbnailURL(path) {
-		return "api/thumbnail/" + encodeURIComponent(path) + "?pad=false&auth_token=" + getAuthToken();
+		return "/api/thumbnail/" + encodeURIComponent(path) + "?pad=false&auth_token=" + getAuthToken();
 	},
 
 	initialSetup() {
