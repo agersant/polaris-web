@@ -44,11 +44,11 @@ export default {
 	methods: {
 		search() {
 			let query = this.$route.params.pathMatch;
-			if (query.startsWith("/")) {
-				query = query.substring(1);
+			if (!query) {
+				this.results = null;
+				return;
 			}
-			this.query = query;
-
+			this.query = query.join("/");
 			API.search(this.query).then(results => {
 				this.results = results;
 			});

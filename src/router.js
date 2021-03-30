@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory  } from 'vue-router'
+import { createRouter, createWebHashHistory  } from 'vue-router'
 
 import Store from "/src/store/store"
 import App from './components/app'
@@ -33,27 +33,27 @@ const routes = [
 		component: App,
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
-			{ path: '/browse*', component: Browser },
+			{ path: '/browse/:pathMatch(.*)*', component: Browser },
 			{ path: '/random', component: Random },
 			{ path: '/recent', component: Recent },
 			{ path: '/playlists', component: Playlists },
-			{ path: '/playlist/:patchMatch(.*)', component: Playlist },
-			{ path: '/search*', component: Search },
+			{ path: '/playlist/:pathMatch(.*)*', component: Playlist },
+			{ path: '/search/:pathMatch(.*)*', component: Search },
 			{
 				path: '/settings', component: Settings, children: [
 					{ path: 'collection', component: SettingsCollection },
 					{ path: 'ddns', component: SettingsDDNS },
 					{ path: 'users', component: SettingsUsers },
-					{ path: ':patchMatch(.*)', component: SettingsPreferences }
+					{ path: ':pathMatch(.*)*', component: SettingsPreferences }
 				]
 			},
-			{ path: ':patchMatch(.*)', component: NotFound }
+			{ path: ':pathMatch(.*)', component: NotFound }
 		]
 	},
 ]
 
 const router = createRouter({
-	history: createWebHistory(),
+	history: createWebHashHistory(),
 	routes,
 });
 
