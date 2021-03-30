@@ -108,24 +108,22 @@ export default {
 		},
 	},
 
-	created() {
-		window.addEventListener("resize", this.onResize);
-	},
-	destroyed() {
-		window.removeEventListener("resize", this.onResize);
-	},
-
 	updated() {
 		nextTick(this.updateScrollbarWidth);
 	},
 
 	mounted() {
+		window.addEventListener("resize", this.onResize);
 		this.$store.subscribe((mutation, state) => {
 			if (mutation.type === "playlist/advance") {
 				this.snapToCurrentTrack();
 			}
 		});
 		this.onResize();
+	},
+
+	unmounted() {
+		window.removeEventListener("resize", this.onResize);
 	},
 
 	methods: {

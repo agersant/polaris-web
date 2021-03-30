@@ -158,7 +158,7 @@ export default {
 		},
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.invalid = true;
 	},
 
