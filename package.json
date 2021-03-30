@@ -6,6 +6,7 @@
   "author": "Antoine Gersant <antoine.gersant@lesforges.org>",
   "license": "MIT",
   "devDependencies": {
+    "@parcel/transformer-image": "^2.0.0-beta.2",
     "@parcel/transformer-vue": "^2.0.0-beta.2",
     "cypress": "^4.12.1",
     "parcel": "^2.0.0-beta.2",
