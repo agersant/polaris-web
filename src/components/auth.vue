@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import API from "/src/api";
 export default {
 	data() {
 		return {
