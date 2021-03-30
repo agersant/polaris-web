@@ -22,7 +22,7 @@ let request = function(endpoint, options) {
 		options.headers["Authorization"] = "Bearer " + getAuthToken();
 	}
 
-	return fetch("api" + endpoint, options)
+	return fetch("/api" + endpoint, options)
 		.then(res => {
 			if (res.status == 401) {
 				Store.dispatch("user/logout");
