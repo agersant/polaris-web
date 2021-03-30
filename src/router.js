@@ -1,4 +1,4 @@
-import { createRouter } from 'vue-router'
+import { createRouter, createWebHistory  } from 'vue-router'
 
 import Store from "/src/store/store"
 import App from './components/app'
@@ -20,39 +20,42 @@ import SettingsUsers from './components/settings/sections/users'
 const routes = [
 	{
 		path: '/welcome',
-		component: { render: k => k(InitialSetup) },
+		component: InitialSetup,
 		meta: { requiresInitialSetupIncomplete: true },
 	},
 	{
 		path: '/auth',
-		component: { render: k => k(Auth) },
+		component: Auth,
 		meta: { requiresAnonymous: true, requiresInitialSetupComplete: true },
 	},
 	{
 		path: '',
-		component: { render: k => k(App) },
+		component: App,
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
-			{ path: '/browse*', component: { render: k => k(Browser) } },
-			{ path: '/random', component: { render: k => k(Random) } },
-			{ path: '/recent', component: { render: k => k(Recent) } },
-			{ path: '/playlists', component: { render: k => k(Playlists) } },
-			{ path: '/playlist/*', component: { render: k => k(Playlist) } },
-			{ path: '/search*', component: { render: k => k(Search) } },
+			{ path: '/browse*', component: Browser },
+			{ path: '/random', component: Random },
+			{ path: '/recent', component: Recent },
+			{ path: '/playlists', component: Playlists },
+			{ path: '/playlist/:patchMatch(.*)', component: Playlist },
+			{ path: '/search*', component: Search },
 			{
-				path: '/settings', component: { render: k => k(Settings) }, children: [
-					{ path: 'collection', component: { render: k => k(SettingsCollection) } },
-					{ path: 'ddns', component: { render: k => k(SettingsDDNS) } },
-					{ path: 'users', component: { render: k => k(SettingsUsers) } },
-					{ path: '*', component: { render: k => k(SettingsPreferences) } }
+				path: '/settings', component: Settings, children: [
+					{ path: 'collection', component: SettingsCollection },
+					{ path: 'ddns', component: SettingsDDNS },
+					{ path: 'users', component: SettingsUsers },
+					{ path: ':patchMatch(.*)', component: SettingsPreferences }
 				]
 			},
-			{ path: '*', component: { render: k => k(NotFound) } }
+			{ path: ':patchMatch(.*)', component: NotFound }
 		]
 	},
 ]
 
-const router = createRouter({ routes });
+const router = createRouter({
+	history: createWebHistory(),
+	routes,
+});
 
 router.beforeEach((to, from, next) => {
 	const isLoggedIn = Store.getters['user/isLoggedIn'];
