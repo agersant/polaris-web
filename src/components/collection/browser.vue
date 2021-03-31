@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { nextTick} from "vue";
+import { nextTick, ref, watch} from "vue";
 import API from "/src/api";
 import * as Format from "/src/format";
 import Breadcrumbs from "./breadcrumbs";
@@ -34,16 +34,37 @@ export default {
 		explorer: Explorer,
 	},
 
-	data() {
-		return {
-			items: [],
-		};
+	props: {
+		path: {
+			type: String,
+			required: true,
+		},
 	},
 
-	mounted() {
-		this.savedPositions = new Map();
-		this.path = null;
-		this.browse();
+	setup(props) {
+		const items = ref([]);
+		const paneContent = ref(null);
+		const savedPositions = new Map();
+		watch(
+			() => props.path,
+			async (path, oldPath) => {
+				if (oldPath) {
+					savedPositions.set(oldPath, paneContent.value.scrollTop);
+				}
+				items.value = await API.browse(path);
+				for (const savedPath of savedPositions.keys()) {
+					if (!path.startsWith(savedPath)) {
+						savedPositions.delete(savedPath);
+					}
+				}
+				nextTick(() => {
+					paneContent.value.scrollTop = savedPositions.get(path) || 0;
+				});
+			},
+			{immediate: true, flush: "post"}
+		);
+
+		return {items, paneContent};
 	},
 
 	computed: {
@@ -107,41 +128,7 @@ export default {
 		},
 	},
 
-	watch: {
-		$route(to, from) {
-			this.browse();
-		},
-	},
-
 	methods: {
-		browse() {
-			if (this.path) {
-				this.savedPositions.set(this.path, this.$refs.paneContent.scrollTop);
-			}
-
-			let newPath = this.$route.params.pathMatch + this.$route.hash || "";
-			if (newPath.startsWith("/")) {
-				newPath = newPath.substring(1);
-			}
-
-			API.browse(newPath).then(items => {
-				this.path = newPath;
-				this.tab = "browse";
-				this.items = items;
-				this.cleanSavedPositions();
-				nextTick(() => {
-					this.$refs.paneContent.scrollTop = this.savedPositions.get(newPath) || 0;
-				});
-			});
-		},
-
-		cleanSavedPositions() {
-			for (const path of this.savedPositions.keys()) {
-				if (!this.path.startsWith(path)) {
-					this.savedPositions.delete(path);
-				}
-			}
-		},
 
 		onItemClicked(item) {
 			const variant = item.variant;

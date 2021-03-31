@@ -17,6 +17,11 @@ import SettingsDDNS from './components/settings/sections/ddns'
 import SettingsPreferences from './components/settings/sections/preferences'
 import SettingsUsers from './components/settings/sections/users'
 
+const extractVFSPath = route => {
+	const path = (route.params.pathMatch || []).join("/") + (route.hash || "");
+	return {path};
+};
+
 const routes = [
 	{
 		path: '/welcome',
@@ -33,7 +38,7 @@ const routes = [
 		component: App,
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
-			{ path: '/browse/:pathMatch(.*)*', component: Browser },
+			{ path: '/browse/:pathMatch(.*)*', component: Browser, props: extractVFSPath},
 			{ path: '/random', component: Random },
 			{ path: '/recent', component: Recent },
 			{ path: '/playlists', component: Playlists },
