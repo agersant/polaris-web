@@ -16,8 +16,10 @@
   },
   "scripts": {
     "watch": "parcel watch index.html",
-    "test": "parcel build index.html && cypress run",
-    "test-ui": "parcel build index.html && cypress open",
-    "production": "parcel build index.html"
+    //  --no-scope-hoist picked up from comments under https://github.com/parcel-bundler/parcel/issues/4389
+    // Is OK to remove if the client works at all without it
+    "test": "parcel build --no-scope-hoist index.html && cypress run",
+    "test-ui": "parcel build --no-scope-hoist index.html && cypress open",
+    "production": "parcel build --no-scope-hoist index.html"
   }
 }
