@@ -75,9 +75,7 @@ router.beforeEach((to, from, next) => {
 
 	// Re-route to auth if needed
 	if (to.matched.some(record => record.meta.requiresAuth)) {
-		console.log("requiresAuth", isLoggedIn);
 		if (!isLoggedIn) {
-			console.log("redirect");
 			return next('/auth');
 		}
 	}
