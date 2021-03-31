@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { ref, watch} from "vue";
 import API from "/src/api";
 import Explorer from "/src/components/collection/layout/explorer";
 export default {
@@ -23,33 +24,29 @@ export default {
 		explorer: Explorer,
 	},
 
-	data() {
-		return {
-			name: "",
-			tracks: null,
-		};
-	},
-
-	mounted() {
-		this.listTracks();
-	},
-
-	watch: {
-		$route(to, from) {
-			this.listTracks();
+	props: {
+		name: {
+			type: String,
+			required: true,
 		},
+	},
+
+	setup(props) {
+		const tracks = ref(null);
+		watch(
+			() => props.name,
+			async (name) => {
+				tracks.value = null;
+				tracks.value = (await API.getPlaylist(name)).map(d => {
+					return { fields: d, variant: "Song" };
+				});
+			},
+			{immediate: true}
+		);
+		return {tracks};
 	},
 
 	methods: {
-		listTracks() {
-			this.name = this.$route.params.pathMatch;
-			API.getPlaylist(this.name).then(data => {
-				this.tracks = data.map(d => {
-					return { fields: d, variant: "Song" };
-				});
-			});
-		},
-
 		play() {
 			this.$store.dispatch("playlist/queuePlaylist", this.name);
 		},

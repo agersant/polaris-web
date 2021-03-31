@@ -47,8 +47,8 @@ const routes = [
 			{ path: '/random', component: Random },
 			{ path: '/recent', component: Recent },
 			{ path: '/playlists', component: Playlists },
-			{ path: '/playlist/:pathMatch(.*)*', component: Playlist },
-			{ path: '/search/:pathMatch(.*)*', component: Search, props: extractSearchQuery},
+			{ path: '/playlist/:name', component: Playlist, props: true},
+			{ path: '/search/:query?', component: Search, props: true},
 			{
 				path: '/settings', component: Settings, children: [
 					{ path: 'collection', component: SettingsCollection },
