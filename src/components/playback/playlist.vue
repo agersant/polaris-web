@@ -148,7 +148,7 @@ export default {
 		},
 
 		snapToCurrentTrack() {
-			const currentTrackIndex = this.playlist.tracks.indexOf(this.playlist.currentTrack);
+			const currentTrackIndex = this.playlist.tracks.indexOf(this.currentTrackRaw);
 			if (currentTrackIndex < 0) {
 				return;
 			}
