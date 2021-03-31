@@ -22,6 +22,11 @@ const extractVFSPath = route => {
 	return {path};
 };
 
+const extractSearchQuery = route => {
+	const query = (route.params.pathMatch || []).join("/") + (route.hash || "");
+	return {query};
+};
+
 const routes = [
 	{
 		path: '/welcome',
@@ -43,7 +48,7 @@ const routes = [
 			{ path: '/recent', component: Recent },
 			{ path: '/playlists', component: Playlists },
 			{ path: '/playlist/:pathMatch(.*)*', component: Playlist },
-			{ path: '/search/:pathMatch(.*)*', component: Search },
+			{ path: '/search/:pathMatch(.*)*', component: Search, props: extractSearchQuery},
 			{
 				path: '/settings', component: Settings, children: [
 					{ path: 'collection', component: SettingsCollection },
