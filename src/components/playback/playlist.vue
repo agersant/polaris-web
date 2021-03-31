@@ -30,12 +30,12 @@
 			<div v-bind:style="{ height: topPadding + 'px' }"></div>
 			<table>
 				<tbody>
-					<tr data-cy="track" v-for="(track, index) in visibleTracks" v-bind:key="index" v-bind:class="{ nowPlaying: track == playlist.currentTrack }" v-on:click="onClickTrack(track)">
+					<tr data-cy="track" v-for="(track, index) in visibleTracks" v-bind:key="index" v-bind:class="{ nowPlaying: track == currentTrackRaw }" v-on:click="onClickTrack(track)">
 						<td data-cy="remove" class="remove">
 							<div class="remove noselect" v-on:click.stop="onClickRemoveTrack(track)">[-]</div>
 						</td>
 						<td class="nowPlaying">
-							<i data-cy="now-playing" v-if="track == playlist.currentTrack" class="nowPlaying material-icons md-16">play_arrow</i>
+							<i data-cy="now-playing" v-if="track == currentTrackRaw" class="nowPlaying material-icons md-16">play_arrow</i>
 						</td>
 						<td class="text">{{ formatTrackContext(track) }}</td>
 						<td class="text song">
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { nextTick } from "vue";
+import { nextTick, toRaw } from "vue";
 import { mapState } from "vuex";
 import * as Format from "/src/format";
 import PlaylistSave from "./playlist-save";
@@ -77,6 +77,9 @@ export default {
 
 	computed: {
 		...mapState(["playlist"]),
+		currentTrackRaw: function() {
+			return toRaw(this.playlist.currentTrack);
+		},
 		playbackOrder: {
 			set(order) {
 				this.$store.dispatch("playlist/setPlaybackOrder", order);
