@@ -327,7 +327,7 @@ export default {
 			}
 			const htmlAudio = event.target;
 			const currentTime = htmlAudio.currentTime;
-			const duration = htmlAudio.duration;
+			const duration = htmlAudio.duration || 1;
 			this.secondsPlayed = currentTime;
 			this.duration = duration;
 			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
