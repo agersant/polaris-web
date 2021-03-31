@@ -14,31 +14,24 @@
 </template>
 
 <script>
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 export default {
-	data() {
-		return {
-			components: [],
-		};
+	setup() {
+		const path = ref("");
+		const route = useRoute();
+		watch(
+			() => [route.params.pathMatch, route.hash],
+			([pathMatch, hash]) => {
+				path.value = (pathMatch || []).join("/") + (hash || "");
+			},
+			{immediate: true}
+		);
+		return {path};
 	},
 
-	mounted() {
-		this.updatePath();
-	},
-
-	watch: {
-		$route(to, from) {
-			this.updatePath();
-		},
-	},
-
-	methods: {
-		updatePath() {
-			let path = this.$route.params.pathMatch + this.$route.hash || "";
-			if (path.startsWith("/")) {
-				path = path.substring(1);
-			}
-			path = decodeURIComponent(path);
-
+	computed: {
+		components() {
 			let components = [
 				{
 					name: "All Music",
@@ -46,26 +39,28 @@ export default {
 				},
 			];
 
-			let separatorMatcher = /[\\/]/g;
+			const separatorMatcher = /[\\/]/g;
 			let previousLastIndex = 0;
-			while (separatorMatcher.test(path)) {
+			while (separatorMatcher.test(this.path)) {
 				components.push({
-					name: path.substring(previousLastIndex, separatorMatcher.lastIndex - 1),
-					path: path.substring(0, separatorMatcher.lastIndex - 1),
+					name: this.path.substring(previousLastIndex, separatorMatcher.lastIndex - 1),
+					path: this.path.substring(0, separatorMatcher.lastIndex - 1),
 				});
 				previousLastIndex = separatorMatcher.lastIndex;
 			}
 
-			if (path) {
+			if (this.path) {
 				components.push({
-					name: path.substring(previousLastIndex),
-					path: path,
+					name: this.path.substring(previousLastIndex),
+					path: this.path,
 				});
 			}
 
-			this.components = components;
-		},
+			return components;
+		}
+	},
 
+	methods: {
 		onClick(component) {
 			this.$router.push("/browse/" + component.path).catch(err => {});
 		},
