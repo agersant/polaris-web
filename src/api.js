@@ -22,7 +22,7 @@ let request = function(endpoint, options) {
 		options.headers["Authorization"] = "Bearer " + getAuthToken();
 	}
 
-	return fetch("/api" + endpoint, options)
+	return fetch("api" + endpoint, options)
 		.then(res => {
 			if (res.status == 401) {
 				Store.dispatch("user/logout");
@@ -39,11 +39,11 @@ let getAuthToken = function() {
 
 export default {
 	makeAudioURL(path) {
-		return "/api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
+		return "api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
 	},
 
 	makeThumbnailURL(path) {
-		return "/api/thumbnail/" + encodeURIComponent(path) + "?pad=false&auth_token=" + getAuthToken();
+		return "api/thumbnail/" + encodeURIComponent(path) + "?pad=false&auth_token=" + getAuthToken();
 	},
 
 	initialSetup() {
