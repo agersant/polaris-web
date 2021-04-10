@@ -1,7 +1,7 @@
 <template>
 	<div class="authForm">
 		<div class="content">
-			<img class="logo" v-bind:src="logoImage" />
+			<img class="logo" src="logo.png" />
 			<form name="authForm" v-on:submit="doLogin">
 				<input data-cy="username" type="text" name="username" placeholder="Username" autofocus />
 				<input data-cy="password" type="password" name="password" placeholder="Password" />
@@ -13,12 +13,10 @@
 </template>
 
 <script>
-import logoUrl from "url:/assets/logo.png";
 export default {
 	data() {
 		return {
 			badCredentials: false,
-			logoImage: logoUrl,
 		};
 	},
 
