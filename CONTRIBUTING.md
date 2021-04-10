@@ -4,7 +4,7 @@ The first thing you need to start iterating on the Polaris web interface is a wo
 
 1. Clone the polaris-web repository with `git clone https://github.com/agersant/polaris-web.git`
 2. Run Polaris with the `-w` pointing to your freshly cloned polaris web, adding `/dist` at the end. For example: `polaris.exe -w C:/path/to/polaris-web/dist`
-3. Install [Node.js](https://nodejs.org) version `12.14.1`
+3. Install [Node.js](https://nodejs.org) version `14.16.0`
 4. Within the polaris-web directory, run `npm install` and then `npm run watch`
 5. Access [http://localhost:5050/](http://localhost:5050/) to open the web UI
 6. Changes you make within `polaris-web/src` are visible immediately

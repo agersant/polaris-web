@@ -1,7 +1,7 @@
 <template>
 	<div class="setupContainer">
 		<div class="logo">
-			<img src="/assets/logo_no_text.png" />
+			<img src="logo_no_text.png" />
 		</div>
 		<div class="step">
 			<welcome v-if="step == 'welcome'" v-on:proceed="ackWelcome"></welcome>
@@ -14,7 +14,6 @@
 
 <script>
 import { mapState } from "vuex";
-import API from "/src/api";
 import Finish from "./steps/finish";
 import Mount from "./steps/mount";
 import User from "./steps/user";

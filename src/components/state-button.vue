@@ -42,6 +42,8 @@ export default {
 		},
 	},
 
+	emits: ['click'],
+
 	data() {
 		return {
 			canAnimate: false,

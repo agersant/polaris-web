@@ -42,6 +42,8 @@ export default {
 		},
 	},
 
+	emits: ['item-click', 'items-drag-start'],
+
 	data: function () {
 		return {};
 	},

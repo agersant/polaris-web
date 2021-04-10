@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { ref, watch} from "vue";
 import API from "/src/api";
 import Explorer from "/src/components/collection/layout/explorer";
 import SearchInput from "/src/components/collection/search/search-input";
@@ -24,36 +25,28 @@ export default {
 		"search-input": SearchInput,
 	},
 
-	data() {
-		return {
-			query: null,
-			results: null,
-		};
-	},
-
-	mounted() {
-		this.search();
-	},
-
-	watch: {
-		$route(to, from) {
-			this.search();
+	props: {
+		query: {
+			type: String,
+			required: true,
 		},
+	},
+
+
+	setup(props) {
+		const results = ref(null);
+		watch(
+			() => props.query,
+			async (query) => {
+				results.value = null;
+				results.value = await API.search(query);
+			},
+			{immediate: true}
+		);
+		return {results};
 	},
 
 	methods: {
-		search() {
-			let query = this.$route.params.pathMatch;
-			if (query.startsWith("/")) {
-				query = query.substring(1);
-			}
-			this.query = query;
-
-			API.search(this.query).then(results => {
-				this.results = results;
-			});
-		},
-
 		queueAll() {
 			let songItems = [];
 			let directoryItems = [];

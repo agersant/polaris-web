@@ -1,7 +1,7 @@
 <template>
 	<div class="authForm">
 		<div class="content">
-			<img class="logo" src="/assets/logo.png" />
+			<img class="logo" src="logo.png" />
 			<form name="authForm" v-on:submit="doLogin">
 				<input data-cy="username" type="text" name="username" placeholder="Username" autofocus />
 				<input data-cy="password" type="password" name="password" placeholder="Password" />
@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import API from "/src/api";
 export default {
 	data() {
 		return {

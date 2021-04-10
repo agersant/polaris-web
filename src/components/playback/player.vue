@@ -49,7 +49,7 @@
 
 
 <script>
-import Vue from "vue";
+import { nextTick } from "vue";
 import { mapState } from "vuex";
 import API from "/src/api";
 import Disk from "/src/disk";
@@ -137,7 +137,7 @@ export default {
 			}
 			this.handleCurrentTrackChanged();
 			if (from) {
-				Vue.nextTick(() => {
+				nextTick(() => {
 					this.$refs.htmlAudio
 						.play()
 						.then(() => {
@@ -158,7 +158,7 @@ export default {
 		},
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.invalid = true;
 	},
 
@@ -327,7 +327,7 @@ export default {
 			}
 			const htmlAudio = event.target;
 			const currentTime = htmlAudio.currentTime;
-			const duration = htmlAudio.duration;
+			const duration = htmlAudio.duration || 1;
 			this.secondsPlayed = currentTime;
 			this.duration = duration;
 			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {

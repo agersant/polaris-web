@@ -14,39 +14,45 @@
 </template>
 
 <script>
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 export default {
-	data() {
-		return {
-			currentURL: "",
-			buttons: [
-				{
-					icon: "library_music",
-					target: "/browse",
-					pattern: new RegExp("(browse|^/$)"),
-				},
-				{ icon: "shuffle", target: "/random", pattern: new RegExp("random") },
-				{
-					icon: "new_releases",
-					target: "/recent",
-					pattern: new RegExp("recent"),
-				},
-				{
-					icon: "playlist_play",
-					target: "/playlists",
-					pattern: new RegExp("playlist"),
-				},
-				{ icon: "search", target: "/search", pattern: new RegExp("search") },
-				{
-					icon: "settings",
-					target: "/settings/preferences",
-					pattern: new RegExp("settings"),
-				},
-			],
-		};
-	},
+	setup() {
+		const buttons = [
+			{
+				icon: "library_music",
+				target: "/browse",
+				pattern: new RegExp("(browse|^/$)"),
+			},
+			{ icon: "shuffle", target: "/random", pattern: new RegExp("random") },
+			{
+				icon: "new_releases",
+				target: "/recent",
+				pattern: new RegExp("recent"),
+			},
+			{
+				icon: "playlist_play",
+				target: "/playlists",
+				pattern: new RegExp("playlist"),
+			},
+			{ icon: "search", target: "/search", pattern: new RegExp("search") },
+			{
+				icon: "settings",
+				target: "/settings/preferences",
+				pattern: new RegExp("settings"),
+			},
+		];
 
-	mounted() {
-		this.currentURL = this.$router.currentRoute.path;
+		const route = useRoute();
+		const currentURL = ref("");
+		watch(
+			() => route.path,
+			(path) => {
+				currentURL.value = path || buttons[0].target;
+			},
+			{immediate: true}
+		);
+		return {buttons, currentURL};
 	},
 
 	methods: {
@@ -56,12 +62,6 @@ export default {
 
 		onClickLogout: function () {
 			this.$store.dispatch("user/logout").then(() => this.$router.push("/").catch(err => {}));
-		},
-	},
-
-	watch: {
-		$route(to, from) {
-			this.currentURL = to.path || this.buttons[0].target;
 		},
 	},
 };

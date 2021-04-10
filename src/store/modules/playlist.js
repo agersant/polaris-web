@@ -1,9 +1,10 @@
+import { markRaw, toRaw } from "vue"
 import API from '/src/api'
 import Disk from '/src/disk'
 
 const reset = (state) => {
 	state.name = null;
-	state.tracks = Object.freeze([]);
+	state.tracks = markRaw([]);
 	state.currentTrack = null;
 	state.playbackOrder = "default";
 	state.elapsedSeconds = 0;
@@ -101,7 +102,7 @@ const actions = {
 const mutations = {
 
 	clear(state) {
-		state.tracks = Object.freeze([]);
+		state.tracks = markRaw([]);
 		state.name = null;
 	},
 
@@ -111,11 +112,11 @@ const mutations = {
 			let j = Math.floor(Math.random() * (i + 1));
 			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
 		}
-		state.tracks = Object.freeze(shuffled);
+		state.tracks = markRaw(shuffled);
 	},
 
 	queueTracks(state, tracks) {
-		state.tracks = Object.freeze(state.tracks.concat(tracks));
+		state.tracks = markRaw(state.tracks.concat(tracks));
 		if (!state.currentTrack && state.tracks.length > 0) {
 			state.currentTrack = state.tracks[0];
 		}
@@ -126,7 +127,7 @@ const mutations = {
 		if (trackIndex >= 0) {
 			let newTracks = [...state.tracks];
 			newTracks.splice(trackIndex, 1);
-			state.tracks = Object.freeze(newTracks);
+			state.tracks = markRaw(newTracks);
 		}
 	},
 
@@ -163,7 +164,7 @@ const mutations = {
 			} else if (playbackOrder == "repeat-track") {
 				newTrack = currentTrack;
 			} else {
-				const currentTrackIndex = tracks.indexOf(currentTrack);
+				const currentTrackIndex = tracks.indexOf(toRaw(currentTrack));
 				if (currentTrackIndex < 0) {
 					newTrack = tracks[0];
 				} else {
@@ -195,7 +196,7 @@ const mutations = {
 		}
 		let tracks = Disk.load("playlist");
 		if (tracks) {
-			state.tracks = Object.freeze(tracks);
+			state.tracks = markRaw(tracks);
 		}
 		let currentTrackIndex = Disk.load("currentTrackIndex");
 		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < state.tracks.length) {
