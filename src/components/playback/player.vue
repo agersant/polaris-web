@@ -171,8 +171,8 @@ export default {
 			}
 		}
 
-		if (this.playlist.elapsedSeconds) {
-			this.$refs.htmlAudio.currentTime = this.playlist.elapsedSeconds;
+		if (this.playlist.elapsedSeconds && this.playlist.elapsedSeconds > 0) {
+			this.seekTo(this.playlist.elapsedSeconds);
 		}
 
 		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
@@ -296,9 +296,13 @@ export default {
 					o = o.offsetParent;
 				}
 				let progress = Math.min(Math.max(x / this.$refs.seekInput.offsetWidth, 0), 1);
-				this.$refs.htmlAudio.currentTime = progress * this.duration;
-				this.canScrobble = false;
+				this.seekTo(progress * this.duration);
 			}
+		},
+
+		seekTo(elapsedSeconds) {
+			this.$refs.htmlAudio.currentTime = elapsedSeconds;
+				this.canScrobble = false;
 		},
 
 		volumeMouseMove(event) {
