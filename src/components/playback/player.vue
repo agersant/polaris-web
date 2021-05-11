@@ -136,20 +136,7 @@ export default {
 				return;
 			}
 			this.handleCurrentTrackChanged();
-			if (from) {
-				nextTick(() => {
-					this.$refs.htmlAudio
-						.play()
-						.then(() => {
-							this.$refs.htmlAudio.currentTime = 0;
-							API.lastFMNowPlaying(to.path);
-						})
-						.catch(() => {})
-						.finally(() => {
-							this.paused = this.$refs.htmlAudio.paused;
-						});
-				});
-			}
+			this.beginPlay();
 		},
 
 		volume(to, from) {
@@ -169,6 +156,10 @@ export default {
 			if (volume > 0) {
 				this.unmutedVolume = volume;
 			}
+		}
+
+		if (this.playlist.currentTrack) {
+			this.handleCurrentTrackChanged();
 		}
 
 		if (this.playlist.elapsedSeconds && this.playlist.elapsedSeconds > 0) {
@@ -215,6 +206,17 @@ export default {
 			this.canScrobble = true;
 			this.updateMediaSession();
 			this.updateWindowTitle();
+			API.lastFMNowPlaying(this.currentTrack.path);
+		},
+
+		beginPlay() {
+			nextTick(() => {
+				this.$refs.htmlAudio
+					.play()
+					.then(() => {
+						this.$refs.htmlAudio.currentTime = 0;
+					});
+			});
 		},
 
 		updateMediaSession() {
@@ -250,23 +252,30 @@ export default {
 
 		togglePlay() {
 			if (this.$refs.htmlAudio.paused) {
-				this.$refs.htmlAudio
-					.play()
-					.catch(() => {})
-					.finally(() => {
-						this.paused = this.$refs.htmlAudio.paused;
-					});
+				this.$refs.htmlAudio.play();
 			} else {
 				this.$refs.htmlAudio.pause();
 			}
 		},
 
 		skipPrevious() {
-			this.$store.dispatch("playlist/previous");
+			this.$store.dispatch("playlist/previous")
+			.then(advancedInPlace => {
+				if (advancedInPlace) {
+					this.handleCurrentTrackChanged();
+					this.beginPlay();
+				}
+			});
 		},
 
 		skipNext() {
-			this.$store.dispatch("playlist/next");
+			this.$store.dispatch("playlist/next")
+			.then(advancedInPlace => {
+				if (advancedInPlace) {
+					this.handleCurrentTrackChanged();
+					this.beginPlay();
+				}
+			});
 		},
 
 		updateScrobble() {
@@ -302,7 +311,7 @@ export default {
 
 		seekTo(elapsedSeconds) {
 			this.$refs.htmlAudio.currentTime = elapsedSeconds;
-				this.canScrobble = false;
+			this.canScrobble = false;
 		},
 
 		volumeMouseMove(event) {
@@ -363,6 +372,7 @@ export default {
 					console.log("Unexpected playback error: " + error.code);
 					break;
 			}
+			this.paused = true;
 			this.skipNext();
 		},
 	},
