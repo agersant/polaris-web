@@ -6,9 +6,9 @@
 		<form v-on:submit.prevent="save">
 			<label for="playlist_name">
 				Playlist name:
-				<input type="text" id="playlist_name" v-model="name" placeholder="Cool Playlist" />
+				<input data-cy="playlist-save-name" type="text" id="playlist_name" v-model="name" placeholder="Cool Playlist" />
 			</label>
-			<state-button v-bind:submit="true" v-bind:states="saveStates" v-bind:state="saveState"></state-button>
+			<state-button data-cy="playlist-save-commit" v-bind:submit="true" v-bind:states="saveStates" v-bind:state="saveState"></state-button>
 		</form>
 	</div>
 </template>

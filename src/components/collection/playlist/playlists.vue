@@ -4,9 +4,10 @@
 			<h2>Playlists</h2>
 		</div>
 
-		<div class="paneContent">
+		<div data-cy="saved-playlists" class="paneContent">
 			<ul v-if="playlists.listing.length > 0">
 				<li
+					data-cy="saved-playlist"
 					v-for="(playlist, index) in playlists.listing"
 					v-bind:key="index"
 					class="noselect"
@@ -44,7 +45,7 @@ export default {
 
 	methods: {
 		onItemClicked(playlist) {
-			this.$router.push("/playlist/" + playlist.name).catch(err => {});
+			this.$router.push("/playlist/" + encodeURIComponent(playlist.name)).catch(err => {});
 		},
 
 		onPlaylistDragStart(event, playlist) {

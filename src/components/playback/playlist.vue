@@ -3,7 +3,7 @@
 		<div class="paneHeader">
 			<h2>{{ playlist.name || "Playlist" }}</h2>
 			<div class="playlistDetails">
-				<span class="noselect save" v-on:click="onClickSave">
+				<span data-cy="playlist-save" class="noselect save" v-on:click="onClickSave">
 					<i class="material-icons md-18">save</i>
 					<playlist-save v-if="saving" v-bind:tracks="playlist.tracks" v-bind:initialName="playlist.name" v-on:cancel="endSave" v-on:complete="endSave" />
 				</span>

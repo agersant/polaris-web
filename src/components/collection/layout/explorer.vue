@@ -7,11 +7,11 @@
 			v-on:click="$emit('item-click', item)"
 			v-on:dragstart="event => $emit('items-drag-start', event, [item])"
 		>
-			<div v-if="item.variant == 'Directory'" class="directory">
+			<div data-cy="explorer-directory" v-if="item.variant == 'Directory'" class="directory">
 				<i class="material-icons">folder</i>
 				{{ formatDirectoryName(item) }}
 			</div>
-			<div v-if="item.variant == 'Song'" class="song">{{ formatTrackDetails(item) }}</div>
+			<div data-cy="explorer-song" v-if="item.variant == 'Song'" class="song">{{ formatTrackDetails(item) }}</div>
 		</li>
 	</ul>
 </template>

@@ -3,7 +3,7 @@
 		<div class="paneHeader">
 			<h2>Playlists</h2>
 		</div>
-		<div v-if="tracks" class="paneContent" ref="paneContent">
+		<div data-cy="saved-playlist-details" v-if="tracks" class="paneContent" ref="paneContent">
 			<div class="viewActions">
 				<div class="header">{{ name }}</div>
 				<button v-if="tracks.length > 0" v-on:click="play" class="small">Play</button>
