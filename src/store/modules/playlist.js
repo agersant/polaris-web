@@ -8,6 +8,7 @@ const reset = (state) => {
 	state.currentTrack = null;
 	state.playbackOrder = "default";
 	state.elapsedSeconds = 0;
+	state.advancedInPlace = false; // Used internally to keep track of advance() action outcome
 	return state;
 }
 
@@ -54,11 +55,13 @@ const actions = {
 	next({ commit, dispatch }) {
 		commit("advance", 1);
 		dispatch("savePlaybackState");
+		return new Promise((resolve, reject) => resolve(state.advancedInPlace));
 	},
 
 	previous({ commit, dispatch }) {
 		commit("advance", -1);
 		dispatch("savePlaybackState");
+		return new Promise((resolve, reject) => resolve(state.advancedInPlace));
 	},
 
 	queueTracks({ commit, dispatch }, tracks) {
@@ -151,6 +154,8 @@ const mutations = {
 	},
 
 	advance(state, delta) {
+		state.advancedInPlace = false;
+
 		const playbackOrder = state.playbackOrder;
 		const tracks = state.tracks;
 		const numTracks = tracks.length;
@@ -182,7 +187,8 @@ const mutations = {
 			}
 		}
 
-		if (newTrack != null && newTrack != state.currentTrack) {
+		if (newTrack != null) {
+			state.advancedInPlace = newTrack == state.currentTrack;
 			state.currentTrack = newTrack;
 			state.elapsedSeconds = 0;
 		}
