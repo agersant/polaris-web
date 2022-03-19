@@ -2,103 +2,103 @@ name: Build
 on: push
 
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-16.04
+    test:
+        name: Run Tests
+        runs-on: ubuntu-20.04
 
-    steps:
-    - name: Clone Polaris Web
-      uses: actions/checkout@master
-    - name: Clone Polaris
-      run: git clone http://github.com/agersant/polaris
-    - name: Check polaris version
-      working-directory: polaris
-      run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
-    - name: Retrieve cached Polaris executable
-      id: cache
-      uses: actions/cache@v1
-      with:
-        path: polaris/target
-        key: polaris-binary-${{ hashFiles('polaris-version') }}
-    - name: Copy rust-toolchain file
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: cp polaris/rust-toolchain .
-    - name: Install Rust toolchain
-      if: steps.cache.outputs.cache-hit != 'true'
-      uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-    - name: Build Polaris
-      working-directory: polaris
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: cargo build --release
-    - name: Run Polaris
-      working-directory: polaris
-      run: ./target/release/polaris -d db.sqlite -w ../dist -f &
+        steps:
+            - name: Clone Polaris Web
+              uses: actions/checkout@master
+            - name: Clone Polaris
+              run: git clone http://github.com/agersant/polaris
+            - name: Check polaris version
+              working-directory: polaris
+              run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
+            - name: Retrieve cached Polaris executable
+              id: cache
+              uses: actions/cache@v1
+              with:
+                  path: polaris/target
+                  key: polaris-binary-${{ hashFiles('polaris-version') }}
+            - name: Copy rust-toolchain file
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: cp polaris/rust-toolchain .
+            - name: Install Rust toolchain
+              if: steps.cache.outputs.cache-hit != 'true'
+              uses: actions-rs/toolchain@v1
+              with:
+                  profile: minimal
+            - name: Build Polaris
+              working-directory: polaris
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: cargo build --release
+            - name: Run Polaris
+              working-directory: polaris
+              run: ./target/release/polaris -d db.sqlite -w ../dist -f &
 
-    - name: Install Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12.14.1'
-    - name: Build Polaris Web
-      run: npm ci && npm run production
-    - name: Run Automated Tests
-      uses: cypress-io/github-action@v2
-      with:
-        wait-on: 'http://localhost:5050'
+            - name: Install Node.js
+              uses: actions/setup-node@v1
+              with:
+                  node-version: "12.14.1"
+            - name: Build Polaris Web
+              run: npm ci && npm run production
+            - name: Run Automated Tests
+              uses: cypress-io/github-action@v2
+              with:
+                  wait-on: "http://localhost:5050"
 
-    - name: Upload Screenshots
-      uses: actions/upload-artifact@v1
-      if: failure()
-      with:
-        name: cypress-screenshots
-        path: cypress/screenshots
-    - name: Upload Video
-      uses: actions/upload-artifact@v1
-      if: always()
-      with:
-        name: cypress-videos
-        path: cypress/videos
+            - name: Upload Screenshots
+              uses: actions/upload-artifact@v1
+              if: failure()
+              with:
+                  name: cypress-screenshots
+                  path: cypress/screenshots
+            - name: Upload Video
+              uses: actions/upload-artifact@v1
+              if: always()
+              with:
+                  name: cypress-videos
+                  path: cypress/videos
 
-    - name: Upload Build
-      uses: actions/upload-artifact@v1
-      with:
-        name: web
-        path: dist
+            - name: Upload Build
+              uses: actions/upload-artifact@v1
+              with:
+                  name: web
+                  path: dist
 
-  release:
-    name: Make Release
-    needs: test
-    runs-on: ubuntu-16.04
-    if: github.ref == 'refs/heads/master'
+    release:
+        name: Make Release
+        needs: test
+        runs-on: ubuntu-16.04
+        if: github.ref == 'refs/heads/master'
 
-    steps:
-    - name: Retrieve Build
-      uses: actions/download-artifact@v1
-      with:
-        name: web
-    - name: Compress Build
-      run: zip -r web.zip web
-    - name: Generate build number
-      uses: einaregilsson/build-number@v3
-      with:
-        token: ${{secrets.GITHUB_TOKEN}}
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: build-${{ env.BUILD_NUMBER }}
-        release_name: Polaris Web Build ${{ env.BUILD_NUMBER }}
-        draft: false
-        prerelease: false
-    - name: Upload Release Content
-      uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: web.zip
-        asset_name: web.zip
-        asset_content_type: application/gzip
+        steps:
+            - name: Retrieve Build
+              uses: actions/download-artifact@v1
+              with:
+                  name: web
+            - name: Compress Build
+              run: zip -r web.zip web
+            - name: Generate build number
+              uses: einaregilsson/build-number@v3
+              with:
+                  token: ${{secrets.GITHUB_TOKEN}}
+            - name: Create Release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: build-${{ env.BUILD_NUMBER }}
+                  release_name: Polaris Web Build ${{ env.BUILD_NUMBER }}
+                  draft: false
+                  prerelease: false
+            - name: Upload Release Content
+              uses: actions/upload-release-asset@v1.0.1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: web.zip
+                  asset_name: web.zip
+                  asset_content_type: application/gzip
