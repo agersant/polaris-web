@@ -68,7 +68,7 @@ export default {
 			if (variant == "Directory") {
 				this.$router.push("/browse/" + item.fields.path).catch(err => {});
 			} else if (variant == "Song") {
-				this.$store.dispatch("playlist/queueTracks", [item.fields]);
+				this.$store.dispatch("playlist/queueTracks", [{...item.fields}]);
 			}
 		},
 

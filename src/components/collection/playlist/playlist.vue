@@ -58,7 +58,7 @@ export default {
 		},
 
 		onItemClicked(item) {
-			this.$store.dispatch("playlist/queueTracks", [item.fields]);
+			this.$store.dispatch("playlist/queueTracks", [{...item.fields}]);
 		},
 
 		onItemsDragStart(event, items) {
