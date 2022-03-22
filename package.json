@@ -6,13 +6,13 @@
   "author": "Antoine Gersant <antoine.gersant@lesforges.org>",
   "license": "MIT",
   "devDependencies": {
-    "@parcel/transformer-vue": "^2.0.0-beta.2",
+    "@parcel/transformer-vue": "^2.3.2",
     "cypress": "^4.12.1",
-    "parcel": "^2.0.0-beta.2",
+    "parcel": "^2.3.2",
     "parcel-reporter-static-files-copy": "^1.2.2",
-    "vue": "^3.0.9",
-    "vue-router": "^4.0.5",
-    "vuex": "^4.0.0"
+    "vue": "^3.2.31",
+    "vue-router": "^4.0.14",
+    "vuex": "^4.0.2"
   },
   "scripts": {
     "watch": "parcel watch index.html",
