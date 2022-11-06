@@ -1,6 +1,7 @@
 <template>
 	<div class="player">
-		<audio ref="htmlAudio" controls v-bind:src="trackURL" v-on:timeupdate="onTimeUpdate" v-on:error="onPlaybackError" v-on:ended="skipNext" v-on:pause="onPaused" v-on:playing="onPlaying"></audio>
+		<audio ref="htmlAudio" controls v-bind:src="trackURL" v-on:timeupdate="onTimeUpdate"
+			v-on:error="onPlaybackError" v-on:ended="skipNext" v-on:pause="onPaused" v-on:playing="onPlaying"></audio>
 
 		<div v-if="currentTrack" class="controls noselect">
 			<div class="playback">
@@ -77,29 +78,29 @@ export default {
 	computed: {
 		...mapState(["playlist"]),
 
-		currentTrack: function () {
+		currentTrack: function() {
 			return this.playlist.currentTrack;
 		},
 
-		trackURL: function () {
+		trackURL: function() {
 			if (!this.currentTrack) {
 				return null;
 			}
 			return API.makeAudioURL(this.currentTrack.path);
 		},
 
-		artworkURL: function () {
+		artworkURL: function() {
 			if (!this.currentTrack || !this.currentTrack.artwork) {
 				return null;
 			}
 			return API.makeThumbnailURL(this.currentTrack.artwork);
 		},
 
-		formattedPlaybackTime: function () {
+		formattedPlaybackTime: function() {
 			return Format.duration(this.secondsPlayed);
 		},
 
-		trackProgress: function () {
+		trackProgress: function() {
 			if (isNaN(this.duration)) {
 				return 0;
 			}
@@ -140,7 +141,7 @@ export default {
 		},
 
 		volume(to, from) {
-			this.$refs.htmlAudio.volume = to;
+			this.$refs.htmlAudio.volume = Math.pow(to, 4);
 			Disk.save("volume", to);
 		},
 	},
@@ -260,22 +261,22 @@ export default {
 
 		skipPrevious() {
 			this.$store.dispatch("playlist/previous")
-			.then(advancedInPlace => {
-				if (advancedInPlace) {
-					this.handleCurrentTrackChanged();
-					this.beginPlay();
-				}
-			});
+				.then(advancedInPlace => {
+					if (advancedInPlace) {
+						this.handleCurrentTrackChanged();
+						this.beginPlay();
+					}
+				});
 		},
 
 		skipNext() {
 			this.$store.dispatch("playlist/next")
-			.then(advancedInPlace => {
-				if (advancedInPlace) {
-					this.handleCurrentTrackChanged();
-					this.beginPlay();
-				}
-			});
+				.then(advancedInPlace => {
+					if (advancedInPlace) {
+						this.handleCurrentTrackChanged();
+						this.beginPlay();
+					}
+				});
 		},
 
 		updateScrobble() {
@@ -519,6 +520,7 @@ audio {
 		transform: scale(0);
 		opacity: 0;
 	}
+
 	to {
 		margin-top: 0;
 		transform: scale(1);
