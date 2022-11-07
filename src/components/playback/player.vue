@@ -1,6 +1,6 @@
 <template>
 	<div class="player">
-		<audio ref="htmlAudio" controls v-if="trackURL" v-bind:src="trackURL" v-on:timeupdate="onTimeUpdate"
+		<audio ref="htmlAudio" controls v-if="trackURL" v-bind:src="trackURL" @timeupdate="onTimeUpdate"
 			v-on:error="onPlaybackError" v-on:ended="skipNext" v-on:pause="onPaused" v-on:playing="onPlaying"></audio>
 
 		<div v-if="currentTrack" class="controls noselect">
@@ -63,7 +63,6 @@ const volume = ref(1);
 const unmutedVolume = ref(1);
 const secondsPlayed = ref(0);
 const duration = ref(1);
-const mouseDown = ref(false);
 const adjusting: Ref<"volume" | "seek" | null> = ref(null);
 const paused = ref(true);
 const canScrobble = ref(false);
@@ -123,7 +122,7 @@ watch(currentTrack, (to, from) => {
 
 watch(volume, (to, from) => {
 	if (htmlAudio.value) {
-		htmlAudio.value.volume = Math.pow(to, 4);
+		htmlAudio.value.volume = Math.pow(to, 3);
 	}
 	save("volume", to);
 });
@@ -133,6 +132,8 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
+	mounted.value = true;
+
 	const savedVolume = parseFloat(load("volume"));
 	if (!isNaN(savedVolume)) {
 		volume.value = savedVolume;
