@@ -19,7 +19,7 @@ function enqueue(state: PlaylistState, tracks: Song[]) {
 	}
 }
 
-function advance(state: PlaylistState, delta: number) {
+function advance(state: PlaylistState, delta: number): Song | null {
 	const playbackOrder = state.playbackOrder;
 	const tracks = state.songs;
 	const numTracks = tracks.length;
@@ -60,6 +60,8 @@ function advance(state: PlaylistState, delta: number) {
 		state.currentTrack = newTrack;
 		state.elapsedSeconds = 0;
 	}
+
+	return newTrack;
 }
 
 export const usePlaylistStore = defineStore("playlist", {
@@ -120,14 +122,16 @@ export const usePlaylistStore = defineStore("playlist", {
 			this.savePlaybackState();
 		},
 
-		next() {
-			advance(this, 1);
+		next(): Song | null {
+			const advancedTo = advance(this, 1);
 			this.savePlaybackState();
+			return advancedTo;
 		},
 
-		previous() {
-			advance(this, -1);
+		previous(): Song | null {
+			const advancedTo = advance(this, -1);
 			this.savePlaybackState();
+			return advancedTo;
 		},
 
 		queueTracks(tracks: Song[]) {

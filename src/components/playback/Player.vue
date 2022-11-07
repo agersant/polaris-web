@@ -1,7 +1,7 @@
 <template>
 	<div class="player">
 		<audio ref="htmlAudio" controls v-if="trackURL" v-bind:src="trackURL" @timeupdate="onTimeUpdate"
-			v-on:error="onPlaybackError" @ended="skipNext" @pause="onPaused" @playing="onPlaying"
+			@error="onPlaybackError" @ended="onEnded" @pause="onPaused" @playing="onPlaying"
 			@waiting="onWaiting"></audio>
 
 		<div v-if="currentTrack" class="controls noselect">
@@ -71,7 +71,7 @@ const duration = ref(1);
 const adjusting: Ref<"volume" | "seek" | null> = ref(null);
 const paused = ref(true);
 const buffering = ref(false);
-const debouncedBuffering = refDebounced(buffering, 500);
+const debouncedBuffering = refDebounced(buffering, 100);
 const canScrobble = ref(false);
 const mounted = ref(false);
 const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
@@ -125,7 +125,6 @@ watch(currentTrack, (to, from) => {
 	handleCurrentTrackChanged();
 	playFromStart();
 });
-
 
 watch(volume, (to, from) => {
 	if (htmlAudio.value) {
@@ -204,6 +203,8 @@ function playFromStart() {
 		if (!htmlAudio.value) {
 			return;
 		}
+		paused.value = false;
+		buffering.value = false;
 		await htmlAudio.value.play();
 		if (!htmlAudio.value) {
 			return;
@@ -253,17 +254,20 @@ function togglePlay() {
 	if (!htmlAudio.value) {
 		return;
 	}
-	if (htmlAudio.value.paused) {
+	if (paused.value) {
 		htmlAudio.value.play();
+		paused.value = false;
 	} else {
 		htmlAudio.value.pause();
+		paused.value = true;
+		buffering.value = false;
 	}
 }
 
 async function skipPrevious() {
 	const oldTrack = currentTrack.value;
-	await playlist.previous();
-	if (oldTrack == currentTrack.value) {
+	const newTrack = await playlist.previous();
+	if (newTrack == oldTrack) {
 		handleCurrentTrackChanged();
 		playFromStart();
 	}
@@ -271,8 +275,8 @@ async function skipPrevious() {
 
 async function skipNext() {
 	const oldTrack = currentTrack.value;
-	await playlist.next();
-	if (oldTrack == currentTrack.value) {
+	const newTrack = await playlist.next();
+	if (newTrack == oldTrack) {
 		handleCurrentTrackChanged();
 		playFromStart();
 	}
@@ -330,17 +334,23 @@ function volumeMouseMove(event: MouseEvent) {
 	}
 }
 
+function onEnded(event: Event) {
+	paused.value = true;
+	buffering.value = false;
+	skipNext();
+}
+
 function onPaused(event: Event) {
-	paused.value = (event.target as HTMLAudioElement).paused;
 	buffering.value = false;
 }
 
 function onPlaying(event: Event) {
-	paused.value = (event.target as HTMLAudioElement).paused;
+	paused.value = false;
 	buffering.value = false;
 }
 
 function onWaiting(event: Event) {
+	paused.value = false;
 	buffering.value = true;
 }
 
