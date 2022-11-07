@@ -12,9 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from "./sidebar.vue";
-import Player from "./playback/player.vue";
-import Playlist from "./playback/playlist.vue";
+import Sidebar from "./Sidebar.vue";
+import Player from "./playback/Player.vue";
+import Playlist from "./playback/Playlist.vue";
 </script>
 
 <style>

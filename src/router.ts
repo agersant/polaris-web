@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory, RouteLocation, RouteLocationMatched } from "vue-router";
 
-import App from "@/components/app.vue";
-import Auth from "@/components/auth.vue";
+import App from "@/components/App.vue";
+import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
 import Browser from "@/components/collection/Browser.vue";
 import Playlist from "@/components/collection/playlist/Playlist.vue";

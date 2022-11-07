@@ -19,7 +19,7 @@ import { onMounted, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
 import { Directory } from "@/api/dto";
 import { random } from "@/api/endpoints";
-import Discography from "./layout/discography.vue";
+import Discography from "./layout/Discography.vue";
 
 const router = useRouter();
 

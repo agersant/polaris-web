@@ -19,7 +19,7 @@ import { useMountDirsStore } from "@/stores/mount-dirs";
 import { useUsersStore } from "@/stores/users";
 import Finish from "./steps/Finish.vue";
 import Mount from "./steps/Mount.vue";
-import User from "./steps/user.vue";
+import User from "./steps/User.vue";
 import Welcome from "./steps/Welcome.vue";
 
 const router = useRouter();

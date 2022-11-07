@@ -29,8 +29,8 @@ import { usePlaylistStore } from "@/stores/playlist";
 import { computed, nextTick, ref, Ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import Breadcrumbs from "./Breadcrumbs.vue";
-import Album from "./layout/album.vue";
-import Discography from "./layout/discography.vue";
+import Album from "./layout/Album.vue";
+import Discography from "./layout/Discography.vue";
 import Explorer from "./layout/Explorer.vue";
 
 
