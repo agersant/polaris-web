@@ -1,7 +1,8 @@
 <template>
 	<div class="player">
 		<audio ref="htmlAudio" controls v-if="trackURL" v-bind:src="trackURL" @timeupdate="onTimeUpdate"
-			v-on:error="onPlaybackError" v-on:ended="skipNext" v-on:pause="onPaused" v-on:playing="onPlaying"></audio>
+			v-on:error="onPlaybackError" @ended="skipNext" @pause="onPaused" @playing="onPlaying"
+			@waiting="onWaiting"></audio>
 
 		<div v-if="currentTrack" class="controls noselect">
 			<div class="playback">
@@ -36,7 +37,9 @@
 
 		<div class="currentTrack" v-if="currentTrack">
 			<div class="trackInfo">
-				<div class="primary">{{ trackInfoPrimary }}</div>
+				<div class="primary">
+					<Spinner class="spinner" v-if="debouncedBuffering" />{{ trackInfoPrimary }}
+				</div>
 				<div class="secondary">{{ trackInfoSecondary }}</div>
 			</div>
 			<div class="seekBar" ref="seekInput" v-on:mousedown="seekMouseDown">
@@ -50,12 +53,14 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
+import { refDebounced } from "@vueuse/core";
 import notify from "@/notify";
+import { load, save } from "@/disk";
 import { lastFMNowPlaying, lastFMScrobble, makeAudioURL } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
 import { formatDuration, formatTitle } from "@/format";
 import CoverArt from "@/components/CoverArt.vue";
-import { load, save } from "@/disk";
+import Spinner from "@/components/Spinner.vue";
 
 const playlist = usePlaylistStore();
 
@@ -65,11 +70,13 @@ const secondsPlayed = ref(0);
 const duration = ref(1);
 const adjusting: Ref<"volume" | "seek" | null> = ref(null);
 const paused = ref(true);
+const buffering = ref(false);
+const debouncedBuffering = refDebounced(buffering, 500);
 const canScrobble = ref(false);
 const mounted = ref(false);
-const htmlAudio: Ref<HTMLAudioElement | null> = ref(null)
-const seekInput: Ref<HTMLElement | null> = ref(null)
-const volumeInput: Ref<HTMLElement | null> = ref(null)
+const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
+const seekInput: Ref<HTMLElement | null> = ref(null);
+const volumeInput: Ref<HTMLElement | null> = ref(null);
 
 const currentTrack = computed(() => playlist.currentTrack);
 const trackURL = computed(() => currentTrack.value ? makeAudioURL(currentTrack.value.path) : null);
@@ -325,10 +332,16 @@ function volumeMouseMove(event: MouseEvent) {
 
 function onPaused(event: Event) {
 	paused.value = (event.target as HTMLAudioElement).paused;
+	buffering.value = false;
 }
 
 function onPlaying(event: Event) {
 	paused.value = (event.target as HTMLAudioElement).paused;
+	buffering.value = false;
+}
+
+function onWaiting(event: Event) {
+	buffering.value = true;
 }
 
 function onTimeUpdate(event: Event) {
@@ -467,6 +480,11 @@ audio {
 .trackInfo .primary {
 	font-weight: 600;
 	margin-bottom: -5px;
+}
+
+.spinner {
+	margin-bottom: -2px;
+	margin-right: 8px;
 }
 
 .trackInfo .secondary,
