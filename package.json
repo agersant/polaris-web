@@ -23,6 +23,6 @@
 		"dev": "vite build --watch --mode development",
 		"test": "vite build && cypress run",
 		"test-ui": "vite build && cypress open",
-		"build": "vue-tsc --noEmit && vite build"
+		"production": "vue-tsc --noEmit && vite build"
 	}
 }
