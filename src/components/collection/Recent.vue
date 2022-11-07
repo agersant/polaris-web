@@ -4,7 +4,7 @@
 			<h2>Recently Added</h2>
 		</div>
 		<div class="paneContent" ref="paneContent">
-			<Discography v-bind:showArtistName="false" v-bind:directories="items" v-on:item-click="onItemClicked"
+			<Discography v-bind:showArtistName="true" v-bind:directories="items" v-on:item-click="onItemClicked"
 				v-on:items-drag-start="onItemsDragStart" />
 		</div>
 	</div>
