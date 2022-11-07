@@ -37,7 +37,7 @@ function validate() {
 }
 
 function proceed() {
-	const newUser = { name: username.value, password: password.value, is_admin: true };
+	const newUser = { name: username.value, password: password.value, admin: true };
 	users.create(newUser);
 }
 </script>
