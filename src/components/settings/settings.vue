@@ -2,7 +2,7 @@
 	<div class="pane">
 		<div class="paneHeader">
 			<h2>Settings</h2>
-			<tabs></tabs>
+			<Tabs />
 		</div>
 		<div class="paneContent">
 			<router-view></router-view>
@@ -10,13 +10,8 @@
 	</div>
 </template>
 
-<script>
-import Tabs from "./tabs";
-export default {
-	components: {
-		tabs: Tabs,
-	},
-};
+<script setup lang="ts">
+import Tabs from "./Tabs.vue";
 </script>
 
 <style scoped>

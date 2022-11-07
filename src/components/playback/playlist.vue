@@ -5,7 +5,8 @@
 			<div class="playlistDetails">
 				<span data-cy="playlist-save" class="noselect save" v-on:click="onClickSave">
 					<i class="material-icons md-18">save</i>
-					<playlist-save v-if="saving" v-bind:tracks="playlist.tracks" v-bind:initialName="playlist.name" v-on:cancel="endSave" v-on:complete="endSave" />
+					<playlist-save v-if="saving" v-bind:tracks="playlist.songs" v-bind:initialName="playlist.name"
+						v-on:cancel="endSave" v-on:complete="endSave" />
 				</span>
 				<span data-cy="clear-playlist" class="noselect delete" v-on:click="onClickClear">
 					<i class="material-icons md-18">delete</i>
@@ -22,32 +23,38 @@
 						<option value="repeat-all">Repeat All</option>
 					</select>
 				</span>
-				<div data-cy="playlist-duration" class="totalDuration" v-if="duration > 0" v-bind:style="{ right: scrollbarWidth + 'px' }">{{ formatPlaylistDuration(duration) }}</div>
+				<div data-cy="playlist-duration" class="totalDuration" v-if="duration > 0"
+					v-bind:style="{ right: scrollbarWidth + 'px' }">{{ formatLongDuration(duration) }}</div>
 			</div>
 		</div>
 
-		<div data-cy="playlist" class="paneContent" ref="scrollElement" v-on:scroll="onScroll" v-on:dragover="onDragOver" v-on:drop.prevent="onDrop">
+		<div data-cy="playlist" class="paneContent" ref="scrollElement" v-on:scroll="onScroll" @dragover.prevent
+			v-on:drop.prevent="onDrop">
 			<div v-bind:style="{ height: topPadding + 'px' }"></div>
 			<table>
 				<tbody>
-					<tr data-cy="track" v-for="(track, index) in visibleTracks" v-bind:key="index" v-bind:class="{ nowPlaying: track == currentTrackRaw }" v-on:click="onClickTrack(track)">
+					<tr data-cy="track" v-for="(track, index) in visibleTracks" v-bind:key="index"
+						v-bind:class="{ nowPlaying: track == currentTrackRaw }" v-on:click="onClickTrack(track)">
 						<td data-cy="remove" class="remove">
 							<div class="remove noselect" v-on:click.stop="onClickRemoveTrack(track)">[-]</div>
 						</td>
 						<td class="nowPlaying">
-							<i data-cy="now-playing" v-if="track == currentTrackRaw" class="nowPlaying material-icons md-16">play_arrow</i>
+							<i data-cy="now-playing" v-if="track == currentTrackRaw"
+								class="nowPlaying material-icons md-16">play_arrow</i>
 						</td>
 						<td class="text">{{ formatTrackContext(track) }}</td>
 						<td class="text song">
 							{{ formatTrackDetails(track) }}
-							<span class="trackArtist" v-if="track.album_artist && track.artist && track.album_artist != track.artist">({{ track.artist }})</span>
+							<span class="trackArtist"
+								v-if="track.album_artist && track.artist && track.album_artist != track.artist">({{
+								track.artist }})</span>
 						</td>
 						<td class="text duration">{{ formatTrackDuration(track) }}</td>
 					</tr>
 				</tbody>
 			</table>
 			<div v-bind:style="{ height: bottomPadding + 'px' }"></div>
-			<div class="help" v-if="playlist.tracks.length == 0">
+			<div class="help" v-if="playlist.songs.length == 0">
 				<i class="material-icons md-48">queue</i>
 				<br />Make a playlist by dragging music from your collection to here.
 			</div>
@@ -55,186 +62,174 @@
 	</div>
 </template>
 
-<script>
-import { nextTick, toRaw } from "vue";
-import { mapState } from "vuex";
-import * as Format from "/src/format";
-import PlaylistSave from "./playlist-save";
-export default {
-	components: {
-		"playlist-save": PlaylistSave,
-	},
+<script setup lang="ts">
+import { computed, nextTick, onMounted, onUnmounted, onUpdated, Ref, ref, toRaw } from "vue";
+import { usePlaylistStore } from "@/stores/playlist";
+import PlaylistSave from "./PlaylistSave.vue";
+import { CollectionItem, ListPlaylistsEntry, Song } from "@/api/dto";
+import { formatDuration, formatLongDuration, formatTitle } from "@/format";
 
-	data() {
-		return {
-			trackHeight: 30, // Also defined in CSS
-			maxVisibleTracks: 0,
-			numScrolledTracks: 0,
-			scrollbarWidth: 0,
-			saving: false,
-		};
-	},
+type PlaylistDragAndDropPayload = CollectionItem[] | ListPlaylistsEntry;
 
-	computed: {
-		...mapState(["playlist"]),
-		currentTrackRaw: function() {
-			return toRaw(this.playlist.currentTrack);
-		},
-		playbackOrder: {
-			set(order) {
-				this.$store.dispatch("playlist/setPlaybackOrder", order);
-			},
-			get() {
-				return this.playlist.playbackOrder;
-			},
-		},
-		firstRenderedIndex: function() {
-			return 2 * Math.floor(this.numScrolledTracks / 2); // Preserve odd/even row indices
-		},
-		visibleTracks: function () {
-			return this.playlist.tracks.slice(this.firstRenderedIndex, this.firstRenderedIndex + this.maxVisibleTracks);
-		},
-		topPadding: function () {
-			return this.firstRenderedIndex * this.trackHeight;
-		},
-		bottomPadding: function () {
-			return Math.max(0, (this.playlist.tracks.length - this.visibleTracks.length) * this.trackHeight - this.topPadding);
-		},
-		duration: function () {
-			return this.playlist.tracks.reduce((acc, track) => {
-				const durationInSeconds = parseInt(track.duration, 10);
-				if (!durationInSeconds) {
-					return acc;
-				}
-				return acc + durationInSeconds;
-			}, 0);
-		},
-	},
+const playlist = usePlaylistStore();
 
-	updated() {
-		nextTick(this.updateScrollbarWidth);
-	},
+const trackHeight = 30; // Also defined in CSS
+const maxVisibleTracks = ref(0);
+const numScrolledTracks = ref(0);
+const scrollbarWidth = ref(0);
+const saving = ref(false);
+const scrollElement: Ref<HTMLElement | null> = ref(null);
 
-	mounted() {
-		window.addEventListener("resize", this.onResize);
-		this.$store.subscribe((mutation, state) => {
-			if (mutation.type === "playlist/advance") {
-				this.snapToCurrentTrack();
+const currentTrackRaw = computed(() => toRaw(playlist.currentTrack));
+const playbackOrder = computed({
+	set(order: string) {
+		playlist.setPlaybackOrder(order);
+	},
+	get() {
+		return playlist.playbackOrder;
+	},
+});
+const firstRenderedIndex = computed(() => 2 * Math.floor(numScrolledTracks.value / 2)); // Preserves odd/even row indices
+const visibleTracks = computed(() => playlist.songs.slice(firstRenderedIndex.value, firstRenderedIndex.value + maxVisibleTracks.value));
+const topPadding = computed(() => firstRenderedIndex.value * trackHeight);
+const bottomPadding = computed(() => Math.max(0, (playlist.songs.length - visibleTracks.value.length) * trackHeight - topPadding.value));
+const duration = computed(() => playlist.songs.reduce((acc, song) => {
+	if (!song.duration || isNaN(song.duration)) {
+		return acc;
+	}
+	return acc + song.duration;
+}, 0));
+
+playlist.$onAction((action) => {
+	if (action.name == "shuffle" || action.name == "next" || action.name == "previous") {
+		snapToCurrentTrack();
+	}
+});
+
+onUpdated(() => {
+	nextTick(updateScrollbarWidth);
+});
+
+onMounted(() => {
+	window.addEventListener("resize", onResize);
+	onResize();
+});
+
+onUnmounted(() => {
+	window.removeEventListener("resize", onResize);
+});
+
+function onResize() {
+	updateMaxVisibleTracks();
+	updateScrollbarWidth();
+}
+
+function onScroll() {
+	if (!scrollElement.value) {
+		return;
+	}
+	numScrolledTracks.value = Math.max(0, Math.floor(scrollElement.value.scrollTop / trackHeight));
+}
+
+function updateMaxVisibleTracks() {
+	if (!scrollElement.value) {
+		return;
+	}
+	maxVisibleTracks.value = Math.ceil(scrollElement.value.clientHeight / trackHeight) + 2;
+}
+
+function updateScrollbarWidth() {
+	if (!scrollElement.value) {
+		return;
+	}
+	scrollbarWidth.value = scrollElement.value.offsetWidth - scrollElement.value.clientWidth;
+}
+
+function snapToCurrentTrack() {
+	if (!currentTrackRaw.value || !scrollElement.value) {
+		return;
+	}
+	const currentTrackIndex = playlist.songs.indexOf(currentTrackRaw.value);
+	if (currentTrackIndex < 0) {
+		return;
+	}
+	scrollElement.value.scrollTop = (currentTrackIndex - 10) * trackHeight;
+}
+
+function onClickSave() {
+	saving.value = true;
+}
+
+function endSave() {
+	saving.value = false;
+}
+
+function onDrop(event: DragEvent) {
+	if (!event || !event.dataTransfer) {
+		return;
+	}
+	const transferData = event.dataTransfer.getData("text/json");
+	const payload: PlaylistDragAndDropPayload = JSON.parse(transferData);
+	if (Array.isArray(payload)) {
+		for (const item of payload) {
+			if (item.variant == "Song") {
+				playlist.queueTracks([item]);
+			} else if (item.variant == "Directory") {
+				playlist.queueDirectory(item.path);
 			}
-		});
-		this.onResize();
-	},
+		}
+	} else {
+		playlist.queuePlaylist(payload.name);
+	}
+}
 
-	unmounted() {
-		window.removeEventListener("resize", this.onResize);
-	},
+function onClickTrack(song: Song) {
+	playlist.play(song);
+}
 
-	methods: {
-		onResize() {
-			this.updateMaxVisibleTracks();
-			this.updateScrollbarWidth();
-		},
+function onClickClear() {
+	playlist.clear();
+}
 
-		onScroll() {
-			this.numScrolledTracks = Math.max(0, Math.floor(this.$refs.scrollElement.scrollTop / this.trackHeight));
-		},
+function onClickShuffle() {
+	playlist.shuffle();
+}
 
-		updateMaxVisibleTracks() {
-			this.maxVisibleTracks = Math.ceil(this.$refs.scrollElement.clientHeight / this.trackHeight) + 2;
-		},
+function onClickRemoveTrack(song: Song) {
+	playlist.removeTrack(song);
+}
 
-		updateScrollbarWidth() {
-			this.scrollbarWidth = this.$refs.scrollElement.offsetWidth - this.$refs.scrollElement.clientWidth;
-		},
+function formatTrackContext(song: Song) {
+	let context = "";
+	if (song.album_artist || song.artist) {
+		context += song.album_artist || song.artist;
+	} else {
+		context += "Unknown Artist";
+	}
+	context += " - ";
+	context += song.album ? song.album : "Unknown Album";
+	if (song.year) {
+		context += " (" + song.year + ")";
+	}
+	return context;
+}
 
-		snapToCurrentTrack() {
-			const currentTrackIndex = this.playlist.tracks.indexOf(this.currentTrackRaw);
-			if (currentTrackIndex < 0) {
-				return;
-			}
-			this.$refs.scrollElement.scrollTop = (currentTrackIndex - 10) * this.trackHeight;
-		},
+function formatTrackDetails(song: Song) {
+	let details = "";
+	if (song.track_number) {
+		details += song.track_number;
+		details += ". ";
+	}
+	details += formatTitle(song);
+	return details;
+}
 
-		endSave() {
-			this.saving = false;
-		},
-
-		onDragOver(event) {
-			event.preventDefault();
-			return false;
-		},
-
-		onDrop(event) {
-			let items = event.dataTransfer.getData("text/json");
-			items = JSON.parse(items);
-			for (const item of items) {
-				const variant = item.variant;
-				if (variant == "Song") {
-					this.$store.dispatch("playlist/queueTracks", [item.fields]);
-				} else if (variant == "Directory") {
-					this.$store.dispatch("playlist/queueDirectory", item.fields.path);
-				} else if (variant == "Playlist") {
-					this.$store.dispatch("playlist/queuePlaylist", item.fields.name);
-				}
-			}
-		},
-
-		onClickTrack(track) {
-			this.$store.dispatch("playlist/play", track);
-		},
-
-		onClickSave() {
-			this.saving = true;
-		},
-
-		onClickClear() {
-			this.$store.dispatch("playlist/clear");
-		},
-
-		onClickShuffle() {
-			this.$store.dispatch("playlist/shuffle");
-			this.snapToCurrentTrack();
-		},
-
-		onClickRemoveTrack(track) {
-			this.$store.dispatch("playlist/removeTrack", track);
-		},
-
-		formatTrackContext(track) {
-			let context = "";
-			if (track.album_artist || track.artist) {
-				context += track.album_artist || track.artist;
-			} else {
-				context += "Unknown Artist";
-			}
-			context += " - ";
-			context += track.album ? track.album : "Unknown Album";
-			if (track.year) {
-				context += " (" + track.year + ")";
-			}
-			return context;
-		},
-
-		formatTrackDetails(track) {
-			let details = "";
-			if (track.track_number) {
-				details += track.track_number;
-				details += ". ";
-			}
-			details += Format.title(track);
-			return details;
-		},
-
-		formatTrackDuration(track) {
-			let durationInSeconds = parseInt(track.duration, 10);
-			return Format.duration(durationInSeconds);
-		},
-
-		formatPlaylistDuration(durationInSeconds) {
-			return Format.longDuration(durationInSeconds);
-		},
-	},
-};
+function formatTrackDuration(song: Song) {
+	if (!song.duration || isNaN(song.duration)) {
+		return "";
+	}
+	return formatDuration(song.duration);
+}
 </script>
 
 <style scoped>
@@ -277,7 +272,8 @@ export default {
 	color: var(--theme-foreground);
 	font-size: 0.875rem;
 	align-self: flex-start;
-	position: relative; /*for dynamic offsetting compensating scrollbar*/
+	position: relative;
+	/*for dynamic offsetting compensating scrollbar*/
 }
 
 tr:not(:hover) .remove {
@@ -294,7 +290,8 @@ table {
 }
 
 tr {
-	height: 30px; /*Used in JS*/
+	height: 30px;
+	/*Used in JS*/
 	cursor: default;
 	white-space: nowrap;
 }

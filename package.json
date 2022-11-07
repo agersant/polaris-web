@@ -1,23 +1,28 @@
 {
-  "name": "polaris-web",
-  "version": "1.0.0",
-  "description": "Web UI for Polaris",
-  "repository": "https://github.com/agersant/polaris-web.git",
-  "author": "Antoine Gersant <antoine.gersant@lesforges.org>",
-  "license": "MIT",
-  "devDependencies": {
-    "@parcel/transformer-vue": "^2.3.2",
-    "cypress": "^4.12.1",
-    "parcel": "^2.3.2",
-    "parcel-reporter-static-files-copy": "^1.2.2",
-    "vue": "^3.2.31",
-    "vue-router": "^4.0.14",
-    "vuex": "^4.0.2"
-  },
-  "scripts": {
-    "watch": "parcel watch index.html",
-    "test": "parcel build --no-scope-hoist index.html && cypress run",
-    "test-ui": "parcel build --no-scope-hoist index.html && cypress open",
-    "production": "parcel build --no-scope-hoist index.html"
-  }
+	"name": "polaris-web",
+	"version": "1.0.0",
+	"description": "Web UI for Polaris",
+	"repository": "https://github.com/agersant/polaris-web.git",
+	"author": "Antoine Gersant <antoine.gersant@lesforges.org>",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^17.0.31",
+		"@vitejs/plugin-vue": "^2.3.1",
+		"cypress": "^4.12.1",
+		"typescript": "^4.5.4",
+		"vite": "^2.9.7",
+		"vue-tsc": "^1.0"
+	},
+	"dependencies": {
+		"pinia": "^2.0.14",
+		"vue": "^3.2.31",
+		"vue-router": "^4.0.14",
+		"vuex": "^4.0.2"
+	},
+	"scripts": {
+		"dev": "vite build --watch --mode development",
+		"test": "vite build && cypress run",
+		"test-ui": "vite build && cypress open",
+		"build": "vue-tsc --noEmit && vite build"
+	}
 }

@@ -2,7 +2,8 @@
 	<form v-if="settings && mountDirs" v-on:submit.prevent>
 		<div class="field">
 			<label for="art_pattern">Album art pattern</label>
-			<input type="text" id="art_pattern" v-model="settings.album_art_pattern" v-on:change="onAlbumArtPatternChanged" v-on:keypress.enter.prevent placeholder="Folder.(jpg|png)" />
+			<input type="text" id="art_pattern" v-model="settings.album_art_pattern"
+				v-on:change="onAlbumArtPatternChanged" v-on:keypress.enter.prevent placeholder="Folder.(jpg|png)" />
 			<p class="tip">The regular expression used to detect album art files.</p>
 			<p v-if="!validateAlbumArtPattern()" class="tip error">Please enter a valid regular expression.</p>
 		</div>
@@ -16,7 +17,8 @@
 				</thead>
 				<tr v-for="(mountDir, index) in mountDirs" v-bind:key="index">
 					<td>
-						<input type="text" v-model="mountDir.source" v-on:change="commitMountDirs" v-on:keypress.enter.prevent />
+						<input type="text" v-model="mountDir.source" v-on:change="commitMountDirs"
+							v-on:keypress.enter.prevent />
 					</td>
 					<td>
 						<input type="text" v-model="mountDir.name" v-on:change="commitMountDirs" />
@@ -31,107 +33,111 @@
 		<div class="field sleep_duration">
 			<label for="sleep_duration">
 				Scan collection every
-				<input type="text" id="sleep_duration" v-model="reindexPeriod" v-on:change="onReindexPeriodChanged" /> minutes
+				<input type="text" id="sleep_duration" v-model="reindexPeriod" @change="onReindexPeriodChanged" />
+				minutes
 			</label>
-			<state-button ref="reindex" v-bind:submit="false" v-bind:states="reindexStates" v-bind:state="reindexState" v-on:click="reindex" />
+			<StateButton v-bind:submit="false" v-bind:states="reindexStates" v-bind:state="reindexState"
+				@click="reindex" />
 		</div>
 	</form>
 </template>
 
-<script>
-import API from "/src/api";
-import StateButton from "/src/components/state-button";
-export default {
-	components: {
-		"state-button": StateButton,
-	},
+<script setup lang="ts">
+import { onMounted, Ref, ref } from "vue";
+import { MountDir, Settings } from "@/api/dto";
+import { getMountDirs, getSettings, putMountDirs, putSettings, triggerIndex } from "@/api/endpoints";
+import StateButton, { State } from "@/components/StateButton.vue";
 
-	// TODO Consider using mountDirs store (and adding a settings store?)
+// TODO Consider using mountDirs store (and adding a settings store?)
 
-	data() {
-		return {
-			settings: null,
-			mountDirs: null,
-			reindexPeriod: 0,
-			reindexStates: {
-				ready: { name: "Scan now" },
-				applying: { name: "Hold on…", disabled: true },
-				success: { name: "On it!", disabled: true, success: true },
-				failure: { name: "Error :(", disabled: true, failure: true },
-			},
-			reindexState: null,
-		};
-	},
+const settings: Ref<Settings | null> = ref(null);
+const mountDirs: Ref<MountDir[] | null> = ref(null);
+const reindexPeriod = ref(0);
+const reindexStates: Ref<Record<string, State>> = ref({
+	ready: { name: "Scan now" },
+	applying: { name: "Hold on…", disabled: true },
+	success: { name: "On it!", disabled: true, success: true },
+	failure: { name: "Error :(", disabled: true, failure: true },
+});
+const reindexState: Ref<State> = ref(reindexStates.value.ready);
 
-	mounted() {
-		this.reindexState = this.reindexStates.ready;
-		API.getSettings().then(data => {
-			this.settings = data;
-			this.reindexPeriod = Math.round(data.reindex_every_n_seconds / 60);
-		});
-		API.getMountDirs().then(data => {
-			this.mountDirs = data;
-		});
-	},
+onMounted(async () => {
+	settings.value = await getSettings();
+	reindexPeriod.value = Math.round(settings.value.reindex_every_n_seconds / 60);
+	mountDirs.value = await getMountDirs();
+});
 
-	methods: {
-		onAlbumArtPatternChanged() {
-			if (this.validateAlbumArtPattern()) {
-				this.commitSettings();
-			}
-		},
+function onAlbumArtPatternChanged() {
+	if (validateAlbumArtPattern()) {
+		commitSettings();
+	}
+}
 
-		validateAlbumArtPattern() {
-			try {
-				new RegExp(this.settings.album_art_pattern);
-				return true;
-			} catch (e) {
-				return false;
-			}
-		},
+function validateAlbumArtPattern() {
+	try {
+		if (settings.value) {
+			new RegExp(settings.value.album_art_pattern);
+		}
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
 
-		onReindexPeriodChanged() {
-			let periodInSeconds = Math.round(this.reindexPeriod) * 60;
-			if (isNaN(periodInSeconds) || periodInSeconds < 0) {
-				return;
-			}
-			this.settings.reindex_every_n_seconds = periodInSeconds;
-			this.commitSettings();
-		},
+function onReindexPeriodChanged() {
+	if (!settings.value) {
+		return;
+	}
+	let periodInSeconds = Math.round(reindexPeriod.value) * 60;
+	if (isNaN(periodInSeconds) || periodInSeconds < 0) {
+		return;
+	}
+	settings.value.reindex_every_n_seconds = periodInSeconds;
+	commitSettings();
+}
 
-		addMountDir() {
-			this.mountDirs.push({ name: "", source: "" });
-		},
+function addMountDir() {
+	if (!mountDirs.value) {
+		return;
+	}
+	mountDirs.value.push({ name: "", source: "" });
+}
 
-		deleteMountDir(index) {
-			this.mountDirs.splice(index, 1);
-			this.commitMountDirs();
-		},
+function deleteMountDir(index: number) {
+	if (!mountDirs.value) {
+		return;
+	}
+	mountDirs.value.splice(index, 1);
+	commitMountDirs();
+}
 
-		reindex() {
-			this.reindexState = this.reindexStates.applying;
-			API.triggerIndex().then(res => {
-				if (res.status != 200) {
-					this.reindexState = this.reindexStates.failure;
-					console.log("Index trigger error: " + res.status);
-				} else {
-					this.reindexState = this.reindexStates.success;
-				}
-				setTimeout(() => {
-					this.reindexState = this.reindexStates.ready;
-				}, 2000);
-			});
-		},
+async function reindex() {
+	reindexState.value = reindexStates.value.applying;
+	const response = await triggerIndex();
+	if (response.status != 200) {
+		reindexState.value = reindexStates.value.failure;
+		console.log("Index trigger error: " + response.status);
+	} else {
+		reindexState.value = reindexStates.value.success;
+	}
+	setTimeout(() => {
+		reindexState.value = reindexStates.value.ready;
+	}, 2000);
+}
 
-		commitSettings() {
-			API.putSettings(this.settings);
-		},
+function commitSettings() {
+	if (!settings.value) {
+		return;
+	}
+	putSettings(settings.value);
+}
 
-		commitMountDirs() {
-			API.putMountDirs(this.mountDirs);
-		},
-	},
-};
+function commitMountDirs() {
+	if (!mountDirs.value) {
+		return;
+	}
+	putMountDirs(mountDirs.value);
+}
 </script>
 
 <style scoped>

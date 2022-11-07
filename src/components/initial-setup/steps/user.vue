@@ -11,33 +11,33 @@
 				<input id="password" type="password" data-cy="create-password" v-model="password" />
 
 				<label for="password-confirm">Confirm password</label>
-				<input id="password-confirm" type="password" data-cy="create-password-confirm" v-model="passwordConfirm" />
-				<p v-if="password && passwordConfirm && password !== passwordConfirm" class="tip error">The passwords do not match.</p>
+				<input id="password-confirm" type="password" data-cy="create-password-confirm"
+					v-model="passwordConfirm" />
+				<p v-if="password && passwordConfirm && password !== passwordConfirm" class="tip error">The passwords do
+					not match.</p>
 			</div>
-			<button data-cy="submit-user" class="submit" v-bind:disabled="!validate()" v-bind:submit="true">Next</button>
+			<button data-cy="submit-user" class="submit" v-bind:disabled="!validate()"
+				v-bind:submit="true">Next</button>
 		</form>
 	</div>
 </template>
 
-<script>
-export default {
-	data() {
-		return {
-			username: "",
-			password: "",
-			passwordConfirm: "",
-		};
-	},
+<script setup lang="ts">
+import { useUsersStore } from "@/stores/users";
+import { ref } from "vue";
 
-	methods: {
-		validate() {
-			return this.username && this.password && this.password === this.passwordConfirm;
-		},
+const users = useUsersStore();
 
-		proceed() {
-			const newUser = { name: this.username, password: this.password, isAdmin: true };
-			this.$store.dispatch("users/create", newUser);
-		},
-	},
-};
+const username = ref("");
+const password = ref("");
+const passwordConfirm = ref("");
+
+function validate() {
+	return !!username.value && !!password.value && password.value === passwordConfirm.value;
+}
+
+function proceed() {
+	const newUser = { name: username.value, password: password.value, is_admin: true };
+	users.create(newUser);
+}
 </script>

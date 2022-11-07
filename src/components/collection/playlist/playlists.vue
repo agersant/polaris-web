@@ -6,15 +6,9 @@
 
 		<div data-cy="saved-playlists" class="paneContent">
 			<ul v-if="playlists.listing.length > 0">
-				<li
-					data-cy="saved-playlist"
-					v-for="(playlist, index) in playlists.listing"
-					v-bind:key="index"
-					class="noselect"
-					draggable="true"
-					v-on:click="onItemClicked(playlist)"
-					v-on:dragstart="event => onPlaylistDragStart(event, playlist)"
-				>
+				<li data-cy="saved-playlist" v-for="(playlist, index) in playlists.listing" v-bind:key="index"
+					class="noselect" draggable="true" v-on:click="onItemClicked(playlist)"
+					v-on:dragstart="event => onPlaylistDragStart(event, playlist)">
 					{{ playlist.name }}
 				</li>
 			</ul>
@@ -27,38 +21,29 @@
 	</div>
 </template>
 
-<script>
-import { mapState } from "vuex";
-import API from "/src/api";
-export default {
-	data() {
-		return {};
-	},
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { ListPlaylistsEntry } from "@/api/dto";
+import { usePlaylistsStore } from "@/stores/playlists";
 
-	computed: {
-		...mapState(["playlists"]),
-	},
+const router = useRouter();
+const playlists = usePlaylistsStore();
 
-	mounted() {
-		this.$store.dispatch("playlists/refresh");
-	},
+onMounted(()=>{
+	playlists.refresh();
+});
 
-	methods: {
-		onItemClicked(playlist) {
-			this.$router.push("/playlist/" + encodeURIComponent(playlist.name)).catch(err => {});
-		},
+function onItemClicked(playlist: ListPlaylistsEntry) {
+	router.push("/playlist/" + encodeURIComponent(playlist.name)).catch(err => { });
+}
 
-		onPlaylistDragStart(event, playlist) {
-			const playlistItem = {
-				variant: "Playlist",
-				fields: {
-					name: playlist.name,
-				},
-			};
-			event.dataTransfer.setData("text/json", JSON.stringify([playlistItem]));
-		},
-	},
-};
+function onPlaylistDragStart(event: DragEvent, playlist: ListPlaylistsEntry) {
+	if (!event || !event.dataTransfer) {
+		return;
+	}
+	event.dataTransfer.setData("text/json", JSON.stringify(playlist));
+}
 </script>
 
 <style scoped>

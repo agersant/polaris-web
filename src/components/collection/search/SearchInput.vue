@@ -1,24 +1,20 @@
 <template>
-	<form name="searchForm" v-on:submit.prevent="find">
+	<form name="searchForm" v-on:submit.prevent="runSearch">
 		<input type="search" v-model="query" />
 		<button class="submit" v-bind:submit="true">Find</button>
 	</form>
 </template>
 
-<script>
-export default {
-	data() {
-		return {
-			query: "",
-		};
-	},
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-	methods: {
-		find() {
-			this.$router.push("/search/" + encodeURIComponent(this.query)).catch(err => {});
-		},
-	},
-};
+const router = useRouter();
+const query = ref("");
+
+function runSearch() {
+	router.push("/search/" + encodeURIComponent(query.value)).catch(err => {});
+}
 </script>
 
 <style scoped>

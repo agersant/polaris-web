@@ -1,45 +1,52 @@
 <template>
 	<div>
-		<span v-for="tab in tabs" v-bind:key="tab.name" v-on:click="onClickTab(tab)" v-bind:class="{ noselect: 1, selected: currentTab == tab }">{{ tab.name }}</span>
+		<span v-for="tab in tabs" v-bind:key="tab.name" v-on:click="onClickTab(tab)"
+			v-bind:class="{ noselect: 1, selected: currentTab == tab }">{{ tab.name }}</span>
 	</div>
 </template>
 
-<script>
-export default {
-	data() {
-		return {
-			tabs: [],
-			currentTab: "",
-		};
-	},
+<script setup lang="ts">
+import { useUserStore } from "@/stores/user";
+import { ref, onMounted, Ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-	mounted() {
-		this.tabs = [{ name: "Preferences", path: "preferences" }];
-		if (this.$store.getters["user/isAdmin"]) {
-			this.tabs.push({ name: "Collection", path: "collection" });
-			this.tabs.push({ name: "Users", path: "users" });
-			this.tabs.push({ name: "Dynamic DNS", path: "ddns" });
-		}
-		this.updateCurrentTab();
-	},
-
-	watch: {
-		$route(to, from) {
-			this.updateCurrentTab();
-		},
-	},
-
-	methods: {
-		updateCurrentTab() {
-			let pathEnd = this.$route.path.split("/").pop();
-			this.currentTab = this.tabs.find(tab => pathEnd.includes(tab.path));
-		},
-
-		onClickTab(tab) {
-			this.$router.push("/settings/" + tab.path).catch(err => {});
-		},
-	},
+type TabDefinition = {
+	name: string,
+	path: string,
 };
+
+const route = useRoute();
+const router = useRouter();
+const user = useUserStore();
+
+const tabs: Ref<TabDefinition[]> = ref([]);
+const currentTab: Ref<TabDefinition | null> = ref(null);
+
+onMounted(()=> {
+	tabs.value = [{ name: "Preferences", path: "preferences" }];
+	if (user.isAdmin) {
+		tabs.value.push({ name: "Collection", path: "collection" });
+		tabs.value.push({ name: "Users", path: "users" });
+		tabs.value.push({ name: "Dynamic DNS", path: "ddns" });
+	}
+	updateCurrentTab();
+});
+
+watch(route, (to, from) => {
+	updateCurrentTab();
+});
+
+function updateCurrentTab() {
+	const pathEnd = route.path.split("/").pop() || "";
+	const newTab = tabs.value.find(tab => pathEnd.includes(tab.path));
+	if (newTab) {
+		currentTab.value = newTab;
+	}
+}
+
+function onClickTab(tab: TabDefinition) {
+	router.push("/settings/" + tab.path).catch(err => {});
+}
 </script>
 
 <style scoped>

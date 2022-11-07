@@ -1,63 +1,45 @@
 <template>
-	<button
-		v-on:click="event => $emit('click', event)"
-		v-bind:disabled="disabled || state.disabled"
+	<button @click="event => emits('click', event)" v-bind:disabled="disabled || state.disabled"
 		v-bind:type="submit ? 'submit' : 'button'"
-		v-bind:class="{ submit: submit, success: state.success, failure: state.failure }"
-	>
+		v-bind:class="{ submit: submit, success: state.success, failure: state.failure }">
 		<div class="status">
-			<span
-				v-for="(possibleState, index) in states"
-				v-bind:key="index"
-				v-bind:class="{
-					'tick-in': possibleState == state && canAnimate,
-					'tick-out': possibleState == previousState && canAnimate,
-					'snap-out': possibleState != state && possibleState != previousState
-				}"
-			>{{ possibleState.name }}</span>
+			<span v-for="possibleState in states" v-bind:key="possibleState.name" v-bind:class="{
+				'tick-in': possibleState == state && canAnimate,
+				'tick-out': possibleState == previousState && canAnimate,
+				'snap-out': possibleState != state && possibleState != previousState
+			}">{{ possibleState.name }}</span>
 		</div>
 	</button>
 </template>
 
-<script>
-export default {
-	props: {
-		submit: {
-			type: Boolean,
-			required: true,
-		},
-		states: {
-			type: Object,
-			required: true,
-		},
-		state: {
-			type: Object,
-			default: function () {
-				return {};
-			},
-		},
-		disabled: {
-			type: Boolean,
-			default: false,
-		},
-	},
+<script setup lang="ts">
+import { Ref, ref, watch } from "vue";
 
-	emits: ['click'],
+export type State = {
+	name: string,
+	disabled?: boolean,
+	success?: boolean,
+	failure?: boolean,
+}
 
-	data() {
-		return {
-			canAnimate: false,
-			previousState: null,
-		};
-	},
+const props = defineProps<{
+	states: Record<string, State>,
+	state: State,
+	submit?: boolean,
+	disabled?: boolean,
+}>();
 
-	watch: {
-		state: function (to, from) {
-			this.previousState = from;
-			this.canAnimate = from != null;
-		},
-	},
-};
+const emits = defineEmits<{
+	(event: "click", mouseEvent: MouseEvent): void
+}>();
+
+const canAnimate = ref(false);
+const previousState: Ref<State | null> = ref(null);
+
+watch(() => props.state, (to, from) => {
+	previousState.value = from;
+	canAnimate.value = from != null;
+});
 </script>
 
 <style scoped>
@@ -122,6 +104,7 @@ button.failure * {
 	from {
 		top: 40px;
 	}
+
 	to {
 		top: 0px;
 	}
@@ -131,6 +114,7 @@ button.failure * {
 	from {
 		top: 0px;
 	}
+
 	to {
 		top: -40px;
 	}

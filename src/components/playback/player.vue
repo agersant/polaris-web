@@ -1,6 +1,6 @@
 <template>
 	<div class="player">
-		<audio ref="htmlAudio" controls v-bind:src="trackURL" v-on:timeupdate="onTimeUpdate"
+		<audio ref="htmlAudio" controls v-if="trackURL" v-bind:src="trackURL" v-on:timeupdate="onTimeUpdate"
 			v-on:error="onPlaybackError" v-on:ended="skipNext" v-on:pause="onPaused" v-on:playing="onPlaying"></audio>
 
 		<div v-if="currentTrack" class="controls noselect">
@@ -30,7 +30,7 @@
 		</div>
 
 		<div v-if="currentTrack" class="art">
-			<cover-art v-if="artworkURL" v-bind:url="artworkURL"></cover-art>
+			<CoverArt v-if="artworkURL" v-bind:url="artworkURL" />
 			<div v-if="!artworkURL" class="missing-art"></div>
 		</div>
 
@@ -43,341 +43,335 @@
 				<div class="fill" v-bind:style="{ width: 100 * trackProgress + '%' }"></div>
 				<div class="head" v-bind:style="{ left: 100 * trackProgress + '%' }"></div>
 			</div>
-			<div v-if="currentTrack" class="trackDuration">{{ formattedPlaybackTime }}</div>
+			<div v-if="currentTrack" class="trackDuration">{{ formatDuration(secondsPlayed) }}</div>
 		</div>
 	</div>
 </template>
 
+<script setup lang="ts">
+import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
+import notify from "@/notify";
+import { lastFMNowPlaying, lastFMScrobble, makeAudioURL } from "@/api/endpoints";
+import { usePlaylistStore } from "@/stores/playlist";
+import { formatDuration, formatTitle } from "@/format";
+import CoverArt from "@/components/CoverArt.vue";
+import { load, save } from "@/disk";
 
-<script>
-import { nextTick } from "vue";
-import { mapState } from "vuex";
-import API from "/src/api";
-import Disk from "/src/disk";
-import * as Format from "/src/format";
-import notify from "/src/notify";
-import CoverArt from "/src/components/cover-art";
-export default {
-	components: {
-		"cover-art": CoverArt,
-	},
+const playlist = usePlaylistStore();
 
-	data() {
-		return {
-			volume: 1,
-			unmutedVolume: 1,
-			secondsPlayed: 0,
-			duration: 1,
-			mouseDown: false,
-			adjusting: null,
-			paused: true,
-			canScrobble: false,
-		};
-	},
+const volume = ref(1);
+const unmutedVolume = ref(1);
+const secondsPlayed = ref(0);
+const duration = ref(1);
+const mouseDown = ref(false);
+const adjusting: Ref<"volume" | "seek" | null> = ref(null);
+const paused = ref(true);
+const canScrobble = ref(false);
+const mounted = ref(false);
+const htmlAudio: Ref<HTMLAudioElement | null> = ref(null)
+const seekInput: Ref<HTMLElement | null> = ref(null)
+const volumeInput: Ref<HTMLElement | null> = ref(null)
 
-	computed: {
-		...mapState(["playlist"]),
+const currentTrack = computed(() => playlist.currentTrack);
+const trackURL = computed(() => currentTrack.value ? makeAudioURL(currentTrack.value.path) : null);
+const artworkURL = computed(() => currentTrack.value && currentTrack.value.artwork ? makeAudioURL(currentTrack.value.artwork) : null);
 
-		currentTrack: function() {
-			return this.playlist.currentTrack;
-		},
+const trackProgress = computed(() => {
+	if (isNaN(duration.value)) {
+		return 0;
+	}
+	if (duration.value == 0) {
+		return 1;
+	}
+	return Math.max(0, Math.min(secondsPlayed.value / duration.value, 1));
+});
 
-		trackURL: function() {
-			if (!this.currentTrack) {
-				return null;
-			}
-			return API.makeAudioURL(this.currentTrack.path);
-		},
+const trackInfoPrimary = computed(() => {
+	const track = currentTrack.value;
+	if (!track) {
+		return "";
+	}
+	let result = track.artist ? track.artist : "Unknown Artist";
+	result += " - ";
+	result += formatTitle(track);
+	return result;
+});
 
-		artworkURL: function() {
-			if (!this.currentTrack || !this.currentTrack.artwork) {
-				return null;
-			}
-			return API.makeThumbnailURL(this.currentTrack.artwork);
-		},
+const trackInfoSecondary = computed(() => {
+	const track = currentTrack.value;
+	if (!track) {
+		return "";
+	}
+	let result = track.album || "Unknown Album";
+	if (track.year) {
+		result += " (" + track.year + ")";
+	}
+	if (track.track_number) {
+		result += " #" + track.track_number;
+	}
+	return result;
+});
 
-		formattedPlaybackTime: function() {
-			return Format.duration(this.secondsPlayed);
-		},
+watch(currentTrack, (to, from) => {
+	if (!mounted.value) {
+		return;
+	}
+	handleCurrentTrackChanged();
+	playFromStart();
+});
 
-		trackProgress: function() {
-			if (isNaN(this.duration)) {
-				return 0;
-			}
-			if (this.duration == 0) {
-				return 1;
-			}
-			return this.secondsPlayed / this.duration;
-		},
 
-		trackInfoPrimary() {
-			const track = this.currentTrack;
-			let result = track.artist ? track.artist : "Unknown Artist";
-			result += " - ";
-			result += Format.title(track);
-			return result;
-		},
+watch(volume, (to, from) => {
+	if (htmlAudio.value) {
+		htmlAudio.value.volume = Math.pow(to, 4);
+	}
+	save("volume", to);
+});
 
-		trackInfoSecondary() {
-			const track = this.currentTrack;
-			let result = track.album || "Unknown Album";
-			if (track.year) {
-				result += " (" + track.year + ")";
-			}
-			if (track.track_number) {
-				result += " #" + track.track_number;
-			}
-			return result;
-		},
-	},
+onBeforeUnmount(() => {
+	mounted.value = false;
+});
 
-	watch: {
-		currentTrack(to, from) {
-			if (this.invalid) {
+onMounted(() => {
+	const savedVolume = parseFloat(load("volume"));
+	if (!isNaN(savedVolume)) {
+		volume.value = savedVolume;
+		if (savedVolume > 0) {
+			unmutedVolume.value = savedVolume;
+		}
+	}
+
+	if (currentTrack.value) {
+		handleCurrentTrackChanged();
+	}
+
+	if (playlist.elapsedSeconds && playlist.elapsedSeconds > 0) {
+		seekTo(playlist.elapsedSeconds);
+	}
+
+	if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
+		navigator.mediaSession.setActionHandler("previoustrack", skipPrevious);
+		navigator.mediaSession.setActionHandler("nexttrack", skipNext);
+	}
+
+	// Global mouse handling
+	let onMouseMove = (event: MouseEvent) => {
+		if (event.buttons != undefined) {
+			const isLeftClickDown = (event.buttons & 1) == 1;
+			if (!isLeftClickDown) {
 				return;
 			}
-			this.handleCurrentTrackChanged();
-			this.beginPlay();
-		},
-
-		volume(to, from) {
-			this.$refs.htmlAudio.volume = Math.pow(to, 4);
-			Disk.save("volume", to);
-		},
-	},
-
-	beforeUnmount() {
-		this.invalid = true;
-	},
-
-	mounted() {
-		const volume = parseFloat(Disk.load("volume"));
-		if (!isNaN(volume)) {
-			this.volume = volume;
-			if (volume > 0) {
-				this.unmutedVolume = volume;
-			}
 		}
-
-		if (this.playlist.currentTrack) {
-			this.handleCurrentTrackChanged();
+		if (adjusting.value == "volume") {
+			volumeMouseMove(event);
+		} else if (adjusting.value == "seek") {
+			seekMouseMove(event);
 		}
+	};
 
-		if (this.playlist.elapsedSeconds && this.playlist.elapsedSeconds > 0) {
-			this.seekTo(this.playlist.elapsedSeconds);
+	document.body.addEventListener("mousemove", onMouseMove);
+	document.body.addEventListener("mousedown", onMouseMove);
+	document.body.addEventListener("mouseup", () => {
+		if (adjusting.value == "volume" && volume.value != 0) {
+			unmutedVolume.value = volume.value;
 		}
+		adjusting.value = null;
+	});
+});
 
-		if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
-			navigator.mediaSession.setActionHandler("previoustrack", this.skipPrevious);
-			navigator.mediaSession.setActionHandler("nexttrack", this.skipNext);
+function handleCurrentTrackChanged() {
+	if (adjusting.value == "seek") {
+		adjusting.value = null;
+	}
+	canScrobble.value = true;
+	updateMediaSession();
+	updateWindowTitle();
+	if (currentTrack.value) {
+		lastFMNowPlaying(currentTrack.value.path);
+	}
+}
+
+function playFromStart() {
+	nextTick(async () => {
+		if (!htmlAudio.value) {
+			return;
 		}
+		await htmlAudio.value.play();
+		if (!htmlAudio.value) {
+			return;
+		}
+		htmlAudio.value.currentTime = 0;
+	});
+}
 
-		// Global mouse handling
-		let onMouseMove = event => {
-			if (event.buttons != undefined) {
-				const isLeftClickDown = (event.buttons & 1) == 1;
-				if (!isLeftClickDown) {
-					return;
-				}
-			}
-			if (this.adjusting == "volume") {
-				this.volumeMouseMove(event);
-			} else if (this.adjusting == "seek") {
-				this.seekMouseMove(event);
-			}
-		};
-
-		document.body.addEventListener("mousemove", onMouseMove);
-		document.body.addEventListener("mousedown", event => {
-			onMouseMove(event);
+function updateMediaSession() {
+	if (navigator.mediaSession && MediaMetadata) {
+		const track = currentTrack.value;
+		if (!track) {
+			return;
+		}
+		let metadata = new MediaMetadata({
+			title: track.title || undefined,
+			artist: track.artist || undefined,
+			album: track.album || undefined,
 		});
-		document.body.addEventListener("mouseup", () => {
-			if (this.adjusting == "volume" && this.volume != 0) {
-				this.unmutedVolume = this.volume;
-			}
-			this.adjusting = null;
+		if (artworkURL.value) {
+			metadata.artwork = [{ src: artworkURL.value }];
+		}
+		navigator.mediaSession.metadata = metadata;
+	}
+}
+
+function updateWindowTitle() {
+	const track = currentTrack.value;
+	if (!track) {
+		return;
+	}
+	let windowTitle = track.artist ? track.artist : "Unknown Artist";
+	windowTitle += " - ";
+	windowTitle += formatTitle(track);
+	document.title = windowTitle;
+}
+
+function toggleMute() {
+	if (volume.value != 0) {
+		volume.value = 0;
+	} else {
+		volume.value = unmutedVolume.value;
+	}
+}
+
+function togglePlay() {
+	if (!htmlAudio.value) {
+		return;
+	}
+	if (htmlAudio.value.paused) {
+		htmlAudio.value.play();
+	} else {
+		htmlAudio.value.pause();
+	}
+}
+
+async function skipPrevious() {
+	const oldTrack = currentTrack.value;
+	await playlist.previous();
+	if (oldTrack == currentTrack.value) {
+		handleCurrentTrackChanged();
+		playFromStart();
+	}
+}
+
+async function skipNext() {
+	const oldTrack = currentTrack.value;
+	await playlist.next();
+	if (oldTrack == currentTrack.value) {
+		handleCurrentTrackChanged();
+		playFromStart();
+	}
+}
+
+function updateScrobble() {
+	if (!canScrobble.value || !currentTrack.value) {
+		return;
+	}
+	const shouldScrobble = duration.value > 30 && (trackProgress.value > 0.5 || secondsPlayed.value > 4 * 60);
+	if (shouldScrobble) {
+		lastFMScrobble(currentTrack.value.path);
+		canScrobble.value = false;
+	}
+}
+
+function seekMouseDown() {
+	adjusting.value = "seek";
+}
+
+function volumeMouseDown() {
+	adjusting.value = "volume";
+}
+
+function seekMouseMove(event: MouseEvent) {
+	if (adjusting.value == "seek" && seekInput.value) {
+		let x = event.pageX;
+		let o: HTMLElement | null = seekInput.value;
+		while (o) {
+			x -= o.offsetLeft;
+			o = o.offsetParent as (HTMLElement | null);
+		}
+		let progress = Math.min(Math.max(x / seekInput.value.offsetWidth, 0), 1);
+		seekTo(progress * duration.value);
+	}
+}
+
+function seekTo(seconds: number) {
+	if (!htmlAudio.value) {
+		return;
+	}
+	htmlAudio.value.currentTime = seconds;
+	canScrobble.value = false;
+}
+
+function volumeMouseMove(event: MouseEvent) {
+	if (adjusting.value == "volume" && volumeInput.value) {
+		let x = event.pageX;
+		let o: HTMLElement | null = volumeInput.value;
+		while (o) {
+			x -= o.offsetLeft;
+			o = o.offsetParent as (HTMLElement | null);
+		}
+		volume.value = Math.min(Math.max(x / volumeInput.value.offsetWidth, 0), 1);
+	}
+}
+
+function onPaused(event: Event) {
+	paused.value = (event.target as HTMLAudioElement).paused;
+}
+
+function onPlaying(event: Event) {
+	paused.value = (event.target as HTMLAudioElement).paused;
+}
+
+function onTimeUpdate(event: Event) {
+	if (!mounted.value || !htmlAudio.value) {
+		return;
+	}
+	const newTime = htmlAudio.value.currentTime;
+	const newDuration = htmlAudio.value.duration || 1;
+	secondsPlayed.value = newTime;
+	duration.value = newDuration;
+	if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
+		navigator.mediaSession.setPositionState({
+			position: newTime,
+			duration: newDuration,
+			playbackRate: 1,
 		});
-	},
+	}
+	playlist.setElapsedSeconds(newTime);
+	updateScrobble();
+}
 
-	methods: {
-		handleCurrentTrackChanged() {
-			if (this.adjusting == "seek") {
-				this.adjusting = null;
-			}
-			this.canScrobble = true;
-			this.updateMediaSession();
-			this.updateWindowTitle();
-			API.lastFMNowPlaying(this.currentTrack.path);
-		},
-
-		beginPlay() {
-			nextTick(() => {
-				this.$refs.htmlAudio
-					.play()
-					.then(() => {
-						this.$refs.htmlAudio.currentTime = 0;
-					});
-			});
-		},
-
-		updateMediaSession() {
-			if (navigator.mediaSession && MediaMetadata) {
-				const track = this.currentTrack;
-				let metadata = new MediaMetadata({
-					title: track.title,
-					artist: track.artist,
-					album: track.album,
-				});
-				if (this.artworkURL) {
-					metadata.artwork = [{ src: this.artworkURL }];
-				}
-				navigator.mediaSession.metadata = metadata;
-			}
-		},
-
-		updateWindowTitle() {
-			const track = this.currentTrack;
-			let windowTitle = track.artist ? track.artist : "Unknown Artist";
-			windowTitle += " - ";
-			windowTitle += Format.title(track);
-			document.title = windowTitle;
-		},
-
-		toggleMute() {
-			if (this.volume != 0) {
-				this.volume = 0;
-			} else {
-				this.volume = this.unmutedVolume;
-			}
-		},
-
-		togglePlay() {
-			if (this.$refs.htmlAudio.paused) {
-				this.$refs.htmlAudio.play();
-			} else {
-				this.$refs.htmlAudio.pause();
-			}
-		},
-
-		skipPrevious() {
-			this.$store.dispatch("playlist/previous")
-				.then(advancedInPlace => {
-					if (advancedInPlace) {
-						this.handleCurrentTrackChanged();
-						this.beginPlay();
-					}
-				});
-		},
-
-		skipNext() {
-			this.$store.dispatch("playlist/next")
-				.then(advancedInPlace => {
-					if (advancedInPlace) {
-						this.handleCurrentTrackChanged();
-						this.beginPlay();
-					}
-				});
-		},
-
-		updateScrobble() {
-			if (this.canScrobble) {
-				const shouldScrobble = this.duration > 30 && (this.trackProgress > 0.5 || this.secondsPlayed > 4 * 60);
-				if (shouldScrobble) {
-					API.lastFMScrobble(this.currentTrack.path);
-					this.canScrobble = false;
-				}
-			}
-		},
-
-		seekMouseDown() {
-			this.adjusting = "seek";
-		},
-
-		volumeMouseDown() {
-			this.adjusting = "volume";
-		},
-
-		seekMouseMove(event) {
-			if (this.adjusting == "seek") {
-				let x = event.pageX;
-				let o = this.$refs.seekInput;
-				while (o) {
-					x -= o.offsetLeft;
-					o = o.offsetParent;
-				}
-				let progress = Math.min(Math.max(x / this.$refs.seekInput.offsetWidth, 0), 1);
-				this.seekTo(progress * this.duration);
-			}
-		},
-
-		seekTo(elapsedSeconds) {
-			this.$refs.htmlAudio.currentTime = elapsedSeconds;
-			this.canScrobble = false;
-		},
-
-		volumeMouseMove(event) {
-			if (this.adjusting == "volume") {
-				let x = event.pageX;
-				let o = this.$refs.volumeInput;
-				while (o) {
-					x -= o.offsetLeft;
-					o = o.offsetParent;
-				}
-				this.volume = Math.min(Math.max(x / this.$refs.volumeInput.offsetWidth, 0), 1);
-			}
-		},
-
-		onPaused(event) {
-			this.paused = event.target.paused;
-		},
-
-		onPlaying(event) {
-			this.paused = event.target.paused;
-		},
-
-		onTimeUpdate(event) {
-			if (this.invalid) {
-				return;
-			}
-			const htmlAudio = event.target;
-			const currentTime = htmlAudio.currentTime;
-			const duration = htmlAudio.duration || 1;
-			this.secondsPlayed = currentTime;
-			this.duration = duration;
-			if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
-				navigator.mediaSession.setPositionState({
-					position: currentTime,
-					duration: duration,
-					playbackRate: 1,
-				});
-			}
-			this.$store.dispatch("playlist/setElapsedSeconds", currentTime);
-			this.updateScrobble();
-		},
-
-		onPlaybackError(event) {
-			const errorText = "'" + this.trackInfoPrimary + "' could not be played because ";
-			const artwork = this.artworkURL || null;
-			const error = event.target.error;
-			switch (error.code) {
-				case error.MEDIA_ERR_NETWORK:
-					notify("Playback Error", artwork, errorText + "of a network error.");
-					break;
-				case error.MEDIA_ERR_DECODE:
-					notify("Playback Error", artwork, errorText + "of a decoding error.");
-					break;
-				case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-					notify("Playback Error", artwork, errorText + "it is not a suitable source of audio.");
-					break;
-				default:
-					console.log("Unexpected playback error: " + error.code);
-					break;
-			}
-			this.paused = true;
-			this.skipNext();
-		},
-	},
-};
+function onPlaybackError(event: Event) {
+	const errorText = "'" + trackInfoPrimary.value + "' could not be played because ";
+	const error = (event.target as HTMLAudioElement).error;
+	if (!error) {
+		return;
+	}
+	switch (error.code) {
+		case error.MEDIA_ERR_NETWORK:
+			notify("Playback Error", artworkURL.value, errorText + "of a network error.");
+			break;
+		case error.MEDIA_ERR_DECODE:
+			notify("Playback Error", artworkURL.value, errorText + "of a decoding error.");
+			break;
+		case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+			notify("Playback Error", artworkURL.value, errorText + "it is not a suitable source of audio.");
+			break;
+		default:
+			console.log("Unexpected playback error: " + error.code);
+			break;
+	}
+	paused.value = true;
+	skipNext();
+}
 </script>
 
 <style scoped>

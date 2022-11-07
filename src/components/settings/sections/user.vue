@@ -5,86 +5,86 @@
 		</div>
 		<div class="details">
 			<div class="admin">
-				<input type="checkbox" id="'admin_' + user.name" v-bind:disabled="isSelf(user)" v-bind:checked="user.is_admin" v-on:input="onIsAdminChanged" />
+				<input type="checkbox" id="'admin_' + user.name" v-bind:disabled="isSelf(user)"
+					v-bind:checked="user.is_admin" @input="onIsAdminChanged" />
 				<label for="'admin_' + user.name" class="admin">Administrator</label>
 				<p class="tip">Grants access to all settings.</p>
 			</div>
 			<div class="actions">
-				<button v-if="!editingPassword" v-on:click="beginPasswordEdit(user)">Change password</button>
+				<button v-if="!editingPassword" @click="beginPasswordEdit">Change password</button>
 				<form class="password-editing" v-if="editingPassword" v-on:submit.prevent="endPasswordEdit(user)">
-					<input type="password" autocomplete="new-password" v-model="newPassword" placeholder="New password" />
-					<state-button v-bind:disabled="!newPassword" v-bind:submit="true" v-bind:states="passwordEditingStates" v-bind:state="passwordEditingState" />
+					<input type="password" autocomplete="new-password" v-model="newPassword"
+						placeholder="New password" />
+					<StateButton v-if="passwordEditingState" v-bind:disabled="!newPassword" v-bind:submit="true"
+						v-bind:states="passwordEditingStates" v-bind:state="passwordEditingState" />
 				</form>
-				<button class="danger delete" v-bind:disabled="isSelf(user)" v-on:click="deleteUser(user)">Delete</button>
+				<button class="danger delete" v-bind:disabled="isSelf(user)" @click="deleteUser">Delete</button>
 			</div>
 		</div>
 	</div>
 </template>
 
-<script>
-import StateButton from "/src/components/state-button";
-export default {
-	components: {
-		"state-button": StateButton,
-	},
+<script setup lang="ts">
+import { Ref, ref } from "vue";
+import { User } from "@/api/dto";
+import StateButton, { State } from "@/components/StateButton.vue";
+import { useUserStore } from "@/stores/user";
+import { useUsersStore } from "@/stores/users";
 
-	props: {
-		user: {
-			type: Object,
-			required: true,
-		},
-	},
+const currentUser = useUserStore();
+const users = useUsersStore();
 
-	data() {
-		return {
-			newPassword: "",
-			editingPassword: false,
-			passwordEditingStates: {
-				ready: { name: "OK" },
-				applying: { name: "Saving…", disabled: true },
-				success: { name: "Got it!", disabled: true, success: true },
-				failure: { name: "Error :(", disabled: true, failure: true },
-			},
-			passwordEditingState: null,
-		};
-	},
+const props = defineProps<{
+	user: User,
+}>();
 
-	methods: {
-		isSelf(user) {
-			return user.name == this.$store.getters["user/name"];
-		},
+const newPassword = ref("");
+const editingPassword = ref(false);
+const passwordEditingStates: Ref<Record<string, State>> = ref({
+	ready: { name: "OK" },
+	applying: { name: "Saving…", disabled: true },
+	success: { name: "Got it!", disabled: true, success: true },
+	failure: { name: "Error :(", disabled: true, failure: true },
+});
+const passwordEditingState: Ref<State> = ref(passwordEditingStates.value.ready);
 
-		onIsAdminChanged(event) {
-			const newIsAdmin = event.target.checked;
-			this.$store.dispatch("users/update", { username: this.user.name, newIsAdmin: newIsAdmin });
-		},
+function isSelf(user: User) {
+	return user.name == currentUser.name;
+}
 
-		beginPasswordEdit(user) {
-			this.editingPassword = true;
-			this.newPassword = "";
-			this.passwordEditingState = this.passwordEditingStates.ready;
-		},
+function onIsAdminChanged(event: Event) {
+	const userUpdate = {
+		new_is_admin: (event.target as HTMLInputElement).checked,
+	};
+	users.update(props.user.name, userUpdate);
+}
 
-		endPasswordEdit(user) {
-			this.passwordEditingState = this.passwordEditingStates.applying;
-			this.$store.dispatch("users/update", { username: user.name, newPassword: this.newPassword }).then(res => {
-				if (res.status != 200) {
-					this.passwordEditingState = this.passwordEditingStates.failure;
-				} else {
-					this.passwordEditingState = this.passwordEditingStates.success;
-				}
-				setTimeout(() => {
-					this.passwordEditingState = this.passwordEditingStates.ready;
-					this.editingPassword = false;
-				}, 2000);
-			});
-		},
+function beginPasswordEdit() {
+	editingPassword.value = true;
+	newPassword.value = "";
+	passwordEditingState.value = passwordEditingStates.value.ready;
+}
 
-		deleteUser(user) {
-			this.$store.dispatch("users/delete", user.name);
-		},
-	},
-};
+async function endPasswordEdit(user: User) {
+	passwordEditingState.value = passwordEditingStates.value.applying;
+	const userUpdate = {
+		new_password: newPassword.value,
+	};
+	const success = await users.update(user.name, userUpdate);
+	if (success) {
+		passwordEditingState.value = passwordEditingStates.value.success;
+	} else {
+		passwordEditingState.value = passwordEditingStates.value.failure;
+	}
+	setTimeout(() => {
+		passwordEditingState.value = passwordEditingStates.value.ready;
+		editingPassword.value = false;
+	}, 2000);
+}
+
+function deleteUser() {
+	users.delete(props.user.name);
+}
 </script>
 
 <style scoped>

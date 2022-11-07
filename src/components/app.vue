@@ -1,28 +1,20 @@
 <template>
 	<div class="app">
-		<sidebar class="sidebar"></sidebar>
+		<Sidebar class="sidebar" />
 		<div class="left-pane">
 			<router-view></router-view>
 		</div>
 		<div class="right-pane">
-			<playlist></playlist>
-			<player></player>
+			<Playlist />
+			<Player />
 		</div>
 	</div>
 </template>
 
-<script>
-import Sidebar from "./sidebar";
-import Player from "./playback/player";
-import Playlist from "./playback/playlist";
-
-export default {
-	components: {
-		sidebar: Sidebar,
-		player: Player,
-		playlist: Playlist,
-	},
-};
+<script setup lang="ts">
+import Sidebar from "./sidebar.vue";
+import Player from "./playback/player.vue";
+import Playlist from "./playback/playlist.vue";
 </script>
 
 <style>

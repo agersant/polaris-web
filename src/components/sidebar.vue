@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<ul class="main-nav">
-			<li v-for="button in buttons" v-bind:key="button.target" v-on:click="onClickButton(button)" v-bind:class="{ noselect: 1, selected: button.pattern.test(currentURL) }">
+			<li v-for="button in buttons" v-bind:key="button.url" v-on:click="onClickButton(button)"
+				v-bind:class="{ noselect: 1, selected: button.pattern.test(currentURL) }">
 				<i class="noselect material-icons md-18">{{ button.icon }}</i>
 			</li>
 		</ul>
@@ -13,58 +14,70 @@
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { useUserStore } from "@/stores/user";
 import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
-export default {
-	setup() {
-		const buttons = [
-			{
-				icon: "library_music",
-				target: "/browse",
-				pattern: new RegExp("(browse|^/$)"),
-			},
-			{ icon: "shuffle", target: "/random", pattern: new RegExp("random") },
-			{
-				icon: "new_releases",
-				target: "/recent",
-				pattern: new RegExp("recent"),
-			},
-			{
-				icon: "playlist_play",
-				target: "/playlists",
-				pattern: new RegExp("playlist"),
-			},
-			{ icon: "search", target: "/search", pattern: new RegExp("search") },
-			{
-				icon: "settings",
-				target: "/settings/preferences",
-				pattern: new RegExp("settings"),
-			},
-		];
+import { useRoute, useRouter } from "vue-router";
 
-		const route = useRoute();
-		const currentURL = ref("");
-		watch(
-			() => route.path,
-			(path) => {
-				currentURL.value = path || buttons[0].target;
-			},
-			{immediate: true}
-		);
-		return {buttons, currentURL};
+const route = useRoute();
+const router = useRouter();
+const user = useUserStore();
+
+type SidebarButton = {
+	icon: string,
+	url: string,
+	pattern: RegExp,
+}
+
+const currentURL = ref("");
+const buttons: SidebarButton[] = [
+	{
+		icon: "library_music",
+		url: "/browse",
+		pattern: new RegExp("(browse|^/$)"),
 	},
-
-	methods: {
-		onClickButton: function (button) {
-			this.$router.push(button.target).catch(err => {});
-		},
-
-		onClickLogout: function () {
-			this.$store.dispatch("user/logout").then(() => this.$router.push("/").catch(err => {}));
-		},
+	{
+		icon: "shuffle",
+		url: "/random",
+		pattern: new RegExp("random"),
 	},
-};
+	{
+		icon: "new_releases",
+		url: "/recent",
+		pattern: new RegExp("recent"),
+	},
+	{
+		icon: "playlist_play",
+		url: "/playlists",
+		pattern: new RegExp("playlist"),
+	},
+	{
+		icon: "search",
+	 	url: "/search",
+	 	pattern: new RegExp("search"),
+	},
+	{
+		icon: "settings",
+		url: "/settings/preferences",
+		pattern: new RegExp("settings"),
+	},
+];
+
+watch(() => route.path,
+	(path) => {
+		currentURL.value = path || buttons[0].url;
+	},
+	{ immediate: true }
+);
+
+function onClickButton(button: SidebarButton) {
+	router.push(button.url).catch(err => {});
+}
+
+function onClickLogout() {
+	user.logout();
+	router.push("/").catch(err => {});
+}
 </script>
 
 <style scoped>

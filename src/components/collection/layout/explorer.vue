@@ -1,12 +1,7 @@
 <template>
 	<ul class="explorerView">
-		<li
-			draggable="true"
-			v-for="(item, index) in items"
-			v-bind:key="index"
-			v-on:click="$emit('item-click', item)"
-			v-on:dragstart="event => $emit('items-drag-start', event, [item])"
-		>
+		<li draggable="true" v-for="(item, index) in props.items" v-bind:key="index"
+			v-on:click="emits('item-click', item)" v-on:dragstart="event => emits('items-drag-start', event, [item])">
 			<div data-cy="explorer-directory" v-if="item.variant == 'Directory'" class="directory">
 				<i class="material-icons">folder</i>
 				{{ formatDirectoryName(item) }}
@@ -16,46 +11,40 @@
 	</ul>
 </template>
 
-<script>
-import * as Format from "/src/format";
-export default {
-	props: {
-		items: {
-			type: Array,
-			required: true,
-		},
-	},
+<script setup lang="ts">
+import { CollectionItem, Directory, Song } from "@/api/dto";
+import { formatTitle } from "@/format";
 
-	emits: ['item-click', 'items-drag-start'],
+const props = defineProps<{
+	items: CollectionItem[],
+}>();
 
-	data: function () {
-		return {};
-	},
+const emits = defineEmits<{
+	(event:'item-click', item: CollectionItem): void
+	(event:'items-drag-start', dragEvent: DragEvent, items: CollectionItem[]): void
+}>();
 
-	methods: {
-		formatTrackDetails(item) {
-			let details = "";
-			if (item.fields.artist) {
-				details += item.fields.artist;
-				details += " - ";
-			}
-			if (item.fields.track_number) {
-				details += item.fields.track_number;
-				details += ". ";
-			}
-			details += Format.title(item.fields);
-			return details;
-		},
+function formatTrackDetails(item: Song) {
+	let details = "";
+	if (item.artist) {
+		details += item.artist;
+		details += " - ";
+	}
+	if (item.track_number) {
+		details += item.track_number;
+		details += ". ";
+	}
+	details += formatTitle(item);
+	return details;
+}
 
-		formatDirectoryName(item) {
-			let slices = item.fields.path.replace(/\\/g, "/").split("/");
-			slices = slices.filter(function (s) {
-				return s.length > 0;
-			});
-			return slices[slices.length - 1];
-		},
-	},
-};
+function formatDirectoryName(item: Directory) {
+	let slices = item.path.replace(/\\/g, "/").split("/");
+	slices = slices.filter(function (s) {
+		return s.length > 0;
+	});
+	return slices[slices.length - 1];
+}
 </script>
 
 <style scoped>

@@ -15,43 +15,39 @@
 					</thead>
 					<tr>
 						<td>
-							<input data-cy="source" type="text" v-model="source" placeholder="C:\MyMusic" />
+							<input data-cy="source" type="text" v-model="mountDir.source" placeholder="C:\MyMusic" />
 						</td>
 						<td class="name">
-							<input data-cy="name" type="text" v-model="name" placeholder="Local Drive Music" />
+							<input data-cy="name" type="text" v-model="mountDir.name" placeholder="Local Drive Music" />
 						</td>
 					</tr>
 				</table>
 			</div>
-			<button data-cy="submit-mount-points" class="submit" v-bind:disabled="!validate()" v-bind:submit="true">Next</button>
+			<button data-cy="submit-mount-points" class="submit" v-bind:disabled="!validate()"
+				v-bind:submit="true">Next</button>
 		</form>
 	</div>
 </template>
 
-<script>
-import API from "/src/api";
-export default {
-	data() {
-		return {
-			name: "",
-			source: "",
-		};
-	},
+<script setup lang="ts">
+import { ref, Ref } from "vue";
+import { MountDir } from "@/api/dto";
+import { useMountDirsStore } from "@/stores/mount-dirs";
+import { triggerIndex } from "@/api/endpoints";
 
-	methods: {
-		validate() {
-			return this.name && this.source;
-		},
+const mountDirs = useMountDirsStore();
 
-		proceed() {
-			const mountDirs = [
-				{
-					name: this.name,
-					source: this.source,
-				},
-			];
-			this.$store.dispatch("mountDirs/set", mountDirs).then(API.triggerIndex);
-		},
-	},
-};
+const mountDir: Ref<MountDir> = ref({
+	name: "",
+	source: "",
+});
+
+function validate(): boolean {
+	return !!mountDir.value.name && !!mountDir.value.source;
+}
+
+async function proceed() {
+	await mountDirs.set([mountDir.value]);
+	triggerIndex();
+}
 </script>

@@ -9,61 +9,50 @@
 				<button v-if="tracks.length > 0" v-on:click="play" class="small">Play</button>
 				<button v-on:click="deletePlaylist" class="danger small">Delete</button>
 			</div>
-
-			<explorer v-bind:items="tracks" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></explorer>
+			<explorer v-bind:items="tracks" v-on:item-click="onItemClicked" @items-drag-start="onItemsDragStart" />
 		</div>
 	</div>
 </template>
 
-<script>
-import { ref, watch} from "vue";
-import API from "/src/api";
-import Explorer from "/src/components/collection/layout/explorer";
-export default {
-	components: {
-		explorer: Explorer,
-	},
+<script setup lang="ts">
+import { Ref, ref, watchEffect } from "vue";
+import Explorer from "@/components/collection/layout/Explorer.vue";
+import { usePlaylistStore } from "@/stores/playlist";
+import { getPlaylist, deletePlaylist as doDeletePlaylist } from "@/api/endpoints";
+import { CollectionItem, Song } from "@/api/dto";
+import { useRouter } from "vue-router";
 
-	props: {
-		name: {
-			type: String,
-			required: true,
-		},
-	},
+const props = defineProps<{
+	name: string,
+}>();
 
-	setup(props) {
-		const tracks = ref(null);
-		watch(
-			() => props.name,
-			async (name) => {
-				tracks.value = null;
-				tracks.value = (await API.getPlaylist(name)).map(d => {
-					return { fields: d, variant: "Song" };
-				});
-			},
-			{immediate: true}
-		);
-		return {tracks};
-	},
+const router = useRouter();
+const playlist= usePlaylistStore();
 
-	methods: {
-		play() {
-			this.$store.dispatch("playlist/queuePlaylist", this.name);
-		},
+const tracks: Ref<Song[] | null> = ref(null);
 
-		deletePlaylist() {
-			API.deletePlaylist(this.name).then(() => {
-				this.$router.push("/playlists").catch(err => {});
-			});
-		},
+watchEffect(async () => {
+	tracks.value = null;
+	tracks.value = await getPlaylist(props.name);
+});
 
-		onItemClicked(item) {
-			this.$store.dispatch("playlist/queueTracks", [{...item.fields}]);
-		},
+function play() {
+	playlist.queuePlaylist(props.name);
+}
 
-		onItemsDragStart(event, items) {
-			event.dataTransfer.setData("text/json", JSON.stringify(items));
-		},
-	},
-};
+async function deletePlaylist() {
+	await doDeletePlaylist(props.name);
+	router.push("/playlists").catch(err => { });
+}
+
+function onItemClicked(item: Song) {
+	playlist.queueTracks([{ ...item }]);
+}
+
+function onItemsDragStart(event: DragEvent, items: CollectionItem[]) {
+	if (!event || !event.dataTransfer) {
+		return;
+	}
+	event.dataTransfer.setData("text/json", JSON.stringify(items));
+}
 </script>

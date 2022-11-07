@@ -1,27 +1,27 @@
 <template>
 	<div class="details">
 		<div class="coverArt">
-			<img v-bind:src="artworkURL" draggable="true" v-on:dragstart="event => $emit('items-drag-start', event, items)" />
+			<img v-bind:src="artworkURL" draggable="true"
+				v-on:dragstart="event => $emit('items-drag-start', event, songs)" />
 		</div>
 		<div class="trackList">
 			<ul>
 				<li v-for="(disc, index) in discs" v-bind:key="index">
-					<div draggable="true" class="discNumber" v-if="discs.length > 1" v-on:dragstart="event => onDiscDragStart(event, disc)">
-						Disc {{ disc.discNumber || '?' }}
+					<div draggable="true" class="discNumber" v-if="discs.length > 1"
+						v-on:dragstart="event => onDiscDragStart(event, disc)">
+						Disc {{ disc.number || '?' }}
 					</div>
 					<ol class="discContent">
-						<li
-							draggable="true"
-							v-bind:value="item.fields.track_number"
-							v-bind:class="{ song: 1, 'no-track-number': !item.fields.track_number }"
-							v-for="(item, index) in disc.songs"
-							v-bind:key="index"
+						<li draggable="true" v-bind:value="item.track_number?.toString()"
+							v-bind:class="{ song: 1, 'no-track-number': !item.track_number }"
+							v-for="(item, index) in disc.songs" v-bind:key="index"
 							v-on:click="$emit('item-click', item)"
-							v-on:dragstart="event => $emit('items-drag-start', event, [item])"
-						>
+							v-on:dragstart="event => $emit('items-drag-start', event, [item])">
 							<span class="songName">
-								{{ formatSongTitle(item) }}
-								<span class="trackArtist" v-if="item.fields.artist && item.fields.album_artist && item.fields.artist != item.fields.album_artist">({{ item.fields.artist }})</span>
+								{{ formatTitle(item) }}
+								<span class="trackArtist"
+									v-if="item.artist && item.album_artist && item.artist != item.album_artist">({{
+									item.artist }})</span>
 							</span>
 						</li>
 					</ol>
@@ -31,63 +31,57 @@
 	</div>
 </template>
 
-<script>
-import API from "/src/api";
-import * as Format from "/src/format";
-export default {
-	props: {
-		items: {
-			type: Array,
-			required: true,
-		},
-	},
+<script setup lang="ts">
+import { computed, defineEmits, defineProps } from "vue"
+import { formatTitle } from "@/format"
+import { makeThumbnailURL } from "@/api/endpoints"
+import { Song } from "@/api/dto"
 
-	emits: ['item-click', 'items-drag-start'],
+type Disc = {
+	number: number | null,
+	songs: Song[],
+}
 
-	data: function () {
-		return {};
-	},
+const props = defineProps<{
+	songs: Song[],
+}>();
 
-	computed: {
-		discs: function () {
-			return this.items.reduce((discs, item) => {
-				let disc = discs[discs.length - 1];
-				let discNumber = item.fields.disc_number;
-				if (!disc || disc.discNumber != discNumber) {
-					disc = {
-						discNumber: discNumber,
-						songs: [],
-					};
-					discs.push(disc);
-				}
-				disc.songs.push(item);
-				return discs;
-			}, []);
-		},
+const emits = defineEmits<{
+	(event:'item-click', item: Song): void
+	(event:'items-drag-start', dragEvent: DragEvent, items: Song[]): void
+}>();
 
-		artworkURL: function () {
-			for (const disc of this.discs) {
-				for (const song of disc.songs) {
-					if (song.fields.artwork) {
-						return API.makeThumbnailURL(song.fields.artwork);
-					}
+const discs = computed((): Disc[] => {
+	return props.songs.reduce((discs, item) => {
+		let disc = discs[discs.length - 1];
+		let discNumber = item.disc_number;
+		if (!disc || disc.number != discNumber) {
+			disc = {
+				number: discNumber,
+				songs: [],
+			};
+			discs.push(disc);
+		}
+		disc.songs.push(item);
+		return discs;
+	}, [] as Disc[]);
+});
+
+const artworkURL = computed(() => {
+	for (const disc of discs.value) {
+			for (const song of disc.songs) {
+				if (song.artwork) {
+					return makeThumbnailURL(song.artwork);
 				}
 			}
-			return "";
-		},
-	},
+		}
+		return "";
+});
 
-	methods: {
-		onDiscDragStart(event, disc) {
-			const songs = this.discs.filter(d => d.discNumber == disc.discNumber).map(d => d.songs).flat();
-			this.$emit('items-drag-start', event, songs)
-		},
-
-		formatSongTitle(item) {
-			return Format.title(item.fields);
-		},
-	},
-};
+function onDiscDragStart(event: DragEvent, disc: Disc) {
+	const songs = discs.value.filter(d => d.number == disc.number).map(d => d.songs).flat();
+	emits('items-drag-start', event, songs);
+}
 </script>
 
 <style scoped>

@@ -1,57 +1,45 @@
 <template>
 	<ul>
-		<li
-			data-cy="album"
-			class="album"
-			draggable="true"
-			v-for="(album, index) in albums"
-			v-bind:key="index"
-			v-on:click="$emit('item-click', album)"
-			v-on:dragstart="event => $emit('items-drag-start', event, [album])"
-		>
+		<li data-cy="album" class="album" draggable="true" v-for="(directory, index) in props.directories"
+			v-bind:key="index" @click="onItemClicked(directory)"
+			@dragstart="event => onItemsDragStart(event, directory)">
 			<div class="cover">
-				<cover-art v-if="album.fields.artwork" v-bind:url="getArtworkURL(album)"></cover-art>
+				<CoverArt v-if="directory.artwork" v-bind:url="makeThumbnailURL(directory.artwork)" />
 			</div>
 			<div class="details">
-				<div class="title">{{ album.fields.album }}</div>
-				<div v-if="showArtistName" class="artist">{{ album.fields.artist }}</div>
-				<div class="year">{{ album.fields.year }}</div>
+				<div class="title">{{ directory.album }}</div>
+				<div v-if="showArtistName" class="artist">{{ directory.artist }}</div>
+				<div class="year">{{ directory.year }}</div>
 			</div>
 		</li>
 	</ul>
 </template>
 
-<script>
-import API from "/src/api";
-import CoverArt from "/src/components/cover-art";
-export default {
-	components: {
-		"cover-art": CoverArt,
-	},
+<script setup lang="ts">
+import { defineEmits, defineProps } from "vue";
+import { Directory } from "@/api/dto";
+import { makeThumbnailURL } from "@/api/endpoints";
+import CoverArt from "/src/components/CoverArt.vue";
 
-	props: {
-		albums: {
-			type: Array,
-			required: true,
-		},
-		showArtistName: {
-			type: Boolean,
-			required: true,
-		},
-	},
+const props = defineProps<{
+	directories: Directory[],
+	showArtistName: boolean
+}>();
 
-	emits: ['item-click', 'items-drag-start'],
+const emits = defineEmits<{
+	(event:'item-click', item: Directory): void
+	(event:'items-drag-start', dragEvent: DragEvent, items: Directory[]): void
+}>();
 
-	data: function () {
-		return {};
-	},
+function onItemClicked(directory: Directory){
+	emits("item-click", directory);
+}
 
-	methods: {
-		getArtworkURL(album) {
-			return API.makeThumbnailURL(album.fields.artwork);
-		},
-	},
-};
+function onItemsDragStart(event: DragEvent, directory: Directory){
+	emits("items-drag-start", event, [directory]);
+}
+
+// TODO fixme
 </script>
 
 <style scoped>
@@ -73,6 +61,7 @@ ul {
 .album:nth-child(4n + 1) {
 	margin-left: 0;
 }
+
 .album:nth-child(4n) {
 	margin-right: 0;
 }

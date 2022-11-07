@@ -1,43 +1,43 @@
 <template>
 	<div class="authForm">
 		<div class="content">
-			<img class="logo" src="logo.png" />
-			<form name="authForm" v-on:submit="doLogin">
-				<input data-cy="username" type="text" name="username" placeholder="Username" autofocus />
-				<input data-cy="password" type="password" name="password" placeholder="Password" />
-				<p v-if="badCredentials" data-cy="login-error" class="tip error">Incorrect credentials, please try again.</p>
+			<img class="logo" src="/assets/logo.png" />
+			<form name="authForm" @submit.prevent="doLogin">
+				<input data-cy="username" type="text" v-model="username" placeholder="Username" autofocus />
+				<input data-cy="password" type="password" v-model="password" placeholder="Password" />
+				<p v-if="badCredentials" data-cy="login-error" class="tip error">Incorrect credentials, please try
+					again.</p>
 				<input type="submit" value="Login" />
 			</form>
 		</div>
 	</div>
 </template>
 
-<script>
-export default {
-	data() {
-		return {
-			badCredentials: false,
-		};
-	},
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
 
-	methods: {
-		doLogin: function (e) {
-			e.preventDefault();
-			const form = document.forms["authForm"];
-			const username = form.elements["username"].value;
-			const password = form.elements["password"].value;
-			this.badCredentials = false;
-			this.$store
-				.dispatch("user/login", { username: username, password: password })
-				.then(() => this.$router.push("/").catch(err => {}))
-				.catch(res => {
-					if (res.status == 401) {
-						this.badCredentials = true;
-					}
-				});
-		},
-	},
-};
+const router = useRouter();
+const user = useUserStore();
+
+const username = ref("");
+const password = ref("");
+const badCredentials = ref(false);
+
+async function doLogin(event: Event) {
+	badCredentials.value = false;
+	try {
+		await user.login(username.value, password.value);
+		router.push("/").catch(err => { });
+	} catch (error) {
+		if (error instanceof Response) {
+			if (error.status == 401) {
+				badCredentials.value = true;
+			}
+		}
+	}
+}
 </script>
 
 <style scoped>

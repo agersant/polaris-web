@@ -3,7 +3,7 @@
 		<label>Users</label>
 		<ul>
 			<li v-for="(user, index) in users.listing" v-bind:key="index">
-				<user v-bind:user="user" />
+				<User v-bind:user="user" />
 			</li>
 		</ul>
 
@@ -15,67 +15,58 @@
 				<input id="name" type="text" v-model="newUser.name" placeholder="" />
 				<label for="password">Password</label>
 				<p v-if="!validatePassword(newUser.password)" class="tip error">The password cannot be blank.</p>
-				<input id="password" type="password" autocomplete="new-password" v-model="newUser.password" placeholder="" />
-				<button class="submit" v-bind:disabled="!validateNewUser()" submit="true" v-on:click="endCreateUser">Create user</button>
+				<input id="password" type="password" autocomplete="new-password" v-model="newUser.password"
+					placeholder="" />
+				<button class="submit" v-bind:disabled="!validateNewUser()" submit="true"
+					v-on:click="endCreateUser">Create user</button>
 			</div>
 		</form>
 	</form>
 </template>
 
-<script>
-import { mapState } from "vuex";
-import User from "/src/components/settings/sections/user";
-export default {
-	components: {
-		user: User,
-	},
+<script setup lang="ts">
+import { ref, onMounted, Ref } from "vue";
+import { NewUser, User as UserDTO } from "@/api/dto";
+import { useUsersStore } from "@/stores/users";
+import User from "@/components/settings/sections/User.vue";
 
-	data() {
-		return {
-			newUser: null,
-		};
-	},
+const newUser: Ref<NewUser | null> = ref(null);
 
-	computed: {
-		...mapState(["users"]),
-	},
+const users = useUsersStore();
 
-	mounted() {
-		this.$store.dispatch("users/refresh");
-	},
+onMounted(() => {
+	users.refresh();
+});
 
-	methods: {
-		validateNewUser() {
-			return this.validateUsername(this.newUser.name) && this.validatePassword(this.newUser.password);
-		},
+function validateNewUser() {
+	if (!newUser.value) {
+		return false;
+	}
+	return validateUsername(newUser.value.name) && validatePassword(newUser.value.password);
+}
 
-		validateUsername(username) {
-			return username && !this.users.listing.some(u => u.name == username);
-		},
+function validateUsername(username: string): boolean {
+	return !!username && !users.listing.some(u => u.name == username);
+}
 
-		validatePassword(password) {
-			return password;
-		},
+function validatePassword(password: string): boolean {
+	return !!password;
+}
 
-		beginCreateUser() {
-			this.editing = null;
-			this.newUser = {
-				name: "",
-				password: "",
-				isAdmin: false,
-			};
-		},
+function beginCreateUser() {
+	newUser.value = {
+		name: "",
+		password: "",
+		admin: false,
+	};
+}
 
-		endCreateUser() {
-			this.$store.dispatch("users/create", this.newUser);
-			this.newUser = null;
-		},
-
-		deleteUser(user) {
-			this.$store.dispatch("users/delete", user.name);
-		},
-	},
-};
+function endCreateUser() {
+	if (newUser.value) {
+		users.create(newUser.value);
+	}
+	newUser.value = null;
+}
 </script>
 
 <style scoped>

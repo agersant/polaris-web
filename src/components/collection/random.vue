@@ -8,51 +8,42 @@
 			</div>
 		</div>
 		<div class="paneContent" ref="paneContent">
-			<discography v-bind:showArtistName="false" v-bind:albums="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></discography>
+			<Discography v-bind:showArtistName="false" v-bind:directories="items" v-on:item-click="onItemClicked"
+				v-on:items-drag-start="onItemsDragStart" />
 		</div>
 	</div>
 </template>
 
-<script>
-import API from "/src/api";
-import Discography from "./layout/discography";
-export default {
-	components: {
-		discography: Discography,
-	},
+<script setup lang="ts">
+import { onMounted, ref, Ref } from "vue";
+import { useRouter } from "vue-router";
+import { Directory } from "@/api/dto";
+import { random } from "@/api/endpoints";
+import Discography from "./layout/discography.vue";
 
-	data() {
-		return {
-			items: [],
-		};
-	},
+const router = useRouter();
 
-	mounted() {
-		this.refresh();
-	},
+const items: Ref<Directory[]> = ref([]);
 
-	methods: {
-		refresh() {
-			this.items = [];
-			API.random().then(data => {
-				this.items = data.map(a => {
-					return {
-						fields: a,
-						variant: "Directory",
-					};
-				});
-			});
-		},
+onMounted(() => {
+	refresh();
+});
 
-		onItemClicked(item) {
-			this.$router.push("/browse/" + item.fields.path).catch(err => {});
-		},
+async function refresh() {
+	items.value = [];
+	items.value = await random();
+}
 
-		onItemsDragStart(event, items) {
-			event.dataTransfer.setData("text/json", JSON.stringify(items));
-		},
-	},
-};
+function onItemClicked(item: Directory) {
+	router.push("/browse/" + item.path).catch(err => { });
+}
+
+function onItemsDragStart(event: DragEvent, items: Directory[]) {
+	if (!event || !event.dataTransfer) {
+		return;
+	}
+	event.dataTransfer.setData("text/json", JSON.stringify(items));
+}
 </script>
 
 <style scoped>

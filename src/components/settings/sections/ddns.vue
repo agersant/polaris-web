@@ -1,8 +1,10 @@
 <template>
 	<div>
 		<p class="explanation">
-			Polaris can automatically broadcast your computer's IP to YDNS to make your server reachable at a fixed URL. You will need to sign up for a
-			<a href="https://ydns.io/" target="_blank">YDNS</a> account before filling out the corresponding settings on this page. If you prefer not to use YDNS, you can ignore these settings and set
+			Polaris can automatically broadcast your computer's IP to YDNS to make your server reachable at a fixed URL.
+			You will need to sign up for a
+			<a href="https://ydns.io/" target="_blank">YDNS</a> account before filling out the corresponding settings on
+			this page. If you prefer not to use YDNS, you can ignore these settings and set
 			up any another dynamic DNS service manually.
 		</p>
 
@@ -28,27 +30,23 @@
 	</div>
 </template>
 
-<script>
-import API from "/src/api";
-export default {
-	data() {
-		return {
-			ddns: null,
-		};
-	},
+<script setup lang="ts">
+import { onMounted, Ref, ref } from "vue";
+import { getDDNSConfig, putDDNSConfig } from "@/api/endpoints";
+import { DDNSConfig } from "@/api/dto";
 
-	mounted() {
-		API.getDDNSConfig().then(data => {
-			this.ddns = data;
-		});
-	},
+const ddns: Ref<DDNSConfig | null> = ref(null);
 
-	methods: {
-		commit() {
-			API.putDDNSConfig(this.ddns);
-		},
-	},
-};
+onMounted(async () => {
+	ddns.value = await getDDNSConfig();
+});
+
+function commit() {
+	if (!ddns.value) {
+		return;
+	}
+	putDDNSConfig(ddns.value);
+}
 </script>
 
 <style scoped>

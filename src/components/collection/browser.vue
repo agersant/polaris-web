@@ -2,7 +2,7 @@
 	<div class="pane">
 		<div class="paneHeader">
 			<h2>Music Collection</h2>
-			<breadcrumbs></breadcrumbs>
+			<Breadcrumbs />
 		</div>
 
 		<div data-cy="browser" class="paneContent" ref="paneContent">
@@ -11,148 +11,143 @@
 				<div v-if="subHeader" class="subHeader">{{ subHeader }}</div>
 				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
 			</div>
-			<explorer v-if="viewMode == 'explorer'" v-bind:items="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></explorer>
-			<discography v-if="viewMode == 'discography'" v-bind:showArtistName="false" v-bind:albums="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></discography>
-			<album v-if="viewMode == 'album'" v-bind:items="items" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart"></album>
+			<Explorer v-if="viewMode == 'explorer'" v-bind:items="items" v-on:item-click="onItemClicked"
+				v-on:items-drag-start="onItemsDragStart" />
+			<Discography v-if="viewMode == 'discography'" v-bind:showArtistName="false" v-bind:directories="directories"
+				v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart" />
+			<Album v-if="viewMode == 'album'" v-bind:songs="songs" v-on:item-click="onItemClicked"
+				v-on:items-drag-start="onItemsDragStart" />
 		</div>
 	</div>
 </template>
 
-<script>
-import { nextTick, ref, watch} from "vue";
-import API from "/src/api";
-import * as Format from "/src/format";
-import Breadcrumbs from "./breadcrumbs";
-import Album from "./layout/album";
-import Discography from "./layout/discography";
-import Explorer from "./layout/explorer";
-export default {
-	components: {
-		breadcrumbs: Breadcrumbs,
-		album: Album,
-		discography: Discography,
-		explorer: Explorer,
+<script setup lang="ts">
+import { CollectionItem, Directory } from "@/api/dto";
+import { browse } from "@/api/endpoints";
+import { getPathTail } from "@/format";
+import { usePlaylistStore } from "@/stores/playlist";
+import { computed, nextTick, ref, Ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import Breadcrumbs from "./Breadcrumbs.vue";
+import Album from "./layout/album.vue";
+import Discography from "./layout/discography.vue";
+import Explorer from "./layout/Explorer.vue";
+
+
+const props = defineProps<{path:string}>();
+
+const router = useRouter();
+const playlist = usePlaylistStore();
+
+const items: Ref<CollectionItem[]> = ref([]);
+const paneContent: Ref<HTMLElement | null> = ref(null);
+const savedPositions = new Map();
+
+watch(
+	() => props.path,
+	async (path, oldPath) => {
+		if (oldPath && paneContent.value) {
+			savedPositions.set(oldPath, paneContent.value.scrollTop);
+		}
+		items.value = await browse(path);
+		for (const savedPath of savedPositions.keys()) {
+			if (!path.startsWith(savedPath)) {
+				savedPositions.delete(savedPath);
+			}
+		}
+		nextTick(() => {
+			if (paneContent.value) {
+				paneContent.value.scrollTop = savedPositions.get(path) || 0;
+			}
+		});
 	},
+	{ immediate: true, flush: "post" }
+);
 
-	props: {
-		path: {
-			type: String,
-			required: true,
-		},
-	},
+const directories = computed(() => items.value.flatMap(i => i.variant == "Directory" ? [i] : []));
+const songs = computed(() => items.value.flatMap(i => i.variant == "Song" ? [i] : []));
 
-	setup(props) {
-		const items = ref([]);
-		const paneContent = ref(null);
-		const savedPositions = new Map();
-		watch(
-			() => props.path,
-			async (path, oldPath) => {
-				if (oldPath) {
-					savedPositions.set(oldPath, paneContent.value.scrollTop);
-				}
-				items.value = await API.browse(path);
-				for (const savedPath of savedPositions.keys()) {
-					if (!path.startsWith(savedPath)) {
-						savedPositions.delete(savedPath);
-					}
-				}
-				nextTick(() => {
-					paneContent.value.scrollTop = savedPositions.get(path) || 0;
-				});
-			},
-			{immediate: true, flush: "post"}
-		);
-
-		return {items, paneContent};
-	},
-
-	computed: {
-		header() {
-			let header = "";
-			for (let item of this.items) {
-				if (item.variant == "Song") {
-					if (header && item.fields.album && header != item.fields.album) {
-						header = null;
-						break;
-					} else {
-						header = header || item.fields.album;
-					}
-				}
-			}
-			return header || Format.getPathTail(this.path) || "All Music";
-		},
-
-		subHeader() {
-			let subHeader = "";
-			for (let item of this.items) {
-				if (item.variant == "Song") {
-					subHeader = subHeader || item.fields.album_artist || item.fields.artist;
-				}
-			}
-			return subHeader;
-		},
-
-		viewMode() {
-			let onlySongs = true;
-			let onlyDirectories = true;
-			let allSameAlbum = true;
-			let allHaveAlbums = true;
-			let hasAnyPicture = false;
-			let album = null;
-
-			for (let item of this.items) {
-				if (!item.fields.album) {
-					allHaveAlbums = false;
-				} else if (!album) {
-					album = item.fields.album;
-				}
-				if (item.fields.artwork) {
-					hasAnyPicture = true;
-				}
-				if (item.variant == "Song") {
-					onlyDirectories = false;
-					allSameAlbum = allSameAlbum && item.fields.album == album;
-				} else {
-					onlySongs = false;
-				}
-			}
-
-			if (onlySongs && hasAnyPicture && allSameAlbum && this.items.length > 0) {
-				return "album";
-			}
-			if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
-				return "discography";
-			}
-			return "explorer";
-		},
-	},
-
-	methods: {
-
-		onItemClicked(item) {
-			const variant = item.variant;
-			if (variant == "Directory") {
-				this.$router.push("/browse/" + item.fields.path).catch(err => {});
-			} else if (variant == "Song") {
-				this.$store.dispatch("playlist/queueTracks", [{...item.fields}]);
-			}
-		},
-
-		onItemsDragStart(event, items) {
-			event.dataTransfer.setData("text/json", JSON.stringify(items));
-		},
-
-		onQueueAll() {
-			if (this.viewMode == "album") {
-				const tracks = this.items.map(i => {
-					return {...i.fields};
-				});
-				this.$store.dispatch("playlist/queueTracks", tracks);
+const header = computed((): string =>{
+	let header: string | null = "";
+	for (let item of items.value) {
+		if (item.variant == "Song") {
+			if (header && item.album && header != item.album) {
+				header = null;
+				break;
 			} else {
-				this.$store.dispatch("playlist/queueDirectory", this.path);
+				header = header || item.album;
 			}
-		},
-	},
-};
+		}
+	}
+	return header || getPathTail(props.path) || "All Music";
+});
+
+const subHeader = computed((): string =>{
+	let subHeader = "";
+	for (let item of items.value) {
+		if (item.variant == "Song") {
+			subHeader = subHeader || item.album_artist || item.artist || "";
+		}
+	}
+	return subHeader;
+});
+
+// TODO view mode enum
+const viewMode = computed(():string => {
+	let onlySongs = true;
+	let onlyDirectories = true;
+	let allSameAlbum = true;
+	let allHaveAlbums = true;
+	let hasAnyPicture = false;
+	let album = null;
+
+	for (let item of items.value) {
+		if (!item.album) {
+			allHaveAlbums = false;
+		} else if (!album) {
+			album = item.album;
+		}
+		if (item.artwork) {
+			hasAnyPicture = true;
+		}
+		if (item.variant == "Song") {
+			onlyDirectories = false;
+			allSameAlbum = allSameAlbum && item.album == album;
+		} else {
+			onlySongs = false;
+		}
+	}
+
+	if (onlySongs && hasAnyPicture && allSameAlbum && items.value.length > 0) {
+		return "album";
+	}
+	if (onlyDirectories && hasAnyPicture && allHaveAlbums) {
+		return "discography";
+	}
+	return "explorer";
+});
+
+function onItemClicked(item: CollectionItem) {
+	if (item.variant == "Directory") {
+		router.push("/browse/" + item.path).catch(err => { });
+	} else if (item.variant == "Song") {
+		playlist.queueTracks([{ ...item }]);
+	}
+}
+
+function onItemsDragStart(event: DragEvent, items: CollectionItem[]) {
+	if (!event || !event.dataTransfer) {
+		return;
+	}
+	event.dataTransfer.setData("text/json", JSON.stringify(items));
+}
+
+function onQueueAll() {
+	if (viewMode.value == "album") {
+		const songs = items.value.flatMap(item => item.variant == "Song" ? [{...item}] : []);
+		playlist.queueTracks(songs);
+	} else {
+		playlist.queueDirectory(props.path);
+	}
+}
 </script>

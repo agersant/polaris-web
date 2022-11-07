@@ -10,30 +10,32 @@
 				</thead>
 				<tr>
 					<td>
-						<select ref="base" v-on:input="onBaseSelected" v-bind:value="themeBase()">
-							<option v-for="base in bases" v-bind:key="base.id" v-bind:value="base.id">{{ base.name }}</option>
+						<select ref="base" @input="onBaseSelected" v-bind:value="user.theme">
+							<option v-for="base in listBases()" v-bind:key="base.id" v-bind:value="base.id">
+								{{ base.name }}
+							</option>
 						</select>
 					</td>
 					<td class="accent-color">
-						<input ref="accent" type="color" v-bind:value="themeAccent()" v-on:input="onAccentHovered" v-on:change="onAccentSelected" />
+						<input ref="accent" type="color" v-bind:value="user.accent" @input="onAccentHovered"
+							@change="onAccentSelected" />
 					</td>
 					<td>
-						<i v-on:click="resetTheme" class="noselect material-icons md-18">restore</i>
+						<i @click="resetTheme" class="noselect material-icons md-18">restore</i>
 					</td>
 				</tr>
 			</table>
 		</div>
 		<div class="field">
 			<label for="lastfm_username">Last.fm scrobbling</label>
-			<div v-if="lastFMUsername()">
+			<div v-if="user.lastFMUsername">
 				<p class="explanation">
 					You are scrobbling music as
-					<a href="https://www.last.fm/user/{lastFMUsername()}" target="_blank">{{ lastFMUsername() }}</a
-					>.
+					<a href="https://www.last.fm/user/{lastFMUsername()}" target="_blank">{{ user.lastFMUsername }}</a>.
 				</p>
 				<button v-on:click="unlinkLastFMAccount">Unlink Last.fm account</button>
 			</div>
-			<div v-if="!lastFMUsername()">
+			<div v-if="!user.lastFMUsername">
 				<p class="explanation">
 					Polaris can automatically submit songs you play to
 					<a href="https://www.last.fm/" target="_blank">Last.fm</a>.
@@ -44,55 +46,44 @@
 	</form>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
-import API from "/src/api";
-import * as Theming from "/src/theming/theming";
-export default {
-	data() {
-		return {
-			...mapGetters({
-				themeBase: "user/themeBase",
-				themeAccent: "user/themeAccent",
-				lastFMUsername: "user/lastFMUsername",
-			}),
-			bases: Theming.listBases(),
-		};
-	},
+<script setup lang="ts">
+import { useUserStore } from "@/stores/user";
+import { getDefaultAccent, getDefaultBaseID, listBases } from "@/theming/theming";
 
-	methods: {
-		onAccentHovered(event) {
-			this.$store.commit("user/previewThemeAccent", event.target.value);
-		},
+const user = useUserStore();
 
-		onAccentSelected() {
-			this.saveTheme();
-		},
+function onAccentHovered(event: Event) {
+	if (!event || !event.target) {
+		return;
+	}
+	user.previewThemeAccent((event.target as HTMLInputElement).value);
+}
 
-		onBaseSelected(event) {
-			this.$store.commit("user/previewThemeBase", event.target.value);
-			this.saveTheme();
-		},
+function onAccentSelected() {
+	user.saveTheme();
+}
 
-		resetTheme() {
-			this.$store.commit("user/previewThemeBase", Theming.getDefaultBase());
-			this.$store.commit("user/previewThemeAccent", Theming.getDefaultAccent());
-			this.saveTheme();
-		},
+function onBaseSelected(event: Event) {
+	if (!event || !event.target) {
+		return;
+	}
+	user.previewThemeBase((event.target as HTMLInputElement).value);
+	user.saveTheme();
+}
 
-		saveTheme() {
-			this.$store.dispatch("user/saveTheme");
-		},
+function resetTheme() {
+	user.previewThemeBase(getDefaultBaseID());
+	user.previewThemeAccent(getDefaultAccent());
+	user.saveTheme();
+}
 
-		linkLastFMAccount() {
-			this.$store.dispatch("user/linkLastFM");
-		},
+function linkLastFMAccount() {
+	user.linkLastFM();
+}
 
-		unlinkLastFMAccount() {
-			this.$store.dispatch("user/unlinkLastFM");
-		},
-	},
-};
+function unlinkLastFMAccount() {
+	user.unlinkLastFM();
+}
 </script>
 
 <style scoped>
