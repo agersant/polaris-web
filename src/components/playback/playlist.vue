@@ -100,9 +100,9 @@ const duration = computed(() => playlist.songs.reduce((acc, song) => {
 	return acc + song.duration;
 }, 0));
 
-playlist.$onAction((action) => {
-	if (action.name == "shuffle" || action.name == "next" || action.name == "previous") {
-		snapToCurrentTrack();
+playlist.$onAction(({name, after}) => {
+	if (name == "shuffle" || name == "next" || name == "previous") {
+		after(snapToCurrentTrack);
 	}
 });
 
