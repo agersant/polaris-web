@@ -56,7 +56,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 
 import { refDebounced } from "@vueuse/core";
 import notify from "@/notify";
 import { load, save } from "@/disk";
-import { lastFMNowPlaying, lastFMScrobble, makeAudioURL } from "@/api/endpoints";
+import { lastFMNowPlaying, lastFMScrobble, makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
 import { formatDuration, formatTitle } from "@/format";
 import CoverArt from "@/components/CoverArt.vue";
@@ -80,7 +80,7 @@ const volumeInput: Ref<HTMLElement | null> = ref(null);
 
 const currentTrack = computed(() => playlist.currentTrack);
 const trackURL = computed(() => currentTrack.value ? makeAudioURL(currentTrack.value.path) : null);
-const artworkURL = computed(() => currentTrack.value && currentTrack.value.artwork ? makeAudioURL(currentTrack.value.artwork) : null);
+const artworkURL = computed(() => currentTrack.value && currentTrack.value.artwork ? makeThumbnailURL(currentTrack.value.artwork) : null);
 
 const trackProgress = computed(() => {
 	if (isNaN(duration.value)) {
