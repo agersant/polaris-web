@@ -1,7 +1,6 @@
-import { ThemeBase } from "@/theming/theming";
+import { ThemeData } from "@/theming/theming";
 
 export default {
-	id: "light",
 	name: "Light",
 	foreground: "#3A3A3A",
 	foregroundMuted: "#AAA",
@@ -16,4 +15,4 @@ export default {
 	bad: "#FF5763",
 	foregroundAgainstGood: "#FFF",
 	foregroundAgainstBad: "#FFF",
-} as ThemeBase;
+} as ThemeData;

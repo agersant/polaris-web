@@ -1,7 +1,6 @@
-import { ThemeBase } from "@/theming/theming";
+import { ThemeData } from "@/theming/theming";
 
 export default {
-	id: "brown",
 	name: "Brown",
 	foreground: "#DDB9B8",
 	foregroundMuted: "#99807F",
@@ -16,4 +15,4 @@ export default {
 	bad: "#FF5763",
 	foregroundAgainstGood: "#FFD6D4",
 	foregroundAgainstBad: "#FFD6D4",
-} as ThemeBase;
+} as ThemeData;

@@ -1,12 +1,10 @@
-import Blue from "./theme-bases/blue";
-import Brown from "./theme-bases/brown";
-import Dark from "./theme-bases/dark";
-import Light from "./theme-bases/light";
+import Blue from "./themes/blue";
+import Brown from "./themes/brown";
+import Dark from "./themes/dark";
+import Light from "./themes/light";
 
-export type ThemeBase = {
-	id: string;
+export type ThemeData = {
 	name: string;
-
 	foreground: string;
 	foregroundMuted: string;
 	foregroundAgainstAccent: string;
@@ -22,55 +20,49 @@ export type ThemeBase = {
 	foregroundAgainstBad: string;
 };
 
-let bases: Map<string, ThemeBase> = new Map();
-let defaultBaseID: string;
-
-registerBase(Light);
-registerBase(Dark);
-registerBase(Blue);
-registerBase(Brown);
-
-function registerBase(themeBase: ThemeBase) {
-	bases.set(themeBase.id, themeBase);
-	if (!defaultBaseID) {
-		defaultBaseID = themeBase.id;
-	}
+export enum Theme {
+	BLUE = "blue",
+	BROWN = "brown",
+	DARK = "dark",
+	LIGHT = "light",
 }
 
-export function listBases() {
-	let result = Array.from(bases, ([id, content]) => {
-		return { id: id, name: content.name };
-	});
-	result.sort(function (a, b) {
-		return a.name > b.name ? 1 : -1;
-	});
-	return result;
+const themes: Map<Theme, ThemeData> = new Map([
+	[Theme.BLUE, Blue],
+	[Theme.BROWN, Brown],
+	[Theme.DARK, Dark],
+	[Theme.LIGHT, Light],
+]);
+
+export function getThemeName(theme: Theme): string {
+	const themeData = themes.get(theme)!;
+	return themeData.name;
 }
 
-export function getDefaultBaseID(): string {
-	return defaultBaseID;
+export function getDefaultTheme(): Theme {
+	return Theme.LIGHT;
 }
 
 export function getDefaultAccent(): string {
 	return "#44C8F1";
 }
 
-export function applyTheme(baseName: string, accent: string) {
+export function applyTheme(theme: Theme, accent: string) {
 	document.documentElement.style.setProperty("--theme-accent", accent);
-	let base = bases.get(baseName);
-	if (base) {
-		document.documentElement.style.setProperty("--theme-foreground", base.foreground);
-		document.documentElement.style.setProperty("--theme-foreground-muted", base.foregroundMuted);
-		document.documentElement.style.setProperty("--theme-foreground-against-accent", base.foregroundAgainstAccent);
-		document.documentElement.style.setProperty("--theme-background", base.background);
-		document.documentElement.style.setProperty("--theme-background-muted", base.backgroundMuted);
-		document.documentElement.style.setProperty("--theme-border", base.border);
-		document.documentElement.style.setProperty("--theme-border-muted", base.borderMuted);
-		document.documentElement.style.setProperty("--theme-menu-foreground", base.menuForeground);
-		document.documentElement.style.setProperty("--theme-menu-background", base.menuBackground);
-		document.documentElement.style.setProperty("--theme-good", base.good);
-		document.documentElement.style.setProperty("--theme-bad", base.bad);
-		document.documentElement.style.setProperty("--theme-foreground-against-good", base.foregroundAgainstGood);
-		document.documentElement.style.setProperty("--theme-foreground-against-bad", base.foregroundAgainstBad);
+	let themeData = themes.get(theme);
+	if (themeData) {
+		document.documentElement.style.setProperty("--theme-foreground", themeData.foreground);
+		document.documentElement.style.setProperty("--theme-foreground-muted", themeData.foregroundMuted);
+		document.documentElement.style.setProperty("--theme-foreground-against-accent", themeData.foregroundAgainstAccent);
+		document.documentElement.style.setProperty("--theme-background", themeData.background);
+		document.documentElement.style.setProperty("--theme-background-muted", themeData.backgroundMuted);
+		document.documentElement.style.setProperty("--theme-border", themeData.border);
+		document.documentElement.style.setProperty("--theme-border-muted", themeData.borderMuted);
+		document.documentElement.style.setProperty("--theme-menu-foreground", themeData.menuForeground);
+		document.documentElement.style.setProperty("--theme-menu-background", themeData.menuBackground);
+		document.documentElement.style.setProperty("--theme-good", themeData.good);
+		document.documentElement.style.setProperty("--theme-bad", themeData.bad);
+		document.documentElement.style.setProperty("--theme-foreground-against-good", themeData.foregroundAgainstGood);
+		document.documentElement.style.setProperty("--theme-foreground-against-bad", themeData.foregroundAgainstBad);
 	}
 }

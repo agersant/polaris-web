@@ -2,17 +2,17 @@ import { computed, Ref, ref, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { getPreferences, lastFMGetLinkToken, lastFMUnlink, putPreferences } from "@/api/endpoints";
 import { useUserStore } from "@/stores/user";
-import { applyTheme, getDefaultAccent, getDefaultBaseID } from "@/theming/theming";
+import { applyTheme, getDefaultAccent, getDefaultTheme, Theme } from "@/theming/theming";
 
 export const usePreferencesStore = defineStore("preferences", () => {
 	const lastFMUsername: Ref<string | null> = ref(null);
-	const themeBase: Ref<string | null> = ref(null); // TODO enum
-	const themeAccent: Ref<string | null> = ref(null);
-	const themeBasePreview: Ref<string | null> = ref(null);
-	const themeAccentPreview: Ref<string | null> = ref(null);
+	const theme: Ref<Theme | null> = ref(null);
+	const themePreview: Ref<Theme | null> = ref(null);
+	const accentColor: Ref<string | null> = ref(null);
+	const accentColorPreview: Ref<string | null> = ref(null);
 
-	const accent = computed(() => themeAccentPreview.value || themeAccent.value || getDefaultAccent());
-	const theme = computed(() => themeBasePreview.value || themeBase.value || getDefaultBaseID());
+	const effectiveTheme = computed(() => themePreview.value || theme.value || getDefaultTheme());
+	const effectiveAccentColor = computed(() => accentColorPreview.value || accentColor.value || getDefaultAccent());
 
 	reset();
 
@@ -30,9 +30,9 @@ export const usePreferencesStore = defineStore("preferences", () => {
 	);
 
 	watch(
-		[theme, accent],
+		[effectiveTheme, effectiveAccentColor],
 		() => {
-			applyTheme(theme.value, accent.value);
+			applyTheme(effectiveTheme.value, effectiveAccentColor.value);
 		},
 		{ immediate: true }
 	);
@@ -77,31 +77,41 @@ export const usePreferencesStore = defineStore("preferences", () => {
 		);
 	}
 
-	function previewThemeBase(themeBase: string) {
-		themeBasePreview.value = themeBase;
+	function previewTheme(newTheme: Theme) {
+		theme.value = newTheme;
 	}
 
-	function previewThemeAccent(themeAccent: string) {
-		themeAccentPreview.value = themeAccent;
+	function previewAccentColor(newAccentColor: string) {
+		accentColor.value = newAccentColor;
 	}
 
 	async function refresh() {
 		const preferences = await getPreferences();
 		lastFMUsername.value = preferences.lastfm_username || null;
-		themeBase.value = preferences.web_theme_base || null;
-		themeAccent.value = preferences.web_theme_accent || null;
+		if (Object.values(Theme).some(t => t == preferences.web_theme_base)) {
+			theme.value = <Theme>preferences.web_theme_base;
+		} else {
+			theme.value = null;
+		}
+		accentColor.value = preferences.web_theme_accent || null;
 	}
 
 	function reset() {
 		lastFMUsername.value = null;
-		themeBase.value = null;
-		themeAccent.value = null;
-		themeBasePreview.value = null;
-		themeAccentPreview.value = null;
+		theme.value = null;
+		themePreview.value = null;
+		accentColor.value = null;
+		accentColorPreview.value = null;
 	}
 
-	async function saveTheme() {
-		await putPreferences(theme.value, accent.value);
+	function resetTheming() {
+		previewTheme(getDefaultTheme());
+		previewAccentColor(getDefaultAccent());
+		saveTheming();
+	}
+
+	async function saveTheming() {
+		await putPreferences(effectiveTheme.value, effectiveAccentColor.value);
 		refresh();
 	}
 
@@ -113,13 +123,14 @@ export const usePreferencesStore = defineStore("preferences", () => {
 	return {
 		lastFMUsername,
 
-		accent,
-		theme,
+		effectiveTheme,
+		effectiveAccentColor,
 
 		linkLastFM,
-		previewThemeAccent,
-		previewThemeBase,
-		saveTheme,
+		previewTheme,
+		previewAccentColor,
+		resetTheming,
+		saveTheming,
 		unlinkLastFM,
 	};
 });

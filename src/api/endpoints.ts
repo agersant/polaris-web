@@ -123,10 +123,10 @@ export async function getPreferences(): Promise<Preferences> {
 	return (await request("/preferences")).json();
 }
 
-export async function putPreferences(themeBase: string, themeAccent: string): Promise<void> {
+export async function putPreferences(theme: string, accentColor: string): Promise<void> {
 	const preferences: Preferences = {
-		web_theme_base: themeBase,
-		web_theme_accent: themeAccent,
+		web_theme_base: theme,
+		web_theme_accent: accentColor,
 	};
 	await request("/preferences", {
 		method: "PUT",

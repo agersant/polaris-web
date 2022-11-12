@@ -10,18 +10,18 @@
 				</thead>
 				<tr>
 					<td>
-						<select ref="base" @input="onBaseSelected" v-bind:value="preferences.theme">
-							<option v-for="base in listBases()" v-bind:key="base.id" v-bind:value="base.id">
-								{{ base.name }}
+						<select ref="base" @input="onBaseSelected" v-bind:value="preferences.effectiveTheme">
+							<option v-for="theme of Object.values(Theme)" v-bind:key="theme" v-bind:value="theme">
+								{{ getThemeName(theme) }}
 							</option>
 						</select>
 					</td>
 					<td class="accent-color">
-						<input ref="accent" type="color" v-bind:value="preferences.accent" @input="onAccentHovered"
-							@change="onAccentSelected" />
+						<input ref="accent" type="color" v-bind:value="preferences.effectiveAccentColor"
+							@input="onAccentHovered" @change="onAccentSelected" />
 					</td>
 					<td>
-						<i @click="resetTheme" class="noselect material-icons md-18">restore</i>
+						<i @click="preferences.resetTheming" class="noselect material-icons md-18">restore</i>
 					</td>
 				</tr>
 			</table>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { usePreferencesStore } from "@/stores/preferences";
-import { getDefaultAccent, getDefaultBaseID, listBases } from "@/theming/theming";
+import { getThemeName, Theme } from "@/theming/theming";
 
 const preferences = usePreferencesStore();
 
@@ -57,25 +57,20 @@ function onAccentHovered(event: Event) {
 	if (!event || !event.target) {
 		return;
 	}
-	preferences.previewThemeAccent((event.target as HTMLInputElement).value);
+	preferences.previewAccentColor((event.target as HTMLInputElement).value);
 }
 
 function onAccentSelected() {
-	preferences.saveTheme();
+	preferences.saveTheming();
 }
 
 function onBaseSelected(event: Event) {
 	if (!event || !event.target) {
 		return;
 	}
-	preferences.previewThemeBase((event.target as HTMLInputElement).value);
-	preferences.saveTheme();
-}
-
-function resetTheme() {
-	preferences.previewThemeBase(getDefaultBaseID());
-	preferences.previewThemeAccent(getDefaultAccent());
-	preferences.saveTheme();
+	const theme = <Theme>((event.target as HTMLInputElement).value);
+	preferences.previewTheme(theme);
+	preferences.saveTheming();
 }
 
 function linkLastFMAccount() {
