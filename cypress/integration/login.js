@@ -73,7 +73,6 @@ describe('Login', function() {
 
 		cy.hash().should('contain', 'browse')
 		cy.window().then(window => window.localStorage.setItem("authToken", "badToken"))
-		cy.clearCookies() // TODO remove when polaris no longer supports cookie auth
 		cy.visit('/')
 		cy.hash().should('contain', 'auth')
 		cy.get('[data-cy=username]')
