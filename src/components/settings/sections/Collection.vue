@@ -15,16 +15,16 @@
 					<th>Name</th>
 					<th />
 				</thead>
-				<tr v-for="(mountDir, index) in mountDirs" v-bind:key="index">
+				<tr v-for="(mountDir, index) in mountDirs.listing" v-bind:key="index">
 					<td>
-						<input type="text" v-model="mountDir.source" v-on:change="commitMountDirs"
+						<input type="text" v-model="mountDir.source" v-on:change="mountDirs.save"
 							v-on:keypress.enter.prevent />
 					</td>
 					<td>
-						<input type="text" v-model="mountDir.name" v-on:change="commitMountDirs" />
+						<input type="text" v-model="mountDir.name" v-on:change="mountDirs.save" />
 					</td>
 					<td>
-						<i v-on:click="deleteMountDir(index)" class="noselect material-icons md-18">delete</i>
+						<i v-on:click="mountDirs.remove(mountDir)" class="noselect material-icons md-18">delete</i>
 					</td>
 				</tr>
 			</table>
@@ -44,14 +44,16 @@
 
 <script setup lang="ts">
 import { onMounted, Ref, ref } from "vue";
-import { MountDir, Settings } from "@/api/dto";
-import { getMountDirs, getSettings, putMountDirs, putSettings, triggerIndex } from "@/api/endpoints";
+import { Settings } from "@/api/dto";
+import { getSettings, putSettings, triggerIndex } from "@/api/endpoints";
+import { useMountDirsStore } from "@/stores/mount-dirs";
 import StateButton, { State } from "@/components/StateButton.vue";
 
-// TODO Consider using mountDirs store (and adding a settings store?)
+// TODO add a settings store?
+
+const mountDirs = useMountDirsStore();
 
 const settings: Ref<Settings | null> = ref(null);
-const mountDirs: Ref<MountDir[] | null> = ref(null);
 const reindexPeriod = ref(0);
 const reindexStates: Ref<Record<string, State>> = ref({
 	ready: { name: "Scan now" },
@@ -64,7 +66,7 @@ const reindexState: Ref<State> = ref(reindexStates.value.ready);
 onMounted(async () => {
 	settings.value = await getSettings();
 	reindexPeriod.value = Math.round(settings.value.reindex_every_n_seconds / 60);
-	mountDirs.value = await getMountDirs();
+	mountDirs.refresh();
 });
 
 function onAlbumArtPatternChanged() {
@@ -97,18 +99,7 @@ function onReindexPeriodChanged() {
 }
 
 function addMountDir() {
-	if (!mountDirs.value) {
-		return;
-	}
-	mountDirs.value.push({ name: "", source: "" });
-}
-
-function deleteMountDir(index: number) {
-	if (!mountDirs.value) {
-		return;
-	}
-	mountDirs.value.splice(index, 1);
-	commitMountDirs();
+	mountDirs.create();
 }
 
 async function reindex() {
@@ -130,13 +121,6 @@ function commitSettings() {
 		return;
 	}
 	putSettings(settings.value);
-}
-
-function commitMountDirs() {
-	if (!mountDirs.value) {
-		return;
-	}
-	putMountDirs(mountDirs.value);
 }
 </script>
 

@@ -47,7 +47,7 @@ function validate(): boolean {
 }
 
 async function proceed() {
-	await mountDirs.set([mountDir.value]);
+	await mountDirs.overwrite([mountDir.value]);
 	triggerIndex();
 }
 </script>

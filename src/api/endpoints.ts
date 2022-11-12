@@ -155,8 +155,8 @@ export async function getMountDirs(): Promise<MountDir[]> {
 	return (await request("/mount_dirs")).json();
 }
 
-export async function putMountDirs(mountDirs: MountDir[]): Promise<void> {
-	await request("/mount_dirs", {
+export async function putMountDirs(mountDirs: MountDir[]): Promise<Response> {
+	return await request("/mount_dirs", {
 		method: "PUT",
 		body: JSON.stringify(mountDirs),
 		headers: {
