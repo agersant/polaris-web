@@ -49,8 +49,6 @@ import { getSettings, putSettings, triggerIndex } from "@/api/endpoints";
 import { useMountDirsStore } from "@/stores/mount-dirs";
 import StateButton, { State } from "@/components/StateButton.vue";
 
-// TODO add a settings store?
-
 const mountDirs = useMountDirsStore();
 
 const settings: Ref<Settings | null> = ref(null);
