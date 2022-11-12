@@ -8,22 +8,23 @@ export const useInitialSetupStore = defineStore("initialSetup", () => {
 
 	const hasAnyUsers: Ref<boolean | null> = ref(null);
 
+	const isStateKnown = computed(() => hasAnyUsers.value != null);
+	const isComplete = computed(() => hasAnyUsers.value == true);
+
 	async function refresh() {
 		const dto = await initialSetup();
 		hasAnyUsers.value = dto.has_any_users;
 	}
 
-	const isStateKnown = computed(() => hasAnyUsers.value != null);
-	const isComplete = computed(() => hasAnyUsers.value == true);
-
 	watch(
 		() => usersStore.listing,
 		() => {
 			refresh();
-		}
+		},
+		{ immediate: true }
 	);
 
-	return { refresh, isStateKnown, isComplete };
+	return { isStateKnown, isComplete, refresh };
 });
 
 if (import.meta.hot) {

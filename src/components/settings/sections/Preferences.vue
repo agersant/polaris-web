@@ -10,14 +10,14 @@
 				</thead>
 				<tr>
 					<td>
-						<select ref="base" @input="onBaseSelected" v-bind:value="user.theme">
+						<select ref="base" @input="onBaseSelected" v-bind:value="preferences.theme">
 							<option v-for="base in listBases()" v-bind:key="base.id" v-bind:value="base.id">
 								{{ base.name }}
 							</option>
 						</select>
 					</td>
 					<td class="accent-color">
-						<input ref="accent" type="color" v-bind:value="user.accent" @input="onAccentHovered"
+						<input ref="accent" type="color" v-bind:value="preferences.accent" @input="onAccentHovered"
 							@change="onAccentSelected" />
 					</td>
 					<td>
@@ -28,14 +28,15 @@
 		</div>
 		<div class="field">
 			<label for="lastfm_username">Last.fm scrobbling</label>
-			<div v-if="user.lastFMUsername">
+			<div v-if="preferences.lastFMUsername">
 				<p class="explanation">
 					You are scrobbling music as
-					<a href="https://www.last.fm/user/{lastFMUsername()}" target="_blank">{{ user.lastFMUsername }}</a>.
+					<a href="https://www.last.fm/user/{lastFMUsername()}" target="_blank">{{ preferences.lastFMUsername
+					}}</a>.
 				</p>
 				<button v-on:click="unlinkLastFMAccount">Unlink Last.fm account</button>
 			</div>
-			<div v-if="!user.lastFMUsername">
+			<div v-if="!preferences.lastFMUsername">
 				<p class="explanation">
 					Polaris can automatically submit songs you play to
 					<a href="https://www.last.fm/" target="_blank">Last.fm</a>.
@@ -47,42 +48,42 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/stores/user";
+import { usePreferencesStore } from "@/stores/preferences";
 import { getDefaultAccent, getDefaultBaseID, listBases } from "@/theming/theming";
 
-const user = useUserStore();
+const preferences = usePreferencesStore();
 
 function onAccentHovered(event: Event) {
 	if (!event || !event.target) {
 		return;
 	}
-	user.previewThemeAccent((event.target as HTMLInputElement).value);
+	preferences.previewThemeAccent((event.target as HTMLInputElement).value);
 }
 
 function onAccentSelected() {
-	user.saveTheme();
+	preferences.saveTheme();
 }
 
 function onBaseSelected(event: Event) {
 	if (!event || !event.target) {
 		return;
 	}
-	user.previewThemeBase((event.target as HTMLInputElement).value);
-	user.saveTheme();
+	preferences.previewThemeBase((event.target as HTMLInputElement).value);
+	preferences.saveTheme();
 }
 
 function resetTheme() {
-	user.previewThemeBase(getDefaultBaseID());
-	user.previewThemeAccent(getDefaultAccent());
-	user.saveTheme();
+	preferences.previewThemeBase(getDefaultBaseID());
+	preferences.previewThemeAccent(getDefaultAccent());
+	preferences.saveTheme();
 }
 
 function linkLastFMAccount() {
-	user.linkLastFM();
+	preferences.linkLastFM();
 }
 
 function unlinkLastFMAccount() {
-	user.unlinkLastFM();
+	preferences.unlinkLastFM();
 }
 </script>
 

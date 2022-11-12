@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps } from "vue";
 import { Directory } from "@/api/dto";
 import { makeThumbnailURL } from "@/api/endpoints";
 import CoverArt from "/src/components/CoverArt.vue";

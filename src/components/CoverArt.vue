@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, onUnmounted, Ref, ref } from "vue";
+import { onBeforeUnmount, onMounted, Ref, ref } from "vue";
 
 const props = defineProps<{
 	url: string,

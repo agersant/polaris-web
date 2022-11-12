@@ -1,7 +1,7 @@
 import { markRaw, Ref, ref, toRaw, watch } from "vue";
+import { defineStore, acceptHMRUpdate } from "pinia";
 import { flatten, getPlaylist } from "@/api/endpoints";
 import { save, load } from "@/disk";
-import { defineStore, acceptHMRUpdate } from "pinia";
 import { Song } from "@/api/dto";
 import { useUserStore } from "@/stores/user";
 
@@ -16,10 +16,15 @@ export const usePlaylistStore = defineStore("playlist", () => {
 
 	const userStore = useUserStore();
 	watch(
-		() => userStore.name,
+		() => userStore.isLoggedIn,
 		() => {
-			loadFromDisk();
-		}
+			if (userStore.isLoggedIn) {
+				loadFromDisk();
+			} else {
+				reset();
+			}
+		},
+		{ immediate: true }
 	);
 
 	function advance(delta: number): Song | null {
@@ -80,23 +85,11 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function loadFromDisk() {
-		const playbackOrder = load("playbackOrder");
-		if (playbackOrder) {
-			playbackOrder.value = playbackOrder;
-		}
-		const tracks = load("playlist");
-		if (tracks) {
-			songs.value = markRaw(tracks);
-		}
-		const currentTrackIndex = load("currentTrackIndex");
-		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < songs.value.length) {
-			currentTrack.value = songs.value[currentTrackIndex];
-		}
-		const elapsedSeconds = load("elapsedSeconds");
-		if (currentTrack.value && elapsedSeconds) {
-			elapsedSeconds.value = elapsedSeconds;
-		}
-		name.value = load("playlistName");
+		playbackOrder.value = load("playbackOrder") || "default";
+		songs.value = markRaw(load("playlist") || []);
+		currentTrack.value = songs.value[load("currentTrackIndex") || 0] || null;
+		elapsedSeconds.value = load("elapsedSeconds") || 0;
+		name.value = load("playlistName") || null;
 	}
 
 	function next(): Song | null {
