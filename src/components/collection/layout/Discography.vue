@@ -38,8 +38,6 @@ function onItemClicked(directory: Directory){
 function onItemsDragStart(event: DragEvent, directory: Directory){
 	emits("items-drag-start", event, [directory]);
 }
-
-// TODO fixme
 </script>
 
 <style scoped>
