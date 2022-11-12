@@ -20,7 +20,7 @@ export const useInitialSetupStore = defineStore("initialSetup", () => {
 		refresh();
 	});
 
-	return { isStateKnown, isComplete };
+	return { refresh, isStateKnown, isComplete };
 });
 
 if (import.meta.hot) {
