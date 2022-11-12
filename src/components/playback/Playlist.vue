@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, onUpdated, Ref, ref, toRaw } from "vue";
-import { usePlaylistStore } from "@/stores/playlist";
+import { PlaybackOrder, usePlaylistStore } from "@/stores/playlist";
 import PlaylistSave from "./PlaylistSave.vue";
 import { CollectionItem, ListPlaylistsEntry, Song } from "@/api/dto";
 import { formatDuration, formatLongDuration, formatTitle } from "@/format";
@@ -82,7 +82,7 @@ const scrollElement: Ref<HTMLElement | null> = ref(null);
 
 const currentTrackRaw = computed(() => toRaw(playlist.currentTrack));
 const playbackOrder = computed({
-	set(order: string) {
+	set(order: PlaybackOrder) {
 		playlist.setPlaybackOrder(order);
 	},
 	get() {

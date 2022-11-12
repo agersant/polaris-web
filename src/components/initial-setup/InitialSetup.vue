@@ -22,6 +22,8 @@ import Mount from "./steps/Mount.vue";
 import User from "./steps/User.vue";
 import Welcome from "./steps/Welcome.vue";
 
+type Step = "welcome" | "mount" | "user" | "finish";
+
 const router = useRouter();
 const mountDirs = useMountDirsStore();
 const users = useUsersStore();
@@ -33,8 +35,7 @@ onMounted(() => {
 	users.refresh();
 });
 
-// TODO enum
-const step = computed((): string => {
+const step = computed((): Step => {
 	if (!didAckWelcome.value || !mountDirs.fetchedInitialState || !users.fetchedInitialState) {
 		return "welcome";
 	}

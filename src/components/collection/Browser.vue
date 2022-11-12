@@ -33,6 +33,7 @@ import Album from "./layout/Album.vue";
 import Discography from "./layout/Discography.vue";
 import Explorer from "./layout/Explorer.vue";
 
+type ViewMode = "explorer" | "discography" | "album";
 
 const props = defineProps<{path:string}>();
 
@@ -92,8 +93,7 @@ const subHeader = computed((): string =>{
 	return subHeader;
 });
 
-// TODO view mode enum
-const viewMode = computed(():string => {
+const viewMode = computed((): ViewMode => {
 	let onlySongs = true;
 	let onlyDirectories = true;
 	let allSameAlbum = true;

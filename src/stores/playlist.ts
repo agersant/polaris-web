@@ -5,11 +5,13 @@ import { save, load } from "@/disk";
 import { Song } from "@/api/dto";
 import { useUserStore } from "@/stores/user";
 
+export type PlaybackOrder = "default" | "random" | "repeat-track" | "repeat-all";
+
 export const usePlaylistStore = defineStore("playlist", () => {
 	const name = ref("");
 	const songs: Ref<Song[]> = ref(markRaw([]));
 	const currentTrack: Ref<Song | null> = ref(null);
-	const playbackOrder = ref("default"); // TODO should be an enum, not nullable
+	const playbackOrder: Ref<PlaybackOrder> = ref("default");
 	const elapsedSeconds = ref(0);
 
 	reset();
@@ -177,7 +179,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaylist();
 	}
 
-	function setPlaybackOrder(order: string) {
+	function setPlaybackOrder(order: PlaybackOrder) {
 		playbackOrder.value = order;
 		savePlaybackState();
 	}
