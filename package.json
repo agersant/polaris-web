@@ -6,6 +6,7 @@
 	"author": "Antoine Gersant <antoine.gersant@lesforges.org>",
 	"license": "MIT",
 	"devDependencies": {
+		"@4tw/cypress-drag-drop": "=2.0",
 		"@types/node": "^17.0.31",
 		"@vitejs/plugin-vue": "^2.3.1",
 		"cypress": "^4.12.1",
