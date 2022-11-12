@@ -1,7 +1,7 @@
-import { login, getPreferences, putPreferences, lastFMGetLinkToken, lastFMUnlink } from "@/api/endpoints";
-import { usePlaylistStore } from "@/stores/playlist";
-import { getDefaultBaseID, getDefaultAccent } from "@/theming/theming";
+import { computed, Ref, ref } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
+import { login as doLogin, getPreferences, putPreferences, lastFMGetLinkToken, lastFMUnlink } from "@/api/endpoints";
+import { getDefaultBaseID, getDefaultAccent } from "@/theming/theming";
 
 const STORAGE_USERNAME = "username";
 const STORAGE_AUTH_TOKEN = "authToken";
@@ -18,105 +18,140 @@ export type UserState = {
 	themeAccentPreview: string | null;
 };
 
-export const useUserStore = defineStore("user", {
-	state: (): UserState => ({
-		name: localStorage.getItem(STORAGE_USERNAME),
-		authToken: localStorage.getItem(STORAGE_AUTH_TOKEN),
-		isAdmin: localStorage.getItem(STORAGE_IS_ADMIN) == "true",
-		lastFMUsername: null,
-		themeBase: null,
-		themeAccent: null,
-		themeBasePreview: null,
-		themeAccentPreview: null,
-	}),
-	actions: {
-		async login(username: string, password: string) {
-			const authorization = await login(username, password);
-			localStorage[STORAGE_USERNAME] = username;
-			localStorage[STORAGE_AUTH_TOKEN] = authorization.token;
-			localStorage[STORAGE_IS_ADMIN] = authorization.is_admin;
-			this.$reset();
-			usePlaylistStore().loadFromDisk(); // todo should be event-driven instead of calling playlist from here
-			await this.refreshPreferences();
-		},
+export const useUserStore = defineStore("user", () => {
+	const name: Ref<string | null> = ref(null);
+	const authToken: Ref<string | null> = ref(null);
+	const isAdmin = ref(false);
 
-		logout() {
-			localStorage.removeItem(STORAGE_USERNAME);
-			localStorage.removeItem(STORAGE_AUTH_TOKEN);
-			localStorage.removeItem(STORAGE_IS_ADMIN);
-			this.$reset();
-		},
+	const lastFMUsername: Ref<string | null> = ref(null);
+	const themeBase: Ref<string | null> = ref(null); // TODO enum
+	const themeAccent: Ref<string | null> = ref(null);
+	const themeBasePreview: Ref<string | null> = ref(null);
+	const themeAccentPreview: Ref<string | null> = ref(null);
 
-		async refreshPreferences() {
-			const preferences = await getPreferences();
-			this.lastFMUsername = preferences.lastfm_username || null;
-			this.themeBase = preferences.web_theme_base || null;
-			this.themeAccent = preferences.web_theme_accent || null;
-		},
+	reset();
 
-		previewThemeBase(themeBase: string) {
-			this.themeBasePreview = themeBase;
-		},
+	async function linkLastFM() {
+		const linkToken = await lastFMGetLinkToken();
+		const apiKey = "02b96c939a2b451c31dfd67add1f696e";
+		const currentURL = new URL(window.location.href);
+		const successPopupContent = window.btoa(
+			`<!doctype html>
+				<html>
+					<head>
+						<title>Polaris</title>
+						<meta charset="UTF-8">
+					</head>
+					<body>
+						<script type="text/javascript">
+							window.opener.postMessage("polaris-lastfm-auth-success", "*");
+						<\/script>
+					</body>
+				</html>`
+		);
 
-		previewThemeAccent(themeAccent: string) {
-			this.themeAccentPreview = themeAccent;
-		},
-
-		async saveTheme() {
-			await putPreferences(this.theme, this.accent);
-			this.refreshPreferences();
-		},
-
-		async linkLastFM() {
-			const linkToken = await lastFMGetLinkToken();
-			const apiKey = "02b96c939a2b451c31dfd67add1f696e";
-			const currentURL = new URL(window.location.href);
-			const successPopupContent = window.btoa(
-				`<!doctype html>
-					<html>
-						<head>
-							<title>Polaris</title>
-							<meta charset="UTF-8">
-						</head>
-						<body>
-							<script type="text/javascript">
-								window.opener.postMessage("polaris-lastfm-auth-success", "*");
-							<\/script>
-						</body>
-					</html>`
-			);
-
-			let callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent) + "&auth_token=" + linkToken;
-			let url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
-			let windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
-			let lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
-			window.addEventListener(
-				"message",
-				event => {
-					if (event.source != lastFMPopup) {
-						return;
+		let callbackURL = currentURL.protocol + "//" + currentURL.host + "/api/lastfm/link?content=" + encodeURIComponent(successPopupContent) + "&auth_token=" + linkToken;
+		let url = "https://www.last.fm/api/auth/?api_key=" + apiKey + "&cb=" + encodeURIComponent(callbackURL);
+		let windowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no";
+		let lastFMPopup = window.open(url, "Link Last.fm account", windowFeatures);
+		window.addEventListener(
+			"message",
+			event => {
+				if (event.source != lastFMPopup) {
+					return;
+				}
+				if (event.data == "polaris-lastfm-auth-success") {
+					if (lastFMPopup) {
+						lastFMPopup.close();
 					}
-					if (event.data == "polaris-lastfm-auth-success") {
-						if (lastFMPopup) {
-							lastFMPopup.close();
-						}
-						this.refreshPreferences();
-					}
-				},
-				false
-			);
-		},
+					refreshPreferences();
+				}
+			},
+			false
+		);
+	}
 
-		async unlinkLastFM() {
-			await lastFMUnlink();
-			this.refreshPreferences();
-		},
-	},
-	getters: {
-		isLoggedIn: state => !!state.authToken,
-		theme: state => state.themeBasePreview || state.themeBase || getDefaultBaseID(),
-		accent: state => state.themeAccentPreview || state.themeAccent || getDefaultAccent(),
-	},
+	async function login(username: string, password: string) {
+		const authorization = await doLogin(username, password);
+
+		reset();
+		name.value = username;
+		authToken.value = authorization.token;
+		isAdmin.value = authorization.is_admin;
+		saveToDisk();
+
+		await refreshPreferences(); // TODO Make a preferences store for this
+	}
+
+	function logout() {
+		reset();
+		saveToDisk();
+	}
+
+	function previewThemeBase(themeBase: string) {
+		themeBasePreview.value = themeBase;
+	}
+
+	function previewThemeAccent(themeAccent: string) {
+		themeAccentPreview.value = themeAccent;
+	}
+
+	async function refreshPreferences() {
+		const preferences = await getPreferences();
+		lastFMUsername.value = preferences.lastfm_username || null;
+		themeBase.value = preferences.web_theme_base || null;
+		themeAccent.value = preferences.web_theme_accent || null;
+	}
+
+	function reset() {
+		name.value = null;
+		authToken.value = null;
+		isAdmin.value = false;
+		lastFMUsername.value = null;
+		themeBase.value = null;
+		themeAccent.value = null;
+		themeBasePreview.value = null;
+		themeAccentPreview.value = null;
+	}
+
+	async function saveTheme() {
+		await putPreferences(theme.value, accent.value);
+		refreshPreferences();
+	}
+
+	function saveToDisk() {
+		localStorage[STORAGE_USERNAME] = name.value;
+		localStorage[STORAGE_AUTH_TOKEN] = authToken.value;
+		localStorage[STORAGE_IS_ADMIN] = isAdmin.value;
+	}
+
+	async function unlinkLastFM() {
+		await lastFMUnlink();
+		refreshPreferences();
+	}
+
+	const accent = computed(() => themeAccentPreview.value || themeAccent.value || getDefaultAccent());
+	const isLoggedIn = computed(() => !!authToken.value);
+	const theme = computed(() => themeBasePreview.value || themeBase.value || getDefaultBaseID());
+
+	return {
+		authToken,
+		lastFMUsername,
+		name,
+
+		linkLastFM,
+		login,
+		logout,
+		previewThemeAccent,
+		previewThemeBase,
+		refreshPreferences,
+		saveTheme,
+		unlinkLastFM,
+
+		accent,
+		isLoggedIn,
+		theme,
+	};
 });
 
 if (import.meta.hot) {

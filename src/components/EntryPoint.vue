@@ -23,7 +23,6 @@ import { useUserStore } from "@/stores/user";
 		// TODO find a better home for this
 		if (user.isLoggedIn) {
 			user.refreshPreferences();
-			playlist.loadFromDisk();
 		}
 	});
 </script>

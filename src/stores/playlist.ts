@@ -1,197 +1,224 @@
-import { markRaw, toRaw } from "vue";
+import { markRaw, Ref, ref, toRaw, watch } from "vue";
 import { flatten, getPlaylist } from "@/api/endpoints";
 import { save, load } from "@/disk";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { Song } from "@/api/dto";
+import { useUserStore } from "@/stores/user";
 
-export type PlaylistState = {
-	name: string;
-	songs: Song[];
-	currentTrack: Song | null;
-	playbackOrder: string; // TODO should be an enum, not nullable
-	elapsedSeconds: number;
-};
+export const usePlaylistStore = defineStore("playlist", () => {
+	const name = ref("");
+	const songs: Ref<Song[]> = ref(markRaw([]));
+	const currentTrack: Ref<Song | null> = ref(null);
+	const playbackOrder = ref("default"); // TODO should be an enum, not nullable
+	const elapsedSeconds = ref(0);
 
-function enqueue(state: PlaylistState, tracks: Song[]) {
-	state.songs = markRaw(state.songs.concat(tracks));
-	if (!state.currentTrack && state.songs.length > 0) {
-		state.currentTrack = state.songs[0];
-	}
-}
+	reset();
 
-function advance(state: PlaylistState, delta: number): Song | null {
-	const playbackOrder = state.playbackOrder;
-	const tracks = state.songs;
-	const numTracks = tracks.length;
-	const currentTrack = state.currentTrack;
+	const userStore = useUserStore();
+	watch(
+		() => userStore.name,
+		() => {
+			loadFromDisk();
+		}
+	);
 
-	let newTrack = null;
-	if (numTracks > 0) {
-		if (playbackOrder == "random") {
-			const newTrackIndex = Math.floor(Math.random() * numTracks);
-			newTrack = tracks[newTrackIndex];
-		} else if (playbackOrder == "repeat-track") {
-			newTrack = currentTrack;
-		} else {
-			const rawCurrentTrack = toRaw(currentTrack);
-			let currentTrackIndex = -1;
-			if (rawCurrentTrack) {
-				currentTrackIndex = tracks.indexOf(rawCurrentTrack);
-			}
+	function advance(delta: number): Song | null {
+		const order = playbackOrder.value;
+		const tracks = songs.value;
+		const numTracks = tracks.length;
 
-			if (currentTrackIndex < 0) {
-				newTrack = tracks[0];
+		let newTrack = null;
+		if (numTracks > 0) {
+			if (order == "random") {
+				const newTrackIndex = Math.floor(Math.random() * numTracks);
+				newTrack = tracks[newTrackIndex];
+			} else if (order == "repeat-track") {
+				newTrack = currentTrack.value;
 			} else {
-				const newTrackIndex = currentTrackIndex + delta;
-				if (newTrackIndex >= 0 && newTrackIndex < numTracks) {
-					newTrack = tracks[newTrackIndex];
-				} else if (playbackOrder == "repeat-all") {
-					if (delta > 0) {
-						newTrack = tracks[0];
-					} else {
-						newTrack = tracks[numTracks - 1];
+				const rawCurrentTrack = toRaw(currentTrack.value);
+				let currentTrackIndex = -1;
+				if (rawCurrentTrack) {
+					currentTrackIndex = tracks.indexOf(rawCurrentTrack);
+				}
+
+				if (currentTrackIndex < 0) {
+					newTrack = tracks[0];
+				} else {
+					const newTrackIndex = currentTrackIndex + delta;
+					if (newTrackIndex >= 0 && newTrackIndex < numTracks) {
+						newTrack = tracks[newTrackIndex];
+					} else if (order == "repeat-all") {
+						if (delta > 0) {
+							newTrack = tracks[0];
+						} else {
+							newTrack = tracks[numTracks - 1];
+						}
 					}
 				}
 			}
 		}
+
+		if (newTrack != null) {
+			currentTrack.value = newTrack;
+			elapsedSeconds.value = 0;
+		}
+
+		return newTrack;
 	}
 
-	if (newTrack != null) {
-		state.currentTrack = newTrack;
-		state.elapsedSeconds = 0;
+	function clear() {
+		songs.value = markRaw([]);
+		name.value = "";
+		savePlaylist();
 	}
 
-	return newTrack;
-}
+	function enqueue(tracks: Song[]) {
+		songs.value = markRaw(songs.value.concat(tracks));
+		if (!currentTrack.value && songs.value.length > 0) {
+			currentTrack.value = songs.value[0];
+		}
+	}
 
-export const usePlaylistStore = defineStore("playlist", {
-	state: (): PlaylistState => ({
-		name: "",
-		songs: markRaw([]),
-		currentTrack: null,
-		playbackOrder: "default",
-		elapsedSeconds: 0,
-	}),
-	actions: {
-		clear() {
-			this.songs = markRaw([]);
-			this.name = "";
-			this.savePlaylist();
-		},
+	function loadFromDisk() {
+		const playbackOrder = load("playbackOrder");
+		if (playbackOrder) {
+			playbackOrder.value = playbackOrder;
+		}
+		const tracks = load("playlist");
+		if (tracks) {
+			songs.value = markRaw(tracks);
+		}
+		const currentTrackIndex = load("currentTrackIndex");
+		if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < songs.value.length) {
+			currentTrack.value = songs.value[currentTrackIndex];
+		}
+		const elapsedSeconds = load("elapsedSeconds");
+		if (currentTrack.value && elapsedSeconds) {
+			elapsedSeconds.value = elapsedSeconds;
+		}
+		name.value = load("playlistName");
+	}
 
-		removeTrack(track: Song) {
-			const trackIndex = this.songs.indexOf(track);
-			if (trackIndex >= 0) {
-				let newSongs = [...this.songs];
-				newSongs.splice(trackIndex, 1);
-				this.songs = markRaw(newSongs);
-			}
-			this.savePlaylist();
-		},
+	function next(): Song | null {
+		const advancedTo = advance(1);
+		savePlaybackState();
+		return advancedTo;
+	}
 
-		shuffle() {
-			let shuffled = [...this.songs];
-			for (let i = shuffled.length - 1; i > 0; i--) {
-				let j = Math.floor(Math.random() * (i + 1));
-				[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-			}
-			this.songs = markRaw(shuffled);
-			this.savePlaylist();
-		},
+	function play(track: Song) {
+		if (track != currentTrack.value) {
+			currentTrack.value = track;
+			elapsedSeconds.value = 0;
+		}
+		savePlaybackState();
+	}
 
-		setPlaybackOrder(order: string) {
-			this.playbackOrder = order;
-			this.savePlaybackState();
-		},
+	function previous(): Song | null {
+		const advancedTo = advance(-1);
+		savePlaybackState();
+		return advancedTo;
+	}
 
-		setName(name: string) {
-			this.name = name;
-			this.savePlaylist();
-		},
+	async function queueDirectory(path: string) {
+		const tracks = await flatten(path);
+		enqueue(tracks);
+		savePlaylist();
+	}
 
-		setElapsedSeconds(seconds: number) {
-			this.elapsedSeconds = seconds;
-			this.savePlaybackState();
-		},
+	async function queuePlaylist(playlistName: string) {
+		const playlistSongs: Song[] = await getPlaylist(playlistName);
+		songs.value = markRaw(playlistSongs);
+		name.value = playlistName;
+		savePlaylist();
+	}
 
-		play(track: Song) {
-			if (track != this.currentTrack) {
-				this.currentTrack = track;
-				this.elapsedSeconds = 0;
-			}
-			this.savePlaybackState();
-		},
+	function queueTracks(tracks: Song[]) {
+		enqueue(tracks);
+		savePlaylist();
+	}
 
-		next(): Song | null {
-			const advancedTo = advance(this, 1);
-			this.savePlaybackState();
-			return advancedTo;
-		},
+	function removeTrack(track: Song) {
+		const trackIndex = songs.value.indexOf(track);
+		if (trackIndex >= 0) {
+			let newSongs = [...songs.value];
+			newSongs.splice(trackIndex, 1);
+			songs.value = markRaw(newSongs);
+		}
+		savePlaylist();
+	}
 
-		previous(): Song | null {
-			const advancedTo = advance(this, -1);
-			this.savePlaybackState();
-			return advancedTo;
-		},
+	function reset() {
+		name.value = "";
+		playbackOrder.value = "default";
+		currentTrack.value = null;
+		songs.value = markRaw([]);
+		elapsedSeconds.value = 0;
+	}
 
-		queueTracks(tracks: Song[]) {
-			enqueue(this, tracks);
-			this.savePlaylist();
-		},
+	function savePlaybackState() {
+		const rawCurrentTrack = toRaw(currentTrack.value);
+		let currentTrackIndex = -1;
+		if (rawCurrentTrack) {
+			currentTrackIndex = songs.value.indexOf(rawCurrentTrack);
+		}
 
-		async queueDirectory(path: string) {
-			const tracks = await flatten(path);
-			enqueue(this, tracks);
-			this.savePlaylist();
-		},
+		save("currentTrackIndex", currentTrackIndex);
+		save("playbackOrder", playbackOrder.value);
+		save("elapsedSeconds", elapsedSeconds.value);
+	}
 
-		async queuePlaylist(name: string) {
-			const songs: Song[] = await getPlaylist(name);
-			this.songs = markRaw(songs);
-			this.name = name;
-			this.savePlaylist();
-		},
+	function savePlaylist() {
+		if (save("playlist", songs.value)) {
+			save("playlistName", name.value);
+			savePlaybackState();
+		}
+	}
 
-		savePlaylist() {
-			if (save("playlist", this.songs)) {
-				save("playlistName", this.name);
-				this.savePlaybackState();
-			}
-		},
+	function setElapsedSeconds(seconds: number) {
+		elapsedSeconds.value = seconds;
+		savePlaybackState();
+	}
 
-		savePlaybackState() {
-			const rawCurrentTrack = toRaw(this.currentTrack);
-			let currentTrackIndex = -1;
-			if (rawCurrentTrack) {
-				currentTrackIndex = this.songs.indexOf(rawCurrentTrack);
-			}
+	function setName(newName: string) {
+		name.value = newName;
+		savePlaylist();
+	}
 
-			save("currentTrackIndex", currentTrackIndex);
-			save("playbackOrder", this.playbackOrder);
-			save("elapsedSeconds", this.elapsedSeconds);
-		},
+	function setPlaybackOrder(order: string) {
+		playbackOrder.value = order;
+		savePlaybackState();
+	}
 
-		loadFromDisk() {
-			this.$reset();
-			const playbackOrder = load("playbackOrder");
-			if (playbackOrder) {
-				this.playbackOrder = playbackOrder;
-			}
-			const tracks = load("playlist");
-			if (tracks) {
-				this.songs = markRaw(tracks);
-			}
-			const currentTrackIndex = load("currentTrackIndex");
-			if (currentTrackIndex && currentTrackIndex >= 0 && currentTrackIndex < this.songs.length) {
-				this.currentTrack = this.songs[currentTrackIndex];
-			}
-			const elapsedSeconds = load("elapsedSeconds");
-			if (this.currentTrack && elapsedSeconds) {
-				this.elapsedSeconds = elapsedSeconds;
-			}
-			this.name = load("playlistName");
-		},
-	},
+	function shuffle() {
+		let shuffled = [...songs.value];
+		for (let i = shuffled.length - 1; i > 0; i--) {
+			let j = Math.floor(Math.random() * (i + 1));
+			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+		}
+		songs.value = markRaw(shuffled);
+		savePlaylist();
+	}
+
+	return {
+		currentTrack,
+		elapsedSeconds,
+		name,
+		playbackOrder,
+		songs,
+
+		clear,
+		next,
+		play,
+		previous,
+		queueDirectory,
+		queuePlaylist,
+		queueTracks,
+		removeTrack,
+		setElapsedSeconds,
+		setPlaybackOrder,
+		setName,
+		shuffle,
+	};
 });
 
 if (import.meta.hot) {

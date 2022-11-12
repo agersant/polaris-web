@@ -16,9 +16,12 @@ export const useInitialSetupStore = defineStore("initialSetup", () => {
 	const isStateKnown = computed(() => hasAnyUsers.value != null);
 	const isComplete = computed(() => hasAnyUsers.value == true);
 
-	watch(usersStore.listing, () => {
-		refresh();
-	});
+	watch(
+		() => usersStore.listing,
+		() => {
+			refresh();
+		}
+	);
 
 	return { refresh, isStateKnown, isComplete };
 });
