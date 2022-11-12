@@ -27,10 +27,8 @@ export const useUsersStore = defineStore("users", {
 				this.refresh();
 			} else {
 				const user = useUserStore();
-				const initialSetup = useInitialSetupStore();
 				await user.login(newUser.name, newUser.password);
 				await this.refresh();
-				await initialSetup.refresh(); // TODO bad coupling
 			}
 		},
 

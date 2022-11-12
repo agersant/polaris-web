@@ -1,24 +1,26 @@
+import { computed, Ref, ref, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { initialSetup } from "@/api/endpoints";
+import { useUsersStore } from "@/stores/users";
 
-export type InitialSetupState = {
-	hasAnyUsers: boolean | null;
-};
+export const useInitialSetupStore = defineStore("initialSetup", () => {
+	const usersStore = useUsersStore();
 
-export const useInitialSetupStore = defineStore("initialSetup", {
-	state: (): InitialSetupState => ({
-		hasAnyUsers: null,
-	}),
-	actions: {
-		async refresh() {
-			const dto = await initialSetup();
-			this.hasAnyUsers = dto.has_any_users;
-		},
-	},
-	getters: {
-		isStateKnown: state => state.hasAnyUsers != null,
-		isComplete: state => state.hasAnyUsers == true,
-	},
+	const hasAnyUsers: Ref<boolean | null> = ref(null);
+
+	async function refresh() {
+		const dto = await initialSetup();
+		hasAnyUsers.value = dto.has_any_users;
+	}
+
+	const isStateKnown = computed(() => hasAnyUsers.value != null);
+	const isComplete = computed(() => hasAnyUsers.value == true);
+
+	watch(usersStore.listing, () => {
+		refresh();
+	});
+
+	return { isStateKnown, isComplete };
 });
 
 if (import.meta.hot) {
