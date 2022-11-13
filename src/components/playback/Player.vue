@@ -207,7 +207,14 @@ function playFromStart() {
 		}
 		paused.value = false;
 		buffering.value = false;
-		await htmlAudio.value.play();
+		try {
+			await htmlAudio.value.play();
+		} catch (e) {
+			// https://developer.chrome.com/blog/play-request-was-interrupted/
+			// This .play() promise will be rejected if we skip to a different
+			// song while it is in progress.
+			return;
+		}
 		if (!htmlAudio.value) {
 			return;
 		}
