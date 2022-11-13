@@ -16,7 +16,7 @@
 		"paths": {
 			"@/*": ["src/*"]
 		},
-		"types": ["cypress", "@4tw/cypress-drag-drop"]
+		"types": ["cypress"]
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
 	"references": [

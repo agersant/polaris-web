@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import "../support/commands";
+import "../support/drag-and-drop";
 
 describe("Playlist", function () {
 	beforeEach(function () {

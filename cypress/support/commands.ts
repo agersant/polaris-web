@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-import "@4tw/cypress-drag-drop";
-
 const getAuthToken = () => {
 	return cy.request("POST", "/api/auth", {
 		username: "testUser",
