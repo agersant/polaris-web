@@ -52,8 +52,7 @@ describe("Login", function () {
 		cy.hash().should("contain", "browse");
 		cy.get("[data-cy=logout]").click();
 		cy.visit("/#/random");
-		// Stopped working when upgrading to vue-router v4
-		// cy.hash().should('contain', 'auth')
+		cy.hash().should("contain", "auth");
 		cy.get("[data-cy=username]");
 	});
 
@@ -73,8 +72,12 @@ describe("Login", function () {
 		cy.visit("/");
 		cy.get("[data-cy=username]").type("testUser");
 		cy.get("[data-cy=password]").type("testPassword{enter}");
-
 		cy.hash().should("contain", "browse");
+
+		cy.on("uncaught:exception", (e, runnable, promise) => {
+			// Allow uncaught promise rejection (from 401 request with bad token)
+			return promise == undefined;
+		});
 		cy.window().then(window => window.localStorage.setItem("authToken", "badToken"));
 		cy.visit("/");
 		cy.hash().should("contain", "auth");

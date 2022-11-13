@@ -7,7 +7,7 @@
 			</li>
 		</ul>
 		<ul>
-			<li v-on:click="onClickLogout" v-bind:class="{ noselect: 1 }" data-cy="logout">
+			<li v-on:click="user.logout" v-bind:class="{ noselect: 1 }" data-cy="logout">
 				<i class="noselect material-icons md-18">exit_to_app</i>
 			</li>
 		</ul>
@@ -72,11 +72,6 @@ watch(() => route.path,
 
 function onClickButton(button: SidebarButton) {
 	router.push(button.url).catch(err => {});
-}
-
-function onClickLogout() {
-	user.logout();
-	router.push("/").catch(err => {});
 }
 </script>
 

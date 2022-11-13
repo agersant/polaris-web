@@ -1,5 +1,0 @@
-{
-	"baseUrl": "http://localhost:5050",
-	"defaultCommandTimeout": 15000,
-	"supportFile": false
-}

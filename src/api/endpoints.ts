@@ -57,7 +57,6 @@ async function request(endpoint: string, options?: RequestInit): Promise<Respons
 	const response = await fetch("api" + endpoint, options);
 	if (response.status == 401) {
 		user.logout();
-		Router.push("/").catch(err => {});
 		throw response;
 	}
 
@@ -81,14 +80,14 @@ export async function initialSetup(): Promise<InitialSetup> {
 }
 
 export async function login(username: string, password: string): Promise<Authorization> {
-	const authorization = await request("/auth", {
+	const response = await request("/auth", {
 		method: "POST",
 		body: JSON.stringify({ username: username, password: password }),
 		headers: {
 			"Content-type": "application/json",
 		},
 	});
-	return authorization.json();
+	return response.json();
 }
 
 export async function users(): Promise<User[]> {

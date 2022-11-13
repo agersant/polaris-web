@@ -1,19 +1,15 @@
 import { useUserStore } from "@/stores/user";
 
-export function save(key: string, value: any) {
-	const user = useUserStore();
-	if (!user.name) {
-		return;
-	}
+export function saveForAnyUser(key: string, value: any): boolean {
 	if (value == null || value == undefined) {
-		localStorage.removeItem(user.name + "." + key);
+		localStorage.removeItem(key);
 		return true;
 	}
 	if (typeof value == "object") {
 		value = JSON.stringify(value);
 	}
 	try {
-		localStorage[user.name + "." + key] = value;
+		localStorage[key] = value;
 		return true;
 	} catch (e) {
 		console.log("Could not write to local storage: " + key);
@@ -21,14 +17,26 @@ export function save(key: string, value: any) {
 	}
 }
 
-export function load(key: string): any {
-	const user = useUserStore();
-	if (!user.name) {
-		return;
-	}
-	let value = localStorage[user.name + "." + key];
+export function loadForAnyUser(key: string): any {
+	let value = localStorage[key];
 	if (value && value[0] == "[") {
 		value = JSON.parse(value);
 	}
 	return value;
+}
+
+export function saveForCurrentUser(key: string, value: any): boolean {
+	const user = useUserStore();
+	if (!user.name) {
+		return false;
+	}
+	return saveForAnyUser(user.name + "." + key, value);
+}
+
+export function loadForCurrentUser(key: string): any {
+	const user = useUserStore();
+	if (!user.name) {
+		return;
+	}
+	return loadForAnyUser(user.name + "." + key);
 }

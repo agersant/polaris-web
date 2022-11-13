@@ -15,10 +15,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 
-const router = useRouter();
 const user = useUserStore();
 
 const username = ref("");
@@ -29,10 +27,9 @@ async function doLogin(event: Event) {
 	badCredentials.value = false;
 	try {
 		await user.login(username.value, password.value);
-		router.push("/").catch(err => { });
-	} catch (error) {
-		if (error instanceof Response) {
-			if (error.status == 401) {
+	} catch (e) {
+		if (e instanceof Response) {
+			if (e.status == 401) {
 				badCredentials.value = true;
 			}
 		}

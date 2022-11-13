@@ -1,5 +1,7 @@
-import { computed, Ref, ref } from "vue";
+import { computed, Ref, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { defineStore, acceptHMRUpdate } from "pinia";
+import { loadForAnyUser, saveForAnyUser } from "@/disk";
 import { login as doLogin } from "@/api/endpoints";
 
 const STORAGE_USERNAME = "username";
@@ -16,9 +18,16 @@ export const useUserStore = defineStore("user", () => {
 	reset();
 	loadFromDisk();
 
-	async function login(username: string, password: string) {
-		const authorization = await doLogin(username, password);
+	const router = useRouter();
+	watch(
+		() => isLoggedIn.value,
+		() => {
+			router.push("/").catch(err => {});
+		}
+	);
 
+	async function login(username: string, password: string): Promise<void> {
+		const authorization = await doLogin(username, password);
 		reset();
 		name.value = username;
 		authToken.value = authorization.token;
@@ -28,9 +37,9 @@ export const useUserStore = defineStore("user", () => {
 
 	function loadFromDisk() {
 		reset();
-		name.value = localStorage[STORAGE_USERNAME];
-		authToken.value = localStorage[STORAGE_AUTH_TOKEN];
-		isAdmin.value = localStorage[STORAGE_IS_ADMIN];
+		name.value = loadForAnyUser(STORAGE_USERNAME);
+		authToken.value = loadForAnyUser(STORAGE_AUTH_TOKEN);
+		isAdmin.value = loadForAnyUser(STORAGE_IS_ADMIN);
 	}
 
 	function logout() {
@@ -45,9 +54,9 @@ export const useUserStore = defineStore("user", () => {
 	}
 
 	function saveToDisk() {
-		localStorage[STORAGE_USERNAME] = name.value;
-		localStorage[STORAGE_AUTH_TOKEN] = authToken.value;
-		localStorage[STORAGE_IS_ADMIN] = isAdmin.value;
+		saveForAnyUser(STORAGE_USERNAME, name.value);
+		saveForAnyUser(STORAGE_AUTH_TOKEN, authToken.value);
+		saveForAnyUser(STORAGE_IS_ADMIN, isAdmin.value);
 	}
 
 	return {

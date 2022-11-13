@@ -55,14 +55,16 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
 import { refDebounced } from "@vueuse/core";
 import notify from "@/notify";
-import { load, save } from "@/disk";
+import { loadForCurrentUser, saveForCurrentUser } from "@/disk";
 import { lastFMNowPlaying, lastFMScrobble, makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
+import { usePreferencesStore } from "@/stores/preferences";
 import { formatDuration, formatTitle } from "@/format";
 import CoverArt from "@/components/CoverArt.vue";
 import Spinner from "@/components/Spinner.vue";
 
 const playlist = usePlaylistStore();
+const preferences = usePreferencesStore();
 
 const volume = ref(1);
 const unmutedVolume = ref(1);
@@ -130,7 +132,7 @@ watch(volume, (to, from) => {
 	if (htmlAudio.value) {
 		htmlAudio.value.volume = Math.pow(to, 3);
 	}
-	save("volume", to);
+	saveForCurrentUser("volume", to);
 });
 
 onBeforeUnmount(() => {
@@ -140,7 +142,7 @@ onBeforeUnmount(() => {
 onMounted(() => {
 	mounted.value = true;
 
-	const savedVolume = parseFloat(load("volume"));
+	const savedVolume = parseFloat(loadForCurrentUser("volume"));
 	if (!isNaN(savedVolume)) {
 		volume.value = savedVolume;
 		if (savedVolume > 0) {
@@ -193,7 +195,7 @@ function handleCurrentTrackChanged() {
 	canScrobble.value = true;
 	updateMediaSession();
 	updateWindowTitle();
-	if (currentTrack.value) {
+	if (currentTrack.value && preferences.lastFMUsername) {
 		lastFMNowPlaying(currentTrack.value.path);
 	}
 }
@@ -286,7 +288,7 @@ function updateScrobble() {
 	if (!canScrobble.value || !currentTrack.value) {
 		return;
 	}
-	const shouldScrobble = duration.value > 30 && (trackProgress.value > 0.5 || secondsPlayed.value > 4 * 60);
+	const shouldScrobble = preferences.lastFMUsername && duration.value > 30 && (trackProgress.value > 0.5 || secondsPlayed.value > 4 * 60);
 	if (shouldScrobble) {
 		lastFMScrobble(currentTrack.value.path);
 		canScrobble.value = false;
