@@ -16,7 +16,7 @@ jobs:
               run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
             - name: Retrieve cached Polaris executable
               id: cache
-              uses: actions/cache@v1
+              uses: actions/cache@v3
               with:
                   path: polaris/target
                   key: polaris-binary-${{ hashFiles('polaris-version') }}
