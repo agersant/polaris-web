@@ -1,7 +1,9 @@
 <template>
 	<div>
 		<span v-for="tab in tabs" v-bind:key="tab.name" v-on:click="onClickTab(tab)"
-			v-bind:class="{ noselect: 1, selected: currentTab == tab }">{{ tab.name }}</span>
+			v-bind:class="{ noselect: 1, selected: currentTab == tab }" v-bind:data-cy="tab.cy">
+			{{ tab.name }}
+		</span>
 	</div>
 </template>
 
@@ -11,6 +13,7 @@ import { ref, onMounted, Ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 type TabDefinition = {
+	cy: string,
 	name: string,
 	path: string,
 };
@@ -23,11 +26,11 @@ const tabs: Ref<TabDefinition[]> = ref([]);
 const currentTab: Ref<TabDefinition | null> = ref(null);
 
 onMounted(()=> {
-	tabs.value = [{ name: "Preferences", path: "preferences" }];
+	tabs.value = [{ cy:"preferences", name: "Preferences", path: "preferences" }];
 	if (user.isAdmin) {
-		tabs.value.push({ name: "Collection", path: "collection" });
-		tabs.value.push({ name: "Users", path: "users" });
-		tabs.value.push({ name: "Dynamic DNS", path: "ddns" });
+		tabs.value.push({ cy:"collection", name: "Collection", path: "collection" });
+		tabs.value.push({ cy:"users", name: "Users", path: "users" });
+		tabs.value.push({ cy:"ddns", name: "Dynamic DNS", path: "ddns" });
 	}
 	updateCurrentTab();
 });

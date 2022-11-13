@@ -1,6 +1,10 @@
-html, body, .theme-base, .theme-accent, #vue-container {
+html, body, #vue-container {
 	height: 100%;
 	font-size: 100%;
+}
+
+body {
+	background-color: var(--theme-background);
 }
 
 * {

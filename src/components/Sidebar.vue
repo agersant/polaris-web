@@ -1,8 +1,8 @@
 <template>
-	<div>
+	<div data-cy="sidebar">
 		<ul class="main-nav">
 			<li v-for="button in buttons" v-bind:key="button.url" v-on:click="onClickButton(button)"
-				v-bind:class="{ noselect: 1, selected: button.pattern.test(currentURL) }">
+				v-bind:data-cy="button.cy" v-bind:class="{ noselect: 1, selected: button.pattern.test(currentURL) }">
 				<i class="noselect material-icons md-18">{{ button.icon }}</i>
 			</li>
 		</ul>
@@ -24,6 +24,7 @@ const router = useRouter();
 const user = useUserStore();
 
 type SidebarButton = {
+	cy: string,
 	icon: string,
 	url: string,
 	pattern: RegExp,
@@ -32,31 +33,37 @@ type SidebarButton = {
 const currentURL = ref("");
 const buttons: SidebarButton[] = [
 	{
+		cy: "browse",
 		icon: "library_music",
 		url: "/browse",
 		pattern: new RegExp("(browse|^/$)"),
 	},
 	{
+		cy: "random",
 		icon: "shuffle",
 		url: "/random",
 		pattern: new RegExp("random"),
 	},
 	{
+		cy: "recent",
 		icon: "new_releases",
 		url: "/recent",
 		pattern: new RegExp("recent"),
 	},
 	{
+		cy: "playlists",
 		icon: "playlist_play",
 		url: "/playlists",
 		pattern: new RegExp("playlist"),
 	},
 	{
+		cy: "search",
 		icon: "search",
-	 	url: "/search",
-	 	pattern: new RegExp("search"),
+		url: "/search",
+		pattern: new RegExp("search"),
 	},
 	{
+		cy: "settings",
 		icon: "settings",
 		url: "/settings/preferences",
 		pattern: new RegExp("settings"),

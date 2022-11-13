@@ -57,7 +57,6 @@ import Playlist from "./playback/Playlist.vue";
 .pane,
 .player {
 	overflow-x: hidden;
-	background-color: var(--theme-background);
 }
 
 .paneHeader {

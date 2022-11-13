@@ -10,18 +10,19 @@
 				</thead>
 				<tr>
 					<td>
-						<select ref="base" @input="onBaseSelected" v-bind:value="preferences.effectiveTheme">
+						<select @input="onBaseSelected" v-bind:value="preferences.effectiveTheme" data-cy="theme">
 							<option v-for="theme of Object.values(Theme)" v-bind:key="theme" v-bind:value="theme">
 								{{ getThemeName(theme) }}
 							</option>
 						</select>
 					</td>
 					<td class="accent-color">
-						<input ref="accent" type="color" v-bind:value="preferences.effectiveAccentColor"
-							@input="onAccentHovered" @change="onAccentSelected" />
+						<input type="color" v-bind:value="preferences.effectiveAccentColor" @input="onAccentHovered"
+							@change="onAccentSelected" data-cy="accent-color" />
 					</td>
 					<td>
-						<i @click="preferences.resetTheming" class="noselect material-icons md-18">restore</i>
+						<i @click="preferences.resetTheming" class="noselect material-icons md-18"
+							data-cy="reset-theming">restore</i>
 					</td>
 				</tr>
 			</table>
