@@ -39,7 +39,7 @@ export const useUserStore = defineStore("user", () => {
 		reset();
 		name.value = loadForAnyUser(STORAGE_USERNAME);
 		authToken.value = loadForAnyUser(STORAGE_AUTH_TOKEN);
-		isAdmin.value = loadForAnyUser(STORAGE_IS_ADMIN);
+		isAdmin.value = loadForAnyUser(STORAGE_IS_ADMIN) === "true";
 	}
 
 	function logout() {
