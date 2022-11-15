@@ -52,7 +52,7 @@ describe("Users", function () {
 		cy.get("[data-cy=end-create-user").click();
 		cy.wait("@postUser");
 		cy.wait("@getUsers");
-		cy.get("[data-cy=delete-user]").not("[disabled]").click();
+		cy.get("[data-cy=delete-user]:not([disabled])").click();
 		cy.wait("@deleteUser");
 		cy.wait("@getUsers");
 
