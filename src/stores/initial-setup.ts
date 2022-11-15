@@ -17,7 +17,7 @@ export const useInitialSetupStore = defineStore("initialSetup", () => {
 	}
 
 	watch(
-		() => usersStore.listing,
+		() => usersStore.listing.length == 0,
 		() => {
 			refresh();
 		},

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="username">
-			<i class="noselect material-icons md-24">account_box</i><span>{{ user.name }}</span>
+			<i class="noselect material-icons md-24">account_box</i><span data-cy="username">{{ user.name }}</span>
 		</div>
 		<div class="details">
 			<div class="admin">
@@ -18,7 +18,8 @@
 					<StateButton v-if="passwordEditingState" v-bind:disabled="!newPassword" v-bind:submit="true"
 						v-bind:states="passwordEditingStates" v-bind:state="passwordEditingState" />
 				</form>
-				<button class="danger delete" v-bind:disabled="isSelf(user)" @click="deleteUser">Delete</button>
+				<button class="danger delete" v-bind:disabled="isSelf(user)" @click="deleteUser"
+					data-cy="delete-user">Delete</button>
 			</div>
 		</div>
 	</div>

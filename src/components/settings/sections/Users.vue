@@ -7,18 +7,18 @@
 			</li>
 		</ul>
 
-		<button v-if="!newUser" v-on:click="beginCreateUser">Create user</button>
+		<button v-if="!newUser" v-on:click="beginCreateUser" data-cy="begin-create-user">New user</button>
 		<form v-if="newUser" v-on:submit.prevent="endCreateUser">
 			<label>Create User</label>
 			<div class="field">
 				<label for="name">Username</label>
-				<input id="name" type="text" v-model="newUser.name" placeholder="" />
+				<input id="name" type="text" v-model="newUser.name" placeholder="" data-cy="new-user-name" />
 				<label for="password">Password</label>
 				<p v-if="!validatePassword(newUser.password)" class="tip error">The password cannot be blank.</p>
 				<input id="password" type="password" autocomplete="new-password" v-model="newUser.password"
-					placeholder="" />
-				<button class="submit" v-bind:disabled="!validateNewUser()" submit="true"
-					v-on:click="endCreateUser">Create user</button>
+					placeholder="" data-cy="new-user-password" />
+				<button class="submit" v-bind:disabled="!validateNewUser()" submit="true" v-on:click="endCreateUser"
+					data-cy="end-create-user">Create user</button>
 			</div>
 		</form>
 	</form>
@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, Ref } from "vue";
-import { NewUser, User as UserDTO } from "@/api/dto";
+import { NewUser } from "@/api/dto";
 import { useUsersStore } from "@/stores/users";
 import User from "@/components/settings/sections/User.vue";
 
