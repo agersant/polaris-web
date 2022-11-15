@@ -99,11 +99,26 @@ Cypress.Commands.add("login", () => {
 	});
 });
 
+Cypress.Commands.add("navigateToRecent", () => {
+	cy.get("[data-cy=sidebar]").get("[data-cy=recent]").click();
+});
+
+Cypress.Commands.add("navigateToRandom", () => {
+	cy.get("[data-cy=sidebar]").get("[data-cy=random]").click();
+});
+
+Cypress.Commands.add("navigateToSettings", () => {
+	cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
+});
+
 declare global {
 	namespace Cypress {
 		interface Chainable<Subject> {
 			completeInitialSetup(): void;
 			login(): void;
+			navigateToRecent(): void;
+			navigateToRandom(): void;
+			navigateToSettings(): void;
 			wipeInitialSetup(): void;
 		}
 	}

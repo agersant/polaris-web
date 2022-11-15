@@ -13,7 +13,7 @@ describe("Preferences", function () {
 		cy.intercept({ method: "PUT", url: "/api/preferences" }).as("putPreferences");
 
 		cy.visit("/");
-		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
+		cy.navigateToSettings();
 		cy.get("[data-cy=preferences]").click();
 		cy.get("[data-cy=theme]").select("Dark");
 		cy.get("body").should("have.css", "background-color", "rgb(34, 34, 34)");
@@ -27,14 +27,14 @@ describe("Preferences", function () {
 		cy.intercept({ method: "PUT", url: "/api/preferences" }).as("putPreferences");
 
 		cy.visit("/");
-		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
+		cy.navigateToSettings();
 		cy.get("[data-cy=preferences]").click();
 		cy.get("[data-cy=accent-color]").invoke("val", "#ff0000").trigger("input").trigger("change");
 		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").should("have.css", "background-color", "rgb(255, 0, 0)");
 		cy.wait("@putPreferences");
 
 		cy.visit("/");
-		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
+		cy.navigateToSettings();
 		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").should("have.css", "background-color", "rgb(255, 0, 0)");
 	});
 
@@ -43,7 +43,7 @@ describe("Preferences", function () {
 
 		// Setup non default preferences
 		cy.visit("/");
-		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
+		cy.navigateToSettings();
 		cy.get("[data-cy=preferences]").click();
 		cy.get("[data-cy=theme]").select("Blue");
 		cy.wait("@putPreferences");
@@ -58,7 +58,7 @@ describe("Preferences", function () {
 
 		// Verify theming still correct after reload
 		cy.visit("/");
-		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
+		cy.navigateToSettings();
 		cy.get("body").should("have.css", "background-color", "rgb(255, 255, 255)");
 		cy.get("[data-cy=sidebar]").get("[data-cy=settings]").should("have.css", "background-color", "rgb(68, 200, 241)");
 	});

@@ -9,7 +9,8 @@ describe("Recent Albums", function () {
 	});
 
 	it("shows albums", () => {
-		cy.visit("/#/recent");
+		cy.visit("/");
+		cy.navigateToRecent();
 		cy.contains("Recent");
 		cy.get("[data-cy=album]").should("have.length", 3);
 	});

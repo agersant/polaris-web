@@ -9,7 +9,8 @@ describe("Random Albums", function () {
 	});
 
 	it("shows albums", () => {
-		cy.visit("/#/random");
+		cy.visit("/");
+		cy.navigateToRandom();
 		cy.contains("Random");
 		cy.get("[data-cy=album]").should("have.length", 3);
 	});

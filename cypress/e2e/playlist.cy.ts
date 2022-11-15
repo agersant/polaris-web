@@ -57,14 +57,16 @@ describe("Playlist", function () {
 	});
 
 	it("can drag and drop an album from random", () => {
-		cy.visit("/#/random");
+		cy.visit("/");
+		cy.navigateToRandom();
 		cy.contains("Random");
 		cy.get("[data-cy=album]").contains("Hunted").drag("[data-cy=playlist]");
 		cy.get("[data-cy=playlist]").find("[data-cy=track]").should("have.length", 5);
 	});
 
 	it("can drag and drop an album from recent", () => {
-		cy.visit("/#/recent");
+		cy.visit("/");
+		cy.navigateToRecent();
 		cy.contains("Recent");
 		cy.get("[data-cy=album]").contains("Hunted").drag("[data-cy=playlist]");
 		cy.get("[data-cy=playlist]").find("[data-cy=track]").should("have.length", 5);

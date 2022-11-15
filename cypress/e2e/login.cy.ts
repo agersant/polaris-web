@@ -51,7 +51,7 @@ describe("Login", function () {
 
 		cy.hash().should("contain", "browse");
 		cy.get("[data-cy=logout]").click();
-		cy.visit("/#/random");
+		cy.visit("/");
 		cy.hash().should("contain", "auth");
 		cy.get("[data-cy=username]");
 	});
