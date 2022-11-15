@@ -48,7 +48,7 @@ const wipeConfig = authToken => {
 };
 
 const populateConfig = () => {
-	cy.request("PUT", "/api/config", {
+	return cy.request("PUT", "/api/config", {
 		users: [
 			{
 				name: "testUser",
@@ -66,7 +66,7 @@ const populateConfig = () => {
 };
 
 Cypress.Commands.add("wipeInitialSetup", () => {
-	cy.request("GET", "/api/initial_setup").then(response => {
+	return cy.request("GET", "/api/initial_setup").then(response => {
 		if (response.body.has_any_users) {
 			getAuthToken().then(response => wipeConfig(response.body.token));
 		} else {
@@ -76,39 +76,44 @@ Cypress.Commands.add("wipeInitialSetup", () => {
 });
 
 Cypress.Commands.add("completeInitialSetup", () => {
-	cy.request("/api/initial_setup").then(response => {
-		if (response.body.has_any_users) {
-			return;
-		}
-		populateConfig();
-	});
-
-	triggerIndex();
-	waitForCollectionIndex();
+	return cy
+		.request("/api/initial_setup")
+		.then(response => {
+			if (response.body.has_any_users) {
+				return;
+			}
+			return populateConfig();
+		})
+		.then(() => {
+			triggerIndex();
+			waitForCollectionIndex();
+		});
 });
 
 Cypress.Commands.add("login", () => {
-	cy.request("POST", "/api/auth", {
-		username: "testUser",
-		password: "testPassword",
-	}).then(resp => {
-		window.localStorage.clear(); // TODO: This is a workaround for https://github.com/agersant/polaris-web/issues/75
-		window.localStorage.setItem("username", resp.body.username);
-		window.localStorage.setItem("authToken", resp.body.token);
-		window.localStorage.setItem("isAdmin", resp.body.is_admin);
-	});
+	return cy
+		.request("POST", "/api/auth", {
+			username: "testUser",
+			password: "testPassword",
+		})
+		.then(resp => {
+			window.localStorage.clear(); // TODO: This is a workaround for https://github.com/agersant/polaris-web/issues/75
+			window.localStorage.setItem("username", resp.body.username);
+			window.localStorage.setItem("authToken", resp.body.token);
+			window.localStorage.setItem("isAdmin", resp.body.is_admin);
+		});
 });
 
 Cypress.Commands.add("navigateToRecent", () => {
-	cy.get("[data-cy=sidebar]").get("[data-cy=recent]").click();
+	return cy.get("[data-cy=sidebar]").get("[data-cy=recent]").click();
 });
 
 Cypress.Commands.add("navigateToRandom", () => {
-	cy.get("[data-cy=sidebar]").get("[data-cy=random]").click();
+	return cy.get("[data-cy=sidebar]").get("[data-cy=random]").click();
 });
 
 Cypress.Commands.add("navigateToSettings", () => {
-	cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
+	return cy.get("[data-cy=sidebar]").get("[data-cy=settings]").click();
 });
 
 declare global {
