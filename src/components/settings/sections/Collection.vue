@@ -3,7 +3,8 @@
 		<div class="field">
 			<label for="art_pattern">Album art pattern</label>
 			<input type="text" id="art_pattern" v-model="settings.album_art_pattern"
-				v-on:change="onAlbumArtPatternChanged" v-on:keypress.enter.prevent placeholder="Folder.(jpg|png)" />
+				v-on:change="onAlbumArtPatternChanged" v-on:keypress.enter.prevent placeholder="Folder.(jpg|png)"
+				data-cy="album-art-pattern" />
 			<p class="tip">The regular expression used to detect album art files.</p>
 			<p v-if="!validateAlbumArtPattern()" class="tip error">Please enter a valid regular expression.</p>
 		</div>
@@ -18,26 +19,29 @@
 				<tr v-for="(mountDir, index) in mountDirs.listing" v-bind:key="index">
 					<td>
 						<input type="text" v-model="mountDir.source" v-on:change="mountDirs.save"
-							v-on:keypress.enter.prevent />
+							v-on:keypress.enter.prevent data-cy="mount-dir-source" />
 					</td>
 					<td>
-						<input type="text" v-model="mountDir.name" v-on:change="mountDirs.save" />
+						<input type="text" v-model="mountDir.name" v-on:change="mountDirs.save"
+							data-cy="mount-dir-name" />
 					</td>
 					<td>
-						<i v-on:click="mountDirs.remove(mountDir)" class="noselect material-icons md-18">delete</i>
+						<i v-on:click="mountDirs.remove(mountDir)" class="noselect material-icons md-18"
+							data-cy="delete-mount-dir">delete</i>
 					</td>
 				</tr>
 			</table>
-			<button v-on:click="addMountDir">Add more</button>
+			<button v-on:click="addMountDir" data-cy="add-mount-dir">Add more</button>
 		</div>
 		<div class="field sleep_duration">
 			<label for="sleep_duration">
 				Scan collection every
-				<input type="text" id="sleep_duration" v-model="reindexPeriod" @change="onReindexPeriodChanged" />
+				<input type="text" id="sleep_duration" v-model="reindexPeriod" @change="onReindexPeriodChanged"
+					data-cy="sleep-duration" />
 				minutes
 			</label>
 			<StateButton v-bind:submit="false" v-bind:states="reindexStates" v-bind:state="reindexState"
-				@click="reindex" />
+				@click="reindex" data-cy="reindex" />
 		</div>
 	</form>
 </template>
