@@ -10,6 +10,7 @@ describe("Collection Settings", function () {
 	});
 
 	it("Can save album art pattern", () => {
+		cy.intercept({ method: "GET", url: "/api/settings" }).as("getSettings");
 		cy.intercept({ method: "PUT", url: "/api/settings" }).as("putSettings");
 
 		const pattern = Math.random().toString();
@@ -17,14 +18,18 @@ describe("Collection Settings", function () {
 		cy.visit("/");
 		cy.navigateToSettings();
 		cy.get("[data-cy=collection]").click();
+		cy.wait("@getSettings");
+
 		cy.get("[data-cy=album-art-pattern").clear().type(pattern).blur();
 		cy.wait("@putSettings");
 
 		cy.reload();
+		cy.wait("@getSettings");
 		cy.get("[data-cy=album-art-pattern").should("have.value", pattern);
 	});
 
 	it("Can save sleep duration", () => {
+		cy.intercept({ method: "GET", url: "/api/settings" }).as("getSettings");
 		cy.intercept({ method: "PUT", url: "/api/settings" }).as("putSettings");
 
 		const sleepDuration = Math.round(Math.random() * 1000000).toString();
@@ -32,10 +37,13 @@ describe("Collection Settings", function () {
 		cy.visit("/");
 		cy.navigateToSettings();
 		cy.get("[data-cy=collection]").click();
+		cy.wait("@getSettings");
+
 		cy.get("[data-cy=sleep-duration").clear().type(sleepDuration).blur();
 		cy.wait("@putSettings");
 
 		cy.reload();
+		cy.wait("@getSettings");
 		cy.get("[data-cy=sleep-duration").should("have.value", sleepDuration);
 	});
 
@@ -50,6 +58,7 @@ describe("Collection Settings", function () {
 		cy.navigateToSettings();
 		cy.get("[data-cy=collection]").click();
 		cy.wait("@getMountDirs");
+
 		cy.get("[data-cy=add-mount-dir]").click();
 
 		cy.get("[data-cy=mount-dir-source").last().type(source).blur();
@@ -61,6 +70,7 @@ describe("Collection Settings", function () {
 		cy.wait("@getMountDirs");
 
 		cy.reload();
+		cy.wait("@getMountDirs");
 		cy.get("[data-cy=mount-dir-source")
 			.filter((k, el) => (el as HTMLInputElement).value == source)
 			.should("have.length", 1);
@@ -95,6 +105,7 @@ describe("Collection Settings", function () {
 		cy.wait("@getMountDirs");
 
 		cy.reload();
+		cy.wait("@getMountDirs");
 		cy.get("[data-cy=mount-dir-name").should("have.length", 1);
 	});
 

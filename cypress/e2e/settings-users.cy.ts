@@ -29,8 +29,6 @@ describe("Users", function () {
 		cy.wait("@getUsers");
 
 		cy.reload();
-		cy.navigateToSettings();
-		cy.get("[data-cy=users]").click();
 		cy.wait("@getUsers");
 		cy.get("[data-cy=username]").contains(username);
 	});
@@ -54,13 +52,11 @@ describe("Users", function () {
 		cy.get("[data-cy=end-create-user").click();
 		cy.wait("@postUser");
 		cy.wait("@getUsers");
-		cy.get("[data-cy=delete-user]").not(":disabled").click();
+		cy.get("[data-cy=delete-user]").not("[disabled]").click();
 		cy.wait("@deleteUser");
 		cy.wait("@getUsers");
 
 		cy.reload();
-		cy.navigateToSettings();
-		cy.get("[data-cy=users]").click();
 		cy.wait("@getUsers");
 		cy.get("[data-cy=username]").should("have.length", 1);
 	});
