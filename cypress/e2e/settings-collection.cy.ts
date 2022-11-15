@@ -61,8 +61,12 @@ describe("Collection Settings", function () {
 		cy.wait("@getMountDirs");
 
 		cy.reload();
-		cy.get("[data-cy=mount-dir-source").last().should("have.value", source);
-		cy.get("[data-cy=mount-dir-name").last().should("have.value", name);
+		cy.get("[data-cy=mount-dir-source")
+			.filter((k, el) => (el as HTMLInputElement).value == source)
+			.should("have.length", 1);
+		cy.get("[data-cy=mount-dir-name")
+			.filter((k, el) => (el as HTMLInputElement).value == name)
+			.should("have.length", 1);
 	});
 
 	it("Can remove a music source", () => {

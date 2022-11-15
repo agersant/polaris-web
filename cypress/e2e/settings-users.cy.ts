@@ -32,7 +32,7 @@ describe("Users", function () {
 		cy.navigateToSettings();
 		cy.get("[data-cy=users]").click();
 		cy.wait("@getUsers");
-		cy.get("[data-cy=username]").last().contains(username);
+		cy.get("[data-cy=username]").contains(username);
 	});
 
 	it("Can delete a user", () => {
@@ -54,7 +54,7 @@ describe("Users", function () {
 		cy.get("[data-cy=end-create-user").click();
 		cy.wait("@postUser");
 		cy.wait("@getUsers");
-		cy.get("[data-cy=delete-user]").last().click();
+		cy.get("[data-cy=delete-user]").not(":disabled").click();
 		cy.wait("@deleteUser");
 		cy.wait("@getUsers");
 
