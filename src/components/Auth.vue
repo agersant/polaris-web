@@ -1,7 +1,7 @@
 <template>
 	<div class="authForm">
 		<div class="content">
-			<img class="logo" src="/assets/logo.png" />
+			<img class="logo" src="/assets/logo.svg" />
 			<form name="authForm" @submit.prevent="doLogin">
 				<input data-cy="username" type="text" v-model="username" placeholder="Username" autofocus />
 				<input data-cy="password" type="password" v-model="password" placeholder="Password" />

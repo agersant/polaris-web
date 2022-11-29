@@ -1,7 +1,7 @@
 <template>
 	<div class="setupContainer">
 		<div class="logo">
-			<img src="/assets/logo_no_text.png" />
+			<img src="/assets/logo_no_text.svg" />
 		</div>
 		<div class="step">
 			<Welcome v-if="step == 'welcome'" v-on:proceed="ackWelcome" />
