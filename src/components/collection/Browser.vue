@@ -50,7 +50,7 @@ watch(
 		if (oldPath && paneContent.value) {
 			savedPositions.set(oldPath, paneContent.value.scrollTop);
 		}
-		items.value = await browse(path);
+		items.value = (await browse(path)).sort((a, b) => a.path.localeCompare(b.path));
 		for (const savedPath of savedPositions.keys()) {
 			if (!path.startsWith(savedPath)) {
 				savedPositions.delete(savedPath);
