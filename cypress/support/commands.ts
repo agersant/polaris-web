@@ -97,7 +97,6 @@ Cypress.Commands.add("login", () => {
 			password: "testPassword",
 		})
 		.then(resp => {
-			window.localStorage.clear(); // TODO: This is a workaround for https://github.com/agersant/polaris-web/issues/75
 			window.localStorage.setItem("username", resp.body.username);
 			window.localStorage.setItem("authToken", resp.body.token);
 			window.localStorage.setItem("isAdmin", resp.body.is_admin);
