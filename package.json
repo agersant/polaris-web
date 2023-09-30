@@ -7,10 +7,10 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^20.0",
-		"@vitejs/plugin-vue": "^2.3.1",
+		"@vitejs/plugin-vue": "^4",
 		"cypress": "^13.0",
 		"typescript": "^5.2",
-		"vite": "^2.9.7",
+		"vite": "^4",
 		"vue-tsc": "^1.0"
 	},
 	"dependencies": {
@@ -21,7 +21,7 @@
 		"vuex": "^4.0.2"
 	},
 	"scripts": {
-		"dev": "vite build --watch --mode development",
+		"dev": "vite",
 		"test": "vite build && cypress run",
 		"test-ui": "vite build && cypress open",
 		"production": "vue-tsc --noEmit && vite build"

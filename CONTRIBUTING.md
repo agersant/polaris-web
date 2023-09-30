@@ -8,8 +8,8 @@
 ## Workflow
 
 1. Clone the polaris-web repository with `git clone https://github.com/agersant/polaris-web.git`
-2. Run Polaris with the `-w` flag pointing to your freshly cloned polaris-web, adding `/dist` at the end. For example on Windows: `polaris.exe -w C:/path/to/polaris-web/dist`
+2. Run Polaris on its default port (5050)
 3. Within the polaris-web directory, run `npm install` followed by `npm run dev`
-4. Access [http://localhost:5050/](http://localhost:5050/) to open the web UI
+4. Open the client by visiting the URL listed in the output of `npm run dev`
 5. Changes you make within `polaris-web/src` are visible immediately
-6. The test suite can be run with `npm test`
+6. The test suite can be run with `npm test`. Tests will fail if the Polaris server has user accounts not created by this test suite.
