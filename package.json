@@ -6,7 +6,7 @@
 	"author": "Antoine Gersant <antoine.gersant@lesforges.org>",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^17.0.31",
+		"@types/node": "^20.0",
 		"@vitejs/plugin-vue": "^2.3.1",
 		"cypress": "^13.0",
 		"typescript": "^5.2",
