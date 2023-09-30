@@ -45,8 +45,10 @@ async function deletePlaylist() {
 	router.push("/playlists").catch(err => { });
 }
 
-function onItemClicked(item: Song) {
-	playlist.queueTracks([{ ...item }]);
+function onItemClicked(item: CollectionItem) {
+	if (item.variant == "Song") {
+		playlist.queueTracks([{ ...item }]);
+	}
 }
 
 function onItemsDragStart(event: DragEvent, items: CollectionItem[]) {
