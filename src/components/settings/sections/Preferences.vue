@@ -32,8 +32,9 @@
 			<div v-if="preferences.lastFMUsername">
 				<p class="explanation">
 					You are scrobbling music as
-					<a href="https://www.last.fm/user/{lastFMUsername()}" target="_blank">{{ preferences.lastFMUsername
-					}}</a>.
+					<a v-bind:href="'https://www.last.fm/user/' + preferences.lastFMUsername" target="_blank">
+						{{preferences.lastFMUsername}}
+					</a>.
 				</p>
 				<button v-on:click="unlinkLastFMAccount">Unlink Last.fm account</button>
 			</div>
