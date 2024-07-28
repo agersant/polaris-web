@@ -22,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import { CollectionItem, Directory } from "@/api/dto";
+import { CollectionItem } from "@/api/dto";
 import { browse } from "@/api/endpoints";
-import { getPathTail } from "@/format";
+import { formatArtists, getPathTail } from "@/format";
 import { usePlaylistStore } from "@/stores/playlist";
 import { computed, nextTick, ref, Ref, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -69,11 +69,11 @@ const directories = computed(() => items.value.flatMap(i => i.variant == "Direct
 const songs = computed(() => items.value.flatMap(i => i.variant == "Song" ? [i] : []));
 
 const header = computed((): string =>{
-	let header: string | null = "";
+	let header: string | undefined = undefined;
 	for (let item of items.value) {
 		if (item.variant == "Song") {
 			if (header && item.album && header != item.album) {
-				header = null;
+				header = undefined;
 				break;
 			} else {
 				header = header || item.album;
@@ -84,13 +84,13 @@ const header = computed((): string =>{
 });
 
 const subHeader = computed((): string =>{
-	let subHeader = "";
+	let subHeader = undefined;
 	for (let item of items.value) {
 		if (item.variant == "Song") {
-			subHeader = subHeader || item.album_artist || item.artist || "";
+			subHeader = subHeader || formatArtists(item.album_artists || []) || formatArtists(item.artists|| []);
 		}
 	}
-	return subHeader;
+	return subHeader || "";
 });
 
 const viewMode = computed((): ViewMode => {

@@ -62,7 +62,7 @@ export type CollectionItemRaw = {
 export interface Directory {
 	variant: "Directory";
 	path: string;
-	artist?: string;
+	artists?: string[];
 	year?: number;
 	album?: string;
 	artwork?: string;
@@ -72,19 +72,19 @@ export interface Directory {
 export interface Song {
 	variant: "Song";
 	path: string;
-	track_number: number | null;
-	disc_number: number | null;
-	title: string | null;
-	artist: string | null;
-	album_artist: string | null;
-	year: number | null;
-	album: string | null;
-	artwork: string | null;
-	duration: number | null;
-	lyricist: string | null;
-	composer: string | null;
-	genre: string | null;
-	label: string | null;
+	track_number?: number;
+	disc_number?: number;
+	title?: string;
+	artists?: string[];
+	album_artists?: string[];
+	year?: number;
+	album?: string;
+	artwork?: string;
+	duration?: number;
+	lyricists?: string[];
+	composers?: string[];
+	genres?: string[];
+	labels?: string[];
 }
 
 export type SavePlaylistInput = {

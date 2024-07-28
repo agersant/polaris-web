@@ -8,7 +8,7 @@
 			</div>
 			<div class="details">
 				<div class="title">{{ directory.album }}</div>
-				<div v-if="showArtistName" class="artist">{{ directory.artist }}</div>
+				<div v-if="showArtistName" class="artist">{{ formatArtists(directory.artists || []) }}</div>
 				<div class="year">{{ directory.year }}</div>
 			</div>
 		</li>
@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import { Directory } from "@/api/dto";
+import { formatArtists } from "@/format";
 import { makeThumbnailURL } from "@/api/endpoints";
 import CoverArt from "/src/components/CoverArt.vue";
 

@@ -53,6 +53,7 @@ async function request(endpoint: string, options?: RequestInit): Promise<Respons
 	if (user.isLoggedIn) {
 		options.headers.set("Authorization", "Bearer " + getAuthToken());
 	}
+	options.headers.set("Accept-Version", "8")
 
 	const response = await fetch("api" + endpoint, options);
 	if (response.status == 401) {

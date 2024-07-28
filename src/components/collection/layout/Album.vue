@@ -20,8 +20,8 @@
 							<span class="songName">
 								{{ formatTitle(item) }}
 								<span class="trackArtist"
-									v-if="item.artist && item.album_artist && item.artist != item.album_artist">({{
-									item.artist }})</span>
+									v-if="item.artists && item.album_artists && !equals(item.artists, item.album_artists)">({{
+									formatArtists(item.artists) }})</span>
 							</span>
 						</li>
 					</ol>
@@ -32,13 +32,14 @@
 </template>
 
 <script setup lang="ts">
+import equals from "array-equal"
 import { computed } from "vue"
-import { formatTitle } from "@/format"
+import { formatArtists, formatTitle } from "@/format"
 import { makeThumbnailURL } from "@/api/endpoints"
 import { Song } from "@/api/dto"
 
 type Disc = {
-	number: number | null,
+	number?: number,
 	songs: Song[],
 }
 

@@ -46,8 +46,8 @@
 						<td class="text song">
 							{{ formatTrackDetails(track) }}
 							<span class="trackArtist"
-								v-if="track.album_artist && track.artist && track.album_artist != track.artist">({{
-								track.artist }})</span>
+								v-if="track.artists && track.album_artists && !equals(track.artists, track.album_artists)">({{
+								formatArtists(track.artists) }})</span>
 						</td>
 						<td class="text duration">{{ formatTrackDuration(track) }}</td>
 					</tr>
@@ -63,7 +63,9 @@
 </template>
 
 <script setup lang="ts">
+import equals from "array-equal"
 import { computed, nextTick, onMounted, onUnmounted, onUpdated, Ref, ref, toRaw } from "vue";
+import { formatArtists } from "@/format";
 import { PlaybackOrder, usePlaylistStore } from "@/stores/playlist";
 import PlaylistSave from "./PlaylistSave.vue";
 import { CollectionItem, ListPlaylistsEntry, Song } from "@/api/dto";
@@ -201,8 +203,10 @@ function onClickRemoveTrack(song: Song) {
 
 function formatTrackContext(song: Song) {
 	let context = "";
-	if (song.album_artist || song.artist) {
-		context += song.album_artist || song.artist;
+	if (song.album_artists){
+		context += formatArtists(song.album_artists);
+	} else if (song.artists)  {
+		context += formatArtists(song.artists);
 	} else {
 		context += "Unknown Artist";
 	}
