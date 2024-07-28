@@ -53,6 +53,10 @@ export function formatLongDuration(totalSeconds: number): string {
 	return output;
 }
 
+export function formatArtists(artists: string[]) {
+	return artists.join(", ");
+}
+
 export function formatTitle(track: Song) {
 	return track.title || stripFileExtension(getPathTail(track.path));
 }

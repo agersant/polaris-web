@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { CollectionItem, Directory, Song } from "@/api/dto";
-import { formatTitle } from "@/format";
+import { formatArtists, formatTitle } from "@/format";
 
 const props = defineProps<{
 	items: CollectionItem[],
@@ -26,8 +26,8 @@ const emits = defineEmits<{
 
 function formatTrackDetails(item: Song) {
 	let details = "";
-	if (item.artist) {
-		details += item.artist;
+	if (item.artists) {
+		details += formatArtists(item.artists);
 		details += " - ";
 	}
 	if (item.track_number) {

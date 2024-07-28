@@ -14,7 +14,9 @@
 		"vue-tsc": "^1.0"
 	},
 	"dependencies": {
+		"@types/array-equal": "^1.0.2",
 		"@vueuse/core": "^10",
+		"array-equal": "^1.0.2",
 		"pinia": "^2.0.14",
 		"vue": "^3.2.31",
 		"vue-router": "^4.0.14",

@@ -59,7 +59,7 @@ import { loadForCurrentUser, saveForCurrentUser } from "@/disk";
 import { lastFMNowPlaying, lastFMScrobble, makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
 import { usePreferencesStore } from "@/stores/preferences";
-import { formatDuration, formatTitle } from "@/format";
+import { formatArtists, formatDuration, formatTitle } from "@/format";
 import CoverArt from "@/components/CoverArt.vue";
 import Spinner from "@/components/Spinner.vue";
 
@@ -99,7 +99,7 @@ const trackInfoPrimary = computed(() => {
 	if (!track) {
 		return "";
 	}
-	let result = track.artist ? track.artist : "Unknown Artist";
+	let result = formatArtists(track.artists || []) || "Unknown Artist";
 	result += " - ";
 	result += formatTitle(track);
 	return result;
@@ -229,10 +229,12 @@ function updateMediaSession() {
 			return;
 		}
 		let metadata = new MediaMetadata({
-			title: track.title || undefined,
-			artist: track.artist || undefined,
-			album: track.album || undefined,
+			title: track.title,
+			album: track.album,
 		});
+		if (track.artists) {
+			metadata.artist = formatArtists(track.artists);
+		}
 		if (artworkURL.value) {
 			metadata.artwork = [{ src: artworkURL.value }];
 		}
@@ -245,7 +247,7 @@ function updateWindowTitle() {
 	if (!track) {
 		return;
 	}
-	let windowTitle = track.artist ? track.artist : "Unknown Artist";
+	let windowTitle = formatArtists(track.artists || []) || "Unknown Artist";
 	windowTitle += " - ";
 	windowTitle += formatTitle(track);
 	document.title = windowTitle;
