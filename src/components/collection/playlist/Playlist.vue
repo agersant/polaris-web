@@ -9,7 +9,8 @@
 				<button v-if="tracks.length > 0" v-on:click="play" class="small">Play</button>
 				<button v-on:click="deletePlaylist" class="danger small">Delete</button>
 			</div>
-			<explorer v-bind:items="tracks" v-on:item-click="onItemClicked" @items-drag-start="onItemsDragStart" />
+			<!-- TODO fixme -->
+			<!-- <explorer v-bind:items="tracks" v-on:item-click="onItemClicked" @items-drag-start="onItemsDragStart" /> -->
 		</div>
 	</div>
 </template>
@@ -19,7 +20,7 @@ import { Ref, ref, watchEffect } from "vue";
 import Explorer from "@/components/collection/layout/Explorer.vue";
 import { usePlaylistStore } from "@/stores/playlist";
 import { getPlaylist, deletePlaylist as doDeletePlaylist } from "@/api/endpoints";
-import { CollectionItem, Song } from "@/api/dto";
+import { Song } from "@/api/dto";
 import { useRouter } from "vue-router";
 
 const props = defineProps<{
@@ -45,16 +46,18 @@ async function deletePlaylist() {
 	router.push("/playlists").catch(err => { });
 }
 
-function onItemClicked(item: CollectionItem) {
-	if (item.variant == "Song") {
-		playlist.queueTracks([{ ...item }]);
-	}
-}
-
-function onItemsDragStart(event: DragEvent, items: CollectionItem[]) {
-	if (!event || !event.dataTransfer) {
-		return;
-	}
-	event.dataTransfer.setData("text/json", JSON.stringify(items));
-}
+// TODO fixme
+// function onItemClicked(item: CollectionItem) {
+	// 	if (item.variant == "Song") {
+		// 		playlist.queueTracks([{ ...item }]);
+		// 	}
+		// }
+		
+// TODO fixme
+// function onItemsDragStart(event: DragEvent, items: CollectionItem[]) {
+// 	if (!event || !event.dataTransfer) {
+// 		return;
+// 	}
+// 	event.dataTransfer.setData("text/json", JSON.stringify(items));
+// }
 </script>

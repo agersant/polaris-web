@@ -1,10 +1,9 @@
 import Router from "@/router";
 import {
+	Album,
 	Authorization,
-	CollectionItem,
-	CollectionItemRaw,
+	BrowserEntry,
 	DDNSConfig,
-	Directory,
 	InitialSetup,
 	LastFMLinkToken,
 	ListPlaylistsEntry,
@@ -19,28 +18,6 @@ import {
 	UserUpdate,
 } from "@/api/dto";
 import { useUserStore } from "@/stores/user";
-
-function decodeCollectionItem(data: CollectionItemRaw): CollectionItem {
-	if (data.Song) {
-		data.Song.variant = "Song";
-		return data.Song;
-	}
-	if (data.Directory) {
-		data.Directory.variant = "Directory";
-		return data.Directory;
-	}
-	throw "invalid collection item";
-}
-
-function decodeDirectory(data: Directory): Directory {
-	data.variant = "Directory";
-	return data;
-}
-
-function decodeSong(data: Song): Song {
-	data.variant = "Song";
-	return data;
-}
 
 async function request(endpoint: string, options?: RequestInit): Promise<Response> {
 	const user = useUserStore();
@@ -183,31 +160,29 @@ export async function triggerIndex(): Promise<Response> {
 	return await request("/trigger_index", { method: "POST" });
 }
 
-export async function browse(path: string): Promise<CollectionItem[]> {
+export async function browse(path: string): Promise<BrowserEntry[]> {
 	const response = await request("/browse/" + encodeURIComponent(path));
-	const rawItems: CollectionItemRaw[] = await response.json();
-	return rawItems.map(decodeCollectionItem);
+	return await response.json();
 }
 
 export async function flatten(path: string): Promise<Song[]> {
 	const response = await request("/flatten/" + encodeURIComponent(path));
-	return (await response.json()).map(decodeSong);
+	return await response.json();
 }
 
-export async function random(): Promise<Directory[]> {
+export async function random(): Promise<Album[]> {
 	const response = await request("/random");
-	return (await response.json()).map(decodeDirectory);
+	return await response.json();
 }
 
-export async function recent(): Promise<Directory[]> {
+export async function recent(): Promise<Album[]> {
 	const response = await request("/recent");
-	return (await response.json()).map(decodeDirectory);
+	return await response.json();
 }
 
-export async function search(query: string): Promise<CollectionItem[]> {
+export async function search(query: string): Promise<BrowserEntry[]> {
 	const response = await request("/search/" + encodeURIComponent(query));
-	const rawItems: CollectionItemRaw[] = await response.json();
-	return rawItems.map(decodeCollectionItem);
+	return await response.json();
 }
 
 export async function playlists(): Promise<ListPlaylistsEntry[]> {
@@ -216,7 +191,7 @@ export async function playlists(): Promise<ListPlaylistsEntry[]> {
 
 export async function getPlaylist(name: string): Promise<Song[]> {
 	const response = await request("/playlist/" + encodeURIComponent(name));
-	return (await response.json()).map(decodeSong);
+	return await response.json();
 }
 
 export async function putPlaylist(name: string, tracks: string[]): Promise<Response> {

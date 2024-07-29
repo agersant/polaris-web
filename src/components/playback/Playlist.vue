@@ -68,10 +68,10 @@ import { computed, nextTick, onMounted, onUnmounted, onUpdated, Ref, ref, toRaw 
 import { formatArtists } from "@/format";
 import { PlaybackOrder, usePlaylistStore } from "@/stores/playlist";
 import PlaylistSave from "./PlaylistSave.vue";
-import { CollectionItem, ListPlaylistsEntry, Song } from "@/api/dto";
+import { BrowserEntry, ListPlaylistsEntry, Song } from "@/api/dto";
 import { formatDuration, formatLongDuration, formatTitle } from "@/format";
 
-type PlaylistDragAndDropPayload = CollectionItem[] | ListPlaylistsEntry;
+type PlaylistDragAndDropPayload = BrowserEntry[] | ListPlaylistsEntry;
 
 const playlist = usePlaylistStore();
 
@@ -174,10 +174,12 @@ function onDrop(event: DragEvent) {
 	const payload: PlaylistDragAndDropPayload = JSON.parse(transferData);
 	if (Array.isArray(payload)) {
 		for (const item of payload) {
-			if (item.variant == "Song") {
-				playlist.queueTracks([item]);
-			} else if (item.variant == "Directory") {
+			// TODO can also drop albums!
+			if (item.is_directory) {
 				playlist.queueDirectory(item.path);
+			} else {
+				// TODO fixme
+				// playlist.queueTracks([item.path]);
 			}
 		}
 	} else {

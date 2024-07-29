@@ -4,7 +4,7 @@
 			<h2>Recently Added</h2>
 		</div>
 		<div class="paneContent" ref="paneContent">
-			<Discography v-bind:showArtistName="true" v-bind:directories="items" v-on:item-click="onItemClicked"
+			<Discography v-bind:showArtistName="true" v-bind:albums="items" v-on:item-click="onItemClicked"
 				v-on:items-drag-start="onItemsDragStart" />
 		</div>
 	</div>
@@ -13,13 +13,13 @@
 <script setup lang="ts">
 import { onMounted, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
-import { Directory } from "@/api/dto";
+import { Album } from "@/api/dto";
 import { recent } from "@/api/endpoints";
 import Discography from "./layout/Discography.vue";
 
 const router = useRouter();
 
-const items: Ref<Directory[]> = ref([]);
+const items: Ref<Album[]> = ref([]);
 
 onMounted(() => {
 	refresh();
@@ -30,11 +30,12 @@ async function refresh() {
 	items.value = await recent();
 }
 
-function onItemClicked(item: Directory) {
-	router.push("/browse/" + item.path).catch(err => { });
+function onItemClicked(item: Album) {
+	// TODO fix me
+	// router.push("/browse/" + item.path).catch(err => { });
 }
 
-function onItemsDragStart(event: DragEvent, items: Directory[]) {
+function onItemsDragStart(event: DragEvent, items: Album[]) {
 	if (!event || !event.dataTransfer) {
 		return;
 	}
