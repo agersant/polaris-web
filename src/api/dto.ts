@@ -51,23 +51,10 @@ export type Preferences = {
 	web_theme_accent?: string | null;
 };
 
-export type CollectionItem = Directory | Song;
-
-export type CollectionItemRaw = {
-	variant?: string;
-	Directory?: Directory;
-	Song?: Song;
-};
-
-export interface Directory {
-	variant: "Directory";
+export type BrowserEntry = {
+	is_directory: boolean;
 	path: string;
-	artists?: string[];
-	year?: number;
-	album?: string;
-	artwork?: string;
-	date_added?: number;
-}
+};
 
 export interface Song {
 	variant: "Song";
@@ -85,6 +72,13 @@ export interface Song {
 	composers?: string[];
 	genres?: string[];
 	labels?: string[];
+}
+
+export interface Album {
+	name?: string,
+	artwork?: string,
+	artists?: string[],
+	year?: number,
 }
 
 export type SavePlaylistInput = {

@@ -1,41 +1,41 @@
 <template>
 	<ul>
-		<li data-cy="album" class="album" draggable="true" v-for="(directory, index) in props.directories"
-			v-bind:key="index" @click="onItemClicked(directory)"
-			@dragstart="event => onItemsDragStart(event, directory)">
+		<li data-cy="album" class="album" draggable="true" v-for="(album, index) in props.albums"
+			v-bind:key="index" @click="onItemClicked(album)"
+			@dragstart="event => onItemsDragStart(event, album)">
 			<div class="cover">
-				<CoverArt v-if="directory.artwork" v-bind:url="makeThumbnailURL(directory.artwork)" />
+				<CoverArt v-if="album.artwork" v-bind:url="makeThumbnailURL(album.artwork)" />
 			</div>
 			<div class="details">
-				<div class="title">{{ directory.album }}</div>
-				<div v-if="showArtistName" class="artist">{{ formatArtists(directory.artists || []) }}</div>
-				<div class="year">{{ directory.year }}</div>
+				<div class="title">{{ album.name }}</div>
+				<div v-if="showArtistName" class="artist">{{ formatArtists(album.artists || []) }}</div>
+				<div class="year">{{ album.year }}</div>
 			</div>
 		</li>
 	</ul>
 </template>
 
 <script setup lang="ts">
-import { Directory } from "@/api/dto";
+import { Album } from "@/api/dto";
 import { formatArtists } from "@/format";
 import { makeThumbnailURL } from "@/api/endpoints";
 import CoverArt from "/src/components/CoverArt.vue";
 
 const props = defineProps<{
-	directories: Directory[],
+	albums: Album[],
 	showArtistName: boolean
 }>();
 
 const emits = defineEmits<{
-	(event:'item-click', item: Directory): void
-	(event:'items-drag-start', dragEvent: DragEvent, items: Directory[]): void
+	(event:'item-click', item: Album): void
+	(event:'items-drag-start', dragEvent: DragEvent, items: Album[]): void
 }>();
 
-function onItemClicked(directory: Directory){
+function onItemClicked(directory: Album){
 	emits("item-click", directory);
 }
 
-function onItemsDragStart(event: DragEvent, directory: Directory){
+function onItemsDragStart(event: DragEvent, directory: Album){
 	emits("items-drag-start", event, [directory]);
 }
 </script>

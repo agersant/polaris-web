@@ -2,43 +2,29 @@
 	<ul class="explorerView">
 		<li draggable="true" v-for="(item, index) in props.items" v-bind:key="index"
 			v-on:click="emits('item-click', item)" v-on:dragstart="event => emits('items-drag-start', event, [item])">
-			<div data-cy="explorer-directory" v-if="item.variant == 'Directory'" class="directory">
+			<div data-cy="explorer-directory" v-if="item.is_directory" class="directory">
 				<i class="material-icons">folder</i>
-				{{ formatDirectoryName(item) }}
+				{{ formatItem(item) }}
 			</div>
-			<div data-cy="explorer-song" v-if="item.variant == 'Song'" class="song">{{ formatTrackDetails(item) }}</div>
+			<div data-cy="explorer-song" v-if="!item.is_directory" class="song">{{ formatItem(item) }}</div>
 		</li>
 	</ul>
 </template>
 
 <script setup lang="ts">
-import { CollectionItem, Directory, Song } from "@/api/dto";
+import { BrowserEntry, Song } from "@/api/dto";
 import { formatArtists, formatTitle } from "@/format";
 
 const props = defineProps<{
-	items: CollectionItem[],
+	items: BrowserEntry[],
 }>();
 
 const emits = defineEmits<{
-	(event:'item-click', item: CollectionItem): void
-	(event:'items-drag-start', dragEvent: DragEvent, items: CollectionItem[]): void
+	(event:'item-click', item: BrowserEntry): void
+	(event:'items-drag-start', dragEvent: DragEvent, items: BrowserEntry[]): void
 }>();
 
-function formatTrackDetails(item: Song) {
-	let details = "";
-	if (item.artists) {
-		details += formatArtists(item.artists);
-		details += " - ";
-	}
-	if (item.track_number) {
-		details += item.track_number;
-		details += ". ";
-	}
-	details += formatTitle(item);
-	return details;
-}
-
-function formatDirectoryName(item: Directory) {
+function formatItem(item: BrowserEntry) {
 	let slices = item.path.replace(/\\/g, "/").split("/");
 	slices = slices.filter(function (s) {
 		return s.length > 0;

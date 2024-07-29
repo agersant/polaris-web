@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { ref, Ref, watch} from "vue";
 import { useRouter } from "vue-router";
-import {CollectionItem, Directory, Song} from "@/api/dto"
+import {BrowserEntry, Song} from "@/api/dto"
 import {search} from "@/api/endpoints"
 import { usePlaylistStore } from "@/stores/playlist";
 import Explorer from "@/components/collection/layout/Explorer.vue"
@@ -30,7 +30,7 @@ const props = defineProps<{
 const router = useRouter();
 const playlist = usePlaylistStore();
 
-const results: Ref<CollectionItem[] | null> = ref(null);
+const results: Ref<BrowserEntry[] | null> = ref(null);
 
 watch(
 	() => props.query,
@@ -43,16 +43,17 @@ watch(
 
 function queueAll() {
 	let songItems: Song[] = [];
-	let directoryItems: Directory[] = [];
+	let directoryItems: BrowserEntry[] = [];
 	if (!results.value) {
 		return;
 	}
 
 	results.value.forEach(item => {
-		if (item.variant == "Song") {
-			songItems.push({...item});
-		} else if (item.variant == "Directory") {
+		if (item.is_directory) {
 			directoryItems.push(item);
+		} else {
+			// TODO fixme
+			// songItems.push({...item});
 		}
 	});
 
@@ -62,16 +63,16 @@ function queueAll() {
 	});
 }
 
-function onItemClicked(item: CollectionItem) {
-	const variant = item.variant;
-	if (variant == "Directory") {
+function onItemClicked(item: BrowserEntry) {
+	if (item.is_directory) {
 		router.push("/browse/" + item.path).catch(err => {});
-	} else if (variant == "Song") {
-		playlist.queueTracks([{...item}]);
+	} else {
+		// TODO fixme
+		// playlist.queueTracks([{...item}]);
 	}
 }
 
-function onItemsDragStart(event: DragEvent, items: CollectionItem[]) {
+function onItemsDragStart(event: DragEvent, items: BrowserEntry[]) {
 	if (!event || !event.dataTransfer) {
 		return;
 	}
