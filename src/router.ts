@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory, RouteLocation, RouteLocationMatched
 import App from "@/components/App.vue";
 import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
+import AlbumPage from "@/components/collection/AlbumPage.vue";
 import Browser from "@/components/collection/Browser.vue";
 import Playlist from "@/components/collection/playlist/Playlist.vue";
 import Playlists from "@/components/collection/playlist/Playlists.vue";
@@ -18,6 +19,8 @@ import SettingsUsers from "@/components/settings/sections/Users.vue";
 import { useUserStore } from "@/stores/user";
 import { useInitialSetupStore } from "@/stores/initial-setup";
 
+export const URI_ARRAY_SEPARATOR = " ⨯ ";
+
 function extractVFSPath(route: RouteLocation) {
 	let pathMatchParam = route.params.pathMatch;
 	let pathMatch: string[];
@@ -28,6 +31,19 @@ function extractVFSPath(route: RouteLocation) {
 	}
 	const path = (pathMatch || []).join("/") + (route.hash || "");
 	return { path };
+}
+
+function extractAlbumKey(route: RouteLocation) {
+	let artists: string[] = [];
+	if (!Array.isArray(route.params.artists)) {
+		artists = route.params.artists.split(URI_ARRAY_SEPARATOR);
+	}
+	return {
+		album_key: {
+			artists,
+			name: route.params.name,
+		}
+	};
 }
 
 const routes = [
@@ -47,6 +63,7 @@ const routes = [
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: "/browse/:pathMatch(.*)*", component: Browser, props: extractVFSPath },
+			{ path: "/artists/:artists/albums/:name", component: AlbumPage, props: extractAlbumKey },
 			{ path: "/random", component: Random },
 			{ path: "/recent", component: Recent },
 			{ path: "/playlists", component: Playlists },

@@ -16,26 +16,26 @@
 </template>
 
 <script setup lang="ts">
-import { Album } from "@/api/dto";
+import { AlbumHeader } from "@/api/dto";
 import { formatArtists } from "@/format";
 import { makeThumbnailURL } from "@/api/endpoints";
 import CoverArt from "/src/components/CoverArt.vue";
 
 const props = defineProps<{
-	albums: Album[],
+	albums: AlbumHeader[],
 	showArtistName: boolean
 }>();
 
 const emits = defineEmits<{
-	(event:'item-click', item: Album): void
-	(event:'items-drag-start', dragEvent: DragEvent, items: Album[]): void
+	(event:'item-click', item: AlbumHeader): void
+	(event:'items-drag-start', dragEvent: DragEvent, items: AlbumHeader[]): void
 }>();
 
-function onItemClicked(directory: Album){
+function onItemClicked(directory: AlbumHeader){
 	emits("item-click", directory);
 }
 
-function onItemsDragStart(event: DragEvent, directory: Album){
+function onItemsDragStart(event: DragEvent, directory: AlbumHeader){
 	emits("items-drag-start", event, [directory]);
 }
 </script>

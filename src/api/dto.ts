@@ -1,3 +1,5 @@
+export const API_ARRAY_SEPARATOR = "\u{000C}";
+
 export type Authorization = {
 	username: string;
 	token: string;
@@ -57,7 +59,6 @@ export type BrowserEntry = {
 };
 
 export interface Song {
-	variant: "Song";
 	path: string;
 	track_number?: number;
 	disc_number?: number;
@@ -74,11 +75,24 @@ export interface Song {
 	labels?: string[];
 }
 
+export interface AlbumKey {
+	artists: string[],
+	name?: string,
+}
+
+export interface AlbumHeader {
+	name?: string,
+	artwork?: string,
+	artists?: string[],
+	year?: number,
+}
+
 export interface Album {
 	name?: string,
 	artwork?: string,
 	artists?: string[],
 	year?: number,
+	songs: Song[],
 }
 
 export type SavePlaylistInput = {

@@ -12,8 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { BrowserEntry, Song } from "@/api/dto";
-import { formatArtists, formatTitle } from "@/format";
+import { BrowserEntry } from "@/api/dto";
 
 const props = defineProps<{
 	items: BrowserEntry[],

@@ -1,6 +1,9 @@
 import Router from "@/router";
 import {
 	Album,
+	AlbumHeader,
+	AlbumKey,
+	API_ARRAY_SEPARATOR,
 	Authorization,
 	BrowserEntry,
 	DDNSConfig,
@@ -170,12 +173,17 @@ export async function flatten(path: string): Promise<Song[]> {
 	return await response.json();
 }
 
-export async function random(): Promise<Album[]> {
+export async function get_album(album_key: AlbumKey): Promise<Album> {
+	const response = await request("/artists/" + encodeURIComponent(album_key.artists.join(API_ARRAY_SEPARATOR)) + "/albums/" + encodeURIComponent(album_key.name || ""));
+	return await response.json();
+}
+
+export async function random(): Promise<AlbumHeader[]> {
 	const response = await request("/random");
 	return await response.json();
 }
 
-export async function recent(): Promise<Album[]> {
+export async function recent(): Promise<AlbumHeader[]> {
 	const response = await request("/recent");
 	return await response.json();
 }
