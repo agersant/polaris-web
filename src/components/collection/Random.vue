@@ -17,13 +17,14 @@
 <script setup lang="ts">
 import { onMounted, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
-import { Album } from "@/api/dto";
+import { AlbumHeader } from "@/api/dto";
 import { random } from "@/api/endpoints";
 import Discography from "./layout/Discography.vue";
+import { URI_ARRAY_SEPARATOR } from "@/router";
 
 const router = useRouter();
 
-const items: Ref<Album[]> = ref([]);
+const items: Ref<AlbumHeader[]> = ref([]);
 
 onMounted(() => {
 	refresh();
@@ -34,12 +35,12 @@ async function refresh() {
 	items.value = await random();
 }
 
-function onItemClicked(item: Album) {
-	// TODO fix me!
-	// router.push("/browse/" + item.path).catch(err => { });
+function onItemClicked(item: AlbumHeader) {
+	// TODO most likely breaks when artists or album name contain `/` character
+	router.push("/artists/" + (item.artists || []).join(URI_ARRAY_SEPARATOR) + "/albums/" + (item.name || "")).catch(err => { });
 }
 
-function onItemsDragStart(event: DragEvent, items: Album[]) {
+function onItemsDragStart(event: DragEvent, items: AlbumHeader[]) {
 	if (!event || !event.dataTransfer) {
 		return;
 	}

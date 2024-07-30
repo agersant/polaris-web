@@ -19,14 +19,12 @@
 <script setup lang="ts">
 import { BrowserEntry } from "@/api/dto";
 import { browse } from "@/api/endpoints";
-import { formatArtists, getPathTail } from "@/format";
+import { getPathTail } from "@/format";
 import { usePlaylistStore } from "@/stores/playlist";
 import { computed, nextTick, ref, Ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import Breadcrumbs from "./Breadcrumbs.vue";
 import Explorer from "./layout/Explorer.vue";
-
-type ViewMode = "explorer" | "discography" | "album";
 
 const props = defineProps<{path:string}>();
 
@@ -59,7 +57,7 @@ watch(
 );
 
 const header = computed((): string =>{
-	return  getPathTail(props.path) || "All Music";
+	return getPathTail(props.path) || "All Music";
 });
 
 function onItemClicked(item: BrowserEntry) {
