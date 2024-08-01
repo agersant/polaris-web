@@ -75,6 +75,10 @@ export interface Song {
 	labels?: string[];
 }
 
+export interface SongList {
+	paths: string[];
+}
+
 export interface AlbumKey {
 	artists: string[],
 	name?: string,

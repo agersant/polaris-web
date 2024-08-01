@@ -17,6 +17,7 @@ import {
 	SavePlaylistInput,
 	Settings,
 	Song,
+	SongList,
 	User,
 	UserUpdate,
 } from "@/api/dto";
@@ -168,7 +169,7 @@ export async function browse(path: string): Promise<BrowserEntry[]> {
 	return await response.json();
 }
 
-export async function flatten(path: string): Promise<Song[]> {
+export async function flatten(path: string): Promise<SongList> {
 	const response = await request("/flatten/" + encodeURIComponent(path));
 	return await response.json();
 }
@@ -197,7 +198,7 @@ export async function playlists(): Promise<ListPlaylistsEntry[]> {
 	return (await request("/playlists")).json();
 }
 
-export async function getPlaylist(name: string): Promise<Song[]> {
+export async function getPlaylist(name: string): Promise<SongList> {
 	const response = await request("/playlist/" + encodeURIComponent(name));
 	return await response.json();
 }
