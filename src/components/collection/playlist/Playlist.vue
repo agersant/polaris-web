@@ -3,10 +3,10 @@
 		<div class="paneHeader">
 			<h2>Playlists</h2>
 		</div>
-		<div data-cy="saved-playlist-details" v-if="tracks" class="paneContent" ref="paneContent">
+		<div data-cy="saved-playlist-details" v-if="songList" class="paneContent" ref="paneContent">
 			<div class="viewActions">
 				<div class="header">{{ name }}</div>
-				<button v-if="tracks.length > 0" v-on:click="play" class="small">Play</button>
+				<button v-if="songList.paths.length > 0" v-on:click="play" class="small">Play</button>
 				<button v-on:click="deletePlaylist" class="danger small">Delete</button>
 			</div>
 			<!-- TODO fixme -->
@@ -20,7 +20,7 @@ import { Ref, ref, watchEffect } from "vue";
 import Explorer from "@/components/collection/layout/Explorer.vue";
 import { usePlaylistStore } from "@/stores/playlist";
 import { getPlaylist, deletePlaylist as doDeletePlaylist } from "@/api/endpoints";
-import { Song } from "@/api/dto";
+import { SongList } from "@/api/dto";
 import { useRouter } from "vue-router";
 
 const props = defineProps<{
@@ -30,11 +30,11 @@ const props = defineProps<{
 const router = useRouter();
 const playlist= usePlaylistStore();
 
-const tracks: Ref<Song[] | null> = ref(null);
+const songList: Ref<SongList | null> = ref(null);
 
 watchEffect(async () => {
-	tracks.value = null;
-	tracks.value = await getPlaylist(props.name);
+	songList.value = null;
+	songList.value = await getPlaylist(props.name);
 });
 
 function play() {
