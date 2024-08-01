@@ -115,14 +115,14 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	async function queueDirectory(path: string) {
-		const tracks = await flatten(path);
-		enqueue(tracks);
+		const songList = await flatten(path);
+		enqueue(songList.paths.map((p) => { return { path: p } }));
 		savePlaylist();
 	}
 
 	async function queuePlaylist(playlistName: string) {
-		const playlistSongs: Song[] = await getPlaylist(playlistName);
-		songs.value = markRaw(playlistSongs);
+		const songList = await getPlaylist(playlistName);
+		songs.value = markRaw(songList.paths.map((p) => { return { path: p } }));
 		name.value = playlistName;
 		savePlaylist();
 	}
