@@ -8,16 +8,22 @@
 	"devDependencies": {
 		"@types/node": "^20.0",
 		"@vitejs/plugin-vue": "^4",
+		"autoprefixer": "^10.4.20",
 		"cypress": "^13.0",
+		"postcss": "^8.4.41",
+		"tailwindcss": "^3.4.9",
 		"typescript": "^5.2",
 		"vite": "^4",
 		"vue-tsc": "^1.0"
 	},
 	"dependencies": {
+		"@primevue/themes": "^4.0.4",
 		"@types/array-equal": "^1.0.2",
 		"@vueuse/core": "^10",
 		"array-equal": "^1.0.2",
 		"pinia": "^2.0.14",
+		"primevue": "^4.0.4",
+		"tailwindcss-primeui": "^0.3.4",
 		"vue": "^3.2.31",
 		"vue-router": "^4.0.14",
 		"vuex": "^4.0.2"

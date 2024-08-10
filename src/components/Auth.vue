@@ -1,20 +1,39 @@
 <template>
-	<div class="authForm">
-		<div class="content">
-			<img class="logo" src="/assets/logo.svg" />
-			<form name="authForm" @submit.prevent="doLogin">
-				<input data-cy="username" type="text" v-model="username" placeholder="Username" autofocus />
-				<input data-cy="password" type="password" v-model="password" placeholder="Password" />
-				<p v-if="badCredentials" data-cy="login-error" class="tip error">Incorrect credentials, please try
-					again.</p>
-				<input type="submit" value="Login" />
-			</form>
+	<div class="flex justify-center items-center bg-surface-100 dark:bg-surface-900">
+		<div class="relative w-[550px]">
+			<div
+				class="p-20 rounded-lg border bg-surface-0 dark:bg-surface-800 border-surface-200 dark:border-surface-700">
+				<img src="/assets/logo.svg" class="mb-20" />
+				<form name="authForm" @submit.prevent="doLogin">
+					<Fluid>
+						<label for="username" class="block mb-2">Username</label>
+						<InputText v-model="username" :invalid="badCredentials" placeholder="Username"
+							pt:root:data-cy="username" pt:root:id="username" pt:root:autofocus="true" class="mb-4" />
+						<label for="password" class="block mb-2">Password</label>
+						<Password v-model="password" :feedback="false" :invalid="badCredentials" placeholder="Password"
+							toggleMask :pt="{ pcInput: { root: { 'data-cy': 'password', id: 'password' } } }"
+							class="mb-8" />
+						<Button label="Sign In" pt:root:type="submit" />
+					</Fluid>
+				</form>
+			</div>
+			<Message v-if="badCredentials" data-cy="login-error" severity="error" class="absolute w-full -bottom-16">
+				Incorrect
+				credentials,
+				please try
+				again.</Message>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+import Button from "primevue/button"
+import Fluid from 'primevue/fluid';
+import InputText from 'primevue/inputtext';
+import Message from 'primevue/message';
+import Password from 'primevue/password';
 import { ref } from "vue";
+
 import { useUserStore } from "@/stores/user";
 
 const user = useUserStore();
@@ -36,63 +55,3 @@ async function doLogin(event: Event) {
 	}
 }
 </script>
-
-<style scoped>
-.authForm {
-	height: 100%;
-	margin: auto;
-	width: 25%;
-}
-
-.logo {
-	width: 100%;
-	margin-bottom: 70px;
-}
-
-.content {
-	display: flex;
-	flex-flow: column nowrap;
-	justify-content: center;
-	align-items: stretch;
-	height: 90%;
-}
-
-form {
-	display: flex;
-	flex-flow: column nowrap;
-	justify-content: center;
-	align-items: stretch;
-}
-
-input {
-	width: inherit;
-	display: block;
-	margin: 5px 0;
-	font-size: 1.5rem;
-}
-
-input[type="submit"] {
-	align-self: flex-end;
-	font-size: 1.25rem;
-	margin-top: 15px;
-}
-
-input[type="text"],
-input[type="password"],
-.tip {
-	padding-left: 10px;
-}
-
-input[type="text"],
-input[type="password"] {
-	border: 0;
-	box-sizing: content-box;
-	border-bottom: 1px solid var(--theme-border);
-}
-
-.tip {
-	/*Exclude from layout so the form doesn't move when this appears*/
-	height: 0;
-	overflow: visible;
-}
-</style>
