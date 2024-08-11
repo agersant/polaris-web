@@ -1,110 +1,210 @@
 <template>
-	<div class="app">
-		<Sidebar class="sidebar" />
-		<div class="left-pane">
-			<router-view></router-view>
+	<div class="h-full flex flex-col">
+		<div class="flex flex-1 min-h-0">
+			<Menu :model="menuItems" class="w-80 p-6 m-8" pt:separator:class="my-4 opacity-0">
+				<template #start>
+					<img src="/assets/logo.svg" class="my-8 mx-4" />
+				</template>
+				<template #itemicon="scope">
+					<span class="material-icons-round">{{ scope.item.icon }}</span>
+				</template>
+			</Menu>
+
+			<div class="flex grow">
+				<div header="Files" class="grow basis-0 m-14 flex flex-col overflow-scroll">
+					<div class="text-4xl font-light mb-8">Files</div>
+					<IconField>
+						<InputIcon>
+							<template #default>
+								<span class="material-icons-round -mt-[4px]">search</span>
+							</template>
+						</InputIcon>
+						<InputText fluid placeholder="Search" />
+					</IconField>
+					<Tree :value="fileStructure" selectionMode="multiple" class="!px-0" />
+				</div>
+				<div class="grow basis-0 ml-8 flex flex-col border-l">
+					<div class="m-8 flex items-center justify-between">
+						<div class="flex items-center">
+							<span class="text-4xl mb-2 mr-2 font-light">Cozy</span>
+							<Button label="Save" size="small" severity="secondary" text>
+								<template #icon>
+									<span class="material-icons-round">save</span>
+								</template>
+							</Button>
+							<Button label="Clear" size="small" severity="secondary" text>
+								<template #icon>
+									<span class="material-icons-round">clear</span>
+								</template>
+							</Button>
+						</div>
+						<div class="flex items-center gap-4">
+							<Button label="Shuffle" severity="secondary" text>
+								<template #icon>
+									<span class="material-icons-round">shuffle</span>
+								</template>
+							</Button>
+							<Select placeholder="Repeat All" />
+						</div>
+					</div>
+					<div class="min-h-0">
+						<DataTable :value="playlist" scrollable scrollHeight="flex" stripedRows class="text-xs">
+							<!-- TODO more subtle drag handle -->
+							<Column rowReorder headerStyle="width: 3rem" />
+							<!-- TODO album art -->
+							<Column field="artist" header="Artist" sortable></Column>
+							<Column field="album" header="Album" sortable></Column>
+							<Column field="title" header="Title" sortable></Column>
+						</DataTable>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div class="right-pane">
-			<Playlist />
-			<Player />
+		<div class="h-28 px-8 py-6 border-t flex-none flex items-center gap-16">
+			<div class="flex">
+				<div class="aspect-square h-20 rounded-md bg-pink-400" />
+				<div class="ml-4 flex flex-col justify-center">
+					<div class="font-semibold">No Turning Back</div>
+					<div class="text-sm text-muted-color">Stratovarius</div>
+				</div>
+			</div>
+			<div class="flex gap-4 items-center text-muted-color">
+				<span class="material-icons-round text-4xl">skip_previous</span>
+				<div class="material-icons-round text-2xl rounded-full p-2 border-4 px-3">pause</div>
+				<span class="material-icons-round text-4xl">skip_next</span>
+			</div>
+			<div class="grow flex items-center gap-4 text-muted-color text-xs">
+				<span>0:24</span>
+				<div id="waveform" class="grow" />
+				<span>5:46</span>
+			</div>
+			<div class="flex items-center gap-4">
+				<span class="material-icons-round">volume_down</span>
+				<Slider class="w-32" />
+			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import Sidebar from "./Sidebar.vue";
-import Player from "./playback/Player.vue";
-import Playlist from "./playback/Playlist.vue";
+import Button from 'primevue/button';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import InputText from 'primevue/inputtext';
+import Menu from 'primevue/menu';
+import Select from 'primevue/select';
+import Slider from 'primevue/slider';
+import Tree from 'primevue/tree';
+import { onMounted } from "vue";
+import WaveSurfer from 'wavesurfer.js'
+
+import { makeAudioURL } from '@/api/endpoints';
+import { $dt } from '@primevue/themes';
+
+onMounted(() => {
+	WaveSurfer.create({
+		container: '#waveform',
+		url: makeAudioURL("root/Jazz/Casiopea/1981 - Cross Point/02 - Swear.mp3"),
+		waveColor: $dt("text.muted.color").value.light.value,
+		progressColor: $dt("primary.color").value.light.value,
+		height: 112,
+		barWidth: 3,
+		barGap: 2,
+		barRadius: 4,
+		barHeight: 0.5,
+		cursorWidth: 0,
+	})
+});
+
+const menuItems = [
+	{
+		label: "Library",
+		items: [
+			{ label: "Files", icon: "folder" },
+			{ label: "Artists", icon: "person" },
+			{ label: "Albums", icon: "library_music" },
+			{ label: "Songs", icon: "music_note" },
+			{ label: "Search", icon: "search" },
+		]
+	},
+	{ separator: true },
+	{
+		label: "Profile",
+		items: [
+			{ label: "Settings", icon: "settings" },
+			{ label: "Sign Out", icon: "logout" },
+		]
+	},
+	{ separator: true },
+	{
+		label: "Playlists",
+		items: [
+			{ label: "Bedtime", icon: "playlist_play" },
+			{ label: "Cozy", icon: "playlist_play" },
+			{ label: "View All", icon: "list_alt", class: "font-semibold text-sm !text-blue-400" },
+		]
+	},
+];
+
+const fileStructure = [
+	{
+		label: "Leviathan",
+		children: [
+			{ label: "Classical" },
+			{ label: "Electronic", },
+			{ label: "Hip-Hop", },
+			{ label: "Jazz", },
+			{ label: "Metal", children: [{ label: "Heavy Metal" }, { label: "Progressive Metal" }, { label: "Power Metal" }] },
+			{ label: "OST - Anime", },
+			{ label: "OST - Games", },
+			{ label: "OST - Movies", },
+			{ label: "Pop", },
+			{ label: "Rock", },
+			{ label: "World", },
+		],
+	},
+];
+
+const playlist = [
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 1, title: "Northwind" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 2, title: "Waltz with the Dead" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 3, title: "Spirit of the Hawk" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 4, title: "Legend and the Lore" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 5, title: "Catch the Shadows" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 6, title: "Tower of the Queen" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 7, title: "Long Gone By" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 8, title: "Perjury and Sanctity" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 9, title: "Fairyland Fanfare" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 10, title: "Himmel sa trind" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 11, title: "Blinded" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 12, title: "Delusion" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 13, title: "Home of the Knave" },
+	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 14, title: "Black Tarn" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 1, title: "Destiny" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 2, title: "S.O.S." },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 3, title: "No Turning Back" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 4, title: "4000 Rainy Nights" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 5, title: "Rebel" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 6, title: "Years Go By" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 7, title: "Playing With Fire" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 8, title: "Venus in the Morning" },
+	{ artist: "Stratovarius", album: "Destiny", year: 1998, trackNumber: 9, title: "Anthem of the World" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 1, title: "Stargazer" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 2, title: "Undying" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 3, title: "In The Walls" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 4, title: "The Tale of Deathface Ginny" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 5, title: "Castles in the Snow" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 6, title: "Kingslayer" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 7, title: "The Faceless Hero" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 8, title: "Neverending" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 9, title: "Hollow" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 10, title: "Awakened From Nothing" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 11, title: "In The Walls (EP Version)" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 12, title: "Undying (EP Version)" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 13, title: "The Bloody Meadow (Re-Recording)" },
+	{ artist: "Seven Kingdoms", album: "Decennium", year: 2017, trackNumber: 14, title: "Stormborn (Re-Recording)" },
+];
+
 </script>
-
-<style>
-.app {
-	display: flex;
-	height: 100%;
-}
-
-.sidebar {
-	width: 50px;
-	flex-shrink: 0;
-}
-
-.left-pane {
-	height: 100%;
-	flex-shrink: 0;
-	width: max(550px, min(900px, calc(40% - 50px)));
-}
-
-.right-pane {
-	height: 100%;
-	flex-grow: 1;
-	z-index: 1;
-	display: flex;
-	flex-direction: column;
-	box-sizing: border-box;
-	border-left: 1px solid var(--theme-border-muted);
-}
-
-.pane {
-	height: 100%;
-}
-
-.player {
-	height: 160px;
-	box-sizing: border-box;
-	border-top: 1px solid var(--theme-border-muted);
-}
-
-.pane,
-.player {
-	overflow-x: hidden;
-}
-
-.paneHeader {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	height: 100px;
-	z-index: 1;
-	box-sizing: border-box;
-	padding-left: 50px;
-	padding-right: 50px;
-	padding-top: 20px;
-	padding-bottom: 10px;
-	white-space: nowrap;
-	overflow: hidden;
-	border-bottom: 1px solid var(--theme-border-muted);
-}
-
-.paneContent {
-	width: 100%;
-	height: calc(100% - 100px);
-	padding-top: 50px;
-	padding-left: 50px;
-	padding-right: 50px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	box-sizing: border-box;
-}
-
-.viewActions {
-	margin-bottom: 40px;
-	font-size: 0;
-}
-
-.viewActions .header {
-	line-height: 1;
-	margin-bottom: 5px;
-	font-size: 1.5rem;
-}
-
-.viewActions .subHeader {
-	line-height: 1;
-	font-size: 1.25rem;
-	margin-bottom: 5px;
-	color: var(--theme-foreground-muted);
-}
-
-.viewActions button {
-	display: inline;
-}
-</style>

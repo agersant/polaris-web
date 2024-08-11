@@ -21,12 +21,14 @@
 		"@types/array-equal": "^1.0.2",
 		"@vueuse/core": "^10",
 		"array-equal": "^1.0.2",
+		"material-icons": "^1.13.12",
 		"pinia": "^2.0.14",
 		"primevue": "^4.0.4",
 		"tailwindcss-primeui": "^0.3.4",
 		"vue": "^3.2.31",
 		"vue-router": "^4.0.14",
-		"vuex": "^4.0.2"
+		"vuex": "^4.0.2",
+		"wavesurfer.js": "^7.8.2"
 	},
 	"scripts": {
 		"dev": "vite",
