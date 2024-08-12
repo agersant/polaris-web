@@ -1,17 +1,10 @@
 <template>
 	<div class="h-full flex flex-col">
 		<div class="flex flex-1 min-h-0">
-			<Menu :model="menuItems" class="w-80 p-6 m-8" pt:separator:class="my-4 opacity-0">
-				<template #start>
-					<img src="/assets/logo.svg" class="my-8 mx-4" />
-				</template>
-				<template #itemicon="scope">
-					<span class="material-icons-round">{{ scope.item.icon }}</span>
-				</template>
-			</Menu>
+			<Sidebar class="m-8 mr-0" />
 
 			<div class="flex grow">
-				<div header="Files" class="grow basis-0 m-14 flex flex-col overflow-scroll">
+				<div header="Files" class="grow basis-0 mx-20 my-14 flex flex-col overflow-scroll">
 					<div class="text-4xl font-light mb-8">Files</div>
 					<IconField>
 						<InputIcon>
@@ -23,7 +16,7 @@
 					</IconField>
 					<Tree :value="fileStructure" selectionMode="multiple" class="!px-0" />
 				</div>
-				<div class="grow basis-0 ml-8 flex flex-col border-l">
+				<div class="grow basis-0 flex flex-col border-l">
 					<div class="m-8 flex items-center justify-between">
 						<div class="flex items-center">
 							<span class="text-4xl mb-2 mr-2 font-light">Cozy</span>
@@ -93,15 +86,15 @@ import Column from 'primevue/column';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
-import Menu from 'primevue/menu';
 import Select from 'primevue/select';
 import Slider from 'primevue/slider';
+import { $dt } from '@primevue/themes';
 import Tree from 'primevue/tree';
 import { onMounted } from "vue";
 import WaveSurfer from 'wavesurfer.js'
 
 import { makeAudioURL } from '@/api/endpoints';
-import { $dt } from '@primevue/themes';
+import Sidebar from './Sidebar.vue';
 
 onMounted(() => {
 	WaveSurfer.create({
@@ -118,35 +111,6 @@ onMounted(() => {
 	})
 });
 
-const menuItems = [
-	{
-		label: "Library",
-		items: [
-			{ label: "Files", icon: "folder" },
-			{ label: "Artists", icon: "person" },
-			{ label: "Albums", icon: "library_music" },
-			{ label: "Songs", icon: "music_note" },
-			{ label: "Search", icon: "search" },
-		]
-	},
-	{ separator: true },
-	{
-		label: "Profile",
-		items: [
-			{ label: "Settings", icon: "settings" },
-			{ label: "Sign Out", icon: "logout" },
-		]
-	},
-	{ separator: true },
-	{
-		label: "Playlists",
-		items: [
-			{ label: "Bedtime", icon: "playlist_play" },
-			{ label: "Cozy", icon: "playlist_play" },
-			{ label: "View All", icon: "list_alt", class: "font-semibold text-sm !text-blue-400" },
-		]
-	},
-];
 
 const fileStructure = [
 	{

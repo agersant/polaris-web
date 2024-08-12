@@ -129,7 +129,7 @@ router.beforeEach(async (to, from, next) => {
 
 	// Default entry-point
 	if (to.path == "/") {
-		return next("/browse");
+		return next("/files");
 	}
 
 	next();
