@@ -21,18 +21,6 @@ import { useInitialSetupStore } from "@/stores/initial-setup";
 
 export const URI_ARRAY_SEPARATOR = " ⨯ ";
 
-function extractVFSPath(route: RouteLocation) {
-	let pathMatchParam = route.params.pathMatch;
-	let pathMatch: string[];
-	if (Array.isArray(pathMatchParam)) {
-		pathMatch = pathMatchParam;
-	} else {
-		pathMatch = [pathMatchParam];
-	}
-	const path = (pathMatch || []).join("/") + (route.hash || "");
-	return { path };
-}
-
 function extractAlbumKey(route: RouteLocation) {
 	let artists: string[] = [];
 	if (!Array.isArray(route.params.artists)) {
@@ -62,7 +50,7 @@ const routes = [
 		component: App,
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
-			{ path: "/browse/:pathMatch(.*)*", component: Browser, props: extractVFSPath },
+			{ path: "/files", component: Browser },
 			{ path: "/artists/:artists/albums/:name", component: AlbumPage, props: extractAlbumKey },
 			{ path: "/random", component: Random },
 			{ path: "/recent", component: Recent },
