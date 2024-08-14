@@ -1,9 +1,6 @@
 import { Song } from "@/api/dto";
 
-export function getPathTail(path: string | null): string | null {
-	if (!path) {
-		return null;
-	}
+export function getPathTail(path: string) {
 	path = path.replace(/\\/g, "/");
 	let slices = path.split("/");
 	slices = slices.filter(s => s.length > 0);

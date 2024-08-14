@@ -14,6 +14,7 @@ import "./style.css";
 const MyPreset = definePreset(Aura, {
     components: {
         menu: { submenuLabel: { fontWeight: 500, } },
+        tree: { padding: 0 },
     },
 });
 

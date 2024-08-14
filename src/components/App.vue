@@ -4,18 +4,10 @@
 			<Sidebar class="m-8 mr-0" />
 
 			<div class="flex grow">
-				<div header="Files" class="grow basis-0 mx-20 my-14 flex flex-col overflow-scroll">
-					<div class="text-4xl font-light mb-8">Files</div>
-					<IconField>
-						<InputIcon>
-							<template #default>
-								<span class="material-icons-round -mt-[4px]">search</span>
-							</template>
-						</InputIcon>
-						<InputText fluid placeholder="Search" />
-					</IconField>
-					<Tree :value="fileStructure" selectionMode="multiple" class="!px-0" />
+				<div class="grow basis-0 mx-20 my-8 flex">
+					<router-view class="grow"></router-view>
 				</div>
+
 				<div class="grow basis-0 flex flex-col border-l">
 					<div class="m-8 flex items-center justify-between">
 						<div class="flex items-center">
@@ -41,13 +33,14 @@
 						</div>
 					</div>
 					<div class="min-h-0">
-						<DataTable :value="playlist" scrollable scrollHeight="flex" stripedRows class="text-xs">
+						<DataTable :value="playlist" scrollable scrollHeight="flex" stripedRows class="text-xs"
+							size="small">
 							<!-- TODO more subtle drag handle -->
 							<Column rowReorder headerStyle="width: 3rem" />
 							<!-- TODO album art -->
-							<Column field="artist" header="Artist" sortable></Column>
-							<Column field="album" header="Album" sortable></Column>
-							<Column field="title" header="Title" sortable></Column>
+							<Column field="artist" header="Artist"></Column>
+							<Column field="album" header="Album"></Column>
+							<Column field="title" header="Title"></Column>
 						</DataTable>
 					</div>
 				</div>
@@ -83,13 +76,9 @@
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Slider from 'primevue/slider';
 import { $dt } from '@primevue/themes';
-import Tree from 'primevue/tree';
 import { onMounted } from "vue";
 import WaveSurfer from 'wavesurfer.js'
 
@@ -110,26 +99,6 @@ onMounted(() => {
 		cursorWidth: 0,
 	})
 });
-
-
-const fileStructure = [
-	{
-		label: "Leviathan",
-		children: [
-			{ label: "Classical" },
-			{ label: "Electronic", },
-			{ label: "Hip-Hop", },
-			{ label: "Jazz", },
-			{ label: "Metal", children: [{ label: "Heavy Metal" }, { label: "Progressive Metal" }, { label: "Power Metal" }] },
-			{ label: "OST - Anime", },
-			{ label: "OST - Games", },
-			{ label: "OST - Movies", },
-			{ label: "Pop", },
-			{ label: "Rock", },
-			{ label: "World", },
-		],
-	},
-];
 
 const playlist = [
 	{ artist: "Falconer", album: "Northwind", year: 2006, trackNumber: 1, title: "Northwind" },

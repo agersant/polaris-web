@@ -1,68 +1,104 @@
 <template>
-	<div class="pane">
-		<div class="paneHeader">
-			<h2>Music Collection</h2>
-			<Breadcrumbs />
-		</div>
 
-		<div data-cy="browser" class="paneContent" ref="paneContent">
-			<div class="viewActions">
-				<div data-cy="browser-header" class="header">{{ header }}</div>
-				<button v-if="items.length > 0" v-on:click="onQueueAll" class="small">Queue All</button>
-			</div>
-			<Explorer v-bind:items="items" v-on:item-click="onItemClicked"
-				v-on:items-drag-start="onItemsDragStart" />			
-		</div>
+	<div data-cy="browser" header="Files" class="flex flex-col">
+		<div data-cy="browser-header" class="mt-[60px] mb-8 text-4xl font-light text-muted-color mb-8">Files</div>
+		<IconField>
+			<InputIcon>
+				<template #default>
+					<span class="material-icons-round -mt-[4px]">search</span>
+				</template>
+			</InputIcon>
+			<InputText fluid placeholder="Search" />
+		</IconField>
+		<ScrollPanel class="mt-4 min-h-0">
+			<Tree v-model:selectionKeys="selection" :value="treeModel" loadingMode="icon" @node-expand="openDirectory"
+				selectionMode="multiple" metaKeySelection>
+				<template #nodeicon="{ node }">
+					<span class="p-tree-node-icon material-icons-round">{{ node.icon }}</span>
+				</template>
+			</Tree>
+		</ScrollPanel>
 	</div>
 </template>
 
 <script setup lang="ts">
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import InputText from 'primevue/inputtext';
+import ScrollPanel from 'primevue/scrollpanel';
+import Tree from 'primevue/tree';
+import { TreeNode } from 'primevue/treenode';
+
 import { BrowserEntry } from "@/api/dto";
 import { browse } from "@/api/endpoints";
-import { getPathTail } from "@/format";
 import { usePlaylistStore } from "@/stores/playlist";
-import { computed, nextTick, ref, Ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import Breadcrumbs from "./Breadcrumbs.vue";
-import Explorer from "./layout/Explorer.vue";
+import { useAsyncState } from '@vueuse/core';
+import { getPathTail } from '@/format';
+import { nextTick, ref } from 'vue';
+import { produce } from 'immer';
 
-const props = defineProps<{path:string}>();
-
-const router = useRouter();
 const playlist = usePlaylistStore();
 
-const items: Ref<BrowserEntry[]> = ref([]);
-const paneContent: Ref<HTMLElement | null> = ref(null);
-const savedPositions = new Map();
+const { state: treeModel } = useAsyncState(browse("").then(f => makeTreeNodes(f, [])), []);
+const selection = ref(null);
 
-watch(
-	() => props.path,
-	async (path, oldPath) => {
-		if (oldPath && paneContent.value) {
-			savedPositions.set(oldPath, paneContent.value.scrollTop);
-		}
-		items.value = (await browse(path)).sort((a, b) => a.path.localeCompare(b.path));
-		for (const savedPath of savedPositions.keys()) {
-			if (!path.startsWith(savedPath)) {
-				savedPositions.delete(savedPath);
+async function openDirectory(node: TreeNode) {
+	if ((node.children || []).length > 0) {
+		return;
+	}
+
+	const findNode = (tree: TreeNode[]) => {
+		var nodeToUpdate: TreeNode = { key: "", children: tree };
+		for (const i of node.index_chain) {
+			if (nodeToUpdate.children) {
+				nodeToUpdate = nodeToUpdate.children[i];
 			}
 		}
-		nextTick(() => {
-			if (paneContent.value) {
-				paneContent.value.scrollTop = savedPositions.get(path) || 0;
-			}
-		});
-	},
-	{ immediate: true, flush: "post" }
-);
+		return nodeToUpdate;
+	};
 
-const header = computed((): string =>{
-	return getPathTail(props.path) || "All Music";
-});
+	treeModel.value = produce(treeModel.value, (tree) => {
+		findNode(tree).loading = true;
+	});
+
+	const children = await browse(node.key || "").then(f => makeTreeNodes(f, node.index_chain));
+
+	// TODO This is a band-aid for poor performance of Tree component https://github.com/primefaces/primevue/issues/6196
+	const maxChildren = 500;
+	treeModel.value = produce(treeModel.value, (tree) => {
+		const nodeToUpdate = findNode(tree);
+		if (!nodeToUpdate.children) {
+			nodeToUpdate.children = [];
+		}
+		nodeToUpdate.children.push(...children.slice(0, maxChildren));
+		if (children.length > maxChildren) {
+			nodeToUpdate.children.push({
+				key: nodeToUpdate.key + "!overflow",
+				label: `[${children.length - maxChildren} more]`,
+				icon: "",
+				selectable: false,
+				leaf: true,
+			});
+		}
+		nodeToUpdate.loading = false;
+	});
+
+}
+
+function makeTreeNodes(entries: BrowserEntry[], parent_indices: number[]): TreeNode[] {
+	return entries.map((e, index) => {
+		return {
+			key: e.path,
+			label: getPathTail(e.path),
+			icon: e.is_directory ? "folder" : "audio_file",
+			leaf: !e.is_directory,
+			index_chain: [...parent_indices, index],
+		};
+	});
+}
 
 function onItemClicked(item: BrowserEntry) {
 	if (item.is_directory) {
-		router.push("/browse/" + item.path).catch(err => { });
 	} else {
 		// TODO fix me!!
 		// playlist.queueTracks([{ ...item }]);
@@ -77,6 +113,6 @@ function onItemsDragStart(event: DragEvent, items: BrowserEntry[]) {
 }
 
 function onQueueAll() {
-	playlist.queueDirectory(props.path);
+	// playlist.queueDirectory(props.path);
 }
 </script>
