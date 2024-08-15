@@ -1,8 +1,8 @@
 <template>
     <VirtualScroller :items="props.value" :itemSize="40">
         <template v-slot:item="{ item, options }">
-            <VirtualTreeNode style="height: 40px" :node="item" @node-toggle="onNodeToggle"
-                :expanded="expandedKeys.has(item.key)">
+            <VirtualTreeNode style="height: 40px" :node="item" @node-toggle="onNodeToggle" @node-click="onNodeClick"
+                :expanded="expandedKeys.has(item.key)" :selected="selectedKeys.has(item.key)">
                 <template #icon>
                     <slot name="icon" :node="item" />
                 </template>
@@ -36,6 +36,7 @@ const emit = defineEmits<{
 }>();
 
 const expandedKeys = ref(new Set<string>());
+const selectedKeys = ref(new Set<string>());
 
 function onNodeToggle(node: Node) {
     const key = node.key;
@@ -46,6 +47,16 @@ function onNodeToggle(node: Node) {
     } else {
         expandedKeys.value.add(key);
         emit('node-expand', node);
+    }
+}
+
+function onNodeClick(event: MouseEvent, node: Node) {
+    const key = node.key;
+
+    if (selectedKeys.value.has(key)) {
+        selectedKeys.value.delete(key);
+    } else {
+        selectedKeys.value.add(key);
     }
 }
 
