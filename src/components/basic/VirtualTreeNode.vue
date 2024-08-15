@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <button v-if="!node.leaf" type="button" @click="toggle" tabindex="-1" aria-hidden="true">
+    <div class="flex items-center text-muted-color" :style="computedStyle">
+        <button v-if="!node.leaf" type="button" @click="toggle" class="mr-2 mt-1">
             <template v-if="node.loading">
                 <SpinnerIcon spin />
             </template>
@@ -9,7 +9,8 @@
                 <ChevronRightIcon v-else />
             </template>
         </button>
-        <span>{{ props.node.label }}</span>
+        <slot name="icon" />
+        <span class="text-color">{{ props.node.label }}</span>
     </div>
 </template>
 
@@ -17,6 +18,7 @@
 import ChevronDownIcon from '@primevue/icons/chevrondown';
 import ChevronRightIcon from '@primevue/icons/chevronright';
 import SpinnerIcon from '@primevue/icons/spinner';
+import { computed, StyleValue } from 'vue';
 
 import { Node } from "@/components/basic/VirtualTree.vue";
 
@@ -32,5 +34,9 @@ const emit = defineEmits<{
 function toggle() {
     emit('node-toggle', props.node);
 }
+
+const computedStyle = computed((): StyleValue => {
+    return { "margin-left": `${12 * props.node.depth}px` }
+});
 
 </script>

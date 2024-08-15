@@ -10,7 +10,11 @@
 			</InputIcon>
 			<InputText fluid placeholder="Search" />
 		</IconField>
-		<VirtualTree :value="treeModel" @node-expand="openDirectory" @node-collapse="closeDirectory" class="mt-4" />
+		<VirtualTree :value="treeModel" @node-expand="openDirectory" @node-collapse="closeDirectory" class="mt-4">
+			<template #icon="{ node }">
+				<span class="material-icons-round mr-1">{{ node.icon }}</span>
+			</template>
+		</VirtualTree>
 	</div>
 </template>
 
