@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center text-muted-color" :style="computedStyle">
+    <div class="flex items-center pl-4 text-muted-color rounded-md hover:bg-surface-100" :style="computedStyle">
         <button v-if="!node.leaf" type="button" @click="toggle" class="mr-2 mt-1">
             <template v-if="node.loading">
                 <SpinnerIcon spin />
@@ -10,7 +10,7 @@
             </template>
         </button>
         <slot name="icon" />
-        <span class="text-color">{{ props.node.label }}</span>
+        <span class="text-color hover:text-hover-color text-nowrap">{{ props.node.label }}</span>
     </div>
 </template>
 
