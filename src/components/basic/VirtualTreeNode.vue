@@ -1,6 +1,8 @@
 <template>
-    <div class="flex items-center pl-4 text-muted-color rounded-md hover:bg-surface-100" :style="computedStyle">
-        <button type="button" @click="toggle" :class="{ 'mr-3': 1, 'mt-1': 1, 'invisible': node.leaf }">
+    <div @click="onClick"
+        class="flex items-center pl-4 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
+        :class="{ '!bg-highlight': selected }" :style="rootStyle">
+        <button type="button" @click.stop="toggle" class="mr-3 mt-1" :class="{ invisible: node.leaf }">
             <template v-if="node.loading">
                 <SpinnerIcon spin />
             </template>
@@ -10,7 +12,7 @@
             </template>
         </button>
         <slot name="icon" />
-        <span class="text-color hover:text-hover-color text-nowrap">{{ props.node.label }}</span>
+        <span class="text-nowrap" :style="labelStyle">{{ props.node.label }}</span>
     </div>
 </template>
 
@@ -21,22 +23,39 @@ import SpinnerIcon from '@primevue/icons/spinner';
 import { computed, StyleValue } from 'vue';
 
 import { Node } from "@/components/basic/VirtualTree.vue";
+import { $dt } from '@primevue/themes';
 
 const props = defineProps<{
     node: Node,
     expanded: boolean,
+    selected: boolean,
 }>();
 
 const emit = defineEmits<{
     (e: 'node-toggle', node: Node): void,
+    (e: 'node-click', originalEvent: MouseEvent, node: Node): void,
 }>();
 
 function toggle() {
     emit('node-toggle', props.node);
 }
 
-const computedStyle = computed((): StyleValue => {
-    return { "margin-left": `${12 * props.node.depth}px` }
+function onClick(event: MouseEvent) {
+    console.log($dt("highlight.color"));
+    emit('node-click', event, props.node);
+}
+
+const rootStyle = computed((): StyleValue => {
+    return {
+        "margin-left": `${12 * props.node.depth}px`,
+        "color": $dt(props.selected ? "highlight.color" : "text.muted.color").variable,
+    }
+});
+
+const labelStyle = computed((): StyleValue => {
+    return {
+        "color": $dt(props.selected ? "highlight.color" : "text.color").variable,
+    }
 });
 
 </script>
