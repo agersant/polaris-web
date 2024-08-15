@@ -1,8 +1,8 @@
 <template>
     <div @click="onClick"
-        class="flex items-center pl-4 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
+        class="flex items-center px-2 py-1 mb-0.5 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
         :class="{ '!bg-highlight': selected }" :style="rootStyle">
-        <button type="button" @click.stop="toggle" class="mr-3 mt-1" :class="{ invisible: node.leaf }">
+        <button type="button" @click.stop="toggle" class="w-7 h-7 pt-1" :class="{ invisible: node.leaf }">
             <template v-if="node.loading">
                 <SpinnerIcon spin />
             </template>
@@ -47,7 +47,7 @@ function onClick(event: MouseEvent) {
 
 const rootStyle = computed((): StyleValue => {
     return {
-        "margin-left": `${12 * props.node.depth}px`,
+        "margin-left": `${16 * props.node.depth}px`,
         "color": $dt(props.selected ? "highlight.color" : "text.muted.color").variable,
     }
 });

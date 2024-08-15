@@ -63,6 +63,7 @@ function closeDirectory(node: Node) {
 	const keepIndex = treeModel.value.slice(parentIndex + 1).findIndex(n => n.depth <= node.depth);
 	const numDeletions = keepIndex >= 0 ? keepIndex : treeModel.value.length - (parentIndex + 1);
 
+	// TODO this removes grandchildren but doesnt fold the corresponding child
 	let newModel = [...treeModel.value];
 	newModel.splice(parentIndex + 1, numDeletions);
 	treeModel.value = newModel;
