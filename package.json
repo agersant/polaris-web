@@ -21,7 +21,6 @@
 		"@types/array-equal": "^1.0.2",
 		"@vueuse/core": "^10.11.1",
 		"array-equal": "^1.0.2",
-		"immer": "^10.1.1",
 		"material-icons": "^1.13.12",
 		"pinia": "^2.0.14",
 		"primevue": "^4.0.4",
