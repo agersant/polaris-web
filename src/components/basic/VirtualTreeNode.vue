@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center pl-4 text-muted-color rounded-md hover:bg-surface-100" :style="computedStyle">
-        <button v-if="!node.leaf" type="button" @click="toggle" class="mr-2 mt-1">
+        <button type="button" @click="toggle" :class="{ 'mr-3': 1, 'mt-1': 1, 'invisible': node.leaf }">
             <template v-if="node.loading">
                 <SpinnerIcon spin />
             </template>
