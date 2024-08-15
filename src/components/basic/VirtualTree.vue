@@ -1,4 +1,5 @@
 <template>
+    <!-- TODO size becomes very wrong after squishing browser window -->
     <VirtualScroller :items="props.value" :itemSize="38">
         <template v-slot:item="{ item, options }">
             <VirtualTreeNode style="height: 38px" :node="item" @node-toggle="onNodeToggle" @node-click="onNodeClick"
