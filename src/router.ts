@@ -3,19 +3,19 @@ import { createRouter, createWebHashHistory, RouteLocation, RouteLocationMatched
 import App from "@/components/App.vue";
 import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
-import AlbumPage from "@/components/collection/AlbumPage.vue";
-import Browser from "@/components/collection/Browser.vue";
-import Playlist from "@/components/collection/playlist/Playlist.vue";
-import Playlists from "@/components/collection/playlist/Playlists.vue";
-import Random from "@/components/collection/Random.vue";
-import Recent from "@/components/collection/Recent.vue";
-import Search from "@/components/collection/search/Search.vue";
+import AlbumPage from "@/components/library/AlbumPage.vue";
+import Files from "@/components/library/Files.vue";
+import Playlist from "@/components/profile/playlists/Playlist.vue";
+import Playlists from "@/components/profile/playlists/Playlists.vue";
+import Random from "@/components/library/Random.vue";
+import Recent from "@/components/library/Recent.vue";
+// import Search from "@/components/library/search/Search.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
-import Settings from "@/components/settings/Settings.vue";
-import SettingsCollection from "@/components/settings/sections/Collection.vue";
-import SettingsDDNS from "@/components/settings/sections/DDNS.vue";
-import SettingsPreferences from "@/components/settings/sections/Preferences.vue";
-import SettingsUsers from "@/components/settings/sections/Users.vue";
+import Settings from "@/components/profile/settings/Settings.vue";
+import SettingsCollection from "@/components/profile/settings/Collection.vue";
+import SettingsDDNS from "@/components/profile/settings/DDNS.vue";
+import SettingsPreferences from "@/components/profile/settings/Preferences.vue";
+import SettingsUsers from "@/components/profile/settings/Users.vue";
 import { useUserStore } from "@/stores/user";
 import { useInitialSetupStore } from "@/stores/initial-setup";
 
@@ -50,13 +50,13 @@ const routes = [
 		component: App,
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
-			{ path: "/files", component: Browser },
+			{ path: "/files", component: Files },
 			{ path: "/artists/:artists/albums/:name", component: AlbumPage, props: extractAlbumKey },
 			{ path: "/random", component: Random },
 			{ path: "/recent", component: Recent },
 			{ path: "/playlists", component: Playlists },
 			{ path: "/playlist/:name", component: Playlist, props: true },
-			{ path: "/search/:query?", component: Search, props: true },
+			// { path: "/search/:query?", component: Search, props: true },
 			{
 				path: "/settings",
 				component: Settings,
