@@ -1,7 +1,7 @@
 <template>
-    <VirtualScroller :items="props.value" :itemSize="40">
+    <VirtualScroller :items="props.value" :itemSize="38">
         <template v-slot:item="{ item, options }">
-            <VirtualTreeNode style="height: 40px" :node="item" @node-toggle="onNodeToggle" @node-click="onNodeClick"
+            <VirtualTreeNode style="height: 38px" :node="item" @node-toggle="onNodeToggle" @node-click="onNodeClick"
                 :expanded="expandedKeys.has(item.key)" :selected="selectedKeys.has(item.key)">
                 <template #icon>
                     <slot name="icon" :node="item" />
