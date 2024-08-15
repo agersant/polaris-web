@@ -15,7 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { produce } from 'immer';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
@@ -35,33 +34,34 @@ const { state: treeModel } = useAsyncState(browse("").then(f => makeTreeNodes(f,
 const selection = ref(null);
 
 async function openDirectory(node: Node) {
-	const parentIndex = treeModel.value.findIndex(n => n.key == node.key);
-	const nextNode = treeModel.value[parentIndex + 1];
-	if (nextNode && nextNode.depth > nextNode.depth) {
-		return;
+	{
+		let parentIndex = treeModel.value.findIndex(n => n.key == node.key);
+		const nextNode = treeModel.value[parentIndex + 1];
+		if (nextNode && nextNode.depth > nextNode.depth) {
+			return;
+		}
+		treeModel.value[parentIndex].loading = true;
 	}
-
-	treeModel.value = produce(treeModel.value, (tree) => {
-		const parentIndex = tree.findIndex(n => n.key == node.key);
-		tree[parentIndex].loading = true;
-	});
 
 	const children = await browse(node.key || "").then(f => makeTreeNodes(f, node));
 
-	treeModel.value = produce(treeModel.value, (tree) => {
-		const parentIndex = tree.findIndex(n => n.key == node.key);
-		tree.splice(parentIndex + 1, 0, ...children);
-		tree[parentIndex].loading = false;
-	});
+	{
+		let parentIndex = treeModel.value.findIndex(n => n.key == node.key);
+		let newModel = [...treeModel.value];
+		newModel.splice(parentIndex + 1, 0, ...children);
+		newModel[parentIndex] = { ...newModel[parentIndex], loading: false };
+		treeModel.value = newModel;
+	}
 }
 
 function closeDirectory(node: Node) {
-	treeModel.value = produce(treeModel.value, (tree) => {
-		const parentIndex = tree.findIndex(n => n.key == node.key);
-		const keepIndex = tree.slice(parentIndex + 1).findIndex(n => n.depth <= node.depth);
-		const numDeletions = keepIndex >= 0 ? keepIndex : tree.length - (parentIndex + 1);
-		tree.splice(parentIndex + 1, numDeletions);
-	});
+	const parentIndex = treeModel.value.findIndex(n => n.key == node.key);
+	const keepIndex = treeModel.value.slice(parentIndex + 1).findIndex(n => n.depth <= node.depth);
+	const numDeletions = keepIndex >= 0 ? keepIndex : treeModel.value.length - (parentIndex + 1);
+
+	let newModel = [...treeModel.value];
+	newModel.splice(parentIndex + 1, numDeletions);
+	treeModel.value = newModel;
 }
 
 function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {
