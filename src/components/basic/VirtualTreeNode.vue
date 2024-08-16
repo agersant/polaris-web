@@ -1,6 +1,6 @@
 <template>
     <div @click="onClick"
-        class="flex items-center px-2 py-1 mb-0.5 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
+        class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
         :class="{ '!bg-highlight': selected }" :style="rootStyle">
         <button type="button" @click.stop="toggle" class="w-7 h-7 pt-1" :class="{ invisible: node.leaf }" tabindex="-1">
             <template v-if="node.loading">
