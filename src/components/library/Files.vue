@@ -10,7 +10,7 @@
 			</InputIcon>
 			<InputText fluid placeholder="Search" />
 		</IconField>
-		<VirtualTree :value="treeModel" @node-expand="openDirectory" @node-collapse="closeDirectory" class="mt-4 grow">
+		<VirtualTree :value="treeModel" @node-expand="openDirectory" class="mt-4 grow">
 			<template #icon="{ node }">
 				<span class="material-icons-round mr-1">{{ node.icon }}</span>
 			</template>
@@ -41,7 +41,7 @@ async function openDirectory(node: Node) {
 	{
 		let parentIndex = treeModel.value.findIndex(n => n.key == node.key);
 		const nextNode = treeModel.value[parentIndex + 1];
-		if (nextNode && nextNode.depth > nextNode.depth) {
+		if (nextNode && nextNode.depth > node.depth) {
 			return;
 		}
 		treeModel.value[parentIndex].loading = true;
@@ -56,17 +56,6 @@ async function openDirectory(node: Node) {
 		newModel[parentIndex] = { ...newModel[parentIndex], loading: false };
 		treeModel.value = newModel;
 	}
-}
-
-function closeDirectory(node: Node) {
-	const parentIndex = treeModel.value.findIndex(n => n.key == node.key);
-	const keepIndex = treeModel.value.slice(parentIndex + 1).findIndex(n => n.depth <= node.depth);
-	const numDeletions = keepIndex >= 0 ? keepIndex : treeModel.value.length - (parentIndex + 1);
-
-	// TODO this removes grandchildren but doesnt fold the corresponding child
-	let newModel = [...treeModel.value];
-	newModel.splice(parentIndex + 1, numDeletions);
-	treeModel.value = newModel;
 }
 
 function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {
