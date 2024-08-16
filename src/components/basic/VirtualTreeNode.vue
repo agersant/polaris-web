@@ -1,5 +1,5 @@
 <template>
-    <div @click="onClick"
+    <div @click="onClick" @keydown="onKeyDown" tabindex="0"
         class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
         :class="{ '!bg-highlight': selected }" :style="rootStyle">
         <button type="button" @click.stop="toggle" class="w-7 h-7 pt-1" :class="{ invisible: node.leaf }" tabindex="-1">
@@ -41,8 +41,34 @@ function toggle() {
 }
 
 function onClick(event: MouseEvent) {
-    console.log($dt("highlight.color"));
     emit('node-click', event, props.node);
+}
+
+function onKeyDown(event: KeyboardEvent) {
+    switch (event.code) {
+        case 'ArrowLeft':
+            onArrowLeft(event);
+            break;
+        case 'ArrowRight':
+            onArrowRight(event);
+            break;
+        default:
+            break;
+    }
+}
+
+function onArrowLeft(event: KeyboardEvent) {
+    if (props.node.leaf || !props.expanded) {
+        return;
+    }
+    emit('node-toggle', props.node);
+}
+
+function onArrowRight(event: KeyboardEvent) {
+    if (props.node.leaf || props.expanded) {
+        return;
+    }
+    emit('node-toggle', props.node);
 }
 
 const rootStyle = computed((): StyleValue => {
