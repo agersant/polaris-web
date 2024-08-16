@@ -1,5 +1,5 @@
 <template>
-    <VirtualScroller :items="props.value" :itemSize="38">
+    <VirtualScroller :items="visibleNodes" :itemSize="38">
         <template v-slot:item="{ item, options }">
             <VirtualTreeNode style="height: 36px" :node="item" @node-toggle="onNodeToggle" @node-click="onNodeClick"
                 :expanded="expandedKeys.has(item.key)" :selected="selectedKeys.has(item.key)" class="mb-0.5">
@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import VirtualScroller from 'primevue/virtualscroller';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import VirtualTreeNode from "./VirtualTreeNode.vue";
 
@@ -30,8 +30,24 @@ const props = defineProps<{
     value: Node[],
 }>();
 
+const visibleNodes = computed(() => {
+    let nodes = [];
+    let collapseDepth = Number.POSITIVE_INFINITY;
+    for (const node of props.value) {
+        if (node.depth >= collapseDepth) {
+            continue;
+        }
+        nodes.push(node);
+        if (!node.leaf && !expandedKeys.value.has(node.key)) {
+            collapseDepth = node.depth + 1;
+        } else {
+            collapseDepth = Number.POSITIVE_INFINITY;
+        }
+    }
+    return nodes;
+});
+
 const emit = defineEmits<{
-    (e: 'node-collapse', node: Node): void,
     (e: 'node-expand', node: Node): void,
 }>();
 
@@ -43,7 +59,6 @@ function onNodeToggle(node: Node) {
 
     if (expandedKeys.value.has(key)) {
         expandedKeys.value.delete(key);
-        emit('node-collapse', node);
     } else {
         expandedKeys.value.add(key);
         emit('node-expand', node);
