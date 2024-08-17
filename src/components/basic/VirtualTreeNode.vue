@@ -34,7 +34,6 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'node-toggle', node: Node): void,
     (e: 'node-click', originalEvent: MouseEvent, node: Node): void,
-    (e: 'node-double-click', originalEvent: MouseEvent, node: Node): void,
 }>();
 
 function toggle() {
@@ -46,7 +45,9 @@ function onClick(event: MouseEvent) {
 }
 
 function onDoubleClick(event: MouseEvent) {
-    emit('node-double-click', event, props.node);
+    if (!props.node.leaf) {
+        toggle();
+    }
 }
 
 function onKeyDown(event: KeyboardEvent) {
