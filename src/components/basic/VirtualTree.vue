@@ -1,5 +1,5 @@
 <template>
-    <VirtualScroller :items="visibleNodes" :itemSize="38">
+    <VirtualScroller :items="visibleNodes" :itemSize="38" class="select-none">
         <template v-slot:item="{ item, options }">
             <VirtualTreeNode style="height: 36px" :node="item" @node-toggle="onNodeToggle" @node-click="onNodeClick"
                 :expanded="expandedKeys.has(item.key)" :selected="selectedKeys.has(item.key)" class="mb-0.5">
@@ -30,29 +30,41 @@ const props = defineProps<{
     value: Node[],
 }>();
 
-const visibleNodes = computed(() => {
-    let nodes = [];
+const emit = defineEmits<{
+    (e: 'node-expand', node: Node): void,
+}>();
+
+const visibleKeys = computed(() => {
+    let keys = new Set();
     let collapseDepth = Number.POSITIVE_INFINITY;
     for (const node of props.value) {
         if (node.depth >= collapseDepth) {
             continue;
         }
-        nodes.push(node);
+        keys.add(node.key);
         if (!node.leaf && !expandedKeys.value.has(node.key)) {
             collapseDepth = node.depth + 1;
         } else {
             collapseDepth = Number.POSITIVE_INFINITY;
         }
     }
+    return keys;
+});
+
+const visibleNodes = computed(() => {
+    let nodes = [];
+    const visible = visibleKeys.value;
+    for (const node of props.value) {
+        if (visible.has(node.key)) {
+            nodes.push(node);
+        }
+    }
     return nodes;
 });
 
-const emit = defineEmits<{
-    (e: 'node-expand', node: Node): void,
-}>();
-
 const expandedKeys = ref(new Set<string>());
 const selectedKeys = ref(new Set<string>());
+let pivot: string | undefined;
 
 function onNodeToggle(node: Node) {
     const key = node.key;
@@ -68,11 +80,50 @@ function onNodeToggle(node: Node) {
 function onNodeClick(event: MouseEvent, node: Node) {
     const key = node.key;
 
-    if (selectedKeys.value.has(key)) {
-        selectedKeys.value.delete(key);
+    const pivotIndex = props.value.findIndex(n => n.key == pivot);
+
+    if (event.shiftKey && pivotIndex >= 0) {
+        const clickedIndex = props.value.findIndex(n => n.key == key);
+        const from = Math.min(pivotIndex, clickedIndex);
+        const to = Math.max(pivotIndex, clickedIndex);
+
+        if (event.ctrlKey) {
+            for (let i = from; i <= to; i++) {
+                const keyIter = props.value[i].key;
+                if (!visibleKeys.value.has(keyIter)) {
+                    continue;
+                }
+                selectedKeys.value.add(keyIter);
+            }
+        } else {
+            selectedKeys.value.clear();
+            for (let i = from; i <= to; i++) {
+                const keyIter = props.value[i].key;
+                if (!visibleKeys.value.has(keyIter)) {
+                    continue;
+                }
+                if (selectedKeys.value.has(keyIter)) {
+                    selectedKeys.value.delete(keyIter);
+                } else {
+                    selectedKeys.value.add(keyIter);
+                }
+            }
+        }
+
+    } else if (event.ctrlKey) {
+        if (selectedKeys.value.has(key)) {
+            selectedKeys.value.delete(key);
+            pivot = undefined;
+        } else {
+            selectedKeys.value.add(key);
+            pivot = key;
+        }
     } else {
+        selectedKeys.value.clear();
         selectedKeys.value.add(key);
+        pivot = key;
     }
+
 }
 
 </script>
