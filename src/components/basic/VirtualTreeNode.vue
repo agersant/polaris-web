@@ -1,5 +1,5 @@
 <template>
-    <div @click="onClick" @keydown="onKeyDown" tabindex="0"
+    <div @click="onClick" @dblclick="onDoubleClick" @keydown="onKeyDown" tabindex="0"
         class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
         :class="{ '!bg-highlight': selected }" :style="rootStyle">
         <button type="button" @click.stop="toggle" class="w-7 h-7 pt-1" :class="{ invisible: node.leaf }" tabindex="-1">
@@ -34,6 +34,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'node-toggle', node: Node): void,
     (e: 'node-click', originalEvent: MouseEvent, node: Node): void,
+    (e: 'node-double-click', originalEvent: MouseEvent, node: Node): void,
 }>();
 
 function toggle() {
@@ -42,6 +43,10 @@ function toggle() {
 
 function onClick(event: MouseEvent) {
     emit('node-click', event, props.node);
+}
+
+function onDoubleClick(event: MouseEvent) {
+    emit('node-double-click', event, props.node);
 }
 
 function onKeyDown(event: KeyboardEvent) {

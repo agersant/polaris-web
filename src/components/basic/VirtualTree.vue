@@ -2,7 +2,8 @@
     <VirtualScroller :items="visibleNodes" :itemSize="38" class="select-none">
         <template v-slot:item="{ item, options }">
             <VirtualTreeNode style="height: 36px" :node="item" @node-toggle="onNodeToggle" @node-click="onNodeClick"
-                :expanded="expandedKeys.has(item.key)" :selected="selectedKeys.has(item.key)" class="mb-0.5">
+                @node-double-click="onNodeDoubleClick" :expanded="expandedKeys.has(item.key)"
+                :selected="selectedKeys.has(item.key)" class="mb-0.5">
                 <template #icon>
                     <slot name="icon" :node="item" />
                 </template>
@@ -126,4 +127,9 @@ function onNodeClick(event: MouseEvent, node: Node) {
 
 }
 
+function onNodeDoubleClick(event: MouseEvent, node: Node) {
+    if (!node.leaf) {
+        onNodeToggle(node);
+    }
+}
 </script>
