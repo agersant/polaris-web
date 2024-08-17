@@ -1,7 +1,8 @@
-import Aura from '@primevue/themes/aura';
 import { createPinia } from "pinia";
+import Aura from '@primevue/themes/aura';
 import PrimeVue from 'primevue/config';
 import { definePreset } from '@primevue/themes';
+import ToastService from 'primevue/toastservice';
 import { createApp } from "vue";
 
 import EntryPoint from "@/components/EntryPoint.vue";
@@ -21,6 +22,7 @@ const MyPreset = definePreset(Aura, {
 createApp(EntryPoint)
     .use(createPinia())
     .use(router)
+    .use(ToastService)
     .use(PrimeVue, { theme: { preset: MyPreset } })
     .mount("#vue-container");
 

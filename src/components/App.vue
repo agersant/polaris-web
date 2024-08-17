@@ -1,14 +1,15 @@
 <template>
 	<div class="h-full flex flex-col">
 		<div class="flex flex-1 min-h-0">
+			<Toast />
 			<Sidebar class="m-8 mr-0" />
 
 			<div class="flex grow">
-				<div class="grow basis-0 mx-20 my-8 flex">
+				<div class="grow basis-0 min-w-0 mx-20 my-8 flex">
 					<router-view class="grow"></router-view>
 				</div>
 
-				<div class="grow basis-0 flex flex-col border-l">
+				<div class="grow basis-0 min-w-0 flex flex-col border-l">
 					<div class="m-8 flex items-center justify-between">
 						<div class="flex items-center">
 							<span class="text-4xl mb-2 mr-2 font-light">Cozy</span>
@@ -78,6 +79,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Select from 'primevue/select';
 import Slider from 'primevue/slider';
+import Toast from 'primevue/toast';
 import { $dt } from '@primevue/themes';
 import { onMounted } from "vue";
 import WaveSurfer from 'wavesurfer.js'

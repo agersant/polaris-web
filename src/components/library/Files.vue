@@ -22,6 +22,7 @@
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
+import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 
@@ -31,6 +32,8 @@ import { BrowserEntry } from "@/api/dto";
 import { browse } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
 import { getPathTail } from '@/format';
+
+const toast = useToast();
 
 const playlist = usePlaylistStore();
 
@@ -47,12 +50,19 @@ async function openDirectory(node: Node) {
 		treeModel.value[parentIndex].loading = true;
 	}
 
-	const children = await browse(node.key || "").then(f => makeTreeNodes(f, node));
+	let children;
+	try {
+		children = await browse(node.key || "").then(f => makeTreeNodes(f, node));
+	} catch (e) {
+		toast.add({ severity: 'error', summary: "API Error", detail: `Failed to download directory content for '${node.label}'`, life: 3000 });
+	}
 
 	{
 		let parentIndex = treeModel.value.findIndex(n => n.key == node.key);
 		let newModel = [...treeModel.value];
-		newModel.splice(parentIndex + 1, 0, ...children);
+		if (children) {
+			newModel.splice(parentIndex + 1, 0, ...children);
+		}
 		newModel[parentIndex] = { ...newModel[parentIndex], loading: false };
 		treeModel.value = newModel;
 	}
