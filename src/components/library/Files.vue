@@ -1,5 +1,5 @@
 <template>
-	<div data-cy="browser" header="Files" class="flex flex-col">
+	<div data-cy="browser" class="flex flex-col">
 		<div data-cy="browser-header"
 			class="my-10 py-[0.5px] text-5xl font-light text-ls-500 tracking-widest dark:text-ds-300">
 			Files</div>
