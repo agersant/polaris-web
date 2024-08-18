@@ -5,7 +5,6 @@
         <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1 flex flex-col"
             :class="{ invisible: node.leaf }" tabindex="-1">
             <template v-if="node.loading">
-                <!-- TODO fix color!! -->
                 <Spinner />
             </template>
             <template v-else>
