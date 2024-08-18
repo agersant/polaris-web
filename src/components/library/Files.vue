@@ -38,7 +38,6 @@ const toast = useToast();
 const playlist = usePlaylistStore();
 
 const { state: treeModel } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
-const selection = ref(null);
 
 async function openDirectory(node: Node) {
 	{
