@@ -1,6 +1,6 @@
 <template>
     <div :list="visibleNodes" v-bind="containerProps" @keydown.prevent="onKeyDown" class="select-none">
-        <div v-bind="wrapperProps" ref="virtualList" tabindex="-1">
+        <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
             <VirtualTreeNode v-for="node in virtualNodes" style="height: 36px" :node="node.data"
                 @node-toggle="toggleNode" @node-click="onNodeClick" @move-left="moveLeft" @move-right="moveRight"
                 :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
