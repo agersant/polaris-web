@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="w-80 rounded-lg flex flex-col overflow-hidden border bg-ls-0 dark:bg-ds-950 border-ls-200 dark:border-ds-800 p-6 pb-0">
-		<img src="/assets/logo.svg" class="mt-8 mb-14 mx-4" />
+		<img src="/assets/logo.svg" class="mt-4 mb-10 mx-4" />
 		<nav class="grow flex flex-col gap-y-7">
 
 			<ul class="-mx-2 space-y-1">

@@ -1,7 +1,7 @@
 <template>
 	<div data-cy="browser" header="Files" class="flex flex-col">
 		<div data-cy="browser-header"
-			class="mt-[60px] mb-8 text-4xl font-light text-ls-500 tracking-widest dark:text-ds-300 mb-8">
+			class="my-10 py-[0.5px] text-5xl font-light text-ls-500 tracking-widest dark:text-ds-300">
 			Files</div>
 		<InputText v-model="searchQuery" id="search" name="search" placeholder="Search" icon="search" />
 		<VirtualTree :value="treeModel" @node-expand="openDirectory" class="mt-4 grow">
