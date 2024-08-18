@@ -1,14 +1,12 @@
 <template>
 	<div class="h-full flex flex-col bg-ls-50 dark:bg-ds-900">
 		<div class="flex flex-1 min-h-0">
-			<Sidebar class="m-8 mr-0" />
+			<Sidebar class="shrink-0 m-8 mr-0" />
 
-			<div class="flex grow">
-				<div class="grow basis-0 min-w-0 mx-20 my-8 flex">
-					<router-view class="grow"></router-view>
-				</div>
+			<div class="grow grid grid-cols-2">
+				<router-view class="px-20 py-8 min-h-0" />
 
-				<div class="grow basis-0 min-w-0 flex flex-col border-l">
+				<div class="flex flex-col border-l">
 					<div class="m-8 flex items-center justify-between">
 						<div class="flex items-center">
 							<span class="text-4xl mb-2 mr-2 font-light">Cozy</span>
