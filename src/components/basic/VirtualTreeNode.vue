@@ -8,7 +8,9 @@
                 <Spinner />
             </template>
             <template v-else>
-                <span class="material-icons-round -mt-0.5">{{ expanded ? "expand_more" : "chevron_right" }}</span>
+                <span :class="iconClass" class="material-icons-round -mt-0.5">
+                    {{ expanded ? "expand_more" : "chevron_right" }}
+                </span>
             </template>
         </button>
         <span :class="iconClass" class="material-icons-round mr-2">{{ node.icon }}</span>
