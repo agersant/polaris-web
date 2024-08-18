@@ -4,11 +4,7 @@
 			class="my-10 py-[0.5px] text-5xl font-light text-ls-500 tracking-widest dark:text-ds-300">
 			Files</div>
 		<InputText v-model="searchQuery" id="search" name="search" placeholder="Search" icon="search" />
-		<VirtualTree :value="treeModel" @node-expand="openDirectory" class="mt-4 grow">
-			<template #icon="{ node }">
-				<span class="material-icons-round mr-1">{{ node.icon }}</span>
-			</template>
-		</VirtualTree>
+		<VirtualTree :value="treeModel" @node-expand="openDirectory" class="mt-4 grow" />
 	</div>
 </template>
 
