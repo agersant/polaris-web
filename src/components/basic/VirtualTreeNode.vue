@@ -36,8 +36,6 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'node-toggle', node: Node): void,
     (e: 'node-click', originalEvent: MouseEvent, node: Node): void,
-    (e: 'move-previous', event: KeyboardEvent, node: Node): void,
-    (e: 'move-next', event: KeyboardEvent, node: Node): void,
 }>();
 
 function toggle() {
