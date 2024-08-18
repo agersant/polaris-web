@@ -1,15 +1,9 @@
 <template>
-
 	<div data-cy="browser" header="Files" class="flex flex-col">
-		<div data-cy="browser-header" class="mt-[60px] mb-8 text-4xl font-light text-muted-color mb-8">Files</div>
-		<IconField>
-			<InputIcon>
-				<template #default>
-					<span class="material-icons-round -mt-[4px]">search</span>
-				</template>
-			</InputIcon>
-			<InputText fluid placeholder="Search" />
-		</IconField>
+		<div data-cy="browser-header"
+			class="mt-[60px] mb-8 text-4xl font-light text-gray-500 tracking-widest dark:text-gray-300 mb-8">
+			Files</div>
+		<InputText v-model="searchQuery" id="search" name="search" placeholder="Search" icon="search" />
 		<VirtualTree :value="treeModel" @node-expand="openDirectory" class="mt-4 grow">
 			<template #icon="{ node }">
 				<span class="material-icons-round mr-1">{{ node.icon }}</span>
@@ -19,25 +13,22 @@
 </template>
 
 <script setup lang="ts">
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import InputText from 'primevue/inputtext';
-import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 
+import InputText from "@/components/basic/InputText.vue";
 import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";
 import { BrowserEntry } from "@/api/dto";
 import { browse } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
 import { getPathTail } from '@/format';
-
-const toast = useToast();
+import { ref } from 'vue';
 
 const playlist = usePlaylistStore();
 
 const { state: treeModel } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
+
+const searchQuery = ref("");
 
 async function openDirectory(node: Node) {
 	{
@@ -53,7 +44,8 @@ async function openDirectory(node: Node) {
 	try {
 		children = await browse(node.key || "").then(f => makeTreeNodes(f, node));
 	} catch (e) {
-		toast.add({ severity: 'error', summary: "API Error", detail: `Failed to download directory content for '${node.label}'`, life: 3000 });
+		// TODO fixme
+		// toast.add({ severity: 'error', summary: "API Error", detail: `Failed to download directory content for '${node.label}'`, life: 3000 });
 	}
 
 	{

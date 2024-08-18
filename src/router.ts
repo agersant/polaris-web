@@ -5,7 +5,7 @@ import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
 import AlbumPage from "@/components/library/AlbumPage.vue";
 import Files from "@/components/library/Files.vue";
-import Playlist from "@/components/profile/playlists/Playlist.vue";
+// import Playlist from "@/components/profile/playlists/Playlist.vue";
 import Playlists from "@/components/profile/playlists/Playlists.vue";
 import Random from "@/components/library/Random.vue";
 import Recent from "@/components/library/Recent.vue";
@@ -55,7 +55,7 @@ const routes = [
 			{ path: "/random", component: Random },
 			{ path: "/recent", component: Recent },
 			{ path: "/playlists", component: Playlists },
-			{ path: "/playlist/:name", component: Playlist, props: true },
+			// { path: "/playlist/:name", component: Playlist, props: true },
 			// { path: "/search/:query?", component: Search, props: true },
 			{
 				path: "/settings",

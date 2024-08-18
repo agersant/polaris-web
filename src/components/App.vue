@@ -1,7 +1,6 @@
 <template>
-	<div class="h-full flex flex-col">
+	<div class="h-full flex flex-col bg-white dark:bg-gray-900">
 		<div class="flex flex-1 min-h-0">
-			<Toast />
 			<Sidebar class="m-8 mr-0" />
 
 			<div class="flex grow">
@@ -74,13 +73,6 @@
 </template>
 
 <script setup lang="ts">
-import Button from 'primevue/button';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Select from 'primevue/select';
-import Slider from 'primevue/slider';
-import Toast from 'primevue/toast';
-import { $dt } from '@primevue/themes';
 import { onMounted } from "vue";
 import WaveSurfer from 'wavesurfer.js'
 
@@ -91,8 +83,8 @@ onMounted(() => {
 	WaveSurfer.create({
 		container: '#waveform',
 		url: makeAudioURL("root/Jazz/Casiopea/1981 - Cross Point/02 - Swear.mp3"),
-		waveColor: $dt("text.muted.color").value.light.value,
-		progressColor: $dt("primary.color").value.light.value,
+		// waveColor: $dt("text.muted.color").value.light.value,
+		// progressColor: $dt("primary.color").value.light.value,
 		height: 112,
 		barWidth: 3,
 		barGap: 2,

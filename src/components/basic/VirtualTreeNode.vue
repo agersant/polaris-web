@@ -1,30 +1,27 @@
 <template>
     <div @click="onClick" @dblclick="onDoubleClick" tabindex="0"
-        class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
+        class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
         :class="rootClass" :style="rootStyle">
-        <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1"
+        <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1 flex flex-col"
             :class="{ invisible: node.leaf }" tabindex="-1">
             <template v-if="node.loading">
-                <SpinnerIcon spin />
+                <!-- TODO fix color!! -->
+                <Spinner />
             </template>
             <template v-else>
-                <ChevronDownIcon v-if="expanded" />
-                <ChevronRightIcon v-else />
+                <span class="material-icons-round -mt-0.5">{{ expanded ? "expand_more" : "chevron_right" }}</span>
             </template>
         </button>
         <slot name="icon" />
-        <span class="text-nowrap" :style="labelStyle">{{ props.node.label }}</span>
+        <span class="text-nowrap">{{ props.node.label }}</span>
     </div>
 </template>
 
 <script setup lang="ts">
-import ChevronDownIcon from '@primevue/icons/chevrondown';
-import ChevronRightIcon from '@primevue/icons/chevronright';
-import SpinnerIcon from '@primevue/icons/spinner';
 import { computed, StyleValue } from 'vue';
 
+import Spinner from '@/components/basic/Spinner.vue';
 import { Node } from "@/components/basic/VirtualTree.vue";
-import { $dt } from '@primevue/themes';
 
 const props = defineProps<{
     node: Node,
@@ -54,21 +51,14 @@ function onDoubleClick(event: MouseEvent) {
 
 const rootClass = computed(() => {
     return [
-        ...(props.selected ? ["!bg-highlight"] : []),
-        ...(props.focused ? ["outline-1", "-outline-offset-2", "outline-dotted", 'outline-primary'] : []),
+        ...(props.selected ? ["!bg-accent-100", "text-accent-700", "dark:!bg-accent-900", "dark:text-accent-300"] : ["text-gray-600", "dark:text-gray-400", "dark:hover:text-gray-300"]),
+        ...(props.focused ? ["outline-1", "-outline-offset-2", "outline-dotted", 'outline-accent-500'] : []),
     ];
 });
 
 const rootStyle = computed((): StyleValue => {
     return {
         "margin-left": `${16 * props.node.depth}px`,
-        "color": $dt(props.selected ? "highlight.color" : "text.muted.color").variable,
-    }
-});
-
-const labelStyle = computed((): StyleValue => {
-    return {
-        "color": $dt(props.selected ? "highlight.color" : "text.color").variable,
     }
 });
 
