@@ -5,9 +5,6 @@
                 @node-toggle="toggleNode" @node-click="onNodeClick" @move-left="moveLeft" @move-right="moveRight"
                 :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
                 :selected="selectedKeys.has(node.data.key)" class="mb-0.5">
-                <template #icon>
-                    <slot name="icon" :node="node.data" />
-                </template>
             </VirtualTreeNode>
         </div>
     </div>
