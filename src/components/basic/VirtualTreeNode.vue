@@ -2,7 +2,7 @@
     <div @click="onClick" @dblclick="onDoubleClick" tabindex="0"
         class="group flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-ls-100 dark:hover:bg-ds-800"
         :class="rootClass" :style="rootStyle">
-        <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1 flex flex-col"
+        <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1"
             :class="{ invisible: node.leaf }" tabindex="-1">
             <Spinner v-if="node.loading" />
             <span v-else :class="iconClass" class="material-icons-round -mt-0.5">
