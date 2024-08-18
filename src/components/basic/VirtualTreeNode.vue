@@ -4,14 +4,10 @@
         :class="rootClass" :style="rootStyle">
         <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1 flex flex-col"
             :class="{ invisible: node.leaf }" tabindex="-1">
-            <template v-if="node.loading">
-                <Spinner />
-            </template>
-            <template v-else>
-                <span :class="iconClass" class="material-icons-round -mt-0.5">
-                    {{ expanded ? "expand_more" : "chevron_right" }}
-                </span>
-            </template>
+            <Spinner v-if="node.loading" />
+            <span v-else :class="iconClass" class="material-icons-round -mt-0.5">
+                {{ expanded ? "expand_more" : "chevron_right" }}
+            </span>
         </button>
         <span :class="iconClass" class="material-icons-round mr-2">{{ node.icon }}</span>
         <span class="text-nowrap">{{ props.node.label }}</span>
