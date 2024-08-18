@@ -10,29 +10,12 @@ let areWeSpammy = function () {
 	return recentNotificationTimes.length >= maxRecentNotifications;
 };
 
-let requestedPermission = false;
-function requestPermissionAndThen(callback: () => void) {
-	if (requestedPermission) {
-		// Extra notifications while request is pending, drop
-		return;
-	}
-	requestedPermission = true;
-	Notification.requestPermission(permission => {
-		if (permission === "granted") {
-			callback();
-		}
-	});
-}
-
 export default async function (title: string, icon: string | null, body: string) {
 	if (!("Notification" in window)) {
 		return;
 	}
 
 	if (Notification.permission === "default") {
-		if (requestedPermission) {
-			return;
-		}
 		const permission = await Notification.requestPermission();
 		if (permission !== "granted") {
 			return;
