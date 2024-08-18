@@ -1,6 +1,6 @@
 <template>
     <div @click="onClick" @dblclick="onDoubleClick" tabindex="0"
-        class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+        class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-ls-100 dark:hover:bg-ds-800"
         :class="rootClass" :style="rootStyle">
         <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1 flex flex-col"
             :class="{ invisible: node.leaf }" tabindex="-1">
@@ -50,7 +50,7 @@ function onDoubleClick(event: MouseEvent) {
 
 const rootClass = computed(() => {
     return [
-        ...(props.selected ? ["!bg-accent-100", "text-accent-700", "dark:!bg-accent-900", "dark:text-accent-300"] : ["text-gray-600", "dark:text-gray-400", "dark:hover:text-gray-300"]),
+        ...(props.selected ? ["!bg-accent-100", "text-accent-700", "dark:!bg-accent-900", "dark:text-accent-300"] : ["text-ls-600", "dark:text-ds-400", "dark:hover:text-ds-300"]),
         ...(props.focused ? ["outline-1", "-outline-offset-2", "outline-dotted", 'outline-accent-500'] : []),
     ];
 });
