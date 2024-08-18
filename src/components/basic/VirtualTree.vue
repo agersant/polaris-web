@@ -88,6 +88,13 @@ function toggleNode(node: Node) {
     virtualList.value?.focus();
 }
 
+function selectNode(node: Node) {
+    selectedKeys.value.clear();
+    selectedKeys.value.add(node.key);
+    pivotKey = node.key;
+    focusedKey.value = node.key;
+}
+
 function onNodeClick(event: MouseEvent, node: Node) {
 
     focusedKey.value = node.key;
@@ -131,9 +138,7 @@ function onNodeClick(event: MouseEvent, node: Node) {
             pivotKey = node.key;
         }
     } else {
-        selectedKeys.value.clear();
-        selectedKeys.value.add(node.key);
-        pivotKey = node.key;
+        selectNode(node);
     }
 
 }
@@ -157,6 +162,14 @@ function onKeyDown(event: KeyboardEvent) {
             break;
         case 'PageDown':
             move(10, event);
+            break;
+        case 'Home':
+            selectNode(visibleNodes.value[0]);
+            snapScrolling();
+            break;
+        case 'End':
+            selectNode(visibleNodes.value[visibleNodes.value.length - 1]);
+            snapScrolling();
             break;
         default:
             break;
