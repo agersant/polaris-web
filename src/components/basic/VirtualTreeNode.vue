@@ -1,8 +1,9 @@
 <template>
-    <div @click="onClick" @dblclick="onDoubleClick" @keydown="onKeyDown" tabindex="0"
+    <div @click="onClick" @dblclick="onDoubleClick" tabindex="0"
         class="flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800"
-        :class="{ '!bg-highlight': selected }" :style="rootStyle">
-        <button type="button" @click.stop="toggle" class="w-7 h-7 pt-1" :class="{ invisible: node.leaf }" tabindex="-1">
+        :class="rootClass" :style="rootStyle">
+        <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1"
+            :class="{ invisible: node.leaf }" tabindex="-1">
             <template v-if="node.loading">
                 <SpinnerIcon spin />
             </template>
@@ -29,11 +30,14 @@ const props = defineProps<{
     node: Node,
     expanded: boolean,
     selected: boolean,
+    focused: boolean,
 }>();
 
 const emit = defineEmits<{
     (e: 'node-toggle', node: Node): void,
     (e: 'node-click', originalEvent: MouseEvent, node: Node): void,
+    (e: 'move-previous', event: KeyboardEvent, node: Node): void,
+    (e: 'move-next', event: KeyboardEvent, node: Node): void,
 }>();
 
 function toggle() {
@@ -50,32 +54,12 @@ function onDoubleClick(event: MouseEvent) {
     }
 }
 
-function onKeyDown(event: KeyboardEvent) {
-    switch (event.code) {
-        case 'ArrowLeft':
-            onArrowLeft(event);
-            break;
-        case 'ArrowRight':
-            onArrowRight(event);
-            break;
-        default:
-            break;
-    }
-}
-
-function onArrowLeft(event: KeyboardEvent) {
-    if (props.node.leaf || !props.expanded) {
-        return;
-    }
-    emit('node-toggle', props.node);
-}
-
-function onArrowRight(event: KeyboardEvent) {
-    if (props.node.leaf || props.expanded) {
-        return;
-    }
-    emit('node-toggle', props.node);
-}
+const rootClass = computed(() => {
+    return [
+        ...(props.selected ? ["!bg-highlight"] : []),
+        ...(props.focused ? ["outline-1", "-outline-offset-2", "outline-dotted", 'outline-primary'] : []),
+    ];
+});
 
 const rootStyle = computed((): StyleValue => {
     return {
