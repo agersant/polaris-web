@@ -50,7 +50,7 @@ function onDoubleClick(event: MouseEvent) {
 
 const rootClass = computed(() => {
     return [
-        ...(props.selected ? ["!bg-accent-100", "text-accent-700", "dark:!bg-accent-900", "dark:text-accent-300"] : ["text-ls-600", "dark:text-ds-400", "dark:hover:text-ds-300"]),
+        ...(props.selected ? ["!bg-accent-100", "text-accent-700", "dark:!bg-accent-900", "dark:text-accent-200"] : ["text-ls-600", "dark:text-ds-400", "dark:hover:text-ds-300"]),
         ...(props.focused ? ["outline-1", "-outline-offset-2", "outline-dotted", 'outline-accent-500'] : []),
     ];
 });
