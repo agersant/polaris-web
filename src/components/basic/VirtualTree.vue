@@ -164,12 +164,16 @@ function onKeyDown(event: KeyboardEvent) {
             move(10, event);
             break;
         case 'Home':
-            selectNode(visibleNodes.value[0]);
-            snapScrolling();
+            move(Number.NEGATIVE_INFINITY, event);
             break;
         case 'End':
-            selectNode(visibleNodes.value[visibleNodes.value.length - 1]);
+            move(Number.POSITIVE_INFINITY, event);
             snapScrolling();
+            break;
+        case 'Escape':
+            selectedKeys.value.clear();
+            focusedKey.value = undefined;
+            pivotKey = undefined;
             break;
         default:
             break;
@@ -217,16 +221,30 @@ function moveRight(event: KeyboardEvent) {
 }
 
 function move(delta: number, event: KeyboardEvent) {
+    if (delta == 0) {
+        return;
+    }
+
+    const pivotIndex = visibleNodes.value.findIndex(n => n.key == pivotKey);
     const fromIndex = Math.max(0, Math.min(visibleNodes.value.findIndex(n => n.key == focusedKey.value), visibleNodes.value.length - 1));
     const toIndex = Math.max(0, Math.min(fromIndex + delta, visibleNodes.value.length - 1));
     const toNode = visibleNodes.value[toIndex];
 
-    if (!event.shiftKey) {
+    if (!event.shiftKey || pivotIndex < 0) {
         selectedKeys.value.clear();
         selectedKeys.value.add(toNode.key);
         pivotKey = toNode.key;
     } else {
-        // TODO add a node if moving away from pivot, remove a node when moving towards pivot
+        for (let index = fromIndex; true; index += Math.sign(delta)) {
+            if ((delta > 0 && index > pivotIndex) || (delta < 0 && index < pivotIndex)) {
+                selectedKeys.value.add(visibleNodes.value[index].key);
+            } else if (index != pivotIndex) {
+                selectedKeys.value.delete(visibleNodes.value[index].key);
+            }
+            if (index == toIndex) {
+                break;
+            }
+        }
     }
 
     focusedKey.value = toNode.key;
