@@ -1,39 +1,26 @@
 <template>
-	<div class="flex justify-center items-center bg-surface-100 dark:bg-surface-900">
-		<div class="relative w-[550px]">
-			<div
-				class="p-20 rounded-lg border bg-surface-0 dark:bg-surface-800 border-surface-200 dark:border-surface-700">
-				<img src="/assets/logo.svg" class="mb-20" />
-				<form name="authForm" @submit.prevent="doLogin">
-					<Fluid>
-						<label for="username" class="block mb-2">Username</label>
-						<InputText v-model="username" :invalid="badCredentials" placeholder="Username"
-							pt:root:data-cy="username" pt:root:id="username" pt:root:autofocus="true" class="mb-4" />
-						<label for="password" class="block mb-2">Password</label>
-						<Password v-model="password" :feedback="false" :invalid="badCredentials" placeholder="Password"
-							toggleMask :pt="{ pcInput: { root: { 'data-cy': 'password', id: 'password' } } }"
-							class="mb-8" />
-						<Button label="Sign In" pt:root:type="submit" />
-					</Fluid>
-				</form>
-			</div>
-			<Message v-if="badCredentials" data-cy="login-error" severity="error" class="absolute w-full -bottom-16">
-				Incorrect
-				credentials,
-				please try
-				again.</Message>
+	<div class="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800">
+		<div class="w-[480px] bg-white dark:bg-gray-900 p-12 rounded-lg shadow">
+			<img class="mx-auto h-16 mb-12" src="/assets/logo.svg" alt="Polaris" />
+			<form name="authForm" @submit.prevent="doLogin" class="space-y-6">
+				<InputText v-model="username" data-cy="username" id="username" name="username" autocomplete="username"
+					label="Username" :error="badCredentials" required autofocus />
+				<InputText v-model="password" data-cy="password" id="password" name="password" autocomplete="password"
+					label="Password" :error="badCredentials" required />
+				<div v-if="badCredentials" class=" text-red-600 dark:text-red-500 text-sm rounded-md py-2">
+					Incorrect credentials, please try again.
+				</div>
+				<Button label="Sign In" type="submit" size="xl" class="w-full" />
+			</form>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import Button from "primevue/button"
-import Fluid from 'primevue/fluid';
-import InputText from 'primevue/inputtext';
-import Message from 'primevue/message';
-import Password from 'primevue/password';
 import { ref } from "vue";
 
+import Button from "@/components/basic/Button.vue";
+import InputText from "@/components/basic/InputText.vue";
 import { useUserStore } from "@/stores/user";
 
 const user = useUserStore();

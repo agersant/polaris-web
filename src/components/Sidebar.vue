@@ -1,24 +1,48 @@
 <template>
-	<Menu :model="menuItems" class="w-80 p-6 overflow-hidden" pt:submenuLabel:class="text-sm uppercase"
-		pt:separator:class="my-2 opacity-0">
-		<template #start>
-			<img src="/assets/logo.svg" class="my-8 mx-4" />
-		</template>
-		<template #item="{ item }">
-			<a :class="['p-menu-item-link', ...itemClasses(item)]" :data-cy="item['data-cy']" tabindex="-1">
-				<span :class="['material-icons-round', ...iconClasses(item)]">{{ item.icon }}</span>
-				<span class="p-menu-item-label">{{ item.label }}</span>
-			</a>
-		</template>
-	</Menu>
+	<div class="w-80 rounded-lg flex flex-col overflow-hidden border border-gray-200 dark:border-gray-800 p-6 pb-0">
+		<img src="/assets/logo.svg" class="mt-8 mb-14 mx-4" />
+		<nav class="grow flex flex-col">
+			<ul class="grow flex flex-col gap-y-7">
+
+				<li v-for="category of navigation">
+					<div class="text-xs text-gray-400 uppercase">{{ category.label }}</div>
+					<ul class="-mx-2 mt-2 space-y-1">
+						<li v-for="item in category.items" :key="item.label">
+							<SidebarItem :data-cy="item['data-cy']" :action="item.action" :label="item.label"
+								:icon="item.icon" :current="isCurrent(item)" />
+						</li>
+					</ul>
+				</li>
+
+				<li>
+					<div class="text-xs text-gray-400 uppercase">Playlists</div>
+					<ul class="-mx-2 mt-2 space-y-1">
+						<li v-for="playlist in playlists">
+							<SidebarItem :action="() => { }" :label="playlist.name" icon="queue_music" />
+						</li>
+					</ul>
+				</li>
+
+				<li class="-mx-6 mt-auto">
+					<a @click="user.logout" class="cursor-pointer flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6
+						text-gray-900 dark:text-white
+						hover:bg-gray-50 dark:hover:bg-gray-800">
+						<span
+							class="material-icons-round text-gray-400 group-hover:text-accent-600 h-6 w-6 shrink-0">logout</span>
+						<span>Sign Out</span>
+					</a>
+				</li>
+			</ul>
+
+		</nav>
+	</div>
 </template>
 
 <script setup lang="ts">
-import Menu from 'primevue/menu';
-import { MenuItem } from 'primevue/menuitem';
-import { computed, ref } from "vue";
+import { computed, Ref, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+import SidebarItem from "@/components/SidebarItem.vue";
 import { useUserStore } from "@/stores/user";
 
 const route = useRoute();
@@ -29,48 +53,46 @@ const currentURL = computed(() => route.path);
 
 const navigateTo = (url: string) => { return () => router.push(url).catch(err => { }); };
 
-const itemClasses = (item: MenuItem) => {
-	if (!item.pattern || !item.pattern.test(currentURL.value)) {
-		return [];
-	}
-	return ["bg-primary", "rounded-md", "!text-primary-contrast", "font-medium"];
+interface Category {
+	label: string,
+	items: Item[],
 }
 
-const iconClasses = (item: MenuItem) => {
-	if (!item.pattern || !item.pattern.test(currentURL.value)) {
-		return ["p-menu-item-icon"];
-	}
-	return [];
+interface Item {
+	label: string,
+	icon: string,
+	'data-cy': string,
+	pattern?: RegExp,
+	action: () => void,
 }
 
-const menuItems = ref([
+function isCurrent(item: Item) {
+	return !!item.pattern?.test(currentURL.value);
+}
+
+const navigation: Ref<Category[]> = ref([
 	{
 		label: "Library",
 		items: [
-			{ label: "Files", icon: "folder", "data-cy": "files", pattern: new RegExp("files"), command: navigateTo("/files") },
-			{ label: "Artists", icon: "person", "data-cy": "artists", pattern: new RegExp("artists"), command: navigateTo("/artists") },
-			{ label: "Albums", icon: "library_music", "data-cy": "albums", pattern: new RegExp("albums"), command: navigateTo("/albums") },
-			{ label: "Songs", icon: "music_note", "data-cy": "songs", pattern: new RegExp("songs"), command: navigateTo("/songs") },
-			{ label: "Search", icon: "search", "data-cy": "search", pattern: new RegExp("search"), command: navigateTo("/search") },
+			{ label: "Files", icon: "folder", "data-cy": "files", pattern: new RegExp("files"), action: navigateTo("/files") },
+			{ label: "Artists", icon: "person", "data-cy": "artists", pattern: new RegExp("artists"), action: navigateTo("/artists") },
+			{ label: "Albums", icon: "library_music", "data-cy": "albums", pattern: new RegExp("albums"), action: navigateTo("/albums") },
+			{ label: "Songs", icon: "music_note", "data-cy": "songs", pattern: new RegExp("songs"), action: navigateTo("/songs") },
+			{ label: "Search", icon: "search", "data-cy": "search", pattern: new RegExp("search"), action: navigateTo("/search") },
 		]
 	},
-	{ separator: true },
 	{
 		label: "Profile",
 		items: [
-			{ label: "Playlists", icon: "playlist_play", "data-cy": "playlists", pattern: new RegExp("playlist"), command: navigateTo("/playlists") },
-			{ label: "Settings", icon: "settings", "data-cy": "settings", pattern: new RegExp("settings"), command: navigateTo("/settings/preferences") },
-			{ label: "Sign Out", icon: "logout", "data-cy": "logout", command: () => { user.logout(); } },
-		]
-	},
-	{ separator: true },
-	{
-		label: "Playlists",
-		items: [
-			{ label: "Summer", icon: "queue_music" },
-			{ label: "Fall", icon: "queue_music" },
-			{ label: "Winter", icon: "queue_music" },
+			{ label: "Playlists", icon: "playlist_play", "data-cy": "playlists", pattern: new RegExp("playlist"), action: navigateTo("/playlists") },
+			{ label: "Settings", icon: "settings", "data-cy": "settings", pattern: new RegExp("settings"), action: navigateTo("/settings/preferences") },
 		]
 	},
 ]);
+
+const playlists = [
+	{ name: "Summer" },
+	{ name: "Fall" },
+	{ name: "Winter" },
+];
 </script>
