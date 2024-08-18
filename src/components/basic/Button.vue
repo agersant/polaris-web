@@ -1,9 +1,9 @@
 <template>
-    <button type="button" :class="buttonClass" class="rounded-md text-sm font-semibold text-white shadow-sm
+    <button type="button" :class="buttonClass" class="rounded-md text-sm font-semibold text-ls-0 dark:text-ls-0 shadow-sm
     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-    bg-accent-600 dark:bg-accent-500
-    hover:bg-accent-500 dark:hover:bg-accent-400
-    focus-visible:outline-accent-600 dark:focus-visible:outline-accent-500">
+    bg-accent-600 dark:bg-accent-600
+    hover:bg-accent-500 dark:hover:bg-accent-500
+    focus-visible:outline-accent-600 dark:focus-visible:outline-accent-600">
         {{ props.label }}
     </button>
 </template>
