@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { useVirtualList } from '@vueuse/core'
 import { computed, Ref, ref } from 'vue';
+import { useVirtualList } from '@vueuse/core';
 
 import VirtualTreeNode from "./VirtualTreeNode.vue";
 
