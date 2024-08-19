@@ -1,5 +1,5 @@
 <template>
-    <div :list="visibleNodes" v-bind="containerProps" @keydown.prevent="onKeyDown" class="select-none">
+    <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="select-none">
         <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
             <VirtualTreeNode v-for="node in virtualNodes" style="height: 36px" :node="node.data"
                 @node-toggle="toggleNode" @node-click="onNodeClick" @move-left="moveLeft" @move-right="moveRight"
@@ -67,6 +67,12 @@ const expandedKeys = ref(new Set<string>());
 const selectedKeys = ref(new Set<string>());
 const focusedKey: Ref<string | undefined> = ref();
 let pivotKey: string | undefined;
+
+const selection = computed(() =>
+    props.value.filter(n => selectedKeys.value.has(n.key))
+);
+
+defineExpose({ selection });
 
 const overscan = 1;
 const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: 38, overscan: overscan });
@@ -150,15 +156,19 @@ function onKeyDown(event: KeyboardEvent) {
             break;
         case 'ArrowUp':
             move(-1, event);
+            event.preventDefault();
             break;
         case 'ArrowDown':
             move(1, event);
+            event.preventDefault();
             break;
         case 'PageUp':
             move(-10, event);
+            event.preventDefault();
             break;
         case 'PageDown':
             move(10, event);
+            event.preventDefault();
             break;
         case 'Home':
             move(Number.NEGATIVE_INFINITY, event);

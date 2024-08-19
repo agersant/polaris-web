@@ -1,16 +1,19 @@
-import { markRaw, Ref, ref, toRaw, watch } from "vue";
+import { Ref, ref, ShallowRef, shallowRef, toRaw, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { flatten, getPlaylist } from "@/api/endpoints";
 import { saveForCurrentUser, loadForCurrentUser } from "@/disk";
-import { Song } from "@/api/dto";
 import { useUserStore } from "@/stores/user";
 
 export type PlaybackOrder = "default" | "random" | "repeat-track" | "repeat-all";
 
+interface PlaylistEntry {
+	path: string,
+}
+
 export const usePlaylistStore = defineStore("playlist", () => {
 	const name = ref("");
-	const songs: Ref<Song[]> = ref(markRaw([]));
-	const currentTrack: Ref<Song | null> = ref(null);
+	const entries: ShallowRef<PlaylistEntry[]> = shallowRef([]);
+	const currentTrack: Ref<PlaylistEntry | null> = ref(null);
 	const playbackOrder: Ref<PlaybackOrder> = ref("default");
 	const elapsedSeconds = ref(0);
 
@@ -29,9 +32,9 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		{ immediate: true }
 	);
 
-	function advance(delta: number): Song | null {
+	function advance(delta: number): PlaylistEntry | null {
 		const order = playbackOrder.value;
-		const tracks = songs.value;
+		const tracks = entries.value;
 		const numTracks = tracks.length;
 
 		let newTrack = null;
@@ -73,34 +76,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		return newTrack;
 	}
 
-	function clear() {
-		songs.value = markRaw([]);
-		name.value = "";
-		savePlaylist();
-	}
-
-	function enqueue(tracks: Song[]) {
-		songs.value = markRaw(songs.value.concat(tracks));
-		if (!currentTrack.value && songs.value.length > 0) {
-			currentTrack.value = songs.value[0];
-		}
-	}
-
-	function loadFromDisk() {
-		playbackOrder.value = loadForCurrentUser("playbackOrder") || "default";
-		songs.value = markRaw(loadForCurrentUser("playlist") || []);
-		currentTrack.value = songs.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
-		elapsedSeconds.value = loadForCurrentUser("elapsedSeconds") || 0;
-		name.value = loadForCurrentUser("playlistName") || null;
-	}
-
-	function next(): Song | null {
-		const advancedTo = advance(1);
-		savePlaybackState();
-		return advancedTo;
-	}
-
-	function play(track: Song) {
+	function play(track: PlaylistEntry) {
 		if (track != currentTrack.value) {
 			currentTrack.value = track;
 			elapsedSeconds.value = 0;
@@ -108,36 +84,55 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaybackState();
 	}
 
-	function previous(): Song | null {
+	function next(): PlaylistEntry | null {
+		const advancedTo = advance(1);
+		savePlaybackState();
+		return advancedTo;
+	}
+
+	function previous(): PlaylistEntry | null {
 		const advancedTo = advance(-1);
 		savePlaybackState();
 		return advancedTo;
 	}
 
+	function clear() {
+		entries.value = [];
+		name.value = "";
+		savePlaylist();
+	}
+
+	function enqueue(tracks: PlaylistEntry[]) {
+		entries.value = entries.value.concat(tracks);
+		if (!currentTrack.value && entries.value.length > 0) {
+			currentTrack.value = entries.value[0];
+		}
+	}
+
+	function queueTracks(tracks: string[]) {
+		enqueue(tracks.map(s => { return { path: s } }));
+		savePlaylist();
+	}
+
 	async function queueDirectory(path: string) {
-		const songList = await flatten(path);
-		enqueue(songList.paths.map((p) => { return { path: p } }));
+		const flattened = await flatten(path);
+		enqueue(flattened.paths.map((p) => { return { path: p } }));
 		savePlaylist();
 	}
 
 	async function queuePlaylist(playlistName: string) {
 		const songList = await getPlaylist(playlistName);
-		songs.value = markRaw(songList.paths.map((p) => { return { path: p } }));
+		entries.value = songList.paths.map((p) => { return { path: p } });
 		name.value = playlistName;
 		savePlaylist();
 	}
 
-	function queueTracks(tracks: Song[]) {
-		enqueue(tracks);
-		savePlaylist();
-	}
-
-	function removeTrack(track: Song) {
-		const trackIndex = songs.value.indexOf(track);
+	function removeTrack(track: PlaylistEntry) {
+		const trackIndex = entries.value.indexOf(track);
 		if (trackIndex >= 0) {
-			let newSongs = [...songs.value];
+			let newSongs = [...entries.value];
 			newSongs.splice(trackIndex, 1);
-			songs.value = markRaw(newSongs);
+			entries.value = newSongs;
 		}
 		savePlaylist();
 	}
@@ -146,15 +141,23 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		name.value = "";
 		playbackOrder.value = "default";
 		currentTrack.value = null;
-		songs.value = markRaw([]);
+		entries.value = [];
 		elapsedSeconds.value = 0;
+	}
+
+	function loadFromDisk() {
+		playbackOrder.value = loadForCurrentUser("playbackOrder") || "default";
+		entries.value = loadForCurrentUser("playlist") || [];
+		currentTrack.value = entries.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
+		elapsedSeconds.value = loadForCurrentUser("elapsedSeconds") || 0;
+		name.value = loadForCurrentUser("playlistName") || null;
 	}
 
 	function savePlaybackState() {
 		const rawCurrentTrack = toRaw(currentTrack.value);
 		let currentTrackIndex = -1;
 		if (rawCurrentTrack) {
-			currentTrackIndex = songs.value.indexOf(rawCurrentTrack);
+			currentTrackIndex = entries.value.indexOf(rawCurrentTrack);
 		}
 
 		saveForCurrentUser("currentTrackIndex", currentTrackIndex);
@@ -163,7 +166,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function savePlaylist() {
-		if (saveForCurrentUser("playlist", songs.value)) {
+		if (saveForCurrentUser("playlist", entries.value)) {
 			saveForCurrentUser("playlistName", name.value);
 			savePlaybackState();
 		}
@@ -185,12 +188,12 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function shuffle() {
-		let shuffled = [...songs.value];
+		let shuffled = [...entries.value];
 		for (let i = shuffled.length - 1; i > 0; i--) {
 			let j = Math.floor(Math.random() * (i + 1));
 			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
 		}
-		songs.value = markRaw(shuffled);
+		entries.value = shuffled;
 		savePlaylist();
 	}
 
@@ -199,7 +202,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		elapsedSeconds,
 		name,
 		playbackOrder,
-		songs,
+		entries,
 
 		clear,
 		next,

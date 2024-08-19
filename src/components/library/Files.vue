@@ -5,7 +5,8 @@
 			Files
 		</div>
 		<InputText v-model="searchQuery" id="search" name="search" placeholder="Search" icon="search" />
-		<VirtualTree :value="treeModel" @node-expand="openDirectory" class="mt-4 grow" />
+		<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
+			class="mt-4 grow" />
 	</div>
 </template>
 
@@ -16,15 +17,16 @@ import InputText from "@/components/basic/InputText.vue";
 import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";
 import { BrowserEntry } from "@/api/dto";
-import { browse } from "@/api/endpoints";
+import { browse, flatten } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
 import { getPathTail } from '@/format';
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
 
 const playlist = usePlaylistStore();
 
 const { state: treeModel } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
 
+const tree: Ref<InstanceType<typeof VirtualTree> | null> = ref(null);
 const searchQuery = ref("");
 
 async function openDirectory(node: Node) {
@@ -68,22 +70,28 @@ function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {
 	});
 }
 
-function onItemClicked(item: BrowserEntry) {
-	if (item.is_directory) {
-	} else {
-		// TODO fix me!!
-		// playlist.queueTracks([{ ...item }]);
+function onKeyDown(event: KeyboardEvent) {
+	if (event.code == "Enter") {
+		queueSelection();
 	}
 }
 
-function onItemsDragStart(event: DragEvent, items: BrowserEntry[]) {
-	if (!event || !event.dataTransfer) {
+async function queueSelection() {
+	if (!tree.value) {
 		return;
 	}
-	event.dataTransfer.setData("text/json", JSON.stringify(items));
-}
 
-function onQueueAll() {
-	// playlist.queueDirectory(props.path);
+	const tracks = (
+		await Promise.all(tree.value.selection.map((e) => {
+			if (e.leaf) {
+				return Promise.resolve(e.key);
+			} else {
+				return flatten(e.key).then(s => s.paths);
+			}
+		}))
+	).flat();
+
+	playlist.clear();
+	playlist.queueTracks(tracks);
 }
 </script>
