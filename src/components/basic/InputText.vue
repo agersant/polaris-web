@@ -1,7 +1,8 @@
 <template>
     <div>
-        <label v-if="label" :for="props.name" class="block text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">{{
-            props.label }}</label>
+        <label v-if="label" :for="props.name" class="block text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">
+            {{ props.label }}
+        </label>
         <div :class="{ 'mt-2': label }" class="relative rounded-md shadow-sm">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <span v-if="icon" class="material-icons-round text-ls-400">{{ props.icon }}</span>
