@@ -30,7 +30,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'node-expand', node: Node): void,
+    'node-expand': [node: Node]
 }>();
 
 const virtualList: Ref<HTMLElement | null> = ref(null);
