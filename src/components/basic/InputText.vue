@@ -5,11 +5,14 @@
         </label>
         <div :class="{ 'mt-2': label }" class="relative rounded-md shadow-sm">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span v-if="icon" class="material-icons-round text-ls-400">{{ props.icon }}</span>
+                <span v-if="icon" class="material-icons-round text-ls-400">
+                    {{ props.icon }}
+                </span>
             </div>
             <input v-model="model" :id="props.id" :placeholder="props.placeholder" :name="props.name"
                 :autocomplete="props.autocomplete" :autofocus="props.autofocus" :required="props.required"
-                :class="inputClass" class="w-full rounded-md border-0 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset text-sm leading-6
+                :class="inputClass" class="w-full rounded-md border-0 py-2 shadow-sm text-sm leading-6
+                ring-1 ring-inset focus:ring-2 focus:ring-inset 
                 dark:bg-white/5
                 text-ls-900 dark:text-ds-0
                 placeholder:text-ls-400 dark:placeholder:text-ls-400 

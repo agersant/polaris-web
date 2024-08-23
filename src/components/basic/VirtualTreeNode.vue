@@ -28,8 +28,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'node-toggle', node: Node): void,
-    (e: 'node-click', originalEvent: MouseEvent, node: Node): void,
+    'node-toggle': [node: Node],
+    'node-click': [originalEvent: MouseEvent, node: Node],
 }>();
 
 function toggle() {

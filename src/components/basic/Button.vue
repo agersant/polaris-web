@@ -1,10 +1,10 @@
 <template>
-    <button type="button" :class="buttonClass" class="inline-flex items-center gap-x-1.5 rounded-md text-sm font-semibold
+    <button type="button" :class="buttonClass" class="inline-flex items-center justify-center gap-x-1.5 rounded-md text-sm font-semibold
     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-    
-    
     focus-visible:outline-accent-600 dark:focus-visible:outline-accent-600">
-        <span v-if="props.icon" class="material-icons-round">{{ props.icon }}</span>
+        <span v-if="props.icon" class="material-icons-round">
+            {{ props.icon }}
+        </span>
         {{ props.label }}
     </button>
 </template>
