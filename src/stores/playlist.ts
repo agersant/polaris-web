@@ -4,9 +4,17 @@ import { flatten, getPlaylist } from "@/api/endpoints";
 import { saveForCurrentUser, loadForCurrentUser } from "@/disk";
 import { useUserStore } from "@/stores/user";
 
+let next_key = 0;
+
+function make_key() {
+	next_key += 1;
+	return next_key;
+}
+
 export type PlaybackOrder = "default" | "random" | "repeat-track" | "repeat-all";
 
-interface PlaylistEntry {
+export interface PlaylistEntry {
+	key: number,
 	path: string,
 }
 
@@ -102,6 +110,27 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaylist();
 	}
 
+	function reorder(movedTracks: PlaylistEntry[], newPosition: number) {
+		const oldEntries = entries.value;
+		let newEntries: PlaylistEntry[] = [];
+		let movedSet = new Set(movedTracks);
+		let insertLocation = oldEntries.length - movedTracks.length;
+
+		for (let i = 0; i < oldEntries.length; i++) {
+			if (newEntries.length == newPosition) {
+				insertLocation = newEntries.length;
+			}
+			if (!movedSet.has(oldEntries[i])) {
+				newEntries.push(oldEntries[i]);
+			}
+		}
+
+		newEntries.splice(insertLocation, 0, ...movedTracks);
+
+		entries.value = newEntries;
+		savePlaylist();
+	}
+
 	function enqueue(tracks: PlaylistEntry[]) {
 		entries.value = entries.value.concat(tracks);
 		if (!currentTrack.value && entries.value.length > 0) {
@@ -110,19 +139,19 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function queueTracks(tracks: string[]) {
-		enqueue(tracks.map(s => { return { path: s } }));
+		enqueue(tracks.map(s => { return { key: make_key(), path: s } }));
 		savePlaylist();
 	}
 
 	async function queueDirectory(path: string) {
 		const flattened = await flatten(path);
-		enqueue(flattened.paths.map((p) => { return { path: p } }));
+		enqueue(flattened.paths.map((p) => { return { key: make_key(), path: p } }));
 		savePlaylist();
 	}
 
 	async function queuePlaylist(playlistName: string) {
 		const songList = await getPlaylist(playlistName);
-		entries.value = songList.paths.map((p) => { return { path: p } });
+		entries.value = songList.paths.map((p) => { return { key: make_key(), path: p } });
 		name.value = playlistName;
 		savePlaylist();
 	}
@@ -147,7 +176,9 @@ export const usePlaylistStore = defineStore("playlist", () => {
 
 	function loadFromDisk() {
 		playbackOrder.value = loadForCurrentUser("playbackOrder") || "default";
-		entries.value = loadForCurrentUser("playlist") || [];
+		entries.value = (loadForCurrentUser("playlist") || []).map((p: string) => {
+			return { key: make_key(), path: p }
+		});
 		currentTrack.value = entries.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
 		elapsedSeconds.value = loadForCurrentUser("elapsedSeconds") || 0;
 		name.value = loadForCurrentUser("playlistName") || null;
@@ -166,7 +197,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function savePlaylist() {
-		if (saveForCurrentUser("playlist", entries.value)) {
+		if (saveForCurrentUser("playlist", entries.value.map(e => e.path))) {
 			saveForCurrentUser("playlistName", name.value);
 			savePlaybackState();
 		}
@@ -212,6 +243,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		queuePlaylist,
 		queueTracks,
 		removeTrack,
+		reorder,
 		setElapsedSeconds,
 		setPlaybackOrder,
 		setName,

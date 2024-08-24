@@ -17,50 +17,28 @@
 			</div>
 		</div>
 
-		<div class="min-h-0 overflow-y-scroll">
-
-			<table class="grid grid-cols-[minmax(100px,_1fr)_minmax(100px,_1fr)_80px] whitespace-nowrap text-left">
-
-				<thead class="contents">
-					<tr class="contents text-sm font-semibold text-ls-900">
-						<th class="">
-							Artist - Album
-						</th>
-						<th class="">
-							Song
-						</th>
-						<th class="">
-							Duration
-						</th>
-					</tr>
-				</thead>
-
-				<!-- TODO make unique keys!! -->
-				<tr v-for="song in playlist.entries" class="contents text-ls-500 even:bg-ls-50" style="height: 32px">
-					<td class="overflow-hidden text-ellipsis">
-						{{ formatTrackContext(song) }}
-					</td>
-					<td class="overflow-hidden text-ellipsis font-medium ">
-						{{ formatTrackDetails(song) }}
-					</td>
-					<td class="">
-						{{ formatTrackDuration(song) }}
-					</td>
-				</tr>
-			</table>
-		</div>
+		<OrderableList class="" :items="playlist.entries" :item-height="itemHeight" @reorder="onReorder">
+		</OrderableList>
 
 	</div>
 
 </template>
 
 <script setup lang="ts">
+
 import { Song } from '@/api/dto';
 import Button from "@/components/basic/Button.vue"
+import OrderableList from '@/components/basic/OrderableList.vue';
 import { formatArtists, formatDuration, formatTitle } from '@/format';
-import { usePlaylistStore } from '@/stores/playlist';
+import { usePlaylistStore, PlaylistEntry } from '@/stores/playlist';
 
 const playlist = usePlaylistStore();
+
+const itemHeight = 32;
+
+function onReorder(tracks: PlaylistEntry[], newIndex: number) {
+	playlist.reorder(tracks, newIndex);
+}
 
 function formatTrackContext(song: Song) {
 	let context = "";
