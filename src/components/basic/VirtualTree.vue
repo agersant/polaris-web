@@ -2,7 +2,8 @@
     <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="select-none">
         <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
             <VirtualTreeNode v-for="node in virtualNodes" style="height: 36px" :node="node.data"
-                @node-toggle="toggleNode" @node-click="onNodeClick" @move-left="moveLeft" @move-right="moveRight"
+                @node-toggle="toggleNode" @click="(e: MouseEvent) => onNodeClick(e, node.data)"
+                @dblclick="(e: MouseEvent) => onNodeDoubleClick(e, node.data)"
                 :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
                 :selected="selectedKeys.has(node.data.key)" class="mb-0.5">
             </VirtualTreeNode>
@@ -144,6 +145,12 @@ function onNodeClick(event: MouseEvent, node: Node) {
         selectNode(node);
     }
 
+}
+
+function onNodeDoubleClick(event: MouseEvent, node: Node) {
+    if (!node.leaf) {
+        toggleNode(node);
+    }
 }
 
 function onKeyDown(event: KeyboardEvent) {

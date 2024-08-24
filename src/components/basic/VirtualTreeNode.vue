@@ -1,5 +1,5 @@
 <template>
-    <div @click="onClick" @dblclick="onDoubleClick" tabindex="0"
+    <div tabindex="0"
         class="group flex items-center px-2 py-1 rounded-md cursor-pointer hover:bg-ls-100 dark:hover:bg-ds-800"
         :class="rootClass" :style="rootStyle">
         <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1"
@@ -29,21 +29,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     'node-toggle': [node: Node],
-    'node-click': [originalEvent: MouseEvent, node: Node],
 }>();
 
 function toggle() {
     emit('node-toggle', props.node);
-}
-
-function onClick(event: MouseEvent) {
-    emit('node-click', event, props.node);
-}
-
-function onDoubleClick(event: MouseEvent) {
-    if (!props.node.leaf) {
-        toggle();
-    }
 }
 
 const rootClass = computed(() => {
