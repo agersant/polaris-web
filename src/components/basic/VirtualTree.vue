@@ -172,10 +172,12 @@ function onKeyDown(event: KeyboardEvent) {
             break;
         case 'Home':
             move(Number.NEGATIVE_INFINITY, event);
+            event.preventDefault();
             break;
         case 'End':
             move(Number.POSITIVE_INFINITY, event);
             snapScrolling();
+            event.preventDefault();
             break;
         case 'Escape':
             selectedKeys.value.clear();
