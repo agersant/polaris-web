@@ -244,10 +244,11 @@ function move(delta: number, event: KeyboardEvent) {
         selectedKeys.value.add(toNode.key);
         pivotKey = toNode.key;
     } else {
+        console.log(delta, fromIndex, toIndex, pivotIndex);
         for (let index = fromIndex; true; index += Math.sign(delta)) {
             if ((delta > 0 && index > pivotIndex) || (delta < 0 && index < pivotIndex)) {
                 selectedKeys.value.add(visibleNodes.value[index].key);
-            } else if (index != pivotIndex) {
+            } else if (index != pivotIndex && index != toIndex) {
                 selectedKeys.value.delete(visibleNodes.value[index].key);
             }
             if (index == toIndex) {
