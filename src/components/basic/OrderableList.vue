@@ -210,7 +210,7 @@ function move(delta: number, event: KeyboardEvent) {
         for (let index = fromIndex; true; index += Math.sign(delta)) {
             if ((delta > 0 && index > pivotIndex) || (delta < 0 && index < pivotIndex)) {
                 selectedKeys.value.add(props.items[index].key);
-            } else if (index != pivotIndex) {
+            } else if (index != pivotIndex && index != toIndex) {
                 selectedKeys.value.delete(props.items[index].key);
             }
             if (index == toIndex) {
