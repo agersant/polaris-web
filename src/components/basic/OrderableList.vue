@@ -3,7 +3,7 @@
         <div ref="wrapper" class="relative" :style="{ height: `${props.items.length * props.itemHeight}px` }">
             <TransitionGroup name="list">
                 <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :draggable="true"
-                    @dragstart="e => onDragStart(item)" @dragend="onDragEnd" class="absolute" :key="item.key"
+                    @dragstart="e => onDragStart(e, item)" @dragend="onDragEnd" class="absolute" :key="item.key"
                     :style="{ translate: `0 ${(firstVirtualIndex + index) * itemHeight}px` }">
 
                     <slot :item="item" :selected="selectedKeys.has(item.key)">
@@ -36,6 +36,9 @@ const emit = defineEmits<{
 const container: Ref<HTMLElement | null> = ref(null);
 const wrapper: Ref<HTMLElement | null> = ref(null);
 
+const blankImage = new Image(0, 0);
+blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+
 const { height: containerHeight } = useElementSize(container);
 const { y: scrollY } = useScroll(container);
 const { elementY: containerMouseY } = useMouseInElement(container);
@@ -59,17 +62,17 @@ const numVirtualItems = computed(() => {
     return 1 + Math.ceil(containerHeight.value / props.itemHeight);
 });
 
-const dragInProgress = ref(false);
+const isReordering = ref(false);
 const dropIndex: Ref<number | undefined> = ref(undefined);
 watch([wrapperMouseY], () => {
-    if (isOutside.value || !dragInProgress.value) {
+    if (isOutside.value || !isReordering.value) {
         return;
     }
     dropIndex.value = Math.max(0, Math.min(Math.floor(wrapperMouseY.value / props.itemHeight), props.items.length - 1));
 });
 
 const orderedItems = computed(() => {
-    if (!dragInProgress.value || dropIndex.value == undefined) {
+    if (!isReordering.value || dropIndex.value == undefined) {
         return props.items;
     }
 
@@ -100,15 +103,16 @@ function selectItem(item: T) {
     focusedKey.value = item.key;
 }
 
-function onDragStart(item: T) {
-    dragInProgress.value = true;
+function onDragStart(event: DragEvent, item: T) {
+    isReordering.value = true;
+    event.dataTransfer?.setDragImage(blankImage, 0, 0);
     if (!selectedKeys.value.has(item.key)) {
         selectItem(item);
     }
 }
 
 function onDragEnd() {
-    dragInProgress.value = false;
+    isReordering.value = false;
     if (dropIndex.value != undefined) {
         emit('reorder', selection.value, dropIndex.value);
     }
@@ -246,7 +250,7 @@ function remap(value: number, fromA: number, fromB: number, toA: number, toB: nu
 }
 
 useRafFn(({ delta }) => {
-    if (isOutside.value || !dragInProgress.value || !wrapper.value || !container.value) {
+    if (isOutside.value || !isReordering.value || !wrapper.value || !container.value) {
         return;
     }
 
