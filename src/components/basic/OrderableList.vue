@@ -3,8 +3,7 @@
         <div ref="wrapper" class="relative" :style="{ height: `${props.items.length * props.itemHeight}px` }">
             <TransitionGroup name="list">
                 <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :draggable="true"
-                    @dragstart="e => onDragStart(item)" @dragend="onDragEnd"
-                    class="absolute transition-all ease-out duration-100" :key="item.key"
+                    @dragstart="e => onDragStart(item)" @dragend="onDragEnd" class="absolute" :key="item.key"
                     :style="{ translate: `0 ${(firstVirtualIndex + index) * itemHeight}px` }">
 
                     <slot :item="item" :selected="selectedKeys.has(item.key)">
@@ -23,7 +22,7 @@
 
 <script setup lang="ts" generic="T extends { key: string | number }">
 import { computed, Ref, ref, watch } from 'vue';
-import { useElementSize, useMouseInElement, useScroll } from '@vueuse/core';
+import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
 const props = defineProps<{
     items: T[],
@@ -39,6 +38,8 @@ const wrapper: Ref<HTMLElement | null> = ref(null);
 
 const { height: containerHeight } = useElementSize(container);
 const { y: scrollY } = useScroll(container);
+const { elementY: containerMouseY } = useMouseInElement(container);
+const { elementY: wrapperMouseY, isOutside } = useMouseInElement(wrapper);
 
 const selectedKeys: Ref<Set<string | number>> = ref(new Set());
 const focusedKey: Ref<string | number | undefined> = ref();
@@ -59,13 +60,12 @@ const numVirtualItems = computed(() => {
 });
 
 const dragInProgress = ref(false);
-const { elementY: mouseY, isOutside } = useMouseInElement(wrapper);
 const dropIndex: Ref<number | undefined> = ref(undefined);
-watch([mouseY, props.itemHeight, props.items], () => {
+watch([wrapperMouseY], () => {
     if (isOutside.value || !dragInProgress.value) {
         return;
     }
-    dropIndex.value = Math.max(0, Math.min(Math.floor(mouseY.value / props.itemHeight), props.items.length - 1));
+    dropIndex.value = Math.max(0, Math.min(Math.floor(wrapperMouseY.value / props.itemHeight), props.items.length - 1));
 });
 
 const orderedItems = computed(() => {
@@ -93,7 +93,6 @@ const orderedItems = computed(() => {
 const virtualItems = computed(() => {
     return orderedItems.value.slice(firstVirtualIndex.value, firstVirtualIndex.value + numVirtualItems.value);
 });
-
 function selectItem(item: T) {
     selectedKeys.value.clear();
     selectedKeys.value.add(item.key);
@@ -177,10 +176,11 @@ function onKeyDown(event: KeyboardEvent) {
             break;
         case 'Home':
             move(Number.NEGATIVE_INFINITY, event);
+            event.preventDefault();
             break;
         case 'End':
             move(Number.POSITIVE_INFINITY, event);
-            snapScrolling();
+            event.preventDefault();
             break;
         case 'Escape':
             selectedKeys.value.clear();
@@ -220,30 +220,71 @@ function move(delta: number, event: KeyboardEvent) {
     }
 
     focusedKey.value = toItem.key;
-    snapScrolling();
+    const focusedIndex = props.items.findIndex(i => i.key == focusedKey.value);
+    snapScrolling(focusedIndex);
 }
 
-function snapScrolling() {
+function snapScrolling(index: number) {
     const focusedIndex = props.items.findIndex(i => i.key == focusedKey.value);
     if (focusedIndex < 0) {
         return;
     }
 
-    // const padding = 4 + overscan;
-    // const items = virtualItems.value;
-    // const first = items[0].index;
-    // const last = items[items.length - 1].index;
+    const padding = 4;
+    const first = firstVirtualIndex.value;
+    const last = first + virtualItems.value.length - 1;
 
-    // if (focusedIndex < first + padding) {
-    //     scrollTo(focusedIndex - padding);
-    // } else if (focusedIndex > last - padding) {
-    //     scrollTo(focusedIndex - (last - first) + padding);
-    // }
+    if (focusedIndex < first + padding) {
+        container.value?.scrollTo(0, props.itemHeight * (focusedIndex - padding));
+    } else if (focusedIndex > last - padding) {
+        container.value?.scrollTo(0, props.itemHeight * (focusedIndex - (last - first) + padding));
+    }
 }
 
+function remap(value: number, fromA: number, fromB: number, toA: number, toB: number) {
+    return toA + (toB - toA) * Math.max(0, Math.min((value - fromA) / (fromB - fromA), 1));
+}
+
+useRafFn(({ delta }) => {
+    if (isOutside.value || !dragInProgress.value || !wrapper.value || !container.value) {
+        return;
+    }
+
+    const triggerRange = 0.05;
+    const maxTracksPerSecond = 80;
+    const viewportHeight = container.value.clientHeight;
+
+    if (containerMouseY.value < viewportHeight * triggerRange) {
+        const tracksPerSecond = remap(
+            containerMouseY.value,
+            0,
+            viewportHeight * triggerRange,
+            -maxTracksPerSecond, 0
+        );
+        container.value.scrollBy({
+            behavior: "instant",
+            top: Math.ceil(tracksPerSecond * props.itemHeight * delta / 1000)
+        });
+    } else if (containerMouseY.value > viewportHeight * (1 - triggerRange)) {
+        const tracksPerSecond = remap(
+            containerMouseY.value,
+            viewportHeight * (1 - triggerRange),
+            viewportHeight,
+            0, maxTracksPerSecond
+        );
+        container.value.scrollBy({
+            behavior: "instant",
+            top: Math.ceil(tracksPerSecond * props.itemHeight * delta / 1000)
+        });
+    }
+});
 </script>
 
 <style scoped>
+.list-move {
+    transition: all 0.1s ease-out;
+}
+
 .list-enter-active,
 .list-leave-active {
     transition: none 0s linear;
