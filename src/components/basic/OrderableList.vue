@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, Ref, ref } from 'vue';
+import { computed, Ref, ref, watch } from 'vue';
 import { useElementSize, useMouseInElement, useScroll } from '@vueuse/core';
 
 const props = defineProps<{
@@ -60,16 +60,16 @@ const numVirtualItems = computed(() => {
 
 const dragInProgress = ref(false);
 const { elementY: mouseY, isOutside } = useMouseInElement(wrapper);
-
-const dropIndex: Ref<number | undefined> = computed(() => {
-    if (isOutside.value) {
-        return undefined;
+const dropIndex: Ref<number | undefined> = ref(undefined);
+watch([mouseY, props.itemHeight, props.items], () => {
+    if (isOutside.value || !dragInProgress.value) {
+        return;
     }
-    return Math.max(0, Math.min(Math.floor(mouseY.value / props.itemHeight), props.items.length - 1));
+    dropIndex.value = Math.max(0, Math.min(Math.floor(mouseY.value / props.itemHeight), props.items.length - 1));
 });
 
 const orderedItems = computed(() => {
-    if (!dragInProgress.value || !dropIndex.value) {
+    if (!dragInProgress.value || dropIndex.value == undefined) {
         return props.items;
     }
 
