@@ -77,6 +77,7 @@ export interface Song {
 
 export interface SongList {
 	paths: string[];
+	first_songs: Song[];
 }
 
 export interface AlbumKey {
