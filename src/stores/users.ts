@@ -2,7 +2,6 @@ import { defineStore, acceptHMRUpdate } from "pinia";
 import { createUser, deleteUser, updateUser, users } from "@/api/endpoints";
 import { NewUser, User, UserUpdate } from "@/api/dto";
 import { useUserStore } from "@/stores/user";
-import { useInitialSetupStore } from "@/stores/initial-setup";
 
 export type UsersState = {
 	listing: User[];
