@@ -1,7 +1,8 @@
 import { Ref, ref, ShallowRef, shallowRef, toRaw, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { flatten, getPlaylist } from "@/api/endpoints";
+import { getPlaylist } from "@/api/endpoints";
 import { saveForCurrentUser, loadForCurrentUser } from "@/disk";
+import { useSongsStore } from "@/stores/songs";
 import { useUserStore } from "@/stores/user";
 
 let next_key = 0;
@@ -171,10 +172,12 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function loadFromDisk() {
+		const songs = useSongsStore();
+		const paths: string[] = loadForCurrentUser("playlist") || [];
+		songs.request(paths);
+
+		entries.value = paths.map(p => { return { key: make_key(), path: p } });
 		playbackOrder.value = loadForCurrentUser("playbackOrder") || "default";
-		entries.value = (loadForCurrentUser("playlist") || []).map((p: string) => {
-			return { key: make_key(), path: p }
-		});
 		currentTrack.value = entries.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
 		elapsedSeconds.value = loadForCurrentUser("elapsedSeconds") || 0;
 		name.value = loadForCurrentUser("playlistName") || null;
