@@ -1,4 +1,3 @@
-import Router from "@/router";
 import {
 	Album,
 	AlbumHeader,
@@ -21,6 +20,7 @@ import {
 	User,
 	UserUpdate,
 } from "@/api/dto";
+import { useSongsStore } from "@/stores/songs";
 import { useUserStore } from "@/stores/user";
 
 async function request(endpoint: string, options?: RequestInit): Promise<Response> {
@@ -170,8 +170,15 @@ export async function browse(path: string): Promise<BrowserEntry[]> {
 }
 
 export async function flatten(path: string): Promise<SongList> {
+	const songs = useSongsStore();
 	const response = await request("/flatten/" + encodeURIComponent(path));
-	return await response.json();
+
+	const songList = response.json().then((l: SongList) => {
+		songs.ingest(l.first_songs);
+		return l;
+	});
+
+	return await songList;
 }
 
 export async function get_album(album_key: AlbumKey): Promise<Album> {
