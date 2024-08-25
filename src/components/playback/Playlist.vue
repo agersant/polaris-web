@@ -11,7 +11,7 @@
 				<Button label="Clear" text severity="secondary" icon="clear" @click="playlist.clear" />
 			</div>
 			<div class="flex items-center gap-4">
-				<Button label="Shuffle" text severity="secondary" size="lg" icon="shuffle" />
+				<Button label="Shuffle" text severity="secondary" size="lg" icon="shuffle" @click="playlist.shuffle" />
 				<!-- TODO playback order -->
 				<!-- <Select placeholder="Repeat All" /> -->
 			</div>
