@@ -131,21 +131,17 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaylist();
 	}
 
-	function enqueue(tracks: PlaylistEntry[]) {
-		entries.value = entries.value.concat(tracks);
+	function enqueue(tracks: string[], index: number) {
+		let newEntries = [...entries.value];
+		newEntries.splice(index, 0, ...tracks.map(s => { return { key: make_key(), path: s } }));
+		entries.value = newEntries;
 		if (!currentTrack.value && entries.value.length > 0) {
 			currentTrack.value = entries.value[0];
 		}
 	}
 
-	function queueTracks(tracks: string[]) {
-		enqueue(tracks.map(s => { return { key: make_key(), path: s } }));
-		savePlaylist();
-	}
-
-	async function queueDirectory(path: string) {
-		const flattened = await flatten(path);
-		enqueue(flattened.paths.map((p) => { return { key: make_key(), path: p } }));
+	function queueTracks(tracks: string[], index?: number) {
+		enqueue(tracks, index || 0);
 		savePlaylist();
 	}
 
@@ -239,7 +235,6 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		next,
 		play,
 		previous,
-		queueDirectory,
 		queuePlaylist,
 		queueTracks,
 		removeTrack,

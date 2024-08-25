@@ -6,7 +6,7 @@
 		</div>
 		<InputText v-model="searchQuery" id="search" name="search" placeholder="Search" icon="search" />
 		<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
-			class="mt-4 grow" />
+			@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="mt-4 grow" />
 	</div>
 </template>
 
@@ -21,6 +21,7 @@ import { browse, flatten } from "@/api/endpoints";
 import { usePlaylistStore } from "@/stores/playlist";
 import { getPathTail } from '@/format';
 import { Ref, ref } from 'vue';
+import { DnDPayload, DndPayloadFiles, endDrag, startDrag, updateDrag } from '@/dnd';
 
 const playlist = usePlaylistStore();
 
@@ -74,6 +75,24 @@ function onKeyDown(event: KeyboardEvent) {
 	if (event.code == "Enter") {
 		queueSelection();
 	}
+}
+
+function onDragStart(event: DragEvent, nodes: Node[]) {
+	const payload: DnDPayload = new DndPayloadFiles(nodes.map(n => {
+		return {
+			path: n.key,
+			is_directory: !n.leaf,
+		};
+	}));
+	startDrag(event, payload);
+}
+
+function onDrag(event: DragEvent) {
+	updateDrag(event);
+}
+
+function onDragEnd(event: DragEvent) {
+	endDrag(event);
 }
 
 async function queueSelection() {

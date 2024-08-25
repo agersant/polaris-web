@@ -1,12 +1,19 @@
 <template>
-    <div ref="container" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown">
-        <div ref="wrapper" class="relative" :style="{ height: `${props.items.length * props.itemHeight}px` }">
-            <TransitionGroup name="list">
-                <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :draggable="true"
-                    @dragstart="e => onDragStart(e, item)" @dragend="onDragEnd" class="absolute" :key="item.key"
-                    :style="{ translate: `0 ${(firstVirtualIndex + index) * itemHeight}px` }">
+    <div ref="container" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown"
+        @dragenter.prevent @dragover.prevent @drop="onDrop">
+        <div ref="wrapper" class="relative min-h-full"
+            :style="{ height: `${props.items.length * props.itemHeight}px` }">
+            <TransitionGroup :name="isReordering ? 'reorder' : 'drop'">
+                <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :key="item.key"
+                    :draggable="true" @dragstart="e => onDragStart(e, item)" @dragend="onDragEnd"
+                    class="absolute w-full "
+                    :style="{ translate: `0 ${(firstVirtualIndex + index) * itemHeight}px`, height: `${itemHeight}px` }">
 
-                    <slot :item="item" :selected="selectedKeys.has(item.key)">
+                    <slot name="drop-preview" v-if="item.isDropPreview">
+                        <div :style="{ height: itemHeight + 'px' }">Drop Preview</div>
+                    </slot>
+
+                    <slot name="default" v-else :item="item" :selected="selectedKeys.has(item.key)">
                         <div class="whitespace-nowrap select-none"
                             :class="{ 'bg-accent-500': selectedKeys.has(item.key) }"
                             :style="{ height: itemHeight + 'px' }">
@@ -27,10 +34,12 @@ import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/
 const props = defineProps<{
     items: T[],
     itemHeight: number,
+    showDropPreview: boolean,
 }>();
 
 const emit = defineEmits<{
-    'reorder': [items: T[], toIndex: number]
+    'list-drop': [toIndex: number]
+    'list-reorder': [items: T[], toIndex: number]
 }>();
 
 const container: Ref<HTMLElement | null> = ref(null);
@@ -41,8 +50,8 @@ blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAAC
 
 const { height: containerHeight } = useElementSize(container);
 const { y: scrollY } = useScroll(container);
-const { elementY: containerMouseY } = useMouseInElement(container);
-const { elementY: wrapperMouseY, isOutside } = useMouseInElement(wrapper);
+const { elementY: containerMouseY, isOutside } = useMouseInElement(container);
+const { elementY: wrapperMouseY } = useMouseInElement(wrapper);
 
 const selectedKeys: Ref<Set<string | number>> = ref(new Set());
 const focusedKey: Ref<string | number | undefined> = ref();
@@ -65,10 +74,16 @@ const numVirtualItems = computed(() => {
 const isReordering = ref(false);
 const dropIndex: Ref<number | undefined> = ref(undefined);
 watch([wrapperMouseY], () => {
-    if (isOutside.value || !isReordering.value) {
+    if (isOutside.value) {
         return;
     }
-    dropIndex.value = Math.max(0, Math.min(Math.floor(wrapperMouseY.value / props.itemHeight), props.items.length - 1));
+
+    if (!isReordering.value && !props.showDropPreview) {
+        return;
+    }
+
+    const max = isReordering.value ? props.items.length - 1 : props.items.length;
+    dropIndex.value = Math.max(0, Math.min(Math.round(wrapperMouseY.value / props.itemHeight), max));
 });
 
 const orderedItems = computed(() => {
@@ -94,8 +109,18 @@ const orderedItems = computed(() => {
 });
 
 const virtualItems = computed(() => {
-    return orderedItems.value.slice(firstVirtualIndex.value, firstVirtualIndex.value + numVirtualItems.value);
+    let items: (T & { isDropPreview: boolean })[] = orderedItems.value.slice(firstVirtualIndex.value, firstVirtualIndex.value + numVirtualItems.value)
+        .map(i => { return { ...i, isDropPreview: false } });
+
+    const first = firstVirtualIndex.value;
+    const last = firstVirtualIndex.value + numVirtualItems.value - 1;
+    if (props.showDropPreview && !isOutside.value && dropIndex.value != undefined && dropIndex.value >= first && dropIndex.value <= last) {
+        items.splice(dropIndex.value - first, 0, { ...items[0], key: -1, isDropPreview: true })
+    }
+
+    return items;
 });
+
 function selectItem(item: T) {
     selectedKeys.value.clear();
     selectedKeys.value.add(item.key);
@@ -114,8 +139,12 @@ function onDragStart(event: DragEvent, item: T) {
 function onDragEnd() {
     isReordering.value = false;
     if (dropIndex.value != undefined) {
-        emit('reorder', selection.value, dropIndex.value);
+        emit('list-reorder', selection.value, dropIndex.value);
     }
+}
+
+function onDrop() {
+    emit('list-drop', dropIndex.value || 0);
 }
 
 function onItemClick(event: MouseEvent, item: T) {
@@ -125,7 +154,7 @@ function onItemClick(event: MouseEvent, item: T) {
     const pivotIndex = pivotKey ? props.items.findIndex(i => i.key == pivotKey) : -1;
 
     if (event.shiftKey && pivotIndex >= 0) {
-        const clickedIndex = props.items.indexOf(item);
+        const clickedIndex = props.items.findIndex(i => i.key == item.key);
         const from = Math.min(pivotIndex, clickedIndex);
         const to = Math.max(pivotIndex, clickedIndex);
 
@@ -250,7 +279,11 @@ function remap(value: number, fromA: number, fromB: number, toA: number, toB: nu
 }
 
 useRafFn(({ delta }) => {
-    if (isOutside.value || !isReordering.value || !wrapper.value || !container.value) {
+    if (isOutside.value || !wrapper.value || !container.value) {
+        return;
+    }
+
+    if (!isReordering.value && !props.showDropPreview) {
         return;
     }
 
@@ -285,12 +318,18 @@ useRafFn(({ delta }) => {
 </script>
 
 <style scoped>
-.list-move {
+.reorder-move {
     transition: all 0.1s ease-out;
 }
 
-.list-enter-active,
-.list-leave-active {
+.drop-move {
+    transition: all 0s linear;
+}
+
+.drop-enter-active,
+.drop-leave-active,
+.reorder-enter-active,
+.reorder-leave-active {
     transition: none 0s linear;
 }
 </style>

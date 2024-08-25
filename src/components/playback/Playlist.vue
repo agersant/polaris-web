@@ -8,7 +8,7 @@
 					{{ playlist.name || "New Playlist" }}
 				</span>
 				<Button label="Save" text severity="secondary" icon="save" />
-				<Button label="Clear" text severity="secondary" icon="clear" />
+				<Button label="Clear" text severity="secondary" icon="clear" @click="playlist.clear" />
 			</div>
 			<div class="flex items-center gap-4">
 				<Button label="Shuffle" text severity="secondary" size="lg" icon="shuffle" />
@@ -17,7 +17,8 @@
 			</div>
 		</div>
 
-		<OrderableList class="" :items="playlist.entries" :item-height="itemHeight" @reorder="onReorder">
+		<OrderableList class="grow" :items="playlist.entries" :item-height="itemHeight"
+			:show-drop-preview="dragPayload != undefined" @list-reorder="onReorder" @list-drop="onDrop">
 		</OrderableList>
 
 	</div>
@@ -25,8 +26,8 @@
 </template>
 
 <script setup lang="ts">
-
 import { Song } from '@/api/dto';
+import { useDragAndDrop } from '@/dnd';
 import Button from "@/components/basic/Button.vue"
 import OrderableList from '@/components/basic/OrderableList.vue';
 import { formatArtists, formatDuration, formatTitle } from '@/format';
@@ -36,8 +37,16 @@ const playlist = usePlaylistStore();
 
 const itemHeight = 32;
 
+const { payload: dragPayload } = useDragAndDrop();
+
 function onReorder(tracks: PlaylistEntry[], newIndex: number) {
 	playlist.reorder(tracks, newIndex);
+}
+
+async function onDrop(atIndex: number) {
+	if (dragPayload.value) {
+		playlist.queueTracks(await dragPayload.value.getTracks(), atIndex);
+	}
 }
 
 function formatTrackContext(song: Song) {
