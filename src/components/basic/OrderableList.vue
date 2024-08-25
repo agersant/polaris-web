@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, Ref, ref, watch } from 'vue';
+import { computed, Ref, ref, toRaw, watch } from 'vue';
 import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
 const props = defineProps<{
@@ -57,12 +57,6 @@ const selectedKeys: Ref<Set<string | number>> = ref(new Set());
 const focusedKey: Ref<string | number | undefined> = ref();
 let pivotKey: string | number | undefined;
 
-const selection = computed(() =>
-    props.items.filter(item => selectedKeys.value.has(item.key))
-);
-
-defineExpose({ selection });
-
 const firstVirtualIndex = computed(() => {
     return Math.floor(scrollY.value / props.itemHeight);
 });
@@ -87,23 +81,28 @@ watch([wrapperMouseY], () => {
 });
 
 const orderedItems = computed(() => {
+    let selected = toRaw(selectedKeys.value);
+    let items = toRaw(props.items);
+    let dropAt = dropIndex.value;
+
     if (!isReordering.value || dropIndex.value == undefined) {
-        return props.items;
+        return items;
     }
 
     let reordered: T[] = [];
-    let insertLocation = props.items.length - selectedKeys.value.size;
+    let insertLocation = items.length - selected.size;
 
-    for (let i = 0; i < props.items.length; i++) {
-        if (reordered.length == dropIndex.value) {
+    for (let i = 0; i < items.length; i++) {
+        if (reordered.length == dropAt) {
             insertLocation = reordered.length;
         }
-        if (!selectedKeys.value.has(props.items[i].key)) {
-            reordered.push(props.items[i]);
+        if (!selected.has(items[i].key)) {
+            reordered.push(items[i]);
         }
     }
 
-    reordered.splice(insertLocation, 0, ...selection.value);
+    const selection = items.filter(item => selected.has(item.key));
+    reordered.splice(insertLocation, 0, ...selection);
 
     return reordered;
 });
@@ -139,7 +138,8 @@ function onDragStart(event: DragEvent, item: T) {
 function onDragEnd() {
     isReordering.value = false;
     if (dropIndex.value != undefined) {
-        emit('list-reorder', selection.value, dropIndex.value);
+        const selection = props.items.filter(item => selectedKeys.value.has(item.key));
+        emit('list-reorder', selection, dropIndex.value);
     }
 }
 
