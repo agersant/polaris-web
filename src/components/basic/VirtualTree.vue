@@ -1,9 +1,10 @@
 <template>
     <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="select-none">
         <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
-            <VirtualTreeNode v-for="node in virtualNodes" style="height: 36px" :node="node.data"
-                @node-toggle="toggleNode" @click="(e: MouseEvent) => onNodeClick(e, node.data)"
-                @dblclick="(e: MouseEvent) => onNodeDoubleClick(e, node.data)"
+            <VirtualTreeNode v-for="node in virtualNodes" style="height: 36px" :node="node.data" tabindex="-1"
+                @node-toggle="toggleNode" @click="onNodeClick($event, node.data)"
+                @dblclick="onNodeDoubleClick($event, node.data)" draggable="true"
+                @dragstart="onDragStart($event, node.data)" @drag="onDrag($event)" @dragend="onDragEnd($event)"
                 :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
                 :selected="selectedKeys.has(node.data.key)" class="mb-0.5">
             </VirtualTreeNode>
@@ -31,7 +32,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    'node-expand': [node: Node]
+    'node-expand': [node: Node],
+    'nodes-drag-start': [event: DragEvent, nodes: Node[]],
+    'nodes-drag': [event: DragEvent],
+    'nodes-drag-end': [event: DragEvent],
 }>();
 
 const virtualList: Ref<HTMLElement | null> = ref(null);
@@ -88,7 +92,6 @@ function toggleNode(node: Node) {
         emit('node-expand', node);
     }
 
-    snapScrolling();
     virtualList.value?.focus();
 }
 
@@ -151,6 +154,21 @@ function onNodeDoubleClick(event: MouseEvent, node: Node) {
     if (!node.leaf) {
         toggleNode(node);
     }
+}
+
+function onDragStart(event: DragEvent, node: Node) {
+    if (!selectedKeys.value.has(node.key)) {
+        selectNode(node);
+    }
+    emit('nodes-drag-start', event, selection.value);
+}
+
+function onDrag(event: DragEvent) {
+    emit('nodes-drag', event);
+}
+
+function onDragEnd(event: DragEvent) {
+    emit('nodes-drag-end', event);
 }
 
 function onKeyDown(event: KeyboardEvent) {
@@ -251,7 +269,6 @@ function move(delta: number, event: KeyboardEvent) {
         selectedKeys.value.add(toNode.key);
         pivotKey = toNode.key;
     } else {
-        console.log(delta, fromIndex, toIndex, pivotIndex);
         for (let index = fromIndex; true; index += Math.sign(delta)) {
             if ((delta > 0 && index > pivotIndex) || (delta < 0 && index < pivotIndex)) {
                 selectedKeys.value.add(visibleNodes.value[index].key);
