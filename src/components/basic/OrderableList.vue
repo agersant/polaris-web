@@ -1,19 +1,20 @@
 <template>
     <div ref="container" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown"
         @dragenter.prevent @dragover.prevent @drop="onDrop">
-        <div ref="wrapper" class="relative min-h-full"
-            :style="{ height: `${props.items.length * props.itemHeight}px` }">
-            <TransitionGroup :name="isReordering ? 'reorder' : 'drop'">
+        <div ref="wrapper" class="relative min-h-full divide-y divide-ls-200"
+            :style="{ height: `${props.items.length * rowHeight}px` }">
+            <TransitionGroup :name="isReordering ? 'reorder' : 'drop'" :css="isReordering">
                 <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :key="item.key"
                     :draggable="true" @dragstart="e => onDragStart(e, item)" @dragend="onDragEnd"
-                    class="absolute w-full "
-                    :style="{ translate: `0 ${(firstVirtualIndex + index) * itemHeight}px`, height: `${itemHeight}px` }">
+                    class="absolute w-full"
+                    :style="{ translate: `0 ${rowOffset(firstVirtualIndex + index)}px`, height: `${itemHeight}px` }">
 
                     <slot name="drop-preview" v-if="item.isDropPreview">
                         <div :style="{ height: itemHeight + 'px' }">Drop Preview</div>
                     </slot>
 
-                    <slot name="default" v-else :item="item" :selected="selectedKeys.has(item.key)">
+                    <slot name="default" v-else :item="item" :index="firstVirtualIndex + index"
+                        :selected="selectedKeys.has(item.key)" :focused="focusedKey == item.key">
                         <div class="whitespace-nowrap select-none"
                             :class="{ 'bg-accent-500': selectedKeys.has(item.key) }"
                             :style="{ height: itemHeight + 'px' }">
@@ -45,6 +46,8 @@ const emit = defineEmits<{
 const container: Ref<HTMLElement | null> = ref(null);
 const wrapper: Ref<HTMLElement | null> = ref(null);
 
+const dividerHeight = 1;
+
 const blankImage = new Image(0, 0);
 blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
 
@@ -57,12 +60,18 @@ const selectedKeys: Ref<Set<string | number>> = ref(new Set());
 const focusedKey: Ref<string | number | undefined> = ref();
 let pivotKey: string | number | undefined;
 
+const rowHeight = computed(() => props.itemHeight + dividerHeight);
+
+function rowOffset(index: number) {
+    return index * rowHeight.value - (index > 0 ? dividerHeight : 0);
+}
+
 const firstVirtualIndex = computed(() => {
-    return Math.floor(scrollY.value / props.itemHeight);
+    return Math.floor(scrollY.value / rowHeight.value);
 });
 
 const numVirtualItems = computed(() => {
-    return 1 + Math.ceil(containerHeight.value / props.itemHeight);
+    return 1 + Math.ceil(containerHeight.value / rowHeight.value);
 });
 
 const isReordering = ref(false);
@@ -77,7 +86,7 @@ watch([wrapperMouseY], () => {
     }
 
     const max = isReordering.value ? props.items.length - 1 : props.items.length;
-    dropIndex.value = Math.max(0, Math.min(Math.round(wrapperMouseY.value / props.itemHeight), max));
+    dropIndex.value = Math.max(0, Math.min(Math.round(wrapperMouseY.value / rowHeight.value), max));
 });
 
 const orderedItems = computed(() => {
@@ -268,9 +277,9 @@ function snapScrolling(index: number) {
     const last = first + virtualItems.value.length - 1;
 
     if (focusedIndex < first + padding) {
-        container.value?.scrollTo(0, props.itemHeight * (focusedIndex - padding));
+        container.value?.scrollTo(0, rowHeight.value * (focusedIndex - padding));
     } else if (focusedIndex > last - padding) {
-        container.value?.scrollTo(0, props.itemHeight * (focusedIndex - (last - first) + padding));
+        container.value?.scrollTo(0, rowHeight.value * (focusedIndex - (last - first) + padding));
     }
 }
 
@@ -300,7 +309,7 @@ useRafFn(({ delta }) => {
         );
         container.value.scrollBy({
             behavior: "instant",
-            top: Math.ceil(tracksPerSecond * props.itemHeight * delta / 1000)
+            top: Math.ceil(tracksPerSecond * rowHeight.value * delta / 1000)
         });
     } else if (containerMouseY.value > viewportHeight * (1 - triggerRange)) {
         const tracksPerSecond = remap(
@@ -311,7 +320,7 @@ useRafFn(({ delta }) => {
         );
         container.value.scrollBy({
             behavior: "instant",
-            top: Math.ceil(tracksPerSecond * props.itemHeight * delta / 1000)
+            top: Math.ceil(tracksPerSecond * rowHeight.value * delta / 1000)
         });
     }
 });
