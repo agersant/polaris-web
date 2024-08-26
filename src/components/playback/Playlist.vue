@@ -1,13 +1,16 @@
 <template>
 
-	<div class="flex flex-col border-l pt-8 bg-ls-0 dark:bg-ds-900">
+	<div class="flex flex-col border-l pt-10 select-none bg-ls-0 dark:bg-ds-900">
 
 		<div class="m-6 flex items-center justify-between">
 			<div class="flex items-center gap-1">
-				<span class="-mt-0.5 mr-2 text-2xl font-light text-ls-500 italic dark:text-ds-300">
+				<span class="-mt-0.5 text-2xl font-light text-ls-500 italic dark:text-ds-300">
 					{{ playlist.name || "New Playlist" }}
 				</span>
-				<Button label="Save" text severity="secondary" icon="save" />
+				<span class="ml-1 font-light text-sm text-ls-600" v-if="duration > 0">{{ formatLongDuration(duration)
+					}}</span>
+				<!-- TODO save functionality -->
+				<Button class="ml-2" label="Save" text severity="secondary" icon="save" />
 				<Button label="Clear" text severity="secondary" icon="clear" @click="playlist.clear" />
 			</div>
 			<div class="flex items-center gap-4">
@@ -17,8 +20,19 @@
 			</div>
 		</div>
 
-		<OrderableList class="grow" :items="playlist.entries" :item-height="itemHeight"
+		<div class="w-full px-4 pt-1 py-3 text-ls-700 flex text-xs font-semibold">
+			<div class="grow basis-0" :class="compact ? 'px-2' : ''">Artist - Album</div>
+			<div v-if="!compact" class="basis-10 shrink-0 mr-1" />
+			<div class="grow basis-0" :class="compact ? '' : 'pl-4'">Song</div>
+			<div class="basis-16 shrink-0 text-right">Duration</div>
+		</div>
+
+		<OrderableList class="grow border-t border-ls-200" :items="playlist.entries" :item-height="itemHeight"
 			:show-drop-preview="dragPayload != undefined" @list-reorder="onReorder" @list-drop="onDrop">
+			<template #default="{ item, index, selected, focused }">
+				<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
+					:selected="selected" :focused="focused" />
+			</template>
 		</OrderableList>
 
 	</div>
@@ -26,18 +40,33 @@
 </template>
 
 <script setup lang="ts">
-import { Song } from '@/api/dto';
-import { useDragAndDrop } from '@/dnd';
+import { computed, ref } from "vue";
+
 import Button from "@/components/basic/Button.vue"
 import OrderableList from '@/components/basic/OrderableList.vue';
-import { formatArtists, formatDuration, formatTitle } from '@/format';
+import PlaylistSong from '@/components/playback/PlaylistSong.vue';
+import { useDragAndDrop } from '@/dnd';
+import { formatLongDuration } from "@/format";
 import { usePlaylistStore, PlaylistEntry } from '@/stores/playlist';
+import { useSongsStore } from "@/stores/songs";
 
 const playlist = usePlaylistStore();
+const songs = useSongsStore();
 
-const itemHeight = 32;
+// TODO switcher
+const compact = ref(true);
+
+const itemHeight = computed(() => compact.value ? 32 : 50);
 
 const { payload: dragPayload } = useDragAndDrop();
+
+const duration = computed(() => playlist.entries.reduce((acc, entry) => {
+	const song = songs.cache.get(entry.path);
+	if (!song || !song.duration || isNaN(song.duration)) {
+		return acc;
+	}
+	return acc + song.duration;
+}, 0));
 
 function onReorder(tracks: PlaylistEntry[], newIndex: number) {
 	playlist.reorder(tracks, newIndex);
@@ -49,37 +78,4 @@ async function onDrop(atIndex: number) {
 	}
 }
 
-function formatTrackContext(song: Song) {
-	let context = "";
-	if (song.album_artists) {
-		context += formatArtists(song.album_artists);
-	} else if (song.artists) {
-		context += formatArtists(song.artists);
-	} else {
-		context += "Unknown Artist";
-	}
-	context += " - ";
-	context += song.album ? song.album : "Unknown Album";
-	if (song.year) {
-		context += " (" + song.year + ")";
-	}
-	return context;
-}
-
-function formatTrackDetails(song: Song) {
-	let details = "";
-	if (song.track_number) {
-		details += song.track_number;
-		details += ". ";
-	}
-	details += formatTitle(song);
-	return details;
-}
-
-function formatTrackDuration(song: Song) {
-	if (!song.duration || isNaN(song.duration)) {
-		return "??:??";
-	}
-	return formatDuration(song.duration);
-}
 </script>
