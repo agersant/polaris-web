@@ -51,7 +51,7 @@ const rowClass = computed(() => {
     let background = "bg-ls-0";
     if (props.selected) {
         background = "bg-accent-100";
-    } else if (props.index % 2 == 0) {
+    } else if (props.index % 2 == 1) {
         background = "bg-ls-50";
     }
 
