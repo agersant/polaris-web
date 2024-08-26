@@ -29,10 +29,21 @@
 
 		<OrderableList class="grow border-t border-ls-200" :items="playlist.entries" :item-height="itemHeight"
 			:show-drop-preview="dragPayload != undefined" @list-reorder="onReorder" @list-drop="onDrop">
+
 			<template #default="{ item, index, selected, focused }">
 				<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
 					:selected="selected" :focused="focused" />
 			</template>
+
+			<template #drop-preview>
+				<div class="flex px-1.5 py-1" :style="{ height: `${itemHeight}px` }">
+					<div
+						class="w-full text-center rounded-sm bg-accent-100 text-accent-600 outline-1 outline-dashed outline-accent-600">
+						<span class="material-icons-round">add</span>
+					</div>
+				</div>
+			</template>
+
 		</OrderableList>
 
 	</div>

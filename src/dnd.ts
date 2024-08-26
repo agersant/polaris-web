@@ -24,7 +24,7 @@ yeet(blankElement);
 
 const dragElement = document.createElement("div");
 dragElement.id = "dnd-drag";
-dragElement.className = "flex items-center gap-2 w-fit bg-ls-0 p-2 rounded-md border-2 border-accent-500 text-accent-500 ring-2 ring-ls-0";
+dragElement.className = "flex items-center gap-2 w-fit bg-ls-0 px-2 py-1 rounded-md text-sm border-2 border-accent-200 text-accent-700 ring-2 ring-ls-0";
 dragElement.style.pointerEvents = "none";
 document.body.appendChild(dragElement);
 yeet(dragElement);
