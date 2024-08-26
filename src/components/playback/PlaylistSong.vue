@@ -42,16 +42,16 @@ const song = computed(() => {
 const thumbnailURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "tiny") : undefined);
 
 const rowClass = computed(() => {
-    let background = ["bg-ls-0"];
+    let background = "bg-ls-0";
     if (props.selected) {
-        background = ["bg-accent-100"];
+        background = "bg-accent-100";
     } else if (props.index % 2 == 0) {
-        background = ["bg-ls-50"];
+        background = "bg-ls-50";
     }
 
     return [
-        ...background,
-        ...(props.selected ? ["text-accent-700", "dark:text-accent-200"] : ["text-ls-700", "dark:text-ds-400"]),
+        background,
+        props.selected ? "text-accent-700 dark:text-accent-200" : "text-ls-700 dark:text-ds-400",
     ];
 });
 

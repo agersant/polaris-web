@@ -25,12 +25,12 @@ const props = withDefaults(defineProps<{
 
 let palettes = {
     opaque: {
-        primary: ["bg-accent-600", "hover:bg-accent-500", "text-ls-0", "dark:bg-accent-600", "dark:hover:bg-accent-500", "dark:text-ds-0"],
-        secondary: ["bg-ls-50", "hover:bg-ls-100", "text-ls-600", "dark:bg-ds-800", "dark:hover:bg-ds-700", "dark:text-ds-300"],
+        primary: "bg-accent-600 hover:bg-accent-500 text-ls-0 dark:bg-accent-600 dark:hover:bg-accent-500 dark:text-ds-0",
+        secondary: "bg-ls-50 hover:bg-ls-100 text-ls-600 dark:bg-ds-800 dark:hover:bg-ds-700 dark:text-ds-300",
     },
     text: {
-        primary: ["bg-transparent", "hover:bg-ds-500/5", "text-accent-600", "dark:hover:bg-white/5"],
-        secondary: ["bg-transparent", "hover:bg-ds-500/5", "text-ls-600", "dark:text-ls-400", "dark:hover:bg-white/5"],
+        primary: "bg-transparent hover:bg-ds-500/5 text-accent-600 dark:hover:bg-white/5",
+        secondary: "bg-transparent hover:bg-ds-500/5 text-ls-600 dark:text-ls-400 dark:hover:bg-white/5",
     },
 };
 
@@ -38,17 +38,17 @@ const buttonClass = computed(() => {
 
     const palette = palettes[props.text ? "text" : "opaque"][props.severity];
 
-    let padding = ["px-2.5", "py-1.5"];
+    let padding = "px-2.5 py-1.5";
     if (props.size == "lg") {
-        padding = ["px-3", "py-2"];
+        padding = "px-3 py-2";
     } else if (props.size == "xl") {
-        padding = ["px-3.5", "py-2.5"];
+        padding = "px-3.5 py-2.5";
     }
 
     return [
-        ...(props.text ? [] : ["shadow-sm"]),
-        ...padding,
-        ...palette,
+        props.text ? "" : "shadow-sm",
+        padding,
+        palette,
     ];
 });
 </script>
