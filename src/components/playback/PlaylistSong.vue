@@ -5,11 +5,11 @@
         <!-- TODO removal support -->
         <!-- TODO context menu -->
         <!-- TODO placeholder while image is loading or failed to load -->
-        <img v-if="!compact && thumbnailURL" class="basis-10 min-w-fit mr-1 shrink-0 h-10 rounded-md"
+        <img v-if="!compact && thumbnailURL" class="basis-10 min-w-fit mr-3 shrink-0 h-10 rounded-md"
             :src="thumbnailURL" />
-        <div class="grow basis-0 px-2 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackContext(song) }}
+        <div class="grow basis-0 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackContext(song) }}
         </div>
-        <div class="grow basis-0 px-2 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackDetails(song) }}</div>
+        <div class="grow basis-0 px-8 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackDetails(song) }}</div>
         <div class="basis-16 shrink-0 text-right" v-if="song">{{ formatTrackDuration(song) }}</div>
         <div v-if="focused" class="absolute h-full outline-1 outline-dotted -outline-offset-4 outline-accent-500"
             :class="compact ? 'left-1 right-1 rounded-md' : 'left-1.5 right-1.5 rounded-lg'" />

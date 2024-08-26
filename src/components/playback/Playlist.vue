@@ -2,7 +2,7 @@
 
 	<div class="flex flex-col border-l pt-10 select-none bg-ls-0 dark:bg-ds-900">
 
-		<div class="m-6 flex items-center justify-between">
+		<div class="m-6 mx-4 flex items-center justify-between">
 			<div class="flex items-center gap-1">
 				<span class="-mt-0.5 text-2xl font-light text-ls-500 italic dark:text-ds-300">
 					{{ playlist.name || "New Playlist" }}
@@ -15,17 +15,19 @@
 				<Button class="ml-2" label="Save" text severity="secondary" icon="save" />
 				<Button label="Clear" text severity="secondary" icon="clear" @click="playlist.clear" />
 			</div>
-			<div class="flex items-center gap-4">
+			<div class="flex items-center gap-2">
 				<Button label="Shuffle" text severity="secondary" size="lg" icon="shuffle" @click="playlist.shuffle" />
+				<MultiSwitch size="sm" v-model="listMode"
+					:items="[{ icon: 'list', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 				<!-- TODO playback order -->
 				<!-- <Select placeholder="Repeat All" /> -->
 			</div>
 		</div>
 
-		<div class="w-full px-4 pt-1 py-3 text-ls-700 flex text-xs font-semibold">
-			<div class="grow basis-0" :class="compact ? 'px-2' : ''">Artist - Album</div>
-			<div v-if="!compact" class="basis-10 shrink-0 mr-1" />
-			<div class="grow basis-0" :class="compact ? '' : 'pl-4'">Song</div>
+		<div class="w-full px-4 pt-1 py-3 text-ls-700 flex text-xs font-semibold whitespace-nowrap">
+			<div class="grow basis-0">Artist - Album</div>
+			<div v-if="!compact" class="basis-10 shrink-0 mr-3" />
+			<div class="grow basis-0">Song</div>
 			<div class="basis-16 shrink-0 text-right">Duration</div>
 		</div>
 
@@ -56,6 +58,7 @@
 import { computed, ref } from "vue";
 
 import Button from "@/components/basic/Button.vue"
+import MultiSwitch from '@/components/basic/MultiSwitch.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
@@ -66,8 +69,9 @@ import { useSongsStore } from "@/stores/songs";
 const playlist = usePlaylistStore();
 const songs = useSongsStore();
 
-// TODO switcher
-const compact = ref(false);
+// TODO save to preferences
+const listMode = ref("compact");
+const compact = computed(() => listMode.value == "compact");
 
 const itemHeight = computed(() => compact.value ? 32 : 50);
 
