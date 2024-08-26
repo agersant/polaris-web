@@ -5,11 +5,16 @@
         <!-- TODO removal support -->
         <!-- TODO context menu -->
         <!-- TODO placeholder while image is loading or failed to load -->
-        <img v-if="!compact && thumbnailURL" class="basis-10 min-w-fit mr-3 shrink-0 h-10 rounded-md"
-            :src="thumbnailURL" />
-        <div class="grow basis-0 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackContext(song) }}
+        <img v-if="!compact && thumbnailURL" class="basis-10 mr-3 shrink-0 h-10 rounded-md" :src="thumbnailURL" />
+        <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackContext(song) }}</div>
+        <div class="basis-8 shrink-0" v-if="song">{{ formatTrackNumber(song) }}</div>
+        <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis" v-if="song">
+            {{ formatTitle(song) }}
+            <span :class="selected ? '' : 'text-ls-400'"
+                v-if="song.artists && song.album_artists && !equals(song.artists, song.album_artists)">
+                ({{ formatArtists(song.artists) }})
+            </span>
         </div>
-        <div class="grow basis-0 px-8 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackDetails(song) }}</div>
         <div class="basis-16 shrink-0 text-right" v-if="song">{{ formatTrackDuration(song) }}</div>
         <div v-if="focused" class="absolute h-full outline-1 outline-dotted -outline-offset-4 outline-accent-500"
             :class="compact ? 'left-1 right-1 rounded-md' : 'left-1.5 right-1.5 rounded-lg'" />
@@ -17,10 +22,11 @@
 </template>
 
 <script setup lang="ts">
+import equals from "array-equal"
 import { computed } from 'vue';
 
 import { Song } from '@/api/dto';
-import { formatArtists, formatDuration, formatTitle } from '@/format';
+import { formatArtists, formatDuration, formatTitle, formatTrackNumber } from '@/format';
 import { useSongsStore } from '@/stores/songs';
 import { makeThumbnailURL } from '@/api/endpoints';
 
@@ -66,9 +72,6 @@ function formatTrackContext(song: Song) {
     }
     context += " - ";
     context += song.album ? song.album : "Unknown Album";
-    if (song.year) {
-        context += " (" + song.year + ")";
-    }
     return context;
 }
 
