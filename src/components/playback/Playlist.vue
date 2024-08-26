@@ -27,7 +27,7 @@
 		<div class="w-full px-4 pt-1 py-3 text-ls-700 flex text-xs font-semibold whitespace-nowrap">
 			<div class="grow basis-0 pr-4">Artist - Album</div>
 			<div v-if="!compact" class="basis-10 shrink-0 mr-3" />
-			<div class="basis-8 shrink-0">#</div>
+			<div class="basis-8 shrink-0 text-right mr-2">#</div>
 			<div class="grow basis-0 pr-4">Song</div>
 			<div class="basis-16 shrink-0 text-right">Duration</div>
 		</div>

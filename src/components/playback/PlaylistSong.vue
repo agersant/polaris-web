@@ -7,7 +7,7 @@
         <!-- TODO placeholder while image is loading or failed to load -->
         <img v-if="!compact && thumbnailURL" class="basis-10 mr-3 shrink-0 h-10 rounded-md" :src="thumbnailURL" />
         <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackContext(song) }}</div>
-        <div class="basis-8 shrink-0" v-if="song">{{ formatTrackNumber(song) }}</div>
+        <div class="basis-8 shrink-0 text-right mr-2" v-if="song">{{ formatTrackNumber(song) }}</div>
         <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis" v-if="song">
             {{ formatTitle(song) }}
             <span :class="selected ? '' : 'text-ls-400'"
