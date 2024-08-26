@@ -86,7 +86,7 @@ watch([wrapperMouseY], () => {
     }
 
     const max = isReordering.value ? props.items.length - 1 : props.items.length;
-    dropIndex.value = Math.max(0, Math.min(Math.round(wrapperMouseY.value / rowHeight.value), max));
+    dropIndex.value = Math.max(0, Math.min(Math.floor(wrapperMouseY.value / rowHeight.value), max));
 });
 
 const orderedItems = computed(() => {
