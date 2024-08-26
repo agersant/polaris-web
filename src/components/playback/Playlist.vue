@@ -38,9 +38,9 @@
 			</template>
 
 			<template #drop-preview>
-				<div class="flex px-1.5 py-1" :style="{ height: `${itemHeight}px` }">
+				<div class="flex items-stretch px-1.5 py-1" :style="{ height: `${itemHeight}px` }">
 					<div
-						class="w-full text-center rounded-sm bg-accent-100 text-accent-600 outline-1 outline-dashed outline-accent-600">
+						class="grow flex items-center place-content-center rounded-sm bg-accent-100 text-accent-600 outline-1 outline-dashed outline-accent-600">
 						<span class="material-icons-round">add</span>
 					</div>
 				</div>
