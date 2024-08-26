@@ -54,6 +54,18 @@ export function formatArtists(artists: string[]) {
 	return artists.join(", ");
 }
 
-export function formatTitle(track: Song) {
-	return track.title || stripFileExtension(getPathTail(track.path));
+export function formatTrackNumber(song: Song): string {
+	if (song.track_number == undefined) {
+		return "";
+	}
+	const trackNumber = (song.track_number < 10) ? `0${song.track_number}` : song.track_number.toString();
+	if (song.disc_number == undefined) {
+		return trackNumber;
+	} else {
+		return `${song.disc_number}.${trackNumber}`;
+	}
+}
+
+export function formatTitle(song: Song) {
+	return song.title || stripFileExtension(getPathTail(song.path));
 }
