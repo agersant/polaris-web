@@ -43,13 +43,13 @@ const model = defineModel<string>({ required: true });
 
 const inputClass = computed(() => {
     return [
-        ...(props.error ? [
-            "text-red-600", "dark:text-red-100",
-            "ring-red-200", "dark:ring-red-700",
-            "placeholder:text-red-300", "dark:placeholder:text-red-300",
-            "focus:ring-red-500", "dark:focus:ring-red-500"]
-            : []),
-        ...(props.icon ? ["pl-10"] : [])
+        props.error ?
+            `text-red-600 dark:text-red-100
+            ring-red-200 dark:ring-red-700
+            placeholder:text-red-300 dark:placeholder:text-red-300
+            focus:ring-red-500 dark:focus:ring-red-500`
+            : "",
+        props.icon ? "pl-10" : ""
     ];
 });
 </script>
