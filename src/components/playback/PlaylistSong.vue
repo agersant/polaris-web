@@ -4,6 +4,7 @@
         <!-- TODO tooltips -->
         <!-- TODO removal support -->
         <!-- TODO context menu -->
+        <!-- TODO placeholder while image is loading or failed to load -->
         <img v-if="!compact && thumbnailURL" class="basis-10 min-w-fit mr-1 shrink-0 h-10 rounded-md"
             :src="thumbnailURL" />
         <div class="grow basis-0 px-2 overflow-hidden text-ellipsis" v-if="song">{{ formatTrackContext(song) }}
