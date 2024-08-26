@@ -264,6 +264,7 @@ export function makeAudioURL(path: string) {
 	return "api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
 }
 
-export function makeThumbnailURL(path: string) {
-	return "api/thumbnail/" + encodeURIComponent(path) + "?pad=false&auth_token=" + getAuthToken();
+export function makeThumbnailURL(path: string, size: undefined | "tiny" | "small" | "large" | "native") {
+	size = size || "small";
+	return `api/thumbnail/${encodeURIComponent(path)}?size=${size}&pad=false&auth_token=${getAuthToken()}`;
 }
