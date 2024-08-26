@@ -1,5 +1,6 @@
 <template>
     <div class="px-4 flex whitespace-nowrap items-center text-xs" :class="rowClass" :style="{ height: height + 'px' }">
+        <!-- TODO fallback when metadata not loaded -->
         <!-- TODO tooltips -->
         <img v-if="!compact && thumbnailURL" class="basis-10 min-w-fit mr-1 shrink-0 h-10 rounded-md"
             :src="thumbnailURL" />
