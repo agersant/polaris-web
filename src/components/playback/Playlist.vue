@@ -7,8 +7,10 @@
 				<span class="-mt-0.5 text-2xl font-light text-ls-500 italic dark:text-ds-300">
 					{{ playlist.name || "New Playlist" }}
 				</span>
-				<span class="ml-1 font-light text-sm text-ls-600" v-if="duration > 0">{{ formatLongDuration(duration)
-					}}</span>
+				<!-- TODO find a better layout. Clearing playlist makes buttons move -->
+				<span class="ml-1 font-light text-sm text-ls-600" v-if="duration > 0">
+					{{ formatLongDuration(duration) }}
+				</span>
 				<!-- TODO save functionality -->
 				<Button class="ml-2" label="Save" text severity="secondary" icon="save" />
 				<Button label="Clear" text severity="secondary" icon="clear" @click="playlist.clear" />
@@ -65,7 +67,7 @@ const playlist = usePlaylistStore();
 const songs = useSongsStore();
 
 // TODO switcher
-const compact = ref(true);
+const compact = ref(false);
 
 const itemHeight = computed(() => compact.value ? 32 : 50);
 
