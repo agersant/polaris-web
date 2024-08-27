@@ -33,7 +33,7 @@ function itemClass(item: MultiSwitchItem) {
     }
 
     return [
-        props.size == "base" ? " p-3" : " p-1.5",
+        props.size == "base" ? " p-3" : "p-1.5",
         item.disabled ? "cursor-not-allowed opacity-25" : "cursor-pointer",
         isSelected(item) ? "bg-accent-600 text-ls-0 ring-0 hover:bg-accent-500" : "bg-ls-0 text-ls-900 ring-1 ring-ls-300 hover:bg-ls-50",
     ];
