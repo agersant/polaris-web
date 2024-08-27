@@ -1,7 +1,7 @@
 <template>
     <div ref="container" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown"
         @dragenter.prevent @dragover.prevent @drop="onDrop">
-        <div ref="wrapper" class="relative min-h-full divide-y divide-ls-200"
+        <div ref="wrapper" class="relative min-h-full divide-ls-200" :class="{ 'divide-y': divider }"
             :style="{ height: `${props.items.length * rowHeight}px` }">
             <TransitionGroup :name="isReordering ? 'reorder' : 'drop'" :css="isReordering">
                 <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :key="item.key"
@@ -32,11 +32,12 @@
 import { computed, Ref, ref, toRaw, watch } from 'vue';
 import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     items: T[],
     itemHeight: number,
+    divider: boolean,
     showDropPreview: boolean,
-}>();
+}>(), { divider: false });
 
 const emit = defineEmits<{
     'list-drop': [toIndex: number]
@@ -45,8 +46,6 @@ const emit = defineEmits<{
 
 const container: Ref<HTMLElement | null> = ref(null);
 const wrapper: Ref<HTMLElement | null> = ref(null);
-
-const dividerHeight = 1;
 
 const blankImage = new Image(0, 0);
 blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
@@ -60,10 +59,11 @@ const selectedKeys: Ref<Set<string | number>> = ref(new Set());
 const focusedKey: Ref<string | number | undefined> = ref();
 let pivotKey: string | number | undefined;
 
-const rowHeight = computed(() => props.itemHeight + dividerHeight);
+const dividerHeight = computed(() => props.divider ? 1 : 0);
+const rowHeight = computed(() => props.itemHeight + dividerHeight.value);
 
 function rowOffset(index: number) {
-    return index * rowHeight.value - (index > 0 ? dividerHeight : 0);
+    return index * rowHeight.value - (index > 0 ? dividerHeight.value : 0);
 }
 
 const firstVirtualIndex = computed(() => {
