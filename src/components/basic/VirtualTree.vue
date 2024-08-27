@@ -1,12 +1,12 @@
 <template>
     <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="select-none">
         <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
-            <VirtualTreeNode v-for="node in virtualNodes" style="height: 36px" :node="node.data" tabindex="-1"
-                @node-toggle="toggleNode" @click="onNodeClick($event, node.data)"
+            <VirtualTreeNode v-for="node in virtualNodes" :style="`height: ${itemHeight}px`" :node="node.data"
+                tabindex="-1" @node-toggle="toggleNode" @click="onNodeClick($event, node.data)"
                 @dblclick="onNodeDoubleClick($event, node.data)" draggable="true"
                 @dragstart="onDragStart($event, node.data)" @drag="onDrag($event)" @dragend="onDragEnd($event)"
                 :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
-                :selected="selectedKeys.has(node.data.key)" class="mb-0.5">
+                :selected="selectedKeys.has(node.data.key)">
             </VirtualTreeNode>
         </div>
     </div>
@@ -26,6 +26,8 @@ export interface Node {
     leaf: boolean,
     loading?: boolean,
 }
+
+const itemHeight = ref(36);
 
 const props = defineProps<{
     value: Node[],
@@ -80,7 +82,7 @@ const selection = computed(() =>
 defineExpose({ selection });
 
 const overscan = 1;
-const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: 38, overscan: overscan });
+const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan: overscan });
 
 function toggleNode(node: Node) {
     const key = node.key;

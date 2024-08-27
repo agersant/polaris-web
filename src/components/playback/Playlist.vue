@@ -21,9 +21,9 @@
 		</div>
 
 		<div class="grow relative min-h-0">
-			<OrderableList ref="orderableList" class="w-full h-full" :class="{ '-mx-2': !compact }"
-				:items="playlist.entries" :item-height="itemHeight" :show-drop-preview="dragPayload != undefined"
-				@list-reorder="onReorder" @list-drop="onDrop" @keydown="onKeyDown">
+			<OrderableList ref="orderableList" class="h-full" :class="{ '-mx-2': !compact }" :items="playlist.entries"
+				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @list-reorder="onReorder"
+				@list-drop="onDrop" @keydown="onKeyDown">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
 						:selected="selected" :focused="focused" />
@@ -73,7 +73,7 @@ const orderableList: Ref<ComponentExposed<typeof OrderableList<PlaylistEntry>> |
 // TODO save to preferences
 const listMode = ref("compact");
 const compact = computed(() => listMode.value == "compact");
-const itemHeight = computed(() => compact.value ? 32 : 50);
+const itemHeight = computed(() => compact.value ? 32 : 48);
 
 const playbackOrderOptions: SelectOption<PlaybackOrder>[] = [
 	{ label: "Play Once", value: "default" },
