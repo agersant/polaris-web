@@ -132,6 +132,12 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaylist();
 	}
 
+	function removeTracks(entriesToRemove: PlaylistEntry[]) {
+		let removeKeys = new Set(entriesToRemove.map(e => e.key));
+		entries.value = entries.value.filter(e => !removeKeys.has(e.key));
+		savePlaylist();
+	}
+
 	function enqueue(tracks: string[], index: number) {
 		let newEntries = [...entries.value];
 		newEntries.splice(index, 0, ...tracks.map(s => { return { key: make_key(), path: s } }));
@@ -150,16 +156,6 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		const songList = await getPlaylist(playlistName);
 		entries.value = songList.paths.map((p) => { return { key: make_key(), path: p } });
 		name.value = playlistName;
-		savePlaylist();
-	}
-
-	function removeTrack(track: PlaylistEntry) {
-		const trackIndex = entries.value.indexOf(track);
-		if (trackIndex >= 0) {
-			let newSongs = [...entries.value];
-			newSongs.splice(trackIndex, 1);
-			entries.value = newSongs;
-		}
 		savePlaylist();
 	}
 
@@ -240,7 +236,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		previous,
 		queuePlaylist,
 		queueTracks,
-		removeTrack,
+		removeTracks,
 		reorder,
 		setElapsedSeconds,
 		setPlaybackOrder,

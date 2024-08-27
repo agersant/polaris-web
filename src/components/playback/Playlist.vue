@@ -21,9 +21,9 @@
 		</div>
 
 		<div class="grow relative min-h-0">
-			<OrderableList class="w-full h-full" :class="{ '-mx-2': !compact }" :items="playlist.entries"
-				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @list-reorder="onReorder"
-				@list-drop="onDrop">
+			<OrderableList ref="orderableList" class="w-full h-full" :class="{ '-mx-2': !compact }"
+				:items="playlist.entries" :item-height="itemHeight" :show-drop-preview="dragPayload != undefined"
+				@list-reorder="onReorder" @list-drop="onDrop" @keydown="onKeyDown">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
 						:selected="selected" :focused="focused" />
@@ -53,7 +53,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, Ref, ref } from "vue";
+import { ComponentExposed } from "vue-component-type-helpers";
 
 import Button from "@/components/basic/Button.vue"
 import MultiSwitch from '@/components/basic/MultiSwitch.vue';
@@ -66,6 +67,8 @@ import { usePlaylistStore, PlaylistEntry, PlaybackOrder } from '@/stores/playlis
 import { SelectOption } from "../basic/Select.vue";
 
 const playlist = usePlaylistStore();
+
+const orderableList: Ref<ComponentExposed<typeof OrderableList<PlaylistEntry>> | null> = ref(null);
 
 // TODO save to preferences
 const listMode = ref("compact");
@@ -97,6 +100,16 @@ function onReorder(tracks: PlaylistEntry[], newIndex: number) {
 async function onDrop(atIndex: number) {
 	if (dragPayload.value) {
 		playlist.queueTracks(await dragPayload.value.getTracks(), atIndex);
+	}
+}
+
+function onKeyDown(event: KeyboardEvent) {
+	switch (event.code) {
+		case 'Delete':
+			if (orderableList.value) {
+				playlist.removeTracks(orderableList.value.selection);
+			}
+			break;
 	}
 }
 </script>
