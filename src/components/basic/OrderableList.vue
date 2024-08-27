@@ -35,7 +35,7 @@ import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/
 const props = withDefaults(defineProps<{
     items: T[],
     itemHeight: number,
-    divider: boolean,
+    divider?: boolean,
     showDropPreview: boolean,
 }>(), { divider: false });
 
