@@ -1,12 +1,13 @@
 <template>
 	<div data-cy="browser" class="flex flex-col">
-		<div data-cy="browser-header"
-			class="my-10 py-[0.5px] text-5xl font-light text-ls-500 tracking-widest dark:text-ds-300">
-			Files
-		</div>
-		<InputText v-model="searchQuery" id="search" name="search" placeholder="Search" icon="search" />
+		<SectionTitle label="Files" data-cy="browser-header" />
+		<InputText class="mt-8 mb-4" v-model="searchQuery" id="search" name="search" placeholder="Search"
+			icon="search" />
+		<!-- TODO initial load spinner -->
+		<!-- TODO error state -->
+		<!-- TODO empty state -->
 		<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
-			@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="mt-4 grow" />
+			@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
 	</div>
 </template>
 
@@ -14,6 +15,7 @@
 import { useAsyncState } from '@vueuse/core';
 
 import InputText from "@/components/basic/InputText.vue";
+import SectionTitle from "@/components/basic/SectionTitle.vue";
 import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";
 import { BrowserEntry } from "@/api/dto";
@@ -44,7 +46,7 @@ async function openDirectory(node: Node) {
 	try {
 		children = await browse(node.key || "").then(f => makeTreeNodes(f, node));
 	} catch (e) {
-		// TODO fixme
+		// TODO error message toast
 		// toast.add({ severity: 'error', summary: "API Error", detail: `Failed to download directory content for '${node.label}'`, life: 3000 });
 	}
 

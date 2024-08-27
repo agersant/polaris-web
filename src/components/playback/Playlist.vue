@@ -1,19 +1,17 @@
 <template>
 
-	<div class="flex flex-col pt-8 border-l select-none bg-ls-0 dark:bg-ds-900">
+	<div class="flex flex-col py-8 px-16 border-l select-none bg-ls-0 dark:bg-ds-900">
 
-		<div class="justify-between my-10 mb-3 mx-4 pb-4 flex items-end justify-center border-b border-ls-200 bg-ls-0">
-			<div class="text-5xl font-light text-ls-500 tracking-widest dark:text-ds-300">
-				{{ playlist.name || "Summer 2024" }}
-			</div>
-			<div class="flex items-center gap-2">
-				<Button label="Clear" severity="secondary" icon="clear" @click="playlist.clear" />
-				<!-- TODO save functionality -->
-				<Button label="Save" severity="secondary" icon="save" />
-			</div>
-		</div>
+		<SectionTitle :label="playlist.name || 'New Playlist'">
+			<template #right>
+				<div class="flex gap-3">
+					<Button label="Clear" severity="secondary" icon="clear" @click="playlist.clear" />
+					<Button label="Save" severity="secondary" icon="save" />
+				</div>
+			</template>
+		</SectionTitle>
 
-		<div class="flex items-center justify-between px-4 pb-5 mt-3">
+		<div class="mt-8 mb-4 flex items-center justify-between">
 			<div class="flex gap-4">
 				<Select class="w-48" v-model="playbackOrder" :options="playbackOrderOptions" />
 				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playlist.shuffle" />
@@ -22,7 +20,7 @@
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
-		<OrderableList class="grow" :items="playlist.entries" :item-height="itemHeight"
+		<OrderableList class="grow" :class="{ '-mx-2': !compact }" :items="playlist.entries" :item-height="itemHeight"
 			:show-drop-preview="dragPayload != undefined" @list-reorder="onReorder" @list-drop="onDrop">
 
 			<template #default="{ item, index, selected, focused }">
@@ -50,6 +48,7 @@ import { computed, ref } from "vue";
 
 import Button from "@/components/basic/Button.vue"
 import MultiSwitch from '@/components/basic/MultiSwitch.vue';
+import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Select from '@/components/basic/Select.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
