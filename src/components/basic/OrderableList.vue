@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, Ref, ref, toRaw, watch } from 'vue';
+import { computed, ComputedRef, Ref, ref, toRaw, watch } from 'vue';
 import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
@@ -58,6 +58,11 @@ const { elementY: wrapperMouseY } = useMouseInElement(wrapper);
 const selectedKeys: Ref<Set<string | number>> = ref(new Set());
 const focusedKey: Ref<string | number | undefined> = ref();
 let pivotKey: string | number | undefined;
+
+const selection = computed(() => {
+    let keys = selectedKeys.value;
+    return props.items.filter(i => keys.has(i.key));
+});
 
 const dividerHeight = computed(() => props.divider ? 1 : 0);
 const rowHeight = computed(() => props.itemHeight + dividerHeight.value);
@@ -110,8 +115,7 @@ const orderedItems = computed(() => {
         }
     }
 
-    const selection = items.filter(item => selected.has(item.key));
-    reordered.splice(insertLocation, 0, ...selection);
+    reordered.splice(insertLocation, 0, ...selection.value);
 
     return reordered;
 });
@@ -129,6 +133,8 @@ const virtualItems = computed(() => {
     return items;
 });
 
+defineExpose<{ selection: ComputedRef<T[]> }>({ selection });
+
 function selectItem(item: T) {
     selectedKeys.value.clear();
     selectedKeys.value.add(item.key);
@@ -137,6 +143,8 @@ function selectItem(item: T) {
 }
 
 function onDragStart(event: DragEvent, item: T) {
+    // TODO drop position is always computed as position where first item should go.
+    // Doesn't feel intuitive when dragging the bottom of a selected range.
     isReordering.value = true;
     event.dataTransfer?.setDragImage(blankImage, 0, 0);
     if (!selectedKeys.value.has(item.key)) {
@@ -147,8 +155,7 @@ function onDragStart(event: DragEvent, item: T) {
 function onDragEnd() {
     isReordering.value = false;
     if (dropIndex.value != undefined) {
-        const selection = props.items.filter(item => selectedKeys.value.has(item.key));
-        emit('list-reorder', selection, dropIndex.value);
+        emit('list-reorder', selection.value, dropIndex.value);
     }
 }
 
