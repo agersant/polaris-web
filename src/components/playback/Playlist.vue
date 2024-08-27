@@ -20,24 +20,33 @@
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
-		<OrderableList class="grow" :class="{ '-mx-2': !compact }" :items="playlist.entries" :item-height="itemHeight"
-			:show-drop-preview="dragPayload != undefined" @list-reorder="onReorder" @list-drop="onDrop">
-
-			<template #default="{ item, index, selected, focused }">
-				<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
-					:selected="selected" :focused="focused" />
-			</template>
-
-			<template #drop-preview>
-				<div class="flex items-stretch px-1.5 py-1" :style="{ height: `${itemHeight}px` }">
-					<div
-						class="grow flex items-center place-content-center rounded-sm bg-accent-100 text-accent-600 outline-1 outline-dashed outline-accent-600">
-						<span class="material-icons-round">add</span>
+		<div class="grow relative min-h-0">
+			<OrderableList class="w-full h-full" :class="{ '-mx-2': !compact }" :items="playlist.entries"
+				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @list-reorder="onReorder"
+				@list-drop="onDrop">
+				<template #default="{ item, index, selected, focused }">
+					<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
+						:selected="selected" :focused="focused" />
+				</template>
+				<template #drop-preview>
+					<div class="flex items-stretch px-1.5 py-1" :style="{ height: `${itemHeight}px` }">
+						<div
+							class="grow flex items-center place-content-center rounded-sm bg-accent-100 text-accent-600 outline-1 outline-dashed outline-accent-600">
+							<span class="material-icons-round">add</span>
+						</div>
 					</div>
+				</template>
+			</OrderableList>
+			<div v-if="!playlist.entries.length"
+				class="pointer-events-none absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center text-center">
+				<div>
+					<span class="material-icons-round text-5xl text-ls-400">queue</span>
+					<p class="mt-1 text-sm leading-6 text-ls-500">
+						Make a playlist by dragging music<br />from your collection to here.
+					</p>
 				</div>
-			</template>
-
-		</OrderableList>
+			</div>
+		</div>
 
 	</div>
 
