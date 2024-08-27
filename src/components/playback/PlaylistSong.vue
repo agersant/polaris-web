@@ -49,11 +49,19 @@ const song = computed(() => {
 const thumbnailURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "tiny") : undefined);
 
 const rowClass = computed(() => {
-    let background = "bg-ls-0";
+
+    const isOdd = props.index % 2 == 1;
+
+    let background;
     if (props.selected) {
         background = "bg-accent-100";
-    } else if (props.index % 2 == 1) {
-        background = props.compact ? "bg-ls-50" : "bg-gradient-to-r from-ls-0 to-ls-50 to-[50px]";
+    } else if (props.compact) {
+        background = isOdd ? "bg-ls-50 hover:bg-ls-100" : "bg-ls-0 hover:bg-ls-100";
+    } else {
+        background = [
+            "bg-gradient-to-r from-ls-0 to-[50px] hover:to-ls-100",
+            isOdd ? "to-ls-50" : "to-ls-0",
+        ];
     }
 
     return [
@@ -63,6 +71,7 @@ const rowClass = computed(() => {
         !props.compact && props.selected ? "pr-4" : "",
         props.selected ? "text-accent-700 dark:text-accent-200" : "text-ls-700 dark:text-ds-400",
     ];
+
 });
 
 function formatTrackContext(song: Song) {
