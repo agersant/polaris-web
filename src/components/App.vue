@@ -8,7 +8,7 @@
 				<Playlist class="min-h-0" />
 			</div>
 		</div>
-		<div class="h-28 px-8 py-6 border-t flex-none flex items-center gap-16 bg-ls-0">
+		<div class="px-8 border-t flex-none flex items-center gap-16 bg-ls-0">
 			<div class="flex">
 				<div class="aspect-square h-20 rounded-md bg-pink-400" />
 				<div class="ml-4 flex flex-col justify-center">
