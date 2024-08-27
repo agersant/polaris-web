@@ -1,11 +1,10 @@
 <template>
-    <button type="button" :class="buttonClass" class="inline-flex items-center justify-center gap-x-1.5 rounded-md text-sm font-semibold
-    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-    focus-visible:outline-accent-600 dark:focus-visible:outline-accent-600">
-        <span v-if="props.icon" class="material-icons-round">
+    <button type="button" :class="buttonClass"
+        class="inline-flex items-center justify-center gap-x-1.5 rounded-md shadow-sm text-sm font-semibold [&>*]:active:translate-y-px">
+        <span v-if="props.icon" class="material-icons-round text-ls-400 dark:text-ds-200">
             {{ props.icon }}
         </span>
-        {{ props.label }}
+        <span>{{ props.label }}</span>
     </button>
 </template>
 
@@ -15,7 +14,6 @@ import { computed } from 'vue';
 const props = withDefaults(defineProps<{
     label: string,
     icon?: string,
-    text?: boolean,
     severity?: "primary" | "secondary",
     size?: "base" | "lg" | "xl",
 }>(), {
@@ -24,19 +22,23 @@ const props = withDefaults(defineProps<{
 });
 
 let palettes = {
-    opaque: {
-        primary: "bg-accent-600 hover:bg-accent-500 text-ls-0 dark:bg-accent-600 dark:hover:bg-accent-500 dark:text-ds-0",
-        secondary: "bg-ls-50 hover:bg-ls-100 text-ls-600 dark:bg-ds-800 dark:hover:bg-ds-700 dark:text-ds-300",
-    },
-    text: {
-        primary: "bg-transparent hover:bg-ds-500/5 text-accent-600 dark:hover:bg-white/5",
-        secondary: "bg-transparent hover:bg-ds-500/5 text-ls-600 dark:text-ls-400 dark:hover:bg-white/5",
-    },
+    primary: `
+        bg-accent-600 hover:bg-accent-500 text-ls-0
+        dark:bg-accent-600 dark:hover:bg-accent-500 dark:text-ds-0
+        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600 
+    `,
+    secondary: `
+        bg-ls-0 hover:bg-ls-50 text-ls-900
+        dark:bg-ds-0/10 dark:hover:bg-ds-0/20 dark:text-ds-0
+        ring-1 ring-inset ring-ls-300
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 
+        dark:ring-0
+    `,
 };
 
 const buttonClass = computed(() => {
 
-    const palette = palettes[props.text ? "text" : "opaque"][props.severity];
+    const palette = palettes[props.severity];
 
     let padding = "px-2.5 py-1.5";
     if (props.size == "lg") {
@@ -46,7 +48,6 @@ const buttonClass = computed(() => {
     }
 
     return [
-        props.text ? "" : "shadow-sm",
         padding,
         palette,
     ];
