@@ -1,38 +1,28 @@
 <template>
 
-	<div class="flex flex-col border-l pt-10 select-none bg-ls-0 dark:bg-ds-900">
+	<div class="flex flex-col pt-8 border-l select-none bg-ls-0 dark:bg-ds-900">
 
-		<div class="m-6 mx-4 flex items-center justify-between">
-			<div class="flex items-center gap-1">
-				<span class="-mt-0.5 text-2xl font-light text-ls-500 italic dark:text-ds-300">
-					{{ playlist.name || "New Playlist" }}
-				</span>
-				<!-- TODO find a better layout. Clearing playlist makes buttons move -->
-				<span class="ml-1 font-light text-sm text-ls-600" v-if="duration > 0">
-					{{ formatLongDuration(duration) }}
-				</span>
-				<!-- TODO save functionality -->
-				<Button class="ml-2" label="Save" text severity="secondary" icon="save" />
-				<Button label="Clear" text severity="secondary" icon="clear" @click="playlist.clear" />
+		<div class="justify-between my-10 mb-3 mx-4 pb-4 flex items-end justify-center border-b border-ls-200 bg-ls-0">
+			<div class="text-5xl font-light text-ls-500 tracking-widest dark:text-ds-300">
+				{{ playlist.name || "Summer 2024" }}
 			</div>
 			<div class="flex items-center gap-2">
-				<Button label="Shuffle" text severity="secondary" size="lg" icon="shuffle" @click="playlist.shuffle" />
-				<MultiSwitch size="sm" v-model="listMode"
-					:items="[{ icon: 'list', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
-				<!-- TODO playback order -->
-				<!-- <Select placeholder="Repeat All" /> -->
+				<Button label="Clear" severity="secondary" icon="clear" @click="playlist.clear" />
+				<!-- TODO save functionality -->
+				<Button label="Save" severity="secondary" icon="save" />
 			</div>
 		</div>
 
-		<div class="w-full px-4 pt-1 py-3 text-ls-700 flex text-xs font-semibold whitespace-nowrap">
-			<div class="grow basis-0 pr-4">Artist - Album</div>
-			<div v-if="!compact" class="basis-10 shrink-0 mr-3" />
-			<div class="basis-8 shrink-0 text-right mr-2">#</div>
-			<div class="grow basis-0 pr-4">Song</div>
-			<div class="basis-16 shrink-0 text-right">Duration</div>
+		<div class="flex items-center justify-between px-4 pb-5 mt-3">
+			<div class="flex gap-4">
+				<Select class="w-48" v-model="playbackOrder" :options="playbackOrderOptions" />
+				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playlist.shuffle" />
+			</div>
+			<MultiSwitch size="sm" v-model="listMode"
+				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
-		<OrderableList class="grow border-t border-ls-200" :items="playlist.entries" :item-height="itemHeight"
+		<OrderableList class="grow" :items="playlist.entries" :item-height="itemHeight"
 			:show-drop-preview="dragPayload != undefined" @list-reorder="onReorder" @list-drop="onDrop">
 
 			<template #default="{ item, index, selected, focused }">
@@ -60,31 +50,37 @@ import { computed, ref } from "vue";
 
 import Button from "@/components/basic/Button.vue"
 import MultiSwitch from '@/components/basic/MultiSwitch.vue';
+import Select from '@/components/basic/Select.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
-import { formatLongDuration } from "@/format";
-import { usePlaylistStore, PlaylistEntry } from '@/stores/playlist';
-import { useSongsStore } from "@/stores/songs";
+import { usePlaylistStore, PlaylistEntry, PlaybackOrder } from '@/stores/playlist';
+import { SelectOption } from "../basic/Select.vue";
 
 const playlist = usePlaylistStore();
-const songs = useSongsStore();
 
 // TODO save to preferences
 const listMode = ref("compact");
 const compact = computed(() => listMode.value == "compact");
-
 const itemHeight = computed(() => compact.value ? 32 : 50);
 
-const { payload: dragPayload } = useDragAndDrop();
+const playbackOrderOptions: SelectOption<PlaybackOrder>[] = [
+	{ label: "Play Once", value: "default" },
+	{ label: "Play Randomly", value: "random" },
+	{ label: "Repeat Song", value: "repeat-track" },
+	{ label: "Repeat All", value: "repeat-all" },
+];
 
-const duration = computed(() => playlist.entries.reduce((acc, entry) => {
-	const song = songs.cache.get(entry.path);
-	if (!song || !song.duration || isNaN(song.duration)) {
-		return acc;
-	}
-	return acc + song.duration;
-}, 0));
+const playbackOrder = computed({
+	set(option: SelectOption<PlaybackOrder>) {
+		playlist.setPlaybackOrder(option.value);
+	},
+	get() {
+		return playbackOrderOptions.find(o => o.value == playlist.playbackOrder) || playbackOrderOptions[0];
+	},
+});
+
+const { payload: dragPayload } = useDragAndDrop();
 
 function onReorder(tracks: PlaylistEntry[], newIndex: number) {
 	playlist.reorder(tracks, newIndex);
@@ -95,5 +91,4 @@ async function onDrop(atIndex: number) {
 		playlist.queueTracks(await dragPayload.value.getTracks(), atIndex);
 	}
 }
-
 </script>
