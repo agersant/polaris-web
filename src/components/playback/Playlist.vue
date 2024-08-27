@@ -6,6 +6,9 @@
 			<template #right>
 				<div class="flex gap-3">
 					<Button label="Clear" severity="secondary" icon="clear" @click="playlist.clear" />
+					<!-- TODO show playlist stats (duration, number of songs, songs per year bar chart? most represented artists? longest songs?) -->
+					<Button label="Stats" severity="secondary" icon="bar_chart" />
+					<!-- TODO save functionality -->
 					<Button label="Save" severity="secondary" icon="save" />
 				</div>
 			</template>
