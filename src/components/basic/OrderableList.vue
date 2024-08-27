@@ -236,6 +236,7 @@ function onKeyDown(event: KeyboardEvent) {
             focusedKey.value = undefined;
             pivotKey = undefined;
             break;
+        // TODO Ctrl+A to select all
         default:
             break;
     }
