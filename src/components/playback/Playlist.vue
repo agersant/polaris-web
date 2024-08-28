@@ -14,7 +14,7 @@
 			</template>
 		</SectionTitle>
 
-		<div class="mt-8 mb-4 flex items-center justify-between">
+		<div class="mb-4 flex items-center justify-between">
 			<div class="flex gap-4">
 				<Select class="w-48" v-model="playbackOrder" :options="playbackOrderOptions" />
 				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playlist.shuffle" />
@@ -42,12 +42,9 @@
 			</OrderableList>
 			<div v-if="!playlist.entries.length"
 				class="pointer-events-none absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center text-center">
-				<div>
-					<span class="material-icons-round text-5xl text-ls-400">queue</span>
-					<p class="mt-1 text-sm leading-6 text-ls-500">
-						Make a playlist by dragging music<br />from your collection to here.
-					</p>
-				</div>
+				<BlankStateFiller icon="queue">
+					Make a playlist by dragging music<br />from your collection to here.
+				</BlankStateFiller>
 			</div>
 		</div>
 
@@ -59,6 +56,7 @@
 import { computed, Ref, ref } from "vue";
 import { ComponentExposed } from "vue-component-type-helpers";
 
+import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
 import MultiSwitch from '@/components/basic/MultiSwitch.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
