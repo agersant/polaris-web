@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="w-80 rounded-lg flex flex-col overflow-hidden border select-none bg-ls-0 dark:bg-ds-950 border-ls-200 dark:border-ds-800 p-6 pb-0">
+		class="w-80 rounded-lg flex flex-col overflow-hidden border select-none bg-ls-0 dark:bg-ds-900 border-ls-200 dark:border-ds-700 p-6 pb-0">
 		<img src="/assets/logo.svg" class="mt-4 mb-10 mx-4" />
 		<nav class="grow flex flex-col gap-y-7">
 

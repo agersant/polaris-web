@@ -1,6 +1,6 @@
 <template>
 
-	<div class="flex flex-col py-8 px-16 border-l border-ls-200 dark:border-ls-800 select-none bg-ls-0 dark:bg-ds-900">
+	<div class="flex flex-col py-8 px-16 border-l border-ls-200 dark:border-ds-700 select-none bg-ls-0 dark:bg-ds-900">
 
 		<SectionTitle :label="playlist.name || 'New Playlist'">
 			<template #right>

@@ -1,5 +1,6 @@
 <template>
-	<div class="h-full flex flex-col bg-ls-50 dark:bg-ds-900">
+	<div class="h-full flex flex-col bg-ls-50 dark:bg-ds-950/95">
+		<!-- TODO ^ sketchy color for dark background but 800 is too bright -->
 		<div class="flex flex-1 min-h-0">
 			<Sidebar class="shrink-0 m-8 mr-0" />
 
@@ -8,20 +9,21 @@
 				<Playlist class="min-h-0" />
 			</div>
 		</div>
-		<div class="px-8 border-t flex-none flex items-center gap-16 bg-ls-0">
+		<div
+			class="px-8 border-t border-ls-200 dark:border-ds-700 flex-none flex items-center gap-16 bg-ls-0 dark:bg-ds-900">
 			<div class="flex">
 				<div class="aspect-square h-20 rounded-md bg-pink-400" />
 				<div class="ml-4 flex flex-col justify-center">
 					<div class="font-semibold">No Turning Back</div>
-					<div class="text-sm text-muted-color">Stratovarius</div>
+					<div class="text-sm">Stratovarius</div>
 				</div>
 			</div>
-			<div class="flex gap-4 items-center text-muted-color">
+			<div class="flex gap-4 items-center">
 				<span class="material-icons-round text-4xl">skip_previous</span>
 				<div class="material-icons-round text-2xl rounded-full p-2 border-4 px-3">pause</div>
 				<span class="material-icons-round text-4xl">skip_next</span>
 			</div>
-			<div class="grow flex items-center gap-4 text-muted-color text-xs">
+			<div class="grow flex items-center gap-4 text-xs">
 				<span>0:24</span>
 				<div id="waveform" class="grow" />
 				<span>5:46</span>
