@@ -32,7 +32,7 @@
 			<Spinner class="text-ls-700 dark:text-ds-400" />
 		</div>
 
-		<div v-else class="grow flex flex-col">
+		<div v-else class="grow min-h-0 flex flex-col">
 			<InputText class="mb-4" v-model="searchQuery" id="search" name="search" placeholder="Search"
 				icon="search" />
 			<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
