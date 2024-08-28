@@ -14,7 +14,7 @@
 			</template>
 		</SectionTitle>
 
-		<div class="mb-4 flex items-center justify-between">
+		<div class="mb-8 flex items-center justify-between">
 			<div class="flex gap-4">
 				<Select class="w-48" v-model="playbackOrder" :options="playbackOrderOptions" />
 				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playlist.shuffle" />
