@@ -16,7 +16,7 @@
 				<ul class="-mx-2 mt-2 space-y-1">
 					<li v-for="playlist in playlists">
 						<SidebarItem :action="() => { }" :label="playlist.name" icon="queue_music"
-							class="italic !font-normal text-sm text-ls-500 dark:text-ls-500" />
+							class="italic !font-normal text-sm text-ls-500 dark:text-ds-500" />
 					</li>
 				</ul>
 			</div>
