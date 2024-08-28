@@ -1,33 +1,69 @@
 <template>
 	<div data-cy="browser" class="flex flex-col">
 		<SectionTitle label="Files" data-cy="browser-header" />
-		<InputText class="mt-8 mb-4" v-model="searchQuery" id="search" name="search" placeholder="Search"
-			icon="search" />
-		<!-- TODO initial load spinner -->
-		<!-- TODO error state -->
-		<!-- TODO empty state -->
-		<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
-			@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
+
+		<div v-if="error" class="grow flex items-start justify-center">
+			<div class="rounded-md w-full bg-red-50 dark:bg-red-900 p-4">
+				<div class="flex items-center">
+					<span class="material-icons-round text-red-400 dark:text-red-400 mt-0.5">
+						error_outline
+					</span>
+					<div class="ml-3">
+						<p class="text-sm font-medium text-red-800 dark:text-red-200">
+							Something went wrong while listing files.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div v-else-if="isReady && !treeModel.length" class="grow flex items-start mt-40 justify-center text-center">
+			<BlankStateFiller icon="folder_off">
+				No files found.
+				<span v-if="user.isAdmin">Please verify<br />your
+					<a @click="router.push('/settings/collection')" class="cursor-pointer text-accent-600 underline">
+						Collection settings
+					</a>.
+				</span>
+			</BlankStateFiller>
+		</div>
+
+		<div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+			<Spinner class="text-ls-700 dark:text-ds-400" />
+		</div>
+
+		<div v-else class="grow flex flex-col">
+			<InputText class="mb-4" v-model="searchQuery" id="search" name="search" placeholder="Search"
+				icon="search" />
+			<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
+				@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+import { Ref, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAsyncState } from '@vueuse/core';
 
-import InputText from "@/components/basic/InputText.vue";
-import SectionTitle from "@/components/basic/SectionTitle.vue";
-import VirtualTree from "@/components/basic/VirtualTree.vue";
-import { Node } from "@/components/basic/VirtualTree.vue";
 import { BrowserEntry } from "@/api/dto";
 import { browse, flatten } from "@/api/endpoints";
-import { usePlaylistStore } from "@/stores/playlist";
-import { getPathTail } from '@/format';
-import { Ref, ref } from 'vue';
+import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
+import InputText from "@/components/basic/InputText.vue";
+import SectionTitle from "@/components/basic/SectionTitle.vue";
+import Spinner from "@/components/basic/Spinner.vue";
+import VirtualTree from "@/components/basic/VirtualTree.vue";
+import { Node } from "@/components/basic/VirtualTree.vue";
 import { DnDPayload, DndPayloadFiles, endDrag, startDrag, updateDrag } from '@/dnd';
+import { getPathTail } from '@/format';
+import { usePlaylistStore } from "@/stores/playlist";
+import { useUserStore } from '@/stores/user';
 
+const router = useRouter();
+const user = useUserStore();
 const playlist = usePlaylistStore();
 
-const { state: treeModel } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
+const { state: treeModel, isReady, isLoading, error } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
 
 const tree: Ref<InstanceType<typeof VirtualTree> | null> = ref(null);
 const searchQuery = ref("");
