@@ -33,7 +33,7 @@
 		</div>
 
 		<div v-else class="grow min-h-0 flex flex-col">
-			<InputText class="mb-4" v-model="searchQuery" id="search" name="search" placeholder="Search"
+			<InputText class="mb-8" v-model="searchQuery" id="search" name="search" placeholder="Search"
 				icon="search" />
 			<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
 				@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
