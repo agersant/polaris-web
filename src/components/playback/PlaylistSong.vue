@@ -6,11 +6,11 @@
         <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
             <!-- TODO placeholder while image is loading or failed to load -->
             <img v-if="thumbnailURL" class="rounded-md" :src="thumbnailURL" />
-            <div v-else class="rounded-md bg-ls-200 w-10 h-10" />
+            <div v-else class="rounded-md bg-black/5 dark:bg-white/5 w-10 h-10" />
         </div>
-        <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis">
+        <div class="grow basis-0 pr-4 text-ellipsis" :class="{ 'overflow-hidden': song }">
             <span v-if="song">{{ formatTrackContext(song) }}</span>
-            <div v-else class="bg-ls-200 h-3 rounded-full" />
+            <div v-else class="-mr-8 bg-black/5 dark:bg-white/5 h-3 rounded-full" />
         </div>
         <div class="basis-8 shrink-0 text-right mr-1">
             <span v-if="song"> {{ formatTrackNumber(song) }}.</span>
@@ -23,11 +23,11 @@
                     ({{ formatArtists(song.artists) }})
                 </span>
             </span>
-            <div v-else class="bg-ls-200 h-3 rounded-full" />
+            <div v-else class="bg-black/5 dark:bg-white/5 h-3 rounded-full" />
         </div>
         <div class="basis-16 shrink-0 text-right">
             <span v-if="song">{{ formatTrackDuration(song) }}</span>
-            <div v-else class="bg-ls-200 h-3 rounded-full" />
+            <div v-else class="bg-black/5 dark:bg-white/5 h-3 rounded-full" />
         </div>
         <div v-if="focused"
             class="absolute left-px right-px top-px bottom-px outline-1 outline-dotted outline-accent-500" />
