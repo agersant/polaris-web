@@ -1,6 +1,6 @@
 <template>
 
-	<div class="flex flex-col py-8 px-16 border-l select-none bg-ls-0 dark:bg-ds-900">
+	<div class="flex flex-col py-8 px-16 border-l border-ls-200 dark:border-ls-800 select-none bg-ls-0 dark:bg-ds-900">
 
 		<SectionTitle :label="playlist.name || 'New Playlist'">
 			<template #right>
@@ -33,8 +33,11 @@
 				</template>
 				<template #drop-preview>
 					<div class="flex items-stretch px-1.5 py-1" :style="{ height: `${itemHeight}px` }">
-						<div
-							class="grow flex items-center place-content-center rounded-sm bg-accent-100 text-accent-600 outline-1 outline-dashed outline-accent-600">
+						<div class="grow flex items-center place-content-center rounded-sm
+							bg-accent-100 dark:bg-accent-900
+							text-accent-700 dark:text-accent-300
+							outline-accent-600 dark:outline-accent-700
+							outline-1 outline-dashed">
 							<span class="material-icons-round">add</span>
 						</div>
 					</div>

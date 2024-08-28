@@ -3,7 +3,6 @@
         :style="{ height: height + 'px' }">
         <!-- TODO fallback when metadata not loaded -->
         <!-- TODO tooltips -->
-        <!-- TODO removal support -->
         <!-- TODO context menu -->
         <!-- TODO placeholder while image is loading or failed to load -->
         <img v-if="!compact && thumbnailURL" class="basis-10 mr-3 shrink-0 h-10 rounded-md" :src="thumbnailURL" />
@@ -11,7 +10,7 @@
         <div class="basis-8 shrink-0 text-right mr-1" v-if="song">{{ formatTrackNumber(song) }}.</div>
         <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis" v-if="song">
             {{ formatTitle(song) }}
-            <span :class="selected ? '' : 'text-ls-400'"
+            <span :class="selected ? '' : 'text-ls-400 dark:text-ds-600'"
                 v-if="song.artists && song.album_artists && !equals(song.artists, song.album_artists)">
                 ({{ formatArtists(song.artists) }})
             </span>
@@ -54,13 +53,13 @@ const rowClass = computed(() => {
 
     let background;
     if (props.selected) {
-        background = "bg-accent-100";
+        background = "bg-accent-100 dark:bg-accent-900";
     } else if (props.compact) {
-        background = isOdd ? "bg-ls-50 hover:bg-ls-100" : "bg-ls-0 hover:bg-ls-100";
+        background = isOdd ? "bg-ls-50 hover:bg-ls-100 dark:bg-ds-800/20 dark:hover:bg-ds-800" : "bg-ls-0 hover:bg-ls-100 dark:bg-ds-900 dark:hover:bg-ds-800";
     } else {
         background = [
-            "bg-gradient-to-r from-ls-0 to-[50px] hover:to-ls-100",
-            isOdd ? "to-ls-50" : "to-ls-0",
+            "bg-gradient-to-r from-ls-0 dark:from-ds-900 to-[50px] hover:to-ls-100 dark:hover:to-ds-800",
+            isOdd ? "to-ls-50 dark:to-ds-800/20" : "to-ls-0 dark:to-ds-900",
         ];
     }
 
