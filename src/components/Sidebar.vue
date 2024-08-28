@@ -49,11 +49,6 @@ const currentURL = computed(() => route.path);
 
 const navigateTo = (url: string) => { return () => router.push(url).catch(err => { }); };
 
-interface Category {
-	label: string,
-	items: Item[],
-}
-
 interface Item {
 	label: string,
 	icon: string,
