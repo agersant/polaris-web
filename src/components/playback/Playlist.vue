@@ -26,7 +26,7 @@
 		<div class="grow relative min-h-0">
 			<OrderableList ref="orderableList" class="h-full" :class="{ '-mx-2': !compact }" :items="playlist.entries"
 				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @list-reorder="onReorder"
-				@list-drop="onDrop" @keydown="onKeyDown">
+				@list-delete="playlist.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
 						:selected="selected" :focused="focused" />
@@ -107,13 +107,4 @@ async function onDrop(atIndex: number) {
 	}
 }
 
-function onKeyDown(event: KeyboardEvent) {
-	switch (event.code) {
-		case 'Delete':
-			if (orderableList.value) {
-				playlist.removeTracks(orderableList.value.selection);
-			}
-			break;
-	}
-}
 </script>

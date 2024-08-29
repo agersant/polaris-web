@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, ComputedRef, Ref, ref, toRaw, watch } from 'vue';
+import { computed, ComputedRef, nextTick, Ref, ref, toRaw, watch } from 'vue';
 import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
@@ -42,6 +42,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
     'list-drop': [toIndex: number]
     'list-reorder': [items: T[], toIndex: number]
+    'list-delete': [items: T[]]
 }>();
 
 const container: Ref<HTMLElement | null> = ref(null);
@@ -231,6 +232,10 @@ function onKeyDown(event: KeyboardEvent) {
             move(Number.POSITIVE_INFINITY, event);
             event.preventDefault();
             break;
+        case 'Delete':
+            deleteSelection();
+            event.preventDefault();
+            break;
         case 'Escape':
             selectedKeys.value.clear();
             focusedKey.value = undefined;
@@ -296,6 +301,23 @@ function snapScrolling(index: number) {
         container.value?.scrollTo(0, rowHeight.value * (focusedIndex - padding));
     } else if (focusedIndex > last - padding) {
         container.value?.scrollTo(0, rowHeight.value * (focusedIndex - (last - first) + padding));
+    }
+}
+
+function deleteSelection() {
+    const pivot = props.items.findIndex(i => i.key == pivotKey);
+    const newSelection = props.items.find((item, index) =>
+        pivot >= 0 && index > pivot && !selectedKeys.value.has(item.key)
+    );
+
+    emit("list-delete", selection.value);
+
+    if (newSelection) {
+        selectItem(newSelection);
+        nextTick(() => {
+            const focusedIndex = props.items.findIndex(i => i.key == focusedKey.value);
+            snapScrolling(focusedIndex);
+        });
     }
 }
 
