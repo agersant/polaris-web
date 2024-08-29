@@ -1,20 +1,32 @@
 <template>
-    <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="select-none">
-        <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
-            <VirtualTreeNode v-for="node in virtualNodes" :style="`height: ${itemHeight}px`" :node="node.data"
-                tabindex="-1" @node-toggle="toggleNode" @click="onNodeClick($event, node.data)"
-                @dblclick="onNodeDoubleClick($event, node.data)" draggable="true"
-                @dragstart="onDragStart($event, node.data)" @drag="onDrag($event)" @dragend="onDragEnd($event)"
-                :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
-                :selected="selectedKeys.has(node.data.key)">
-            </VirtualTreeNode>
+    <div class="relative min-h-0">
+        <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="select-none h-full">
+            <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
+                <VirtualTreeNode v-for="node in virtualNodes" :style="`height: ${itemHeight}px`" :node="node.data"
+                    tabindex="-1" @node-toggle="toggleNode" @click="onNodeClick($event, node.data)"
+                    @dblclick="onNodeDoubleClick($event, node.data)" draggable="true"
+                    @dragstart="onDragStart($event, node.data)" @drag="onDrag($event)" @dragend="onDragEnd($event)"
+                    :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
+                    :selected="selectedKeys.has(node.data.key)">
+                </VirtualTreeNode>
+            </div>
+        </div>
+        <div v-if="findQuery.length" class="absolute right-0 bottom-0" v-on-click-outside="clearFindQuery">
+            <div class="relative text-ls-900 dark:text-ds-400">
+                <label
+                    class="absolute -top-2 left-2 rounded-sm bg-ls-50 dark:bg-ds-900 px-1 text-xs font-medium">Find</label>
+                <input disabled type="text" :value="findQuery"
+                    class="rounded-md dark:bg-ds-900 border-0 py-2 shadow-sm ring-2 ring-inset ring-accent-600"
+                    :class="findQuery.length && !findMatch ? 'ring-red-600 text-red-900 dark:text-red-400' : ''" />
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref } from 'vue';
+import { computed, Ref, ref, watch } from 'vue';
 import { useVirtualList } from '@vueuse/core';
+import { vOnClickOutside } from "@vueuse/components";
 
 import VirtualTreeNode from "./VirtualTreeNode.vue";
 
@@ -79,10 +91,30 @@ const selection = computed(() =>
     props.value.filter(n => selectedKeys.value.has(n.key))
 );
 
-defineExpose({ jumpTo, selection });
+defineExpose({ selection });
 
 const overscan = 1;
 const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan: overscan });
+
+const findQuery = ref("");
+const findMatch = computed(() => {
+    if (!findQuery.value.length) {
+        return undefined;
+    }
+    let lowercaseQuery = findQuery.value.toLowerCase();
+    const visible = visibleKeys.value;
+    return props.value.find(n => visible.has(n.key) && n.label.toLowerCase().startsWith(lowercaseQuery));
+});
+watch(findMatch, () => {
+    if (findMatch.value) {
+        selectNode(findMatch.value);
+        snapScrolling();
+    }
+});
+
+function clearFindQuery() {
+    findQuery.value = "";
+}
 
 function toggleNode(node: Node) {
     const key = node.key;
@@ -102,16 +134,6 @@ function selectNode(node: Node) {
     selectedKeys.value.add(node.key);
     pivotKey = node.key;
     focusedKey.value = node.key;
-}
-
-function jumpTo(query: string) {
-    let lowercaseQuery = query.toLowerCase();
-    const visible = visibleKeys.value;
-    const node = props.value.find(n => visible.has(n.key) && n.label.toLowerCase().startsWith(lowercaseQuery));
-    if (node) {
-        selectNode(node);
-        snapScrolling();
-    }
 }
 
 function onNodeClick(event: MouseEvent, node: Node) {
@@ -184,7 +206,20 @@ function onDragEnd(event: DragEvent) {
 }
 
 function onKeyDown(event: KeyboardEvent) {
+
+    const isPrintable = event.key.length == 1 && !event.ctrlKey;
+    if (isPrintable) {
+        findQuery.value += event.key;
+        event.preventDefault();
+        return;
+    }
+
+    let preserveFindQuery = false;
     switch (event.code) {
+        case 'AltLeft':
+        case 'AltRight':
+            preserveFindQuery = true;
+            break;
         case 'ArrowLeft':
             moveLeft(event);
             break;
@@ -199,27 +234,36 @@ function onKeyDown(event: KeyboardEvent) {
             move(1, event);
             event.preventDefault();
             break;
-        case 'PageUp':
-            move(-10, event);
+        case 'Backspace':
+            findQuery.value = findQuery.value.slice(0, -1);
+            preserveFindQuery = true;
             event.preventDefault();
             break;
-        case 'PageDown':
-            move(10, event);
-            event.preventDefault();
-            break;
-        case 'Home':
-            move(Number.NEGATIVE_INFINITY, event);
-            event.preventDefault();
+        case 'ControlLeft':
+        case 'ControlRight':
+            preserveFindQuery = true;
             break;
         case 'End':
             move(Number.POSITIVE_INFINITY, event);
             snapScrolling();
             event.preventDefault();
             break;
+        case 'Enter':
+            if (findQuery.value.length) {
+                event.stopImmediatePropagation();
+            }
+            event.preventDefault();
+            break;
         case 'Escape':
-            selectedKeys.value.clear();
-            focusedKey.value = undefined;
-            pivotKey = undefined;
+            if (!findQuery.value.length) {
+                selectedKeys.value.clear();
+                focusedKey.value = undefined;
+                pivotKey = undefined;
+            }
+            break;
+        case 'Home':
+            move(Number.NEGATIVE_INFINITY, event);
+            event.preventDefault();
             break;
         case 'KeyA':
             if (event.ctrlKey) {
@@ -228,10 +272,25 @@ function onKeyDown(event: KeyboardEvent) {
                 pivotKey = focusedKey.value;
             }
             event.preventDefault();
-            event.stopImmediatePropagation();
+            break;
+        case 'PageUp':
+            move(-10, event);
+            event.preventDefault();
+            break;
+        case 'PageDown':
+            move(10, event);
+            event.preventDefault();
+            break;
+        case 'ShiftLeft':
+        case 'ShiftRight':
+            preserveFindQuery = true;
             break;
         default:
             break;
+    }
+
+    if (!preserveFindQuery) {
+        findQuery.value = "";
     }
 }
 
