@@ -43,7 +43,7 @@ const emit = defineEmits<{
 const virtualList: Ref<HTMLElement | null> = ref(null);
 
 const visibleKeys = computed(() => {
-    let keys = new Set();
+    let keys = new Set<string>();
     let collapseDepth = Number.POSITIVE_INFINITY;
     for (const node of props.value) {
         if (node.depth >= collapseDepth) {
@@ -79,7 +79,7 @@ const selection = computed(() =>
     props.value.filter(n => selectedKeys.value.has(n.key))
 );
 
-defineExpose({ selection });
+defineExpose({ jumpTo, selection });
 
 const overscan = 1;
 const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan: overscan });
@@ -102,6 +102,16 @@ function selectNode(node: Node) {
     selectedKeys.value.add(node.key);
     pivotKey = node.key;
     focusedKey.value = node.key;
+}
+
+function jumpTo(query: string) {
+    let lowercaseQuery = query.toLowerCase();
+    const visible = visibleKeys.value;
+    const node = props.value.find(n => visible.has(n.key) && n.label.toLowerCase().startsWith(lowercaseQuery));
+    if (node) {
+        selectNode(node);
+        snapScrolling();
+    }
 }
 
 function onNodeClick(event: MouseEvent, node: Node) {
@@ -211,7 +221,15 @@ function onKeyDown(event: KeyboardEvent) {
             focusedKey.value = undefined;
             pivotKey = undefined;
             break;
-        // TODO Ctrl+A to select all
+        case 'KeyA':
+            if (event.ctrlKey) {
+                selectedKeys.value = new Set(visibleKeys.value);
+                focusedKey.value = props.value.find(n => visibleKeys.value.has(n.key))?.key;
+                pivotKey = focusedKey.value;
+            }
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            break;
         default:
             break;
     }

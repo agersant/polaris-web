@@ -1,5 +1,5 @@
 <template>
-	<div data-cy="browser" class="flex flex-col">
+	<div data-cy="browser" class="flex flex-col relative">
 		<SectionTitle label="Files" data-cy="browser-header" />
 
 		<div v-if="error" class="grow flex items-start justify-center">
@@ -35,16 +35,26 @@
 		<div v-else class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="searchQuery" id="search" name="search" placeholder="Search"
 				icon="search" />
-			<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
+			<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown.capture="onKeyDown"
 				@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
+		</div>
+
+		<div v-if="findQuery.length" class="absolute right-20 bottom-8" v-on-click-outside="clearFindQuery">
+			<div class="relative text-ls-900 dark:text-ls-400">
+				<label
+					class="absolute -top-2 left-2 rounded-md bg-ls-50 dark:bg-ds-900 px-1 text-xs font-medium">Find</label>
+				<input disabled type="text" :value="findQuery"
+					class="rounded-md dark:bg-ds-900 border-0 py-2 shadow-sm ring-2 ring-inset ring-accent-600" />
+			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAsyncState } from '@vueuse/core';
+import { Ref, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAsyncState } from "@vueuse/core";
+import { vOnClickOutside } from "@vueuse/components";
 
 import { BrowserEntry } from "@/api/dto";
 import { browse, flatten } from "@/api/endpoints";
@@ -67,6 +77,7 @@ const { state: treeModel, isReady, isLoading, error } = useAsyncState(browse("")
 
 const tree: Ref<InstanceType<typeof VirtualTree> | null> = ref(null);
 const searchQuery = ref("");
+const findQuery = ref("");
 
 async function openDirectory(node: Node) {
 	{
@@ -110,9 +121,26 @@ function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {
 }
 
 function onKeyDown(event: KeyboardEvent) {
-	if (event.code == "Enter") {
-		queueSelection();
+	const isPrintable = event.key.length == 1 && !event.ctrlKey;
+
+	if (isPrintable) {
+		findQuery.value += event.key;
+		tree.value?.jumpTo(findQuery.value);
+	} else if (findQuery.value.length && event.code == "Backspace") {
+		findQuery.value = findQuery.value.slice(0, -1);
+	} else if (findQuery.value.length && (event.code == "Escape" || event.code == "Enter")) {
+		findQuery.value = "";
+		event.stopImmediatePropagation();
+	} else {
+		findQuery.value = "";
+		if (event.code == "Enter") {
+			queueSelection();
+		}
 	}
+}
+
+function clearFindQuery() {
+	findQuery.value = "";
 }
 
 function onDragStart(event: DragEvent, nodes: Node[]) {
