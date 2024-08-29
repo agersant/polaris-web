@@ -51,9 +51,9 @@ const wrapper: Ref<HTMLElement | null> = ref(null);
 const blankImage = new Image(0, 0);
 blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
 
-const { height: containerHeight } = useElementSize(container);
 const { y: scrollY } = useScroll(container);
-const { elementY: containerMouseY, isOutside } = useMouseInElement(container);
+const { width: containerWidth, height: containerHeight } = useElementSize(container);
+const { elementX: containerMouseX, elementY: containerMouseY, isOutside } = useMouseInElement(container);
 const { elementY: wrapperMouseY } = useMouseInElement(wrapper);
 
 const selectedKeys: Ref<Set<string | number>> = ref(new Set());
@@ -326,7 +326,7 @@ function remap(value: number, fromA: number, fromB: number, toA: number, toB: nu
 }
 
 useRafFn(({ delta }) => {
-    if (isOutside.value || !wrapper.value || !container.value) {
+    if (!wrapper.value || !container.value) {
         return;
     }
 
@@ -334,28 +334,33 @@ useRafFn(({ delta }) => {
         return;
     }
 
-    const triggerRange = 0.05;
-    const maxTracksPerSecond = 80;
+    if (containerMouseX.value < 0 || containerMouseX.value > containerWidth.value) {
+        return;
+    }
+
+    const triggerRange = 100;
+    const maxTracksPerSecond = 40;
     const viewportHeight = container.value.clientHeight;
 
-    if (containerMouseY.value < viewportHeight * triggerRange) {
-        const tracksPerSecond = remap(
+    if (containerMouseY.value < triggerRange) {
+        const t = remap(
             containerMouseY.value,
-            0,
-            viewportHeight * triggerRange,
-            -maxTracksPerSecond, 0
+            0, triggerRange,
+            1, 0
         );
+        const tracksPerSecond = -maxTracksPerSecond * Math.pow(t, 1.5);
         container.value.scrollBy({
             behavior: "instant",
             top: Math.ceil(tracksPerSecond * rowHeight.value * delta / 1000)
         });
-    } else if (containerMouseY.value > viewportHeight * (1 - triggerRange)) {
-        const tracksPerSecond = remap(
+    } else if (containerMouseY.value > viewportHeight - triggerRange) {
+        const t = remap(
             containerMouseY.value,
-            viewportHeight * (1 - triggerRange),
+            viewportHeight - triggerRange,
             viewportHeight,
-            0, maxTracksPerSecond
+            0, 1
         );
+        const tracksPerSecond = maxTracksPerSecond * Math.pow(t, 3);
         container.value.scrollBy({
             behavior: "instant",
             top: Math.ceil(tracksPerSecond * rowHeight.value * delta / 1000)
