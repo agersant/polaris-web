@@ -1,7 +1,7 @@
 <template>
     <div ref="container" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown"
         @dragenter.prevent @dragover.prevent @drop="onDrop">
-        <div ref="wrapper" class="relative min-h-full divide-ls-200" :class="{ 'divide-y': divider }"
+        <div ref="wrapper" class="relative min-h-full divide-ls-200 dark:border-ds-700" :class="{ 'divide-y': divider }"
             :style="{ height: `${props.items.length * rowHeight}px` }">
             <TransitionGroup :name="isReordering ? 'reorder' : 'drop'" :css="isReordering">
                 <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :key="item.key"
@@ -29,8 +29,8 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, ComputedRef, nextTick, Ref, ref, toRaw, watch } from 'vue';
-import { useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
+import { computed, ComputedRef, nextTick, Ref, ref, toRaw } from 'vue';
+import { useCached, useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
     items: T[],
@@ -81,8 +81,7 @@ const numVirtualItems = computed(() => {
 });
 
 const isReordering = ref(false);
-const dropIndex: Ref<number | undefined> = ref(undefined);
-watch([wrapperMouseY], () => {
+const rawDropIndex = computed(() => {
     if (isOutside.value) {
         return;
     }
@@ -92,8 +91,9 @@ watch([wrapperMouseY], () => {
     }
 
     const max = isReordering.value ? props.items.length - 1 : props.items.length;
-    dropIndex.value = Math.max(0, Math.min(Math.floor(wrapperMouseY.value / rowHeight.value), max));
+    return Math.max(0, Math.min(Math.floor(wrapperMouseY.value / rowHeight.value), max));
 });
+const dropIndex = useCached(rawDropIndex, (i) => i == undefined);
 
 const orderedItems = computed(() => {
     let selected = toRaw(selectedKeys.value);
@@ -144,8 +144,6 @@ function selectItem(item: T) {
 }
 
 function onDragStart(event: DragEvent, item: T) {
-    // TODO drop position is always computed as position where first item should go.
-    // Doesn't feel intuitive when dragging the bottom of a selected range.
     isReordering.value = true;
     event.dataTransfer?.setDragImage(blankImage, 0, 0);
     if (!selectedKeys.value.has(item.key)) {
@@ -156,12 +154,12 @@ function onDragStart(event: DragEvent, item: T) {
 function onDragEnd() {
     isReordering.value = false;
     if (dropIndex.value != undefined) {
-        emit('list-reorder', selection.value, dropIndex.value);
+        emit("list-reorder", selection.value, dropIndex.value);
     }
 }
 
 function onDrop() {
-    emit('list-drop', dropIndex.value || 0);
+    emit("list-drop", dropIndex.value || 0);
 }
 
 function onItemClick(event: MouseEvent, item: T) {
