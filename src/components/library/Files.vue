@@ -81,10 +81,7 @@ async function openDirectory(node: Node) {
 	let children;
 	try {
 		children = await browse(node.key || "").then(f => makeTreeNodes(f, node));
-	} catch (e) {
-		// TODO error message toast
-		// toast.add({ severity: 'error', summary: "API Error", detail: `Failed to download directory content for '${node.label}'`, life: 3000 });
-	}
+	} catch (e) { }
 
 	{
 		let parentIndex = treeModel.value.findIndex(n => n.key == node.key);
