@@ -111,7 +111,7 @@ function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {
 
 function onKeyDown(event: KeyboardEvent) {
 	if (event.code == "Enter") {
-		queueSelection();
+		queueSelection(!event.shiftKey);
 	}
 }
 
@@ -133,7 +133,7 @@ function onDragEnd(event: DragEvent) {
 	endDrag(event);
 }
 
-async function queueSelection() {
+async function queueSelection(replace: boolean) {
 	if (!tree.value) {
 		return;
 	}
@@ -148,7 +148,9 @@ async function queueSelection() {
 		}))
 	).flat();
 
-	playlist.clear();
+	if (replace) {
+		playlist.clear();
+	}
 	playlist.queueTracks(tracks);
 }
 </script>
