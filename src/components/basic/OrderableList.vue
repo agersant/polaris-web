@@ -236,7 +236,15 @@ function onKeyDown(event: KeyboardEvent) {
             focusedKey.value = undefined;
             pivotKey = undefined;
             break;
-        // TODO Ctrl+A to select all
+        case 'KeyA':
+            if (event.ctrlKey) {
+                selectedKeys.value = new Set(props.items.map(i => i.key));
+                focusedKey.value = props.items[0]?.key;
+                pivotKey = focusedKey.value;
+            }
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            break;
         default:
             break;
     }
