@@ -9,7 +9,7 @@
 			</div>
 		</div>
 		<div
-			class="px-8 border-t border-ls-200 dark:border-ds-700 flex-none flex items-center gap-16 bg-ls-0 dark:bg-ds-900">
+			class="px-8 py-4 border-t border-ls-200 dark:border-ds-700 flex-none flex items-center gap-16 bg-ls-0 dark:bg-ds-900">
 			<div class="flex">
 				<div class="aspect-square h-20 rounded-md bg-pink-400" />
 				<div class="ml-4 flex flex-col justify-center">
@@ -50,11 +50,11 @@ onMounted(() => {
 		url: makeAudioURL("root/Jazz/Casiopea/1981 - Cross Point/02 - Swear.mp3"),
 		// waveColor: $dt("text.muted.color").value.light.value,
 		// progressColor: $dt("primary.color").value.light.value,
-		height: 112,
+		height: 80,
 		barWidth: 3,
 		barGap: 2,
 		barRadius: 4,
-		barHeight: 0.5,
+		barHeight: .8,
 		cursorWidth: 0,
 	})
 });
