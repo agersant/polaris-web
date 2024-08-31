@@ -149,5 +149,8 @@ async function queueSelection(replace: boolean) {
 		playlist.clear();
 	}
 	playlist.queueTracks(tracks);
+	if (replace) {
+		playlist.next();
+	}
 }
 </script>

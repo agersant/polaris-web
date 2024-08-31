@@ -52,7 +52,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 				const newTrackIndex = Math.floor(Math.random() * numTracks);
 				newTrack = tracks[newTrackIndex];
 			} else if (order == "repeat-track") {
-				newTrack = currentTrack.value;
+				newTrack = currentTrack.value || tracks[0];
 			} else {
 				const rawCurrentTrack = toRaw(currentTrack.value);
 				let currentTrackIndex = -1;
@@ -143,7 +143,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		newEntries.splice(index, 0, ...tracks.map(s => { return { key: make_key(), path: s } }));
 		entries.value = newEntries;
 		if (!currentTrack.value && entries.value.length > 0) {
-			currentTrack.value = entries.value[0];
+			advance(1);
 		}
 	}
 
