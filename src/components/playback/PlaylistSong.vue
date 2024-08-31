@@ -1,6 +1,6 @@
 <template>
-    <div @dblclick="onDoubleClick" class="flex whitespace-nowrap items-center rounded-sm text-xs" :class="rowClass"
-        :style="{ height: height + 'px' }">
+    <div @dblclick="playlist.play(entry)" class="flex whitespace-nowrap items-center rounded-sm text-xs"
+        :class="rowClass" :style="{ height: height + 'px' }">
         <!-- TODO tooltips -->
         <!-- TODO context menu -->
         <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
@@ -87,10 +87,6 @@ const rowClass = computed(() => {
     ];
 
 });
-
-function onDoubleClick() {
-    playlist.play(props.entry);
-}
 
 function formatTrackContext(song: Song) {
     let context = "";
