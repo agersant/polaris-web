@@ -29,7 +29,7 @@
 				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @list-reorder="onReorder"
 				@list-delete="playlist.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
-					<PlaylistSong :path="item.path" :compact="compact" :height="itemHeight" :index="index"
+					<PlaylistSong :entry="item" :compact="compact" :height="itemHeight" :index="index"
 						:selected="selected" :focused="focused" />
 				</template>
 				<template #drop-preview>

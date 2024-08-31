@@ -1,5 +1,5 @@
 <template>
-    <div class="flex whitespace-nowrap items-center rounded-sm text-xs" :class="rowClass"
+    <div @dblclick="onDoubleClick" class="flex whitespace-nowrap items-center rounded-sm text-xs" :class="rowClass"
         :style="{ height: height + 'px' }">
         <!-- TODO tooltips -->
         <!-- TODO context menu -->
@@ -42,11 +42,13 @@ import { Song } from '@/api/dto';
 import { formatArtists, formatDuration, formatTitle, formatTrackNumber } from '@/format';
 import { useSongsStore } from '@/stores/songs';
 import { makeThumbnailURL } from '@/api/endpoints';
+import { PlaylistEntry, usePlaylistStore } from "@/stores/playlist";
 
+const playlist = usePlaylistStore();
 const songs = useSongsStore();
 
 const props = defineProps<{
-    path: string,
+    entry: PlaylistEntry,
     height: number,
     index: number,
     selected: boolean,
@@ -55,7 +57,7 @@ const props = defineProps<{
 }>();
 
 const song = computed(() => {
-    return songs.cache.get(props.path);
+    return songs.cache.get(props.entry.path);
 });
 
 const thumbnailURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "tiny") : undefined);
@@ -85,6 +87,10 @@ const rowClass = computed(() => {
     ];
 
 });
+
+function onDoubleClick() {
+    playlist.play(props.entry);
+}
 
 function formatTrackContext(song: Song) {
     let context = "";
