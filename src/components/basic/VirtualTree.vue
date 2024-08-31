@@ -46,10 +46,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    'node-expand': [node: Node],
-    'nodes-drag-start': [event: DragEvent, nodes: Node[]],
-    'nodes-drag': [event: DragEvent],
-    'nodes-drag-end': [event: DragEvent],
+    "node-expand": [node: Node],
+    "nodes-drag-start": [event: DragEvent, nodes: Node[]],
+    "nodes-drag": [event: DragEvent],
+    "nodes-drag-end": [event: DragEvent],
 }>();
 
 const virtualList: Ref<HTMLElement | null> = ref(null);
