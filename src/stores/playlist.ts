@@ -41,6 +41,14 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		{ immediate: true }
 	);
 
+	function hasPrevious(): boolean {
+		return advance(-1) != null;
+	}
+
+	function hasNext(): boolean {
+		return advance(1) != null;
+	}
+
 	function advance(delta: number): PlaylistEntry | null {
 		const order = playbackOrder.value;
 		const tracks = entries.value;
@@ -77,11 +85,6 @@ export const usePlaylistStore = defineStore("playlist", () => {
 			}
 		}
 
-		if (newTrack != null) {
-			currentTrack.value = newTrack;
-			elapsedSeconds.value = 0;
-		}
-
 		return newTrack;
 	}
 
@@ -94,15 +97,23 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function next(): PlaylistEntry | null {
-		const advancedTo = advance(1);
+		const newTrack = advance(1);
+		if (newTrack) {
+			currentTrack.value = newTrack;
+			elapsedSeconds.value = 0;
+		}
 		savePlaybackState();
-		return advancedTo;
+		return newTrack;
 	}
 
 	function previous(): PlaylistEntry | null {
-		const advancedTo = advance(-1);
+		const newTrack = advance(-1);
+		if (newTrack) {
+			currentTrack.value = newTrack;
+			elapsedSeconds.value = 0;
+		}
 		savePlaybackState();
-		return advancedTo;
+		return newTrack;
 	}
 
 	function clear() {
@@ -143,7 +154,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		newEntries.splice(index, 0, ...tracks.map(s => { return { key: make_key(), path: s } }));
 		entries.value = newEntries;
 		if (!currentTrack.value && entries.value.length > 0) {
-			advance(1);
+			next();
 		}
 	}
 
@@ -231,6 +242,8 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		entries,
 
 		clear,
+		hasPrevious,
+		hasNext,
 		next,
 		play,
 		previous,
