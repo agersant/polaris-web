@@ -5,7 +5,7 @@
 
 		<SectionTitle :label="playlist.name || 'New Playlist'">
 			<template #right>
-				<div class="flex gap-3">
+				<div class="flex gap-2">
 					<Button label="Clear" severity="secondary" icon="clear" @click="playlist.clear" />
 					<!-- TODO show playlist stats (duration, number of songs, songs per year bar chart? most represented artists? longest songs?) -->
 					<Button label="Stats" severity="secondary" icon="bar_chart" />
@@ -20,7 +20,7 @@
 				<Select class="w-48" v-model="playbackOrder" :options="playbackOrderOptions" />
 				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playlist.shuffle" />
 			</div>
-			<MultiSwitch size="sm" v-model="listMode"
+			<MultiSwitch v-model="listMode"
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 

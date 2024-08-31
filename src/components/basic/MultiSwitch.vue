@@ -1,7 +1,7 @@
 <template>
-    <div class="flex" :class="[size == 'base' ? 'gap-3' : 'gap-2']">
+    <div class="flex gap-2">
         <div v-for="item of items" @click="onItemClicked(item)">
-            <div class="flex flex-1 items-center justify-center rounded-md font-semibold uppercase"
+            <div class="flex flex-1 p-1.5 items-center justify-center rounded-md font-semibold"
                 :class="itemClass(item)">
                 <span class="material-icons-round">{{ item.icon }}</span>
             </div>
@@ -16,10 +16,7 @@ export type MultiSwitchItem = {
     disabled?: boolean,
 };
 
-const props = withDefaults(defineProps<{
-    items: MultiSwitchItem[],
-    size?: "sm" | "base",
-}>(), { size: "base" });
+const props = defineProps<{ items: MultiSwitchItem[] }>();
 
 const model = defineModel<any>({ required: true });
 
@@ -33,7 +30,6 @@ function itemClass(item: MultiSwitchItem) {
     }
 
     return [
-        props.size == "base" ? " p-3" : "p-1.5",
         item.disabled ? "cursor-not-allowed opacity-25" : "cursor-pointer",
         isSelected(item) ? "bg-accent-600 dark:bg-accent-700 text-ls-0 ring-0 hover:bg-accent-500 dark:hover:bg-accent-600" : "bg-ls-0 dark:bg-ds-700 text-ls-900 dark:text-ds-0 ring-1 ring-ls-300 dark:ring-0 hover:bg-ls-50 dark:hover:bg-ds-600",
     ];
