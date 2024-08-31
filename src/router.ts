@@ -51,7 +51,7 @@ const routes = [
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: "/files", component: Files },
-			{ path: "/artists/:artists/albums/:name", component: AlbumPage, props: extractAlbumKey },
+			{ path: "/albums/:artists/:name", component: AlbumPage, props: extractAlbumKey },
 			{ path: "/random", component: Random },
 			{ path: "/recent", component: Recent },
 			{ path: "/playlists", component: Playlists },

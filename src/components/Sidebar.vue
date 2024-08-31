@@ -62,13 +62,13 @@ function isCurrent(item: Item) {
 }
 
 const navigation: Ref<Item[]> = ref([
-	{ label: "Files", icon: "folder", "data-cy": "files", pattern: new RegExp("files"), action: navigateTo("/files") },
-	{ label: "Artists", icon: "person", "data-cy": "artists", pattern: new RegExp("artists"), action: navigateTo("/artists") },
-	{ label: "Albums", icon: "library_music", "data-cy": "albums", pattern: new RegExp("albums"), action: navigateTo("/albums") },
-	{ label: "Songs", icon: "music_note", "data-cy": "songs", pattern: new RegExp("songs"), action: navigateTo("/songs") },
-	{ label: "Playlists", icon: "playlist_play", "data-cy": "playlists", pattern: new RegExp("playlist"), action: navigateTo("/playlists") },
-	{ label: "Search", icon: "search", "data-cy": "search", pattern: new RegExp("search"), action: navigateTo("/search") },
-	{ label: "Settings", icon: "settings", "data-cy": "settings", pattern: new RegExp("settings"), action: navigateTo("/settings/preferences") },
+	{ label: "Files", icon: "folder", "data-cy": "files", pattern: new RegExp("^/files"), action: navigateTo("/files") },
+	{ label: "Artists", icon: "person", "data-cy": "artists", pattern: new RegExp("^/artists"), action: navigateTo("/artists") },
+	{ label: "Albums", icon: "library_music", "data-cy": "albums", pattern: new RegExp("^/albums"), action: navigateTo("/albums") },
+	{ label: "Songs", icon: "music_note", "data-cy": "songs", pattern: new RegExp("^/songs"), action: navigateTo("/songs") },
+	{ label: "Playlists", icon: "playlist_play", "data-cy": "playlists", pattern: new RegExp("^/playlist"), action: navigateTo("/playlists") },
+	{ label: "Search", icon: "search", "data-cy": "search", pattern: new RegExp("^/search"), action: navigateTo("/search") },
+	{ label: "Settings", icon: "settings", "data-cy": "settings", pattern: new RegExp("^/settings"), action: navigateTo("/settings/preferences") },
 ]);
 
 const playlists = [

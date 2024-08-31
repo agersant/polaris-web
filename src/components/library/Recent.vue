@@ -33,7 +33,7 @@ async function refresh() {
 
 function onItemClicked(item: AlbumHeader) {
 	// TODO most likely breaks when artists or album name contain `/` character
-	router.push("/artists/" + (item.artists || []).join(URI_ARRAY_SEPARATOR) + "/albums/" + (item.name || "")).catch(err => { });
+	router.push("/albums/" + (item.artists || []).join(URI_ARRAY_SEPARATOR) + "/" + (item.name || "")).catch(err => { });
 }
 
 function onItemsDragStart(event: DragEvent, items: AlbumHeader[]) {
