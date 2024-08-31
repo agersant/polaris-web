@@ -134,5 +134,4 @@ function onAlbumClicked() {
         router.push(albumURL.value).catch(err => { });
     }
 }
-
 </script>
