@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { refDebounced } from "@vueuse/core";
 
 import Slider from "@/components/basic/Slider.vue";
@@ -52,22 +52,28 @@ import { usePlaylistStore } from "@/stores/playlist";
 
 const playlist = usePlaylistStore();
 
-const volume = ref(0);
-
-const isQuiet = computed(() => props.muted || volume.value == 0);
-
 const props = defineProps<{
     buffering: boolean,
-    muted: boolean,
     paused: boolean,
-    volume: number,
 }>();
+
+const volume = defineModel<number>("volume", { required: true, });
 
 const emit = defineEmits<{
     "pause": [],
     "play": [],
     "restart": [],
 }>();
+
+const debouncedVolume = refDebounced(volume, 100);
+const savedVolume = ref(volume.value);
+const isQuiet = computed(() => volume.value == 0);
+
+watch(debouncedVolume, () => {
+    if (debouncedVolume.value > 0) {
+        savedVolume.value = debouncedVolume.value;
+    }
+});
 
 const bufferingRef = computed(() => props.buffering);
 const debouncedBuffering = refDebounced(bufferingRef, 100);
@@ -97,6 +103,10 @@ async function skipNext() {
 }
 
 function toggleMute() {
-
+    if (volume.value > 0) {
+        volume.value = 0;
+    } else {
+        volume.value = savedVolume.value;
+    }
 }
 </script>
