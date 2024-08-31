@@ -16,7 +16,7 @@ function yeet(element: HTMLElement) {
 
 document.querySelectorAll("#dnd-blank, #dnd-drag").forEach(e => e.remove());
 
-const blankElement = document.createElement("img");
+export const blankElement = document.createElement("img");
 blankElement.id = "dnd-blank";
 blankElement.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 document.body.appendChild(blankElement);
