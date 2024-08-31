@@ -1,5 +1,6 @@
 <template>
     <div class="flex items-center">
+        <!-- TODO tooltips -->
         <div @click="onAlbumClicked" class="shrink-0 cursor-pointer w-24 h-24">
             <UseImage :src="artworkURL || ''" class="w-full h-full object-cover rounded-md"
                 :class="albumURL ? 'cursor-pointer hover:opacity-90' : ''">
