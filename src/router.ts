@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouteLocation, RouteLocationMatched } from "vue-router";
 
+import { Song } from "@/api/dto";
 import App from "@/components/App.vue";
 import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
@@ -122,5 +123,18 @@ router.beforeEach(async (to, from, next) => {
 
 	next();
 });
+
+export function makeAlbumURL(song: Song) {
+	if (!song.album) {
+		// TODO support for orphaned songs?
+		return undefined;
+	}
+	let artists = song.artists;
+	if (song.album_artists?.length) {
+		artists = song.album_artists;
+	}
+	// TODO this breaks when artists or album name contain `/` character (eg. OCRemix)
+	return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${song.album}`;
+};
 
 export default router;

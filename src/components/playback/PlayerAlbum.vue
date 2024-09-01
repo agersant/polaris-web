@@ -56,7 +56,7 @@ import { makeThumbnailURL } from '@/api/endpoints';
 import Spinner from '@/components/basic/Spinner.vue';
 import { usePlaylistStore } from '@/stores/playlist';
 import { useSongsStore } from '@/stores/songs';
-import { URI_ARRAY_SEPARATOR } from '@/router';
+import { makeAlbumURL } from '@/router';
 
 interface Artist {
     name: string,
@@ -86,18 +86,10 @@ const albumName = computed(() => {
 });
 
 const albumURL = computed(() => {
-    const album = song.value?.album;
-    if (!album) {
+    if (!song.value) {
         return undefined;
     }
-
-    let artists = song.value.artists;
-    if (song.value.album_artists?.length) {
-        artists = song.value.album_artists;
-    }
-
-    // TODO this breaks when artists or album name contain `/` character (eg. OCRemix)
-    return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${album}`;
+    return makeAlbumURL(song.value);
 });
 
 const artists = computed(() => {
