@@ -23,9 +23,13 @@
 				<span v-else class="mb-4 rounded-full w-40 h-3 bg-ls-200" />
 			</div>
 			<div class="flex grow items-center gap-4 text-xs text-ls-700">
-				<span>{{ currentTrack ? formatDuration(secondsPlayed) : "-:--" }}</span>
+				<div class="w-10 text-right">
+					{{ currentTrack ? formatDuration(secondsPlayed) : "-:--" }}
+				</div>
 				<div id="waveform" class="grow" />
-				<span>{{ song && song.duration ? formatDuration(song.duration) : "-:--" }}</span>
+				<div class="w-10">
+					{{ song && song.duration ? formatDuration(song.duration) : "-:--" }}
+				</div>
 			</div>
 
 		</div>
