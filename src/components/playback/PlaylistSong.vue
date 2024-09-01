@@ -5,7 +5,7 @@
         <div class="basis-8 shrink-0 flex justify-center items-center" :class="!compact ? '-translate-x-2' : ''">
             <span v-if="isCurrent" class="material-icons-round text-ls-600 dark:text-ds-200">play_arrow</span>
         </div>
-        <div class="relative flex grow h-full rounded-sm items-center" :class="rowClass">
+        <div class="relative grow h-full min-w-0 rounded-sm flex items-center" :class="rowClass">
             <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
                 <!-- TODO placeholder while image is loading or failed to load -->
                 <img v-if="thumbnailURL" class="rounded-md" :src="thumbnailURL" />
