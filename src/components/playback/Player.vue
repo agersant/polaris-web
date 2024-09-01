@@ -90,19 +90,16 @@ const trackProgress = computed(() => {
 	return Math.max(0, Math.min(secondsPlayed.value / duration.value, 1));
 });
 
-watch(audioURL, (to, from) => {
-	if (!wavesurfer || !audioURL.value) {
-		return;
-	}
+watch(audioURL, () => {
 	handleCurrentTrackChanged();
 	playFromStart();
 });
 
-watch(volume, (to, from) => {
+watch([volume, htmlAudio], () => {
 	if (htmlAudio.value) {
-		htmlAudio.value.volume = Math.pow(to, 3);
+		htmlAudio.value.volume = Math.pow(volume.value, 3);
 	}
-	saveForCurrentUser("volume", to);
+	saveForCurrentUser("volume", volume.value);
 });
 
 onMounted(() => {
