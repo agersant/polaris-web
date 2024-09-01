@@ -26,8 +26,8 @@
 
 		<div class="grow relative min-h-0">
 			<OrderableList ref="orderableList" class="h-full" :class="{ '-mx-2': !compact }" :items="playlist.entries"
-				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @list-reorder="onReorder"
-				@list-delete="playlist.removeTracks" @list-drop="onDrop">
+				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @keydown="onKeyDown"
+				@list-reorder="onReorder" @list-delete="playlist.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :entry="item" :compact="compact" :height="itemHeight" :index="index"
 						:selected="selected" :focused="focused" />
@@ -100,6 +100,15 @@ const { payload: dragPayload } = useDragAndDrop();
 
 function onReorder(tracks: PlaylistEntry[], newIndex: number) {
 	playlist.reorder(tracks, newIndex);
+}
+
+function onKeyDown(event: KeyboardEvent) {
+	if (event.code == "Enter") {
+		const entry = orderableList.value?.selection[0];
+		if (entry) {
+			playlist.play(entry);
+		}
+	}
 }
 
 async function onDrop(atIndex: number) {
