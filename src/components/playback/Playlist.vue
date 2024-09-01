@@ -24,7 +24,7 @@
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
-		<div class="grow relative min-h-0">
+		<div ref="container" class="grow relative min-h-0">
 			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playlist.entries"
 				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @keydown="onKeyDown"
 				@list-reorder="onReorder" @list-delete="playlist.removeTracks" @list-drop="onDrop">
@@ -57,7 +57,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref } from "vue";
+import { computed, nextTick, Ref, ref, watch } from "vue";
+import { useIdle, useMouseInElement } from "@vueuse/core";
 import { ComponentExposed } from "vue-component-type-helpers";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
@@ -74,11 +75,14 @@ import { SelectOption } from "../basic/Select.vue";
 const playlist = usePlaylistStore();
 
 const orderableList: Ref<ComponentExposed<typeof OrderableList<PlaylistEntry>> | null> = ref(null);
+const container = ref(null);
+const { isOutside } = useMouseInElement(container);
 
 // TODO save to preferences
 const listMode = ref("compact");
 const compact = computed(() => listMode.value == "compact");
 const itemHeight = computed(() => compact.value ? 32 : 48);
+const { idle } = useIdle(400);
 
 const playbackOrderOptions: SelectOption<PlaybackOrder>[] = [
 	{ label: "Play Once", value: "default" },
@@ -97,6 +101,18 @@ const playbackOrder = computed({
 });
 
 const { payload: dragPayload } = useDragAndDrop();
+
+watch(() => playlist.currentTrack, () => {
+	nextTick(() => {
+		if (!orderableList.value || !playlist.currentTrack) {
+			return;
+		}
+		if ((idle.value || isOutside.value) && orderableList.value.isIdle()) {
+			orderableList.value.selectItem(playlist.currentTrack);
+			orderableList.value.snapScrolling("center", "smooth");
+		}
+	});
+});
 
 function onReorder(tracks: PlaylistEntry[], newIndex: number) {
 	playlist.reorder(tracks, newIndex);
