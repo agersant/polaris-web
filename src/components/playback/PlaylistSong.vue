@@ -95,10 +95,11 @@ const rowClass = computed(() => {
         text,
         background,
         isCurrent.value ? "font-semibold" : "",
-        props.compact ? "mr-8 px-3" : "",
-        !props.compact && props.selected ? "-ml-2 pl-2 mr-6 pr-4" : "",
-        !props.compact && !props.selected ? "mr-8 pr-2" : "",
+        props.compact ? "px-3" : "",
+        !props.compact && props.selected ? "-ml-2 pl-2 pr-2" : "",
+        !props.compact && !props.selected ? "pr-2" : "",
         props.focused ? "outline-1 outline-dotted outline-accent-500 -outline-offset-1" : "",
+        "mr-2"
     ];
 
 });
