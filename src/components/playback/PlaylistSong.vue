@@ -1,36 +1,38 @@
 <template>
-    <div @dblclick="playlist.play(entry)" class="flex whitespace-nowrap items-center rounded-sm text-xs"
-        :class="rowClass" :style="{ height: height + 'px' }">
+    <div @dblclick="playlist.play(entry)" class="flex whitespace-nowrap text-xs" :style="{ height: height + 'px' }">
         <!-- TODO tooltips -->
         <!-- TODO context menu -->
-        <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
-            <!-- TODO placeholder while image is loading or failed to load -->
-            <img v-if="thumbnailURL" class="rounded-md" :src="thumbnailURL" />
-            <div v-else class="rounded-md bg-black/5 dark:bg-white/5 w-10 h-10" />
+        <div class="basis-8 shrink-0 flex justify-center items-center" :class="!compact ? '-translate-x-2' : ''">
+            <span v-if="isCurrent" class="material-icons-round" :class="playArrowClass">play_arrow</span>
         </div>
-        <div class="grow basis-0 pr-4 text-ellipsis" :class="{ 'overflow-hidden': song }">
-            <span v-if="song">{{ formatTrackContext(song) }}</span>
-            <div v-else class="-mr-8 bg-black/5 dark:bg-white/5 h-3 rounded-full" />
-        </div>
-        <div class="basis-8 shrink-0 text-right mr-1">
-            <span v-if="song"> {{ formatTrackNumber(song) }}.</span>
-        </div>
-        <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis">
-            <span v-if="song">
-                {{ formatTitle(song) }}
-                <span :class="selected ? '' : 'text-ls-400 dark:text-ds-600'"
-                    v-if="song.artists && song.album_artists && !equals(song.artists, song.album_artists)">
-                    ({{ formatArtists(song.artists) }})
+        <div class="relative flex grow h-full rounded-sm items-center" :class="rowClass">
+            <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
+                <!-- TODO placeholder while image is loading or failed to load -->
+                <img v-if="thumbnailURL" class="rounded-md" :src="thumbnailURL" />
+                <div v-else class="rounded-md bg-black/5 dark:bg-white/5 w-10 h-10" />
+            </div>
+            <div class="grow basis-0 pr-4 text-ellipsis" :class="{ 'overflow-hidden': song }">
+                <span v-if="song">{{ formatTrackContext(song) }}</span>
+                <div v-else class="-mr-8 bg-black/5 dark:bg-white/5 h-3 rounded-full" />
+            </div>
+            <div class="basis-8 shrink-0 text-right mr-1">
+                <span v-if="song"> {{ formatTrackNumber(song) }}.</span>
+            </div>
+            <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis">
+                <span v-if="song">
+                    {{ formatTitle(song) }}
+                    <span :class="selected ? '' : 'text-ls-400 dark:text-ds-600'"
+                        v-if="song.artists && song.album_artists && !equals(song.artists, song.album_artists)">
+                        ({{ formatArtists(song.artists) }})
+                    </span>
                 </span>
-            </span>
-            <div v-else class="bg-black/5 dark:bg-white/5 h-3 rounded-full" />
+                <div v-else class="bg-black/5 dark:bg-white/5 h-3 rounded-full" />
+            </div>
+            <div class="basis-16 shrink-0 text-right">
+                <span v-if="song">{{ formatTrackDuration(song) }}</span>
+                <div v-else class="bg-black/5 dark:bg-white/5 h-3 rounded-full" />
+            </div>
         </div>
-        <div class="basis-16 shrink-0 text-right">
-            <span v-if="song">{{ formatTrackDuration(song) }}</span>
-            <div v-else class="bg-black/5 dark:bg-white/5 h-3 rounded-full" />
-        </div>
-        <div v-if="focused"
-            class="absolute left-px right-px top-px bottom-px outline-1 outline-dotted outline-accent-500" />
     </div>
 </template>
 
@@ -60,6 +62,8 @@ const song = computed(() => {
     return songs.cache.get(props.entry.path);
 });
 
+const isCurrent = computed(() => props.entry.key == playlist.currentTrack?.key);
+
 const thumbnailURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "tiny") : undefined);
 
 const rowClass = computed(() => {
@@ -78,14 +82,33 @@ const rowClass = computed(() => {
         ];
     }
 
+    let text;
+    if (props.selected) {
+        text = "text-accent-700 dark:text-accent-200";
+    } else if (isCurrent.value) {
+        text = "text-ls-700 dark:text-ds-0";
+    } else {
+        text = "text-ls-700 dark:text-ds-400";
+    }
+
     return [
+        text,
         background,
-        props.compact ? "px-3" : "px-2",
-        !props.compact && !props.selected ? "mr-2" : "",
-        !props.compact && props.selected ? "pr-4" : "",
-        props.selected ? "text-accent-700 dark:text-accent-200" : "text-ls-700 dark:text-ds-400",
+        isCurrent.value ? "font-semibold" : "",
+        props.compact ? "mr-8 px-3" : "",
+        !props.compact && props.selected ? "-ml-2 pl-2 mr-6 pr-4" : "",
+        !props.compact && !props.selected ? "mr-8 pr-2" : "",
+        props.focused ? "outline-1 outline-dotted outline-accent-500 -outline-offset-1" : "",
     ];
 
+});
+
+const playArrowClass = computed(() => {
+    if (props.selected) {
+        return "text-accent-500 dark:text-accent-400";
+    } else {
+        return "text-ls-600 dark:text-ds-200";
+    }
 });
 
 function formatTrackContext(song: Song) {
