@@ -222,9 +222,11 @@ function onKeyDown(event: KeyboardEvent) {
             break;
         case 'ArrowLeft':
             moveLeft(event);
+            event.preventDefault();
             break;
         case 'ArrowRight':
             moveRight(event);
+            event.preventDefault();
             break;
         case 'ArrowUp':
             move(-1, event);
