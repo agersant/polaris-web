@@ -5,7 +5,7 @@
         <div class="cursor-grab
         absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5
         rounded-full bg-ls-0 shadow-sm border-2 border-ls-300
-        active:border-accent-500 group-focus:border-accent-500" :style="`left: ${100 * model}%`" />
+        group-active:border-accent-500 group-focus:border-accent-500" :style="`left: ${100 * model}%`" />
     </div>
 </template>
 
