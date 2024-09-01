@@ -24,7 +24,7 @@
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
-		<div ref="container" class="grow relative min-h-0">
+		<div class="grow relative min-h-0">
 			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playlist.entries"
 				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @keydown="onKeyDown"
 				@list-reorder="onReorder" @list-delete="playlist.removeTracks" @list-drop="onDrop">
@@ -58,7 +58,6 @@
 
 <script setup lang="ts">
 import { computed, nextTick, Ref, ref, watch } from "vue";
-import { useIdle, useMouseInElement } from "@vueuse/core";
 import { ComponentExposed } from "vue-component-type-helpers";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
@@ -76,13 +75,11 @@ const playlist = usePlaylistStore();
 
 const orderableList: Ref<ComponentExposed<typeof OrderableList<PlaylistEntry>> | null> = ref(null);
 const container = ref(null);
-const { isOutside } = useMouseInElement(container);
 
 // TODO save to preferences
 const listMode = ref("compact");
 const compact = computed(() => listMode.value == "compact");
 const itemHeight = computed(() => compact.value ? 32 : 48);
-const { idle } = useIdle(400);
 
 const playbackOrderOptions: SelectOption<PlaybackOrder>[] = [
 	{ label: "Play Once", value: "default" },
@@ -107,7 +104,7 @@ watch(() => playlist.currentTrack, () => {
 		if (!orderableList.value || !playlist.currentTrack) {
 			return;
 		}
-		if ((idle.value || isOutside.value) && orderableList.value.isIdle()) {
+		if (orderableList.value.isIdle()) {
 			orderableList.value.selectItem(playlist.currentTrack);
 			orderableList.value.snapScrolling("center", "smooth");
 		}

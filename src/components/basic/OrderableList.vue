@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, ComputedRef, nextTick, Ref, ref, toRaw } from 'vue';
+import { computed, nextTick, Ref, ref, toRaw } from 'vue';
 import { useCached, useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
@@ -298,20 +298,25 @@ function snapScrolling(mode: "clamp" | "center", behavior: ScrollBehavior) {
         behavior = "instant";
     }
 
+    let y = scrollY.value;
     if (mode == "clamp") {
         const padding = 4;
         const first = firstVirtualIndex.value;
         const last = first + virtualItems.value.length - 1;
         if (focusedIndex < first + padding) {
-            container.value?.scrollTo({ top: rowHeight.value * (focusedIndex - padding), behavior });
+            y = rowHeight.value * (focusedIndex - padding);
         } else if (focusedIndex > last - padding) {
-            container.value?.scrollTo({ top: rowHeight.value * (focusedIndex - (last - first) + padding), behavior });
+            y = rowHeight.value * (focusedIndex - (last - first) + padding);
         }
     } else {
-        const y = (focusedIndex + 0.5) * rowHeight.value - containerHeight.value / 2;
-        container.value?.scrollTo({ top: y, behavior });
-
+        y = (focusedIndex + 0.5) * rowHeight.value - containerHeight.value / 2;
     }
+
+    if (rowHeight.value * props.items.length > 50 * window.innerHeight) {
+        behavior = "instant";
+    }
+
+    container.value?.scrollTo({ top: y, behavior });
 }
 
 function deleteSelection() {
