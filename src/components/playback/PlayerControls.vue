@@ -12,12 +12,12 @@
                 skip_previous
             </span>
 
-            <div @click="togglePlayback" class="cursor-pointer material-icons-round py-1 w-12 h-12 
-                text-4xl text-center text-ls-0
-                rounded-full bg-accent-600 
-                hover:bg-accent-500 hover:ring-2
+            <div @click="togglePlayback" class="material-icons-round py-1 w-12 h-12 
+                text-4xl text-center text-ls-0 rounded-full 
                 ring-accent-500 ring-offset-4
-                active:pt-[5px]">
+                active:pt-[5px]" :class="playlist.currentTrack
+                    ? 'cursor-pointer bg-accent-600 hover:bg-accent-500 hover:ring-2'
+                    : 'active:pointer-events-none cursor-not-allowed bg-ls-400'">
                 {{ paused ? 'play_arrow' : 'pause' }}
             </div>
 
