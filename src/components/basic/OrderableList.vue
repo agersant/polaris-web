@@ -134,7 +134,11 @@ const virtualItems = computed(() => {
     return items;
 });
 
-defineExpose<{ selection: ComputedRef<T[]> }>({ selection });
+defineExpose({ isIdle, selectItem, selection, snapScrolling });
+
+function isIdle() {
+    return !isReordering.value && !props.showDropPreview;
+}
 
 function selectItem(item: T) {
     selectedKeys.value.clear();
@@ -281,24 +285,32 @@ function move(delta: number, event: KeyboardEvent) {
     }
 
     focusedKey.value = toItem.key;
-    const focusedIndex = props.items.findIndex(i => i.key == focusedKey.value);
-    snapScrolling(focusedIndex);
+    snapScrolling("clamp", "instant");
 }
 
-function snapScrolling(index: number) {
+function snapScrolling(mode: "clamp" | "center", behavior: ScrollBehavior) {
     const focusedIndex = props.items.findIndex(i => i.key == focusedKey.value);
     if (focusedIndex < 0) {
         return;
     }
 
-    const padding = 4;
-    const first = firstVirtualIndex.value;
-    const last = first + virtualItems.value.length - 1;
+    if (document.hidden) {
+        behavior = "instant";
+    }
 
-    if (focusedIndex < first + padding) {
-        container.value?.scrollTo(0, rowHeight.value * (focusedIndex - padding));
-    } else if (focusedIndex > last - padding) {
-        container.value?.scrollTo(0, rowHeight.value * (focusedIndex - (last - first) + padding));
+    if (mode == "clamp") {
+        const padding = 4;
+        const first = firstVirtualIndex.value;
+        const last = first + virtualItems.value.length - 1;
+        if (focusedIndex < first + padding) {
+            container.value?.scrollTo({ top: rowHeight.value * (focusedIndex - padding), behavior });
+        } else if (focusedIndex > last - padding) {
+            container.value?.scrollTo({ top: rowHeight.value * (focusedIndex - (last - first) + padding), behavior });
+        }
+    } else {
+        const y = (focusedIndex + 0.5) * rowHeight.value - containerHeight.value / 2;
+        container.value?.scrollTo({ top: y, behavior });
+
     }
 }
 
@@ -312,10 +324,7 @@ function deleteSelection() {
 
     if (newSelection) {
         selectItem(newSelection);
-        nextTick(() => {
-            const focusedIndex = props.items.findIndex(i => i.key == focusedKey.value);
-            snapScrolling(focusedIndex);
-        });
+        nextTick(() => snapScrolling("clamp", "instant"));
     }
 }
 
