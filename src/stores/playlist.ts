@@ -62,11 +62,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 			} else if (order == "repeat-track") {
 				newTrack = currentTrack.value || tracks[0];
 			} else {
-				const rawCurrentTrack = toRaw(currentTrack.value);
-				let currentTrackIndex = -1;
-				if (rawCurrentTrack) {
-					currentTrackIndex = tracks.indexOf(rawCurrentTrack);
-				}
+				const currentTrackIndex = tracks.findIndex(t => t.key == currentTrack.value?.key);
 
 				if (currentTrackIndex < 0) {
 					newTrack = tracks[0];
