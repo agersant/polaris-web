@@ -33,7 +33,7 @@
 						:selected="selected" :focused="focused" />
 				</template>
 				<template #drop-preview>
-					<div class="flex items-stretch px-1.5 py-1" :style="{ height: `${itemHeight}px` }">
+					<div class="flex items-stretch pl-8 pr-2 py-1" :style="{ height: `${itemHeight}px` }">
 						<div class="grow flex items-center place-content-center rounded-sm
 							bg-accent-100 dark:bg-accent-900
 							text-accent-700 dark:text-accent-300
