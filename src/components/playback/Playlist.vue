@@ -25,9 +25,9 @@
 		</div>
 
 		<div class="grow relative min-h-0">
-			<OrderableList ref="orderableList" class="h-full" :class="{ '-mx-2': !compact }" :items="playlist.entries"
-				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @keydown="onKeyDown"
-				@list-reorder="onReorder" @list-delete="playlist.removeTracks" @list-drop="onDrop">
+			<OrderableList ref="orderableList" class="h-full -mx-8" :items="playlist.entries" :item-height="itemHeight"
+				:show-drop-preview="dragPayload != undefined" @keydown="onKeyDown" @list-reorder="onReorder"
+				@list-delete="playlist.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :entry="item" :compact="compact" :height="itemHeight" :index="index"
 						:selected="selected" :focused="focused" />
