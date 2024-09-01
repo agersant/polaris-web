@@ -2,20 +2,7 @@
     <div class="flex items-center">
         <!-- TODO tooltips -->
         <div @click="onAlbumClicked" class="shrink-0 cursor-pointer w-24 h-24">
-            <UseImage :src="artworkURL || ''" class="w-full h-full object-cover rounded-md"
-                :class="albumURL ? 'cursor-pointer hover:opacity-90' : ''">
-                <template #loading>
-                    <div class="bg-ls-200 rounded-md w-full h-full flex items-center justify-center">
-                        <Spinner />
-                    </div>
-                </template>
-
-                <template #error>
-                    <div class="bg-ls-200 rounded-md w-full h-full flex items-center justify-center">
-                        <span class="material-icons-round text-ls-500">image_not_supported</span>
-                    </div>
-                </template>
-            </UseImage>
+            <AlbumArt :url="artworkURL" />
         </div>
 
         <div class="ml-4 min-w-0 flex flex-col text-sm">
@@ -50,10 +37,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter } from "vue-router";
-import { UseImage } from '@vueuse/components';
 
 import { makeThumbnailURL } from '@/api/endpoints';
-import Spinner from '@/components/basic/Spinner.vue';
+import AlbumArt from '@/components/AlbumArt.vue';
 import { usePlaylistStore } from '@/stores/playlist';
 import { useSongsStore } from '@/stores/songs';
 import { makeAlbumURL } from '@/router';
@@ -76,7 +62,7 @@ const song = computed(() => {
     return songs.cache.get(currentTrack.value.path)
 });
 
-const artworkURL = computed(() => song.value && song.value.artwork ? makeThumbnailURL(song.value.artwork, "small") : null);
+const artworkURL = computed(() => song.value && song.value.artwork ? makeThumbnailURL(song.value.artwork, "small") : undefined);
 
 const albumName = computed(() => {
     if (!song.value) {

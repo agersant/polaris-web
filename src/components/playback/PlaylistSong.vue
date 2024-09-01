@@ -7,9 +7,7 @@
         </div>
         <div class="relative grow h-full min-w-0 rounded-sm flex items-center" :class="rowClass">
             <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
-                <!-- TODO placeholder while image is loading or failed to load -->
-                <img v-if="thumbnailURL" class="rounded-md" :src="thumbnailURL" />
-                <div v-else class="rounded-md bg-black/5 dark:bg-white/5 w-10 h-10" />
+                <AlbumArt :url="artworkURL" />
             </div>
             <div class="grow basis-0 pr-4 text-ellipsis" :class="{ 'overflow-hidden': song }">
                 <span v-if="song">{{ formatTrackContext(song) }}</span>
@@ -41,6 +39,7 @@ import equals from "array-equal"
 import { computed } from 'vue';
 
 import { Song } from '@/api/dto';
+import AlbumArt from '@/components/AlbumArt.vue';
 import { formatArtists, formatDuration, formatTitle, formatTrackNumber } from '@/format';
 import { useSongsStore } from '@/stores/songs';
 import { makeThumbnailURL } from '@/api/endpoints';
@@ -64,7 +63,7 @@ const song = computed(() => {
 
 const isCurrent = computed(() => props.entry.key == playlist.currentTrack?.key);
 
-const thumbnailURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "tiny") : undefined);
+const artworkURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "tiny") : undefined);
 
 const rowClass = computed(() => {
 
