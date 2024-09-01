@@ -11,6 +11,7 @@ const { x: mouseX, y: mouseY } = useMouse();
 
 function yeet(element: HTMLElement) {
     element.style.position = "absolute";
+    element.style.left = "0px";
     element.style.top = "-1000px";
 }
 
