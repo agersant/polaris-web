@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, nextTick, Ref, ref, toRaw } from 'vue';
+import { computed, nextTick, Ref, ref, toRaw, watch } from 'vue';
 import { useCached, useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
@@ -132,6 +132,14 @@ const virtualItems = computed(() => {
     }
 
     return items;
+});
+
+watch(() => props.itemHeight, (to, from) => {
+    const halfHeight = containerHeight.value / 2;
+    const y = (scrollY.value + halfHeight) * to / from - halfHeight;
+    nextTick(() => {
+        container.value?.scrollTo({ top: y, behavior: "instant" });
+    });
 });
 
 defineExpose({ isIdle, selectItem, selection, snapScrolling });
