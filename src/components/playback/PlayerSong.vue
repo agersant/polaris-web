@@ -10,7 +10,7 @@
                     <span v-if="index < artists.length - 1">{{ ", " }}</span>
                 </span>
             </div>
-            <div v-if="artists">-</div>
+            <div v-if="artists" class="text-ls-400">-</div>
             <!-- TODO song click interaction -->
             <span v-if="song"
                 class="cursor-pointer hover:underline hover:text-accent-600 overflow-hidden text-ellipsis select-text">
