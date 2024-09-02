@@ -2,41 +2,10 @@
 	<div class="relative flex items-center px-8 py-4 bg-ls-0 dark:bg-ds-900 whitespace-nowrap select-none">
 		<audio ref="htmlAudio" v-if="audioURL" v-bind:src="audioURL" @timeupdate="onTimeUpdate" @error="onPlaybackError"
 			@ended="onEnded" @pause="onPaused" @playing="onPlaying" @waiting="onWaiting" />
-
 		<PlayerAlbum class="basis-80 min-w-0 grow shrink" />
-
-		<!-- Waveform -->
-		<div class="grow-[8] basis-80 min-w-32 mx-16 flex flex-col gap-4">
-			<div class="flex justify-center text-sm gap-1 text-ls-900">
-				<span class="text-accent-600 underline">
-					<span v-if="song && song.artists?.length">
-						{{ formatArtists(song.artists) }}
-					</span>
-					<span v-else-if="song && song.album_artists?.length">{{ formatArtists(song.album_artists)
-						}}</span>
-				</span>
-				<span>-</span>
-				<span v-if="song" class="overflow-hidden text-ellipsis select-text">
-					{{ formatTitle(song) }}
-				</span>
-				<span v-else-if="currentTrack" class="select-text">{{ getPathTail(currentTrack.path) }}</span>
-				<span v-else class="mb-4 rounded-full w-40 h-3 bg-ls-200" />
-			</div>
-			<div class="flex grow items-center gap-4 text-xs text-ls-700">
-				<div class="w-10 text-right">
-					{{ currentTrack ? formatDuration(secondsPlayed) : "-:--" }}
-				</div>
-				<div id="waveform" class="grow" />
-				<div class="w-10">
-					{{ song && song.duration ? formatDuration(song.duration) : "-:--" }}
-				</div>
-			</div>
-
-		</div>
-
+		<PlayerSong :seconds-played="secondsPlayed" class="grow-[8] basis-80 min-w-32 mx-16" />
 		<PlayerControls class="basis-80 min-w-0 grow shrink" v-model:volume="volume" :paused="paused"
 			:buffering="buffering" @play="play" @pause="pause" @restart="playFromStart" />
-
 	</div>
 </template>
 
@@ -47,8 +16,9 @@ import WaveSurfer from 'wavesurfer.js'
 import { lastFMNowPlaying, lastFMScrobble, makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import PlayerAlbum from "@/components/playback/PlayerAlbum.vue";
 import PlayerControls from "@/components/playback/PlayerControls.vue";
+import PlayerSong from "@/components/playback/PlayerSong.vue";
 import { loadForCurrentUser, saveForCurrentUser } from "@/disk";
-import { formatArtists, formatDuration, formatTitle, getPathTail } from "@/format";
+import { formatArtists, formatTitle } from "@/format";
 import notify from "@/notify";
 import { usePlaylistStore } from "@/stores/playlist";
 import { usePreferencesStore } from "@/stores/preferences";
