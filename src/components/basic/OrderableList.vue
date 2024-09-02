@@ -30,7 +30,7 @@
 
 <script setup lang="ts" generic="T extends { key: string | number }">
 import { computed, nextTick, Ref, ref, toRaw, watch } from 'vue';
-import { useCached, useElementSize, useMouseInElement, useRafFn, useScroll } from '@vueuse/core';
+import { useCached, useElementSize, useLastChanged, useMouseInElement, useMousePressed, useRafFn, useScroll } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
     items: T[],
@@ -55,6 +55,8 @@ const { y: scrollY } = useScroll(container);
 const { width: containerWidth, height: containerHeight } = useElementSize(container);
 const { elementX: containerMouseX, elementY: containerMouseY, isOutside } = useMouseInElement(container);
 const { elementY: wrapperMouseY } = useMouseInElement(wrapper);
+const { pressed: mousePressed } = useMousePressed({ target: container });
+const mouseLastPressed = useLastChanged(mousePressed, { initialValue: 0 });
 
 const selectedKeys: Ref<Set<string | number>> = ref(new Set());
 const focusedKey: Ref<string | number | undefined> = ref();
@@ -145,7 +147,10 @@ watch(() => props.itemHeight, (to, from) => {
 defineExpose({ isIdle, selectItem, selection, snapScrolling });
 
 function isIdle() {
-    return !isReordering.value && !props.showDropPreview;
+    if (isReordering.value || props.showDropPreview) {
+        return true;
+    }
+    return (Date.now() - mouseLastPressed.value) > 200;
 }
 
 function selectItem(item: T) {
