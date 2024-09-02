@@ -74,7 +74,6 @@ import { SelectOption } from "../basic/Select.vue";
 const playlist = usePlaylistStore();
 
 const orderableList: Ref<ComponentExposed<typeof OrderableList<PlaylistEntry>> | null> = ref(null);
-const container = ref(null);
 
 // TODO save to preferences
 const listMode = ref("compact");
