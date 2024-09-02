@@ -187,12 +187,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function savePlaybackState() {
-		const rawCurrentTrack = toRaw(currentTrack.value);
-		let currentTrackIndex = -1;
-		if (rawCurrentTrack) {
-			currentTrackIndex = entries.value.indexOf(rawCurrentTrack);
-		}
-
+		const currentTrackIndex = entries.value.findIndex(t => t.key == currentTrack.value?.key);
 		saveForCurrentUser("currentTrackIndex", currentTrackIndex);
 		saveForCurrentUser("playbackOrder", playbackOrder.value);
 		saveForCurrentUser("elapsedSeconds", elapsedSeconds.value);
