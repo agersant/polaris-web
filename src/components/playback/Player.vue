@@ -3,7 +3,8 @@
 		<audio ref="htmlAudio" v-if="audioURL" v-bind:src="audioURL" @timeupdate="onTimeUpdate" @error="onPlaybackError"
 			@ended="onEnded" @pause="onPaused" @playing="onPlaying" @waiting="onWaiting" />
 		<PlayerAlbum class="basis-80 min-w-0 grow shrink" />
-		<PlayerSong :seconds-played="secondsPlayed" class="grow-[8] basis-80 min-w-32 mx-16" />
+		<PlayerSong :seconds-played="secondsPlayed" :progress="trackProgress"
+			class="grow-[8] basis-80 min-w-32 mx-16" />
 		<PlayerControls class="basis-80 min-w-0 grow shrink" v-model:volume="volume" :paused="paused"
 			:buffering="buffering" @play="play" @pause="pause" @restart="playFromStart" />
 	</div>
@@ -11,7 +12,6 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, Ref, ref, watch } from "vue";
-import WaveSurfer from 'wavesurfer.js'
 
 import { lastFMNowPlaying, lastFMScrobble, makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import PlayerAlbum from "@/components/playback/PlayerAlbum.vue";
@@ -23,6 +23,7 @@ import notify from "@/notify";
 import { usePlaylistStore } from "@/stores/playlist";
 import { usePreferencesStore } from "@/stores/preferences";
 import { useSongsStore } from "@/stores/songs";
+import { useTimeoutPoll } from "@vueuse/core";
 
 const playlist = usePlaylistStore();
 const songs = useSongsStore();
@@ -48,7 +49,12 @@ const song = computed(() => {
 const audioURL = computed(() => currentTrack.value ? makeAudioURL(currentTrack.value.path) : null);
 const artworkURL = computed(() => song.value && song.value.artwork ? makeThumbnailURL(song.value.artwork, "small") : null);
 
-let wavesurfer: WaveSurfer | undefined;
+useTimeoutPoll(() => {
+	if (htmlAudio.value) {
+		secondsPlayed.value = htmlAudio.value.currentTime;
+		duration.value = htmlAudio.value.duration || 1;
+	}
+}, 1000 / 60, { immediate: true });
 
 const trackProgress = computed(() => {
 	if (isNaN(duration.value)) {
@@ -73,16 +79,6 @@ watch([volume, htmlAudio], () => {
 });
 
 onMounted(() => {
-	wavesurfer = WaveSurfer.create({
-		container: '#waveform',
-		height: 32,
-		cursorWidth: 0,
-		waveColor: "#e5e7eb", // TODO theming
-		progressColor: "#46c8f1", // TODO theming
-		media: htmlAudio.value as HTMLMediaElement,
-		dragToSeek: true,
-	})
-
 	const savedVolume = parseFloat(loadForCurrentUser("volume"));
 	if (!isNaN(savedVolume)) {
 		volume.value = savedVolume;
@@ -246,18 +242,16 @@ function onTimeUpdate(event: Event) {
 	if (!htmlAudio.value) {
 		return;
 	}
-	const newTime = htmlAudio.value.currentTime;
-	const newDuration = htmlAudio.value.duration || 1;
-	secondsPlayed.value = newTime;
-	duration.value = newDuration;
+	const position = htmlAudio.value.currentTime;
+	const duration = htmlAudio.value.duration || 1;
 	if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
 		navigator.mediaSession.setPositionState({
-			position: newTime,
-			duration: newDuration,
+			position,
+			duration,
 			playbackRate: 1,
 		});
 	}
-	playlist.setElapsedSeconds(newTime);
+	playlist.setElapsedSeconds(position);
 	updateScrobble();
 }
 

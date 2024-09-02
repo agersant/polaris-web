@@ -75,6 +75,8 @@ export interface Song {
 	labels?: string[];
 }
 
+export type Peaks = Uint8Array;
+
 export interface SongList {
 	paths: string[];
 	first_songs: Song[];

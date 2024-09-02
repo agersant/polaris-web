@@ -12,6 +12,7 @@ import {
 	MountDir,
 	NewSettings,
 	NewUser,
+	Peaks,
 	Preferences,
 	SavePlaylistInput,
 	Settings,
@@ -258,6 +259,11 @@ export async function get_songs(paths: string[]): Promise<{ songs: Song[], not_f
 		headers: { "Content-Type": "application/json" },
 	});
 	return await response.json();
+}
+
+export async function get_peaks(path: string): Promise<Peaks> {
+	const response = await request(`/peaks/${encodeURIComponent(path)}`, { method: "GET" });
+	return await response.arrayBuffer().then((buffer) => new Uint8Array(buffer));
 }
 
 export function makeAudioURL(path: string) {

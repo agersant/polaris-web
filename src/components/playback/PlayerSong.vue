@@ -22,7 +22,7 @@
             <div class="w-10 text-right">
                 {{ currentTrack ? formatDuration(props.secondsPlayed) : "-:--" }}
             </div>
-            <div id="waveform" class="grow" />
+            <Waveform :path="currentTrack?.path" :progress="progress" class="grow h-8" />
             <div class="w-10">
                 {{ song && song.duration ? formatDuration(song.duration) : "-:--" }}
             </div>
@@ -34,6 +34,7 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
+import Waveform from '@/components/playback/Waveform.vue';
 import { formatDuration, formatTitle } from "@/format";
 import { usePlaylistStore } from '@/stores/playlist';
 import { useSongsStore } from '@/stores/songs';
@@ -49,6 +50,7 @@ interface Artist {
 
 const props = defineProps<{
     secondsPlayed: number,
+    progress: number,
 }>();
 
 const currentTrack = computed(() => playlist.currentTrack);
