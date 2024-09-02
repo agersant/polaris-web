@@ -5,19 +5,19 @@ import Light from "./themes/light";
 
 export type ThemeData = {
 	name: string;
-	foreground: string;
-	foregroundMuted: string;
-	foregroundAgainstAccent: string;
-	background: string;
-	backgroundMuted: string;
-	border: string;
-	borderMuted: string;
-	menuForeground: string;
-	menuBackground: string;
-	good: string;
-	bad: string;
-	foregroundAgainstGood: string;
-	foregroundAgainstBad: string;
+	polarity: "light" | "dark",
+	"surface-0": string;
+	"surface-50": string;
+	"surface-100": string;
+	"surface-200": string;
+	"surface-300": string;
+	"surface-400": string;
+	"surface-500": string;
+	"surface-600": string;
+	"surface-700": string;
+	"surface-800": string;
+	"surface-900": string;
+	"surface-950": string;
 };
 
 export enum Theme {
@@ -47,22 +47,33 @@ export function getDefaultAccent(): string {
 	return "#44C8F1";
 }
 
-export function applyTheme(theme: Theme, accent: string) {
-	document.documentElement.style.setProperty("--theme-accent", accent);
-	let themeData = themes.get(theme);
-	if (themeData) {
-		document.documentElement.style.setProperty("--theme-foreground", themeData.foreground);
-		document.documentElement.style.setProperty("--theme-foreground-muted", themeData.foregroundMuted);
-		document.documentElement.style.setProperty("--theme-foreground-against-accent", themeData.foregroundAgainstAccent);
-		document.documentElement.style.setProperty("--theme-background", themeData.background);
-		document.documentElement.style.setProperty("--theme-background-muted", themeData.backgroundMuted);
-		document.documentElement.style.setProperty("--theme-border", themeData.border);
-		document.documentElement.style.setProperty("--theme-border-muted", themeData.borderMuted);
-		document.documentElement.style.setProperty("--theme-menu-foreground", themeData.menuForeground);
-		document.documentElement.style.setProperty("--theme-menu-background", themeData.menuBackground);
-		document.documentElement.style.setProperty("--theme-good", themeData.good);
-		document.documentElement.style.setProperty("--theme-bad", themeData.bad);
-		document.documentElement.style.setProperty("--theme-foreground-against-good", themeData.foregroundAgainstGood);
-		document.documentElement.style.setProperty("--theme-foreground-against-bad", themeData.foregroundAgainstBad);
+function toRGB(hex: string) {
+	var parsed = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	if (!parsed) {
+		return "0 0 0";
 	}
+	return `${parseInt(parsed[1], 16)} ${parseInt(parsed[2], 16)} ${parseInt(parsed[3], 16)}`;
+}
+
+export function applyTheme(theme: Theme, accent: string) {
+	let themeData = themes.get(theme);
+	if (!themeData) {
+		return;
+	}
+
+	document.documentElement.setAttribute("data-polaris-theme-polarity", themeData.polarity);
+
+	const style = document.documentElement.style;
+	style.setProperty("--surface-0", toRGB(themeData["surface-0"]));
+	style.setProperty("--surface-50", toRGB(themeData["surface-50"]));
+	style.setProperty("--surface-100", toRGB(themeData["surface-100"]));
+	style.setProperty("--surface-200", toRGB(themeData["surface-200"]));
+	style.setProperty("--surface-300", toRGB(themeData["surface-300"]));
+	style.setProperty("--surface-400", toRGB(themeData["surface-400"]));
+	style.setProperty("--surface-500", toRGB(themeData["surface-500"]));
+	style.setProperty("--surface-600", toRGB(themeData["surface-600"]));
+	style.setProperty("--surface-700", toRGB(themeData["surface-700"]));
+	style.setProperty("--surface-800", toRGB(themeData["surface-800"]));
+	style.setProperty("--surface-900", toRGB(themeData["surface-900"]));
+	style.setProperty("--surface-950", toRGB(themeData["surface-950"]));
 }
