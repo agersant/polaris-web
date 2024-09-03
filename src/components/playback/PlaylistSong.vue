@@ -1,5 +1,5 @@
 <template>
-    <div @dblclick="playlist.play(entry)" class="flex whitespace-nowrap text-xs" :style="{ height: height + 'px' }">
+    <div @dblclick="playback.play(entry)" class="flex whitespace-nowrap text-xs" :style="{ height: height + 'px' }">
         <!-- TODO tooltips -->
         <!-- TODO context menu -->
         <div class="basis-8 shrink-0 flex justify-center items-center" :class="!compact ? '-translate-x-2' : ''">
@@ -42,9 +42,9 @@ import { Song } from '@/api/dto';
 import AlbumArt from '@/components/AlbumArt.vue';
 import { formatArtists, formatDuration, formatTitle, formatTrackNumber } from '@/format';
 import { makeThumbnailURL } from '@/api/endpoints';
-import { PlaylistEntry, usePlaylistStore } from "@/stores/playlist";
+import { PlaylistEntry, usePlaybackStore } from "@/stores/playback";
 
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 
 const props = defineProps<{
     entry: PlaylistEntry,
@@ -55,9 +55,9 @@ const props = defineProps<{
     compact: boolean,
 }>();
 
-const song = computed(() => playlist.currentSong);
+const song = computed(() => playback.currentSong);
 
-const isCurrent = computed(() => props.entry.key == playlist.currentTrack?.key);
+const isCurrent = computed(() => props.entry.key == playback.currentTrack?.key);
 
 const artworkURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "tiny") : undefined);
 

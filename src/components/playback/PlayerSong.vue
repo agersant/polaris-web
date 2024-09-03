@@ -37,10 +37,10 @@ import { useRouter } from 'vue-router';
 
 import Waveform from '@/components/playback/Waveform.vue';
 import { formatDuration, formatTitle } from "@/format";
-import { usePlaylistStore } from '@/stores/playlist';
+import { usePlaybackStore } from '@/stores/playback';
 
 const router = useRouter();
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 
 interface Artist {
     name: string,
@@ -57,8 +57,8 @@ const emit = defineEmits<{
     "seek": [progress: number],
 }>();
 
-const currentTrack = computed(() => playlist.currentTrack);
-const song = computed(() => playlist.currentSong);
+const currentTrack = computed(() => playback.currentTrack);
+const song = computed(() => playback.currentSong);
 
 const artists = computed(() => {
     if (!song.value) {

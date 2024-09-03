@@ -20,7 +20,7 @@ export interface PlaylistEntry {
 	path: string,
 }
 
-export const usePlaylistStore = defineStore("playlist", () => {
+export const usePlaybackStore = defineStore("playlist", () => {
 	const user = useUserStore();
 	const songs = useSongsStore();
 
@@ -266,5 +266,5 @@ export const usePlaylistStore = defineStore("playlist", () => {
 });
 
 if (import.meta.hot) {
-	import.meta.hot.accept(acceptHMRUpdate(usePlaylistStore, import.meta.hot));
+	import.meta.hot.accept(acceptHMRUpdate(usePlaybackStore, import.meta.hot));
 }
