@@ -241,7 +241,7 @@ export async function lastFMScrobble(path: string): Promise<void> {
 }
 
 export async function lastFMGetLinkToken(): Promise<string> {
-	const response = await request("/lastfm/link_token/");
+	const response = await request("/lastfm/link_token");
 	const token: LastFMLinkToken = await response.json();
 	return token.value;
 }
@@ -270,7 +270,7 @@ export function makeAudioURL(path: string) {
 	return "api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
 }
 
-export function makeThumbnailURL(path: string, size: undefined | "tiny" | "small" | "large" | "native") {
+export function makeThumbnailURL(path: string, size: "tiny" | "small" | "large" | "native") {
 	size = size || "small";
 	return `api/thumbnail/${encodeURIComponent(path)}?size=${size}&pad=false&auth_token=${getAuthToken()}`;
 }
