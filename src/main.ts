@@ -1,6 +1,7 @@
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 
+import setupBroadcasts from "./broadcast";
 import EntryPoint from "@/components/EntryPoint.vue";
 import { usePreferencesStore } from "@/stores/preferences";
 import router from "./router";
@@ -14,3 +15,4 @@ createApp(EntryPoint)
     .mount("#vue-container");
 
 usePreferencesStore();
+setupBroadcasts();

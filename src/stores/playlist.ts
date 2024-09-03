@@ -1,7 +1,6 @@
 import { computed, Ref, ref, ShallowRef, shallowRef, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 
-import { formatArtists, formatTitle } from "@/format";
 import { getPlaylist } from "@/api/endpoints";
 import { saveForCurrentUser, loadForCurrentUser } from "@/disk";
 import { useSongsStore } from "@/stores/songs";
@@ -36,6 +35,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	});
 	const playbackOrder: Ref<PlaybackOrder> = ref("default");
 	const elapsedSeconds = ref(0);
+	const duration = ref(0);
 
 	reset();
 
@@ -214,6 +214,10 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaybackState();
 	}
 
+	function setDuration(seconds: number) {
+		duration.value = seconds;
+	}
+
 	function setName(newName: string) {
 		name.value = newName;
 		savePlaylist();
@@ -234,27 +238,10 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaylist();
 	}
 
-	watch(currentSong, () => {
-		if (!currentSong.value) {
-			document.title = "Polaris";
-			return;
-		}
-
-		let artists: string[] = [];
-		if (currentSong.value.artists?.length) {
-			artists = currentSong.value.artists;
-		} else if (currentSong.value.album_artists?.length) {
-			artists = currentSong.value.album_artists;
-		}
-
-		const artistText = artists.length ? formatArtists(artists) : "Unknown Artist";
-		const titleText = formatTitle(currentSong.value);
-		document.title = `${artistText} - ${titleText}`;
-	});
-
 	return {
 		currentSong,
 		currentTrack,
+		duration,
 		elapsedSeconds,
 		name,
 		playbackOrder,
@@ -270,6 +257,7 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		queueTracks,
 		removeTracks,
 		reorder,
+		setDuration,
 		setElapsedSeconds,
 		setPlaybackOrder,
 		setName,

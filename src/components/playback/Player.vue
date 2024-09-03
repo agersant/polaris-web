@@ -91,7 +91,6 @@ onMounted(() => {
 
 function handleCurrentTrackChanged() {
 	canScrobble.value = true;
-	updateMediaSession();
 	if (playlist.currentTrack && preferences.lastFMUsername) {
 		lastFMNowPlaying(playlist.currentTrack.path);
 	}
@@ -113,26 +112,6 @@ function playFromStart() {
 			// song while it is in progress.
 		}
 	});
-}
-
-function updateMediaSession() {
-	if (navigator.mediaSession && MediaMetadata) {
-		const track = playlist.currentSong;
-		if (!track) {
-			return;
-		}
-		let metadata = new MediaMetadata({
-			title: track.title,
-			album: track.album,
-		});
-		if (track.artists) {
-			metadata.artist = formatArtists(track.artists);
-		}
-		if (artworkURL.value) {
-			metadata.artwork = [{ src: artworkURL.value }];
-		}
-		navigator.mediaSession.metadata = metadata;
-	}
 }
 
 function play() {
@@ -213,16 +192,8 @@ function onTimeUpdate(event: Event) {
 	if (!htmlAudio.value) {
 		return;
 	}
-	const position = htmlAudio.value.currentTime;
-	const duration = htmlAudio.value.duration || 1;
-	if (navigator.mediaSession && navigator.mediaSession.setPositionState) {
-		navigator.mediaSession.setPositionState({
-			position,
-			duration,
-			playbackRate: 1,
-		});
-	}
-	playlist.setElapsedSeconds(position);
+	playlist.setDuration(htmlAudio.value.duration || 1);
+	playlist.setElapsedSeconds(htmlAudio.value.currentTime);
 	updateScrobble();
 }
 
