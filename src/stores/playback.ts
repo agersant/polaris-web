@@ -34,6 +34,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 		return songs.cache.get(currentTrack.value.path);
 	});
 	const playbackOrder: Ref<PlaybackOrder> = ref("default");
+	const volume = ref(1);
 	const elapsedSeconds = ref(0);
 	const duration = ref(0);
 	const scrobbleAllowed = ref(false);
@@ -194,6 +195,9 @@ export const usePlaybackStore = defineStore("playback", () => {
 		currentTrack.value = playlist.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
 		elapsedSeconds.value = loadForCurrentUser("elapsedSeconds") || 0;
 		name.value = loadForCurrentUser("playlistName") || null;
+
+		const savedVolume = parseFloat(loadForCurrentUser("volume"));
+		volume.value = isNaN(savedVolume) ? 1 : savedVolume;
 	}
 
 	function savePlaybackState() {
@@ -201,6 +205,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 		saveForCurrentUser("currentTrackIndex", currentTrackIndex);
 		saveForCurrentUser("playbackOrder", playbackOrder.value);
 		saveForCurrentUser("elapsedSeconds", elapsedSeconds.value);
+		saveForCurrentUser("volume", volume.value);
 	}
 
 	function savePlaylist() {
@@ -233,6 +238,11 @@ export const usePlaybackStore = defineStore("playback", () => {
 		savePlaybackState();
 	}
 
+	function setVolume(newVolume: number) {
+		volume.value = newVolume;
+		savePlaybackState();
+	}
+
 	function shuffle() {
 		let shuffled = [...playlist.value];
 		for (let i = shuffled.length - 1; i > 0; i--) {
@@ -252,6 +262,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 		playbackOrder,
 		playlist,
 		scrobbleAllowed,
+		volume,
 
 		clear,
 		hasPrevious,
@@ -268,6 +279,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 		setElapsedSeconds,
 		setPlaybackOrder,
 		setName,
+		setVolume,
 		shuffle,
 	};
 });
