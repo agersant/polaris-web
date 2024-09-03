@@ -25,7 +25,7 @@
 		</div>
 
 		<div class="grow relative min-h-0">
-			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playback.entries"
+			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playback.playlist"
 				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @keydown="onKeyDown"
 				@list-reorder="onReorder" @list-delete="playback.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
@@ -44,7 +44,7 @@
 					</div>
 				</template>
 			</OrderableList>
-			<div v-if="!playback.entries.length"
+			<div v-if="!playback.playlist.length"
 				class="pointer-events-none absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center text-center">
 				<BlankStateFiller icon="queue">
 					Make a playlist by dragging music<br />from your collection to here.

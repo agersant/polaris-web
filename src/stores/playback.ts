@@ -25,7 +25,7 @@ export const usePlaybackStore = defineStore("playlist", () => {
 	const songs = useSongsStore();
 
 	const name = ref("");
-	const entries: ShallowRef<PlaylistEntry[]> = shallowRef([]);
+	const playlist: ShallowRef<PlaylistEntry[]> = shallowRef([]);
 	const currentTrack: Ref<PlaylistEntry | null> = ref(null);
 	const currentSong = computed(() => {
 		if (!currentTrack.value) {
@@ -61,7 +61,7 @@ export const usePlaybackStore = defineStore("playlist", () => {
 
 	function advance(delta: number): PlaylistEntry | null {
 		const order = playbackOrder.value;
-		const tracks = entries.value;
+		const tracks = playlist.value;
 		const numTracks = tracks.length;
 
 		let newTrack = null;
@@ -123,55 +123,55 @@ export const usePlaybackStore = defineStore("playlist", () => {
 	}
 
 	function clear() {
-		entries.value = [];
+		playlist.value = [];
 		name.value = "";
 		savePlaylist();
 	}
 
 	function reorder(movedTracks: PlaylistEntry[], newPosition: number) {
-		const oldEntries = entries.value;
-		let newEntries: PlaylistEntry[] = [];
+		const oldPlaylist = playlist.value;
+		let newPlaylist: PlaylistEntry[] = [];
 		let movedSet = new Set(movedTracks);
-		let insertLocation = oldEntries.length - movedTracks.length;
+		let insertLocation = oldPlaylist.length - movedTracks.length;
 
-		for (let i = 0; i < oldEntries.length; i++) {
-			if (newEntries.length == newPosition) {
-				insertLocation = newEntries.length;
+		for (let i = 0; i < oldPlaylist.length; i++) {
+			if (newPlaylist.length == newPosition) {
+				insertLocation = newPlaylist.length;
 			}
-			if (!movedSet.has(oldEntries[i])) {
-				newEntries.push(oldEntries[i]);
+			if (!movedSet.has(oldPlaylist[i])) {
+				newPlaylist.push(oldPlaylist[i]);
 			}
 		}
 
-		newEntries.splice(insertLocation, 0, ...movedTracks);
+		newPlaylist.splice(insertLocation, 0, ...movedTracks);
 
-		entries.value = newEntries;
+		playlist.value = newPlaylist;
 		savePlaylist();
 	}
 
 	function removeTracks(entriesToRemove: PlaylistEntry[]) {
 		let removeKeys = new Set(entriesToRemove.map(e => e.key));
-		entries.value = entries.value.filter(e => !removeKeys.has(e.key));
+		playlist.value = playlist.value.filter(e => !removeKeys.has(e.key));
 		savePlaylist();
 	}
 
 	function enqueue(tracks: string[], index: number) {
-		let newEntries = [...entries.value];
-		newEntries.splice(index, 0, ...tracks.map(s => { return { key: make_key(), path: s } }));
-		entries.value = newEntries;
-		if (!currentTrack.value && entries.value.length > 0) {
+		let newPlaylist = [...playlist.value];
+		newPlaylist.splice(index, 0, ...tracks.map(s => { return { key: make_key(), path: s } }));
+		playlist.value = newPlaylist;
+		if (!currentTrack.value && playlist.value.length > 0) {
 			next();
 		}
 	}
 
 	function queueTracks(tracks: string[], index?: number) {
-		enqueue(tracks, index || entries.value.length);
+		enqueue(tracks, index || playlist.value.length);
 		savePlaylist();
 	}
 
 	async function queuePlaylist(playlistName: string) {
 		const songList = await getPlaylist(playlistName);
-		entries.value = songList.paths.map((p) => { return { key: make_key(), path: p } });
+		playlist.value = songList.paths.map((p) => { return { key: make_key(), path: p } });
 		name.value = playlistName;
 		savePlaylist();
 	}
@@ -180,7 +180,7 @@ export const usePlaybackStore = defineStore("playlist", () => {
 		name.value = "";
 		playbackOrder.value = "default";
 		currentTrack.value = null;
-		entries.value = [];
+		playlist.value = [];
 		elapsedSeconds.value = 0;
 	}
 
@@ -188,22 +188,22 @@ export const usePlaybackStore = defineStore("playlist", () => {
 		const paths: string[] = loadForCurrentUser("playlist") || [];
 		songs.request(paths);
 
-		entries.value = paths.map(p => { return { key: make_key(), path: p } });
+		playlist.value = paths.map(p => { return { key: make_key(), path: p } });
 		playbackOrder.value = loadForCurrentUser("playbackOrder") || "default";
-		currentTrack.value = entries.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
+		currentTrack.value = playlist.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
 		elapsedSeconds.value = loadForCurrentUser("elapsedSeconds") || 0;
 		name.value = loadForCurrentUser("playlistName") || null;
 	}
 
 	function savePlaybackState() {
-		const currentTrackIndex = entries.value.findIndex(t => t.key == currentTrack.value?.key);
+		const currentTrackIndex = playlist.value.findIndex(t => t.key == currentTrack.value?.key);
 		saveForCurrentUser("currentTrackIndex", currentTrackIndex);
 		saveForCurrentUser("playbackOrder", playbackOrder.value);
 		saveForCurrentUser("elapsedSeconds", elapsedSeconds.value);
 	}
 
 	function savePlaylist() {
-		if (saveForCurrentUser("playlist", entries.value.map(e => e.path))) {
+		if (saveForCurrentUser("playlist", playlist.value.map(e => e.path))) {
 			saveForCurrentUser("playlistName", name.value);
 			savePlaybackState();
 		}
@@ -229,12 +229,12 @@ export const usePlaybackStore = defineStore("playlist", () => {
 	}
 
 	function shuffle() {
-		let shuffled = [...entries.value];
+		let shuffled = [...playlist.value];
 		for (let i = shuffled.length - 1; i > 0; i--) {
 			let j = Math.floor(Math.random() * (i + 1));
 			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
 		}
-		entries.value = shuffled;
+		playlist.value = shuffled;
 		savePlaylist();
 	}
 
@@ -245,7 +245,7 @@ export const usePlaybackStore = defineStore("playlist", () => {
 		elapsedSeconds,
 		name,
 		playbackOrder,
-		entries,
+		playlist,
 
 		clear,
 		hasPrevious,
