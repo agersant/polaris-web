@@ -5,28 +5,28 @@
 
             <span @click="skipPrevious" class="material-icons-round w-9 h-9 mb-0.5
                 text-3xl text-center
-                rounded-lg border border-ls-0
+                rounded-lg border border-ls-0 dark:border-ds-900
                 active:py-px" :class="playlist.hasPrevious()
-                    ? 'cursor-pointer text-ls-900 hover:border-ls-200 hover:bg-ls-50'
-                    : 'active:pointer-events-none cursor-not-allowed text-ls-400'">
+                    ? 'cursor-pointer text-ls-900 dark:text-ds-0 hover:border-ls-200 dark:hover:border-ds-700 hover:bg-ls-50 dark:hover:bg-white/5'
+                    : 'active:pointer-events-none cursor-not-allowed text-ls-400 dark:text-ds-700'">
                 skip_previous
             </span>
 
             <div @click="togglePlayback" class="material-icons-round py-1 w-12 h-12 
-                text-4xl text-center text-ls-0 rounded-full 
-                ring-accent-500 ring-offset-4
+                text-4xl text-center text-accent-0 rounded-full 
+                ring-accent-500 dark:ring-accent-600 ring-offset-4 ring-offset-ls-0 dark:ring-offset-ds-900
                 active:pt-[5px]" :class="playlist.currentTrack
-                    ? 'cursor-pointer bg-accent-600 hover:bg-accent-500 hover:ring-2'
-                    : 'active:pointer-events-none cursor-not-allowed bg-ls-400'">
+                    ? 'cursor-pointer bg-accent-600 dark:bg-accent-700 hover:bg-accent-500 dark:hover:bg-accent-600 hover:ring-2'
+                    : 'active:pointer-events-none cursor-not-allowed bg-ls-400 dark:text-ds-400 dark:bg-ds-600'">
                 {{ paused ? 'play_arrow' : 'pause' }}
             </div>
 
             <span @click="skipNext" class="material-icons-round w-9 h-9 mb-0.5
                 text-3xl text-center
-                rounded-lg border border-ls-0
+                rounded-lg border border-ls-0 dark:border-ds-900
                 active:pt-px" :class="playlist.hasNext()
-                    ? 'cursor-pointer text-ls-900 hover:border-ls-200 hover:bg-ls-50'
-                    : 'active:pointer-events-none cursor-not-allowed text-ls-400'">
+                    ? 'cursor-pointer text-ls-900 dark:text-ds-0 hover:border-ls-200 dark:hover:border-ds-700 hover:bg-ls-50 dark:hover:bg-white/5'
+                    : 'active:pointer-events-none cursor-not-allowed text-ls-400 dark:text-ds-700'">
                 skip_next
             </span>
 
