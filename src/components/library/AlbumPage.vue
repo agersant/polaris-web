@@ -42,7 +42,8 @@ const header = computed((): string => {
 });
 
 function onItemClicked(song: Song) {
-	playback.queueTracks([{ ...song }]);
+	// TODO fixme
+	// playback.queueTracks([{ ...song }]);
 }
 
 function onItemsDragStart(event: DragEvent, items: Song[]) {
@@ -54,6 +55,7 @@ function onItemsDragStart(event: DragEvent, items: Song[]) {
 }
 
 function onQueueAll() {
-	playback.queueTracks((album.value?.songs || []).map(s => { return { ...s } }));
+	// TODO fixme
+	// playback.queueTracks((album.value?.songs || []).map(s => { return { ...s } }));
 }
 </script>
