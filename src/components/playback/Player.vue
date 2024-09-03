@@ -3,7 +3,7 @@
 		<audio ref="htmlAudio" v-if="audioURL" v-bind:src="audioURL" @timeupdate="onTimeUpdate" @error="onPlaybackError"
 			@ended="onEnded" @pause="onPaused" @playing="onPlaying" @waiting="onWaiting" />
 		<PlayerAlbum class="basis-80 min-w-0 grow shrink" />
-		<PlayerSong :seconds-played="secondsPlayed" :progress="trackProgress"
+		<PlayerSong :seconds-played="secondsPlayed" :duration="duration" :progress="trackProgress" @seek="seekTo"
 			class="grow-[8] basis-80 min-w-32 mx-16" />
 		<PlayerControls class="basis-80 min-w-0 grow shrink" v-model:volume="volume" :paused="paused"
 			:buffering="buffering" @play="play" @pause="pause" @restart="playFromStart" />
@@ -99,10 +99,6 @@ onMounted(() => {
 });
 
 function handleCurrentTrackChanged() {
-	// TODO wavesurfer doesnt handle this!!
-	// if (adjusting.value == "seek") {
-	// 	adjusting.value = null;
-	// }
 	canScrobble.value = true;
 	updateMediaSession();
 	updateWindowTitle();

@@ -22,7 +22,8 @@
             <div class="w-10 text-right">
                 {{ currentTrack ? formatDuration(props.secondsPlayed) : "-:--" }}
             </div>
-            <Waveform :path="currentTrack?.path" :progress="progress" class="grow h-8" />
+            <Waveform :path="currentTrack?.path" :duration="duration" :progress="progress" @seek="s => emit('seek', s)"
+                class="grow h-8" />
             <div class="w-10">
                 {{ song && song.duration ? formatDuration(song.duration) : "-:--" }}
             </div>
@@ -50,7 +51,12 @@ interface Artist {
 
 const props = defineProps<{
     secondsPlayed: number,
+    duration: number,
     progress: number,
+}>();
+
+const emit = defineEmits<{
+    "seek": [progress: number],
 }>();
 
 const currentTrack = computed(() => playlist.currentTrack);
