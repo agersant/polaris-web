@@ -1,16 +1,15 @@
 <template>
     <div ref="root" @click="snapToCursor" @keydown="onKeyDown" @dragstart="onDragStart" @dragend="endDrag"
         draggable="true" tabindex="-1"
-        class="cursor-pointer group relative h-1.5 rounded-full bg-ls-300 dark:bg-white/5">
-        <div class="absolute h-full rounded-full bg-accent-500 dark:bg-accent-600" :style="`width: ${100 * model}%`" />
+        class="cursor-pointer group relative h-1.5 rounded-full bg-ls-300 dark:bg-ds-700">
+        <div class="absolute h-full rounded-full bg-accent-600 dark:bg-accent-700" :style="`width: ${100 * model}%`" />
         <div class="cursor-grab
         absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5
         rounded-full shadow-sm border-2
-        bg-ls-0 dark:bg-ds-800 
-        border-ls-300 dark:border-ds-600
+        bg-ls-0 dark:bg-ds-900 
+        border-ls-300 dark:border-ds-700
         group-active:border-accent-500 group-focus:border-accent-500
-        dark:group-active:border-accent-600 dark:group-focus:border-accent-600        "
-            :style="`left: ${100 * model}%`" />
+        dark:group-active:border-accent-600 dark:group-focus:border-accent-600" :style="`left: ${100 * model}%`" />
     </div>
 </template>
 
