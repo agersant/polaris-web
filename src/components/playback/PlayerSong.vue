@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-4">
-        <div class="flex justify-center items-center text-sm text-ls-900 gap-1">
+        <div class="flex justify-center items-center text-sm text-ls-900 dark:text-ds-200 gap-1">
             <div v-if="artists" class="overflow-hidden text-ellipsis">
                 <span v-for="artist, index in artists">
                     <span @click="onArtistClicked(artist)"
@@ -10,15 +10,15 @@
                     <span v-if="index < artists.length - 1">{{ ", " }}</span>
                 </span>
             </div>
-            <div v-if="artists" class="text-ls-400">-</div>
+            <div v-if="artists" class="text-ls-400 dark:text-ds-200">-</div>
             <!-- TODO song click interaction -->
             <span v-if="song"
                 class="cursor-pointer hover:underline hover:text-accent-600 overflow-hidden text-ellipsis select-text">
                 {{ formatTitle(song) }}
             </span>
-            <span v-else class="rounded-full w-40 mt-1 h-3 mb-1 bg-ls-200" />
+            <span v-else class="rounded-full w-40 mt-1 h-3 mb-1 bg-ls-200 dark:bg-ds-700" />
         </div>
-        <div class="flex grow items-center gap-4 text-xs text-ls-700">
+        <div class="flex grow items-center gap-4 text-xs text-ls-700 dark:text-ds-400">
             <div class="w-10 text-right">
                 {{ currentTrack ? formatDuration(props.secondsPlayed) : "-:--" }}
             </div>
