@@ -69,3 +69,16 @@ export function formatTrackNumber(song: Song): string {
 export function formatTitle(song: Song) {
 	return song.title || stripFileExtension(getPathTail(song.path));
 }
+
+export function formatSong(song: Song) {
+	let artists: string[] = [];
+	if (song.artists?.length) {
+		artists = song.artists;
+	} else if (song.album_artists?.length) {
+		artists = song.album_artists;
+	}
+
+	const artistText = artists.length ? formatArtists(artists) : "Unknown Artist";
+	const titleText = formatTitle(song);
+	return `${artistText} - ${titleText}`;
+}

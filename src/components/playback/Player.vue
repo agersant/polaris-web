@@ -6,7 +6,8 @@
 		<PlayerSong :seconds-played="secondsPlayed" :duration="duration" :progress="trackProgress" @seek="seekTo"
 			class="grow-[8] basis-80 min-w-32 mx-16" />
 		<PlayerControls class="basis-80 min-w-0 grow shrink" v-model:volume="volume" :paused="paused"
-			:buffering="buffering" @play="play" @pause="pause" @previous="skipPrevious" @next="skipNext" />
+			:buffering="buffering" :error="error" @play="play" @pause="pause" @previous="skipPrevious"
+			@next="skipNext" />
 	</div>
 </template>
 
@@ -21,6 +22,7 @@ import { loadForCurrentUser, saveForCurrentUser } from "@/disk";
 import notify from "@/notify";
 import { usePlaybackStore } from "@/stores/playback";
 import { useTimeoutPoll } from "@vueuse/core";
+import { formatSong } from "@/format";
 
 const playback = usePlaybackStore();
 
@@ -29,6 +31,7 @@ const secondsPlayed = ref(0);
 const duration = ref(1);
 const paused = ref(true);
 const buffering = ref(false);
+const error: Ref<string | null> = ref(null);
 const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
 
 const audioURL = computed(() => playback.currentTrack ? makeAudioURL(playback.currentTrack.path) : null);
@@ -81,6 +84,7 @@ function playFromStart() {
 		if (!htmlAudio.value) {
 			return;
 		}
+		error.value = null;
 		paused.value = false;
 		buffering.value = false;
 		try {
@@ -165,26 +169,29 @@ function onTimeUpdate(event: Event) {
 }
 
 function onPlaybackError(event: Event) {
-	const errorText = "'" + trackInfoPrimary.value + "' could not be played because ";
-	const error = (event.target as HTMLAudioElement).error;
-	if (!error) {
+	const songInfo = playback.currentSong ? formatSong(playback.currentSong) : "Unknown Song";
+	const errorPrefix = `'${songInfo}' could not be played because `;
+	const mediaError = (event.target as HTMLAudioElement).error;
+	if (!mediaError) {
 		return;
 	}
-	switch (error.code) {
-		case error.MEDIA_ERR_NETWORK:
-			notify("Playback Error", artworkURL.value, errorText + "of a network error.");
+	let errorText;
+	switch (mediaError.code) {
+		case mediaError.MEDIA_ERR_NETWORK:
+			errorText = errorPrefix + "of a network error.";
 			break;
-		case error.MEDIA_ERR_DECODE:
-			notify("Playback Error", artworkURL.value, errorText + "of a decoding error.");
+		case mediaError.MEDIA_ERR_DECODE:
+			errorText = errorPrefix + "of a decoding error.";
 			break;
-		case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-			notify("Playback Error", artworkURL.value, errorText + "it is not a suitable source of audio.");
+		case mediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+			errorText = errorPrefix + "it is not a suitable source of audio.";
 			break;
 		default:
-			console.log("Unexpected playback error: " + error.code);
+			errorText = errorPrefix + `of an unknown error ('${mediaError.code}').`;
 			break;
 	}
-	paused.value = true;
-	skipNext();
+	pause();
+	error.value = errorText;
+	notify("Playback Error", artworkURL.value, errorText);
 }
 </script>
