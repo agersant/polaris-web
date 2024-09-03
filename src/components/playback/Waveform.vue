@@ -63,7 +63,7 @@ function seekToCursor() {
 
 watch(() => props.path, endDrag);
 
-const playedDarkColor = useCssVar('--accent-700', null, { observe: true });
+const playedDarkColor = useCssVar('--accent-800', null, { observe: true });
 const playedLightColor = useCssVar('--accent-600', null, { observe: true });
 const unplayedDarkColor = useCssVar('--surface-700', null, { observe: true });
 const unplayedLightColor = useCssVar('--surface-300', null, { observe: true });
