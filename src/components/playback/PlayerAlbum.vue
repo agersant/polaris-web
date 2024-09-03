@@ -8,14 +8,14 @@
         <div class="ml-4 min-w-0 flex flex-col text-sm">
 
             <div v-if="albumName" @click="onAlbumClicked"
-                class="cursor-pointer mb-2 text-ls-900 overflow-hidden text-ellipsis"
+                class="cursor-pointer mb-2 text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis"
                 :class="albumURL ? 'cursor-pointer hover:underline hover:text-accent-600' : ''">
                 {{ albumName }}
             </div>
-            <div v-else class="rounded-full w-48 h-2.5 mt-1.5 mb-3 bg-ls-200" />
+            <div v-else class="rounded-full w-48 h-2.5 mt-1.5 mb-3 bg-ls-200 dark:bg-ds-700" />
 
             <div v-if="artists" class="overflow-hidden text-ellipsis">
-                <span v-for="artist, index in artists" class="text-ls-700">
+                <span v-for="artist, index in artists" class="text-ls-500 dark:text-ds-500">
                     <span @click="onArtistClicked(artist)"
                         :class="artist.url ? 'cursor-pointer hover:underline hover:text-accent-600' : ''">
                         {{ artist.name }}
@@ -23,12 +23,12 @@
                     <span v-if="index < artists.length - 1">{{ ", " }}</span>
                 </span>
             </div>
-            <div v-else class="rounded-full w-36 h-2.5 my-[5px] bg-ls-200" />
+            <div v-else class="rounded-full w-36 h-2.5 my-[5px] bg-ls-200 dark:bg-ds-700" />
 
-            <div v-if="song && song.year" class="text-ls-500 overflow-hidden text-ellipsis">
+            <div v-if="song && song.year" class="text-ls-400 dark:text-ds-600 overflow-hidden text-ellipsis">
                 {{ song.year }}
             </div>
-            <div v-else class="rounded-full w-12 h-2.5 my-[5px] bg-ls-200" />
+            <div v-else class="rounded-full w-12 h-2.5 my-[5px] bg-ls-200 dark:bg-ds-700" />
 
         </div>
     </div>
