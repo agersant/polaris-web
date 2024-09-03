@@ -2,7 +2,7 @@ import { computed, Ref, ref, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { getPreferences, lastFMGetLinkToken, lastFMUnlink, putPreferences } from "@/api/endpoints";
 import { useUserStore } from "@/stores/user";
-import { applyTheme, getDefaultAccent, getDefaultTheme, Theme } from "@/theming/theming";
+import { applyTheme, getDefaultAccent, getDefaultTheme, getThemePolarity, Theme } from "@/theming/theming";
 
 export const usePreferencesStore = defineStore("preferences", () => {
 	const lastFMUsername: Ref<string | null> = ref(null);
@@ -13,6 +13,7 @@ export const usePreferencesStore = defineStore("preferences", () => {
 
 	const effectiveTheme = computed(() => themePreview.value || theme.value || getDefaultTheme());
 	const effectiveAccentColor = computed(() => accentColorPreview.value || accentColor.value || getDefaultAccent());
+	const effectivePolarity = computed(() => getThemePolarity(effectiveTheme.value));
 
 	reset();
 
@@ -125,6 +126,7 @@ export const usePreferencesStore = defineStore("preferences", () => {
 
 		effectiveTheme,
 		effectiveAccentColor,
+		effectivePolarity,
 
 		linkLastFM,
 		previewTheme,
