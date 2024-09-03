@@ -1,10 +1,9 @@
 <template>
 	<ul>
-		<li data-cy="album" class="album" draggable="true" v-for="(album, index) in props.albums"
-			v-bind:key="index" @click="onItemClicked(album)"
-			@dragstart="event => onItemsDragStart(event, album)">
+		<li data-cy="album" class="album" draggable="true" v-for="(album, index) in props.albums" v-bind:key="index"
+			@click="onItemClicked(album)" @dragstart="event => onItemsDragStart(event, album)">
 			<div class="cover">
-				<CoverArt v-if="album.artwork" v-bind:url="makeThumbnailURL(album.artwork)" />
+				<CoverArt v-if="album.artwork" v-bind:url="makeThumbnailURL(album.artwork, 'small')" />
 			</div>
 			<div class="details">
 				<div class="title">{{ album.name }}</div>
@@ -27,15 +26,15 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-	(event:'item-click', item: AlbumHeader): void
-	(event:'items-drag-start', dragEvent: DragEvent, items: AlbumHeader[]): void
+	(event: 'item-click', item: AlbumHeader): void
+	(event: 'items-drag-start', dragEvent: DragEvent, items: AlbumHeader[]): void
 }>();
 
-function onItemClicked(directory: AlbumHeader){
+function onItemClicked(directory: AlbumHeader) {
 	emits("item-click", directory);
 }
 
-function onItemsDragStart(event: DragEvent, directory: AlbumHeader){
+function onItemsDragStart(event: DragEvent, directory: AlbumHeader) {
 	emits("items-drag-start", event, [directory]);
 }
 </script>

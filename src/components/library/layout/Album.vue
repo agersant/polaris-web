@@ -21,7 +21,7 @@
 								{{ formatTitle(item) }}
 								<span class="trackArtist"
 									v-if="item.artists && item.album_artists && !equals(item.artists, item.album_artists)">({{
-									formatArtists(item.artists) }})</span>
+										formatArtists(item.artists) }})</span>
 							</span>
 						</li>
 					</ol>
@@ -48,8 +48,8 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-	(event:'item-click', item: Song): void
-	(event:'items-drag-start', dragEvent: DragEvent, items: Song[]): void
+	(event: 'item-click', item: Song): void
+	(event: 'items-drag-start', dragEvent: DragEvent, items: Song[]): void
 }>();
 
 const discs = computed((): Disc[] => {
@@ -70,13 +70,13 @@ const discs = computed((): Disc[] => {
 
 const artworkURL = computed(() => {
 	for (const disc of discs.value) {
-			for (const song of disc.songs) {
-				if (song.artwork) {
-					return makeThumbnailURL(song.artwork);
-				}
+		for (const song of disc.songs) {
+			if (song.artwork) {
+				return makeThumbnailURL(song.artwork, "small");
 			}
 		}
-		return "";
+	}
+	return "";
 });
 
 function onDiscDragStart(event: DragEvent, disc: Disc) {

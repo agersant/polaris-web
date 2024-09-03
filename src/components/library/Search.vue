@@ -57,9 +57,11 @@ function queueAll() {
 		}
 	});
 
-	playback.queueTracks(songItems);
+	// TODO fixme
+	// playback.queueTracks(songItems);
 	directoryItems.forEach(item => {
-		playback.queueDirectory(item.path);
+		// TODO fixme
+		// playback.queueDirectory(item.path);
 	});
 }
 
