@@ -1,5 +1,7 @@
-import { Ref, ref, ShallowRef, shallowRef, toRaw, watch } from "vue";
+import { computed, Ref, ref, ShallowRef, shallowRef, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
+
+import { formatArtists, formatTitle } from "@/format";
 import { getPlaylist } from "@/api/endpoints";
 import { saveForCurrentUser, loadForCurrentUser } from "@/disk";
 import { useSongsStore } from "@/stores/songs";
@@ -20,19 +22,27 @@ export interface PlaylistEntry {
 }
 
 export const usePlaylistStore = defineStore("playlist", () => {
+	const user = useUserStore();
+	const songs = useSongsStore();
+
 	const name = ref("");
 	const entries: ShallowRef<PlaylistEntry[]> = shallowRef([]);
 	const currentTrack: Ref<PlaylistEntry | null> = ref(null);
+	const currentSong = computed(() => {
+		if (!currentTrack.value) {
+			return undefined;
+		}
+		return songs.cache.get(currentTrack.value.path);
+	});
 	const playbackOrder: Ref<PlaybackOrder> = ref("default");
 	const elapsedSeconds = ref(0);
 
 	reset();
 
-	const userStore = useUserStore();
 	watch(
-		() => userStore.isLoggedIn,
+		() => user.isLoggedIn,
 		() => {
-			if (userStore.isLoggedIn) {
+			if (user.isLoggedIn) {
 				loadFromDisk();
 			} else {
 				reset();
@@ -175,7 +185,6 @@ export const usePlaylistStore = defineStore("playlist", () => {
 	}
 
 	function loadFromDisk() {
-		const songs = useSongsStore();
 		const paths: string[] = loadForCurrentUser("playlist") || [];
 		songs.request(paths);
 
@@ -225,7 +234,26 @@ export const usePlaylistStore = defineStore("playlist", () => {
 		savePlaylist();
 	}
 
+	watch(currentSong, () => {
+		if (!currentSong.value) {
+			document.title = "Polaris";
+			return;
+		}
+
+		let artists: string[] = [];
+		if (currentSong.value.artists?.length) {
+			artists = currentSong.value.artists;
+		} else if (currentSong.value.album_artists?.length) {
+			artists = currentSong.value.album_artists;
+		}
+
+		const artistText = artists.length ? formatArtists(artists) : "Unknown Artist";
+		const titleText = formatTitle(currentSong.value);
+		document.title = `${artistText} - ${titleText}`;
+	});
+
 	return {
+		currentSong,
 		currentTrack,
 		elapsedSeconds,
 		name,
