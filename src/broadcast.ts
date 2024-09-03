@@ -1,7 +1,7 @@
 import { watch } from "vue";
 
 import { lastFMNowPlaying, lastFMScrobble, makeThumbnailURL } from "./api/endpoints";
-import { formatArtists, formatTitle } from "./format";
+import { formatArtists, formatSong } from "./format";
 import { usePlaybackStore } from "./stores/playback";
 import { usePreferencesStore } from "./stores/preferences";
 
@@ -24,9 +24,7 @@ export default function setupBroadcasts() {
             artists = song.album_artists;
         }
 
-        const artistText = artists.length ? formatArtists(artists) : "Unknown Artist";
-        const titleText = formatTitle(song);
-        document.title = `${artistText} - ${titleText}`;
+        document.title = formatSong(song);
     });
 
     // Media session
