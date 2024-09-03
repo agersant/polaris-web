@@ -38,7 +38,7 @@
 
         <div class="flex items-center gap-0.5">
             <span @click="toggleMute" class="cursor-pointer material-icons-round"
-                :class="isQuiet ? '-translate-x-0.5 text-ls-500 dark:text-ls-500' : 'text-ls-900 text-ds-200'">
+                :class="isQuiet ? '-translate-x-0.5 text-ls-500 dark:text-ls-500' : 'text-ls-900 dark:text-ds-200'">
                 {{ isQuiet ? 'volume_mute' : 'volume_down' }}
             </span>
             <Slider class="w-20" v-model="volume" />
