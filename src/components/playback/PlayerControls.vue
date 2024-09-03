@@ -2,7 +2,7 @@
     <div class="flex gap-4 items-center justify-end">
         <div v-if="error" class="flex items-center">
             <!-- TODO error text as tooltip -->
-            <span class="material-icons-round dark:text-red-700">error_outline</span>
+            <span class="material-icons-round text-red-500 dark:text-red-700">error_outline</span>
         </div>
         <Spinner v-else-if="debouncedBuffering" class="text-ls-700 dark:text-ls-500" />
         <div class="flex gap-2 items-center">
