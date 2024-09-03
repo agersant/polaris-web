@@ -60,9 +60,10 @@ const props = defineProps<{
 const volume = defineModel<number>("volume", { required: true, });
 
 const emit = defineEmits<{
+    "previous": [],
+    "next": [],
     "pause": [],
     "play": [],
-    "restart": [],
 }>();
 
 const debouncedVolume = refDebounced(volume, 100);
@@ -87,19 +88,11 @@ function togglePlayback() {
 }
 
 async function skipPrevious() {
-    const oldTrack = playlist.currentTrack;
-    const newTrack = await playlist.previous();
-    if (newTrack?.key == oldTrack?.key) {
-        emit("restart");
-    }
+    emit("previous");
 }
 
 async function skipNext() {
-    const oldTrack = playlist.currentTrack;
-    const newTrack = await playlist.next();
-    if (newTrack?.key == oldTrack?.key) {
-        emit("restart");
-    }
+    emit("next");
 }
 
 function toggleMute() {

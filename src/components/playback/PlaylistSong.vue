@@ -41,12 +41,10 @@ import { computed } from 'vue';
 import { Song } from '@/api/dto';
 import AlbumArt from '@/components/AlbumArt.vue';
 import { formatArtists, formatDuration, formatTitle, formatTrackNumber } from '@/format';
-import { useSongsStore } from '@/stores/songs';
 import { makeThumbnailURL } from '@/api/endpoints';
 import { PlaylistEntry, usePlaylistStore } from "@/stores/playlist";
 
 const playlist = usePlaylistStore();
-const songs = useSongsStore();
 
 const props = defineProps<{
     entry: PlaylistEntry,
@@ -57,9 +55,7 @@ const props = defineProps<{
     compact: boolean,
 }>();
 
-const song = computed(() => {
-    return songs.cache.get(props.entry.path);
-});
+const song = computed(() => playlist.currentSong);
 
 const isCurrent = computed(() => props.entry.key == playlist.currentTrack?.key);
 

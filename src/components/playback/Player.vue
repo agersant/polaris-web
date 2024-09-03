@@ -6,7 +6,7 @@
 		<PlayerSong :seconds-played="secondsPlayed" :duration="duration" :progress="trackProgress" @seek="seekTo"
 			class="grow-[8] basis-80 min-w-32 mx-16" />
 		<PlayerControls class="basis-80 min-w-0 grow shrink" v-model:volume="volume" :paused="paused"
-			:buffering="buffering" @play="play" @pause="pause" @restart="playFromStart" />
+			:buffering="buffering" @play="play" @pause="pause" @previous="skipPrevious" @next="skipNext" />
 	</div>
 </template>
 
@@ -37,17 +37,8 @@ const buffering = ref(false);
 const canScrobble = ref(false);
 const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
 
-const currentTrack = computed(() => playlist.currentTrack);
-
-const song = computed(() => {
-	if (!currentTrack.value) {
-		return undefined;
-	}
-	return songs.cache.get(currentTrack.value.path)
-});
-
-const audioURL = computed(() => currentTrack.value ? makeAudioURL(currentTrack.value.path) : null);
-const artworkURL = computed(() => song.value && song.value.artwork ? makeThumbnailURL(song.value.artwork, "small") : null);
+const audioURL = computed(() => playlist.currentTrack ? makeAudioURL(playlist.currentTrack.path) : null);
+const artworkURL = computed(() => playlist.currentSong && playlist.currentSong.artwork ? makeThumbnailURL(playlist.currentSong.artwork, "small") : null);
 
 useTimeoutPoll(() => {
 	if (htmlAudio.value) {
@@ -84,7 +75,7 @@ onMounted(() => {
 		volume.value = savedVolume;
 	}
 
-	if (currentTrack.value) {
+	if (playlist.currentTrack) {
 		handleCurrentTrackChanged();
 	}
 
@@ -101,9 +92,8 @@ onMounted(() => {
 function handleCurrentTrackChanged() {
 	canScrobble.value = true;
 	updateMediaSession();
-	updateWindowTitle();
-	if (currentTrack.value && preferences.lastFMUsername) {
-		lastFMNowPlaying(currentTrack.value.path);
+	if (playlist.currentTrack && preferences.lastFMUsername) {
+		lastFMNowPlaying(playlist.currentTrack.path);
 	}
 }
 
@@ -127,7 +117,7 @@ function playFromStart() {
 
 function updateMediaSession() {
 	if (navigator.mediaSession && MediaMetadata) {
-		const track = currentTrack.value;
+		const track = playlist.currentSong;
 		if (!track) {
 			return;
 		}
@@ -143,17 +133,6 @@ function updateMediaSession() {
 		}
 		navigator.mediaSession.metadata = metadata;
 	}
-}
-
-function updateWindowTitle() {
-	const track = currentTrack.value;
-	if (!track) {
-		return;
-	}
-	let windowTitle = formatArtists(track.artists || []) || "Unknown Artist";
-	windowTitle += " - ";
-	windowTitle += formatTitle(track);
-	document.title = windowTitle;
 }
 
 function play() {
@@ -174,16 +153,16 @@ function pause() {
 }
 
 async function skipPrevious() {
-	const oldTrack = currentTrack.value;
+	const oldTrack = playlist.currentTrack;
 	const newTrack = await playlist.previous();
-	if (newTrack == oldTrack) {
+	if (newTrack?.key == oldTrack?.key) {
 		handleCurrentTrackChanged();
 		playFromStart();
 	}
 }
 
 async function skipNext() {
-	const oldTrack = currentTrack.value;
+	const oldTrack = playlist.currentTrack;
 	const newTrack = await playlist.next();
 	if (newTrack?.key == oldTrack?.key) {
 		handleCurrentTrackChanged();
@@ -192,12 +171,12 @@ async function skipNext() {
 }
 
 function updateScrobble() {
-	if (!canScrobble.value || !currentTrack.value) {
+	if (!canScrobble.value || !playlist.currentTrack) {
 		return;
 	}
 	const shouldScrobble = preferences.lastFMUsername && duration.value > 30 && (trackProgress.value > 0.5 || secondsPlayed.value > 4 * 60);
 	if (shouldScrobble) {
-		lastFMScrobble(currentTrack.value.path);
+		lastFMScrobble(playlist.currentTrack.path);
 		canScrobble.value = false;
 	}
 }
