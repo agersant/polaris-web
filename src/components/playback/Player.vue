@@ -18,7 +18,6 @@ import { makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import PlayerAlbum from "@/components/playback/PlayerAlbum.vue";
 import PlayerControls from "@/components/playback/PlayerControls.vue";
 import PlayerSong from "@/components/playback/PlayerSong.vue";
-import { loadForCurrentUser, saveForCurrentUser } from "@/disk";
 import notify from "@/notify";
 import { usePlaybackStore } from "@/stores/playback";
 import { useTimeoutPoll } from "@vueuse/core";
@@ -26,7 +25,6 @@ import { formatSong } from "@/format";
 
 const playback = usePlaybackStore();
 
-const volume = ref(1);
 const secondsPlayed = ref(0);
 const duration = ref(1);
 const paused = ref(true);
@@ -36,6 +34,11 @@ const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
 
 const audioURL = computed(() => playback.currentTrack ? makeAudioURL(playback.currentTrack.path) : null);
 const artworkURL = computed(() => playback.currentSong && playback.currentSong.artwork ? makeThumbnailURL(playback.currentSong.artwork, "small") : null);
+
+const volume = computed({
+	get: () => playback.volume,
+	set: (value) => playback.setVolume(value),
+});
 
 useTimeoutPoll(() => {
 	if (htmlAudio.value) {
@@ -60,15 +63,9 @@ watch([volume, htmlAudio], () => {
 	if (htmlAudio.value) {
 		htmlAudio.value.volume = Math.pow(volume.value, 3);
 	}
-	saveForCurrentUser("volume", volume.value);
 });
 
 onMounted(() => {
-	const savedVolume = parseFloat(loadForCurrentUser("volume"));
-	if (!isNaN(savedVolume)) {
-		volume.value = savedVolume;
-	}
-
 	if (playback.elapsedSeconds && playback.elapsedSeconds > 0) {
 		seekTo(playback.elapsedSeconds);
 	}

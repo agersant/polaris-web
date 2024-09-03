@@ -36,7 +36,7 @@ export function saveForCurrentUser(key: string, value: any): boolean {
 export function loadForCurrentUser(key: string): any {
 	const user = useUserStore();
 	if (!user.name) {
-		return;
+		return undefined;
 	}
 	return loadForAnyUser(user.name + "." + key);
 }
