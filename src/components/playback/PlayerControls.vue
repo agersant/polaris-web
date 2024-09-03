@@ -1,6 +1,6 @@
 <template>
     <div class="flex gap-4 items-center justify-end">
-        <Spinner v-if="debouncedBuffering" />
+        <Spinner v-if="debouncedBuffering" class="text-ls-700 dark:text-ls-500" />
         <div class="flex gap-2 items-center">
 
             <span @click="skipPrevious" class="material-icons-round w-9 h-9 mb-0.5
