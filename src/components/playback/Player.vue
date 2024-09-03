@@ -116,16 +116,12 @@ function playFromStart() {
 		buffering.value = false;
 		try {
 			await htmlAudio.value.play();
+			htmlAudio.value.currentTime = 0;
 		} catch (e) {
 			// https://developer.chrome.com/blog/play-request-was-interrupted/
 			// This .play() promise will be rejected if we skip to a different
 			// song while it is in progress.
-			return;
 		}
-		if (!htmlAudio.value) {
-			return;
-		}
-		htmlAudio.value.currentTime = 0;
 	});
 }
 
@@ -189,7 +185,7 @@ async function skipPrevious() {
 async function skipNext() {
 	const oldTrack = currentTrack.value;
 	const newTrack = await playlist.next();
-	if (newTrack == oldTrack) {
+	if (newTrack?.key == oldTrack?.key) {
 		handleCurrentTrackChanged();
 		playFromStart();
 	}
