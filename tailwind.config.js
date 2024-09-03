@@ -14,18 +14,19 @@ module.exports = {
         sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        "accent": { // TODO theming (current: ramp generated from polaris brand blue)
-          50: "#f6f9fe",
-          100: "#ecf5fe",
-          200: "#d4ebfc",
-          300: "#b3e0f9",
-          400: "#88d5f6",
-          500: "#46c8f1",
-          600: "#25b2ee",
-          700: "#1196e4",
-          800: "#0f75c2",
-          900: "#0a4a89",
-          950: "#041934"
+        "accent": {
+          0: "rgb(var(--accent-0) / <alpha-value>)",
+          50: "rgb(var(--accent-50) / <alpha-value>)",
+          100: "rgb(var(--accent-100) / <alpha-value>)",
+          200: "rgb(var(--accent-200) / <alpha-value>)",
+          300: "rgb(var(--accent-300) / <alpha-value>)",
+          400: "rgb(var(--accent-400) / <alpha-value>)",
+          500: "rgb(var(--accent-500) / <alpha-value>)",
+          600: "rgb(var(--accent-600) / <alpha-value>)",
+          700: "rgb(var(--accent-700) / <alpha-value>)",
+          800: "rgb(var(--accent-800) / <alpha-value>)",
+          900: "rgb(var(--accent-900) / <alpha-value>)",
+          950: "rgb(var(--accent-950) / <alpha-value>)",
         },
         "ls": {
           0: "rgb(var(--surface-0) / <alpha-value>)",

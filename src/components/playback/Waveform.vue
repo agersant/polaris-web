@@ -17,11 +17,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref, watch } from 'vue';
-import { useElementSize, watchDebounced } from '@vueuse/core';
+import { computed, onMounted, ref, Ref, watch } from 'vue';
+import { useCssVar, useElementSize, watchDebounced } from '@vueuse/core';
 
 import { Peaks } from '@/api/dto';
 import { get_peaks } from '@/api/endpoints';
+import { usePreferencesStore } from '@/stores/preferences';
+
+const preferences = usePreferencesStore();
 
 const props = defineProps<{
     path: string | undefined,
@@ -34,6 +37,26 @@ const loading = ref(false);
 const fullWaveform: Ref<HTMLCanvasElement | null> = ref(null);
 const playedWaveform: Ref<HTMLCanvasElement | null> = ref(null);
 const { width, height } = useElementSize(fullWaveform);
+
+const playedDarkColor = useCssVar('--accent-700', null, { observe: true });
+const playedLightColor = useCssVar('--accent-600', null, { observe: true });
+const unplayedDarkColor = useCssVar('--surface-700', null, { observe: true });
+const unplayedLightColor = useCssVar('--surface-300', null, { observe: true });
+
+const palette = computed(() => {
+    switch (preferences.effectivePolarity) {
+        case "dark":
+            return {
+                unplayed: unplayedDarkColor.value,
+                played: playedDarkColor.value,
+            };
+        case "light":
+            return {
+                unplayed: unplayedLightColor.value,
+                played: playedLightColor.value,
+            };
+    }
+});
 
 watch(() => props.path, async () => {
     if (props.path) {
@@ -51,7 +74,7 @@ watch(() => props.path, async () => {
 }, { immediate: true });
 
 watchDebounced(
-    [width, height, fullWaveform, playedWaveform, peaks, loading],
+    [width, height, fullWaveform, playedWaveform, peaks, loading, palette],
     redraw,
     { debounce: 20, maxWait: 100 }
 );
@@ -60,11 +83,11 @@ onMounted(redraw);
 
 function redraw() {
     if (fullWaveform.value) {
-        draw(fullWaveform.value, "#CCCCCC"); // TODO theming
+        draw(fullWaveform.value, palette.value.unplayed);
     }
 
     if (playedWaveform.value) {
-        draw(playedWaveform.value, "blue"); // TODO theming
+        draw(playedWaveform.value, palette.value.played);
     }
 }
 
@@ -80,7 +103,7 @@ function draw(canvas: HTMLCanvasElement, color: string) {
     canvas.width = w;
     canvas.height = h;
     context.clearRect(0, 0, w, h);
-    context.fillStyle = color;
+    context.fillStyle = `rgb(${color})`;
 
     if (loading.value || !peaks.value) {
         context.fillRect(0, h / 2 - 2, w, 4);
