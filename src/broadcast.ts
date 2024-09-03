@@ -1,12 +1,14 @@
 import { watch } from "vue";
 
+import { lastFMNowPlaying, lastFMScrobble, makeThumbnailURL } from "./api/endpoints";
 import { formatArtists, formatTitle } from "./format";
 import { usePlaybackStore } from "./stores/playback";
-import { makeThumbnailURL } from "./api/endpoints";
+import { usePreferencesStore } from "./stores/preferences";
 
 export default function setupBroadcasts() {
 
     const playback = usePlaybackStore();
+    const preferences = usePreferencesStore();
 
     // Browser window title
     watch(() => playback.currentSong, (song) => {
@@ -66,6 +68,26 @@ export default function setupBroadcasts() {
             duration: playback.duration,
             playbackRate: 1,
         });
+    });
+
+    // Last.fm
+    watch(() => playback.currentTrack, () => {
+        playback.setScrobbleAllowed(true);
+        if (playback.currentTrack && preferences.lastFMUsername) {
+            lastFMNowPlaying(playback.currentTrack.path);
+        }
+    });
+
+    watch(() => playback.elapsedSeconds, () => {
+        if (!playback.scrobbleAllowed || !playback.currentTrack) {
+            return;
+        }
+        const progress = playback.elapsedSeconds / playback.duration;
+        const shouldScrobble = preferences.lastFMUsername && playback.duration > 30 && (progress > 0.5 || playback.elapsedSeconds > 4 * 60);
+        if (shouldScrobble) {
+            lastFMScrobble(playback.currentTrack.path);
+            playback.setScrobbleAllowed(false);
+        }
     });
 
 }
