@@ -13,28 +13,22 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, Ref, ref, watch } from "vue";
 
-import { lastFMNowPlaying, lastFMScrobble, makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
+import { makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import PlayerAlbum from "@/components/playback/PlayerAlbum.vue";
 import PlayerControls from "@/components/playback/PlayerControls.vue";
 import PlayerSong from "@/components/playback/PlayerSong.vue";
 import { loadForCurrentUser, saveForCurrentUser } from "@/disk";
-import { formatArtists, formatTitle } from "@/format";
 import notify from "@/notify";
 import { usePlaybackStore } from "@/stores/playback";
-import { usePreferencesStore } from "@/stores/preferences";
-import { useSongsStore } from "@/stores/songs";
 import { useTimeoutPoll } from "@vueuse/core";
 
 const playback = usePlaybackStore();
-const songs = useSongsStore();
-const preferences = usePreferencesStore();
 
 const volume = ref(1);
 const secondsPlayed = ref(0);
 const duration = ref(1);
 const paused = ref(true);
 const buffering = ref(false);
-const canScrobble = ref(false);
 const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
 
 const audioURL = computed(() => playback.currentTrack ? makeAudioURL(playback.currentTrack.path) : null);
@@ -57,10 +51,7 @@ const trackProgress = computed(() => {
 	return Math.max(0, Math.min(secondsPlayed.value / duration.value, 1));
 });
 
-watch(audioURL, () => {
-	handleCurrentTrackChanged();
-	playFromStart();
-});
+watch(audioURL, playFromStart);
 
 watch([volume, htmlAudio], () => {
 	if (htmlAudio.value) {
@@ -75,10 +66,6 @@ onMounted(() => {
 		volume.value = savedVolume;
 	}
 
-	if (playback.currentTrack) {
-		handleCurrentTrackChanged();
-	}
-
 	if (playback.elapsedSeconds && playback.elapsedSeconds > 0) {
 		seekTo(playback.elapsedSeconds);
 	}
@@ -88,13 +75,6 @@ onMounted(() => {
 		navigator.mediaSession.setActionHandler("nexttrack", skipNext);
 	}
 });
-
-function handleCurrentTrackChanged() {
-	canScrobble.value = true;
-	if (playback.currentTrack && preferences.lastFMUsername) {
-		lastFMNowPlaying(playback.currentTrack.path);
-	}
-}
 
 function playFromStart() {
 	nextTick(async () => {
@@ -106,6 +86,7 @@ function playFromStart() {
 		try {
 			await htmlAudio.value.play();
 			htmlAudio.value.currentTime = 0;
+			playback.setScrobbleAllowed(true);
 		} catch (e) {
 			// https://developer.chrome.com/blog/play-request-was-interrupted/
 			// This .play() promise will be rejected if we skip to a different
@@ -135,7 +116,6 @@ async function skipPrevious() {
 	const oldTrack = playback.currentTrack;
 	const newTrack = await playback.previous();
 	if (newTrack?.key == oldTrack?.key) {
-		handleCurrentTrackChanged();
 		playFromStart();
 	}
 }
@@ -144,19 +124,7 @@ async function skipNext() {
 	const oldTrack = playback.currentTrack;
 	const newTrack = await playback.next();
 	if (newTrack?.key == oldTrack?.key) {
-		handleCurrentTrackChanged();
 		playFromStart();
-	}
-}
-
-function updateScrobble() {
-	if (!canScrobble.value || !playback.currentTrack) {
-		return;
-	}
-	const shouldScrobble = preferences.lastFMUsername && duration.value > 30 && (trackProgress.value > 0.5 || secondsPlayed.value > 4 * 60);
-	if (shouldScrobble) {
-		lastFMScrobble(playback.currentTrack.path);
-		canScrobble.value = false;
 	}
 }
 
@@ -165,7 +133,7 @@ function seekTo(seconds: number) {
 		return;
 	}
 	htmlAudio.value.currentTime = seconds;
-	canScrobble.value = false;
+	playback.setScrobbleAllowed(false);
 }
 
 function onEnded(event: Event) {
@@ -194,7 +162,6 @@ function onTimeUpdate(event: Event) {
 	}
 	playback.setDuration(htmlAudio.value.duration || 1);
 	playback.setElapsedSeconds(htmlAudio.value.currentTime);
-	updateScrobble();
 }
 
 function onPlaybackError(event: Event) {

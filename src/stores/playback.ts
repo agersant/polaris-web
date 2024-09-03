@@ -36,6 +36,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 	const playbackOrder: Ref<PlaybackOrder> = ref("default");
 	const elapsedSeconds = ref(0);
 	const duration = ref(0);
+	const scrobbleAllowed = ref(false);
 
 	reset();
 
@@ -209,13 +210,17 @@ export const usePlaybackStore = defineStore("playback", () => {
 		}
 	}
 
-	function setElapsedSeconds(seconds: number) {
-		elapsedSeconds.value = seconds;
-		savePlaybackState();
+	function setScrobbleAllowed(allowed: boolean) {
+		scrobbleAllowed.value = allowed;
 	}
 
 	function setDuration(seconds: number) {
 		duration.value = seconds;
+	}
+
+	function setElapsedSeconds(seconds: number) {
+		elapsedSeconds.value = seconds;
+		savePlaybackState();
 	}
 
 	function setName(newName: string) {
@@ -246,6 +251,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 		name,
 		playbackOrder,
 		playlist,
+		scrobbleAllowed,
 
 		clear,
 		hasPrevious,
@@ -257,6 +263,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 		queueTracks,
 		removeTracks,
 		reorder,
+		setScrobbleAllowed,
 		setDuration,
 		setElapsedSeconds,
 		setPlaybackOrder,
