@@ -23,7 +23,7 @@
 
 			<div class="-mx-6 mt-auto">
 				<a @click="user.logout" class="cursor-pointer flex items-center gap-x-4 px-6 py-3 text-sm font-semibold
-						text-ls-900 dark:text-ds-0
+						text-ls-900 dark:text-ds-400
 						hover:bg-ls-50 dark:hover:bg-ds-900">
 					<span class="material-icons-round text-ls-400">logout</span>
 					<span>Sign Out</span>
