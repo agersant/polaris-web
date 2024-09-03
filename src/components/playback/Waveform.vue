@@ -1,5 +1,6 @@
 <template>
-    <div class="relative">
+    <div ref="root" class="cursor-pointer relative" draggable="true" @click="seekToCursor" @dragstart="onDragStart"
+        @dragend="endDrag">
         <!--
          Preferably, we would draw a single white waveform canvas. We would then
          use it as mask for two empty divs with colored backgrounds. However, this
@@ -18,18 +19,26 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, Ref, watch } from 'vue';
-import { useCssVar, useElementSize, watchDebounced } from '@vueuse/core';
+import { useCssVar, useElementSize, useMouseInElement, watchDebounced, watchPausable } from '@vueuse/core';
 
 import { Peaks } from '@/api/dto';
 import { get_peaks } from '@/api/endpoints';
+import { blankElement } from '@/dnd';
 import { usePreferencesStore } from '@/stores/preferences';
 
 const preferences = usePreferencesStore();
 
 const props = defineProps<{
     path: string | undefined,
+    duration: number,
     progress: number,
 }>();
+
+const emit = defineEmits<{
+    "seek": [seconds: number],
+}>();
+
+const root = ref(null);
 
 const peaks: Ref<Peaks | null> = ref(null);
 const loading = ref(false);
@@ -37,6 +46,22 @@ const loading = ref(false);
 const fullWaveform: Ref<HTMLCanvasElement | null> = ref(null);
 const playedWaveform: Ref<HTMLCanvasElement | null> = ref(null);
 const { width, height } = useElementSize(fullWaveform);
+
+const { elementX: mouseX } = useMouseInElement(root);
+const { pause: endDrag, resume: beginDrag } = watchPausable(mouseX, seekToCursor);
+
+onMounted(endDrag);
+
+function onDragStart(event: DragEvent) {
+    event.dataTransfer?.setDragImage(blankElement, 0, 0);
+    beginDrag();
+}
+
+function seekToCursor() {
+    emit("seek", props.duration * mouseX.value / width.value);
+}
+
+watch(() => props.path, endDrag);
 
 const playedDarkColor = useCssVar('--accent-700', null, { observe: true });
 const playedLightColor = useCssVar('--accent-600', null, { observe: true });
@@ -73,13 +98,13 @@ watch(() => props.path, async () => {
     }
 }, { immediate: true });
 
+onMounted(redraw);
+
 watchDebounced(
     [width, height, fullWaveform, playedWaveform, peaks, loading, palette],
     redraw,
     { debounce: 20, maxWait: 100 }
 );
-
-onMounted(redraw);
 
 function redraw() {
     if (fullWaveform.value) {
