@@ -1,15 +1,15 @@
 import { watch } from "vue";
 
 import { formatArtists, formatTitle } from "./format";
-import { usePlaylistStore } from "./stores/playlist";
+import { usePlaybackStore } from "./stores/playback";
 import { makeThumbnailURL } from "./api/endpoints";
 
 export default function setupBroadcasts() {
 
-    const playlist = usePlaylistStore();
+    const playback = usePlaybackStore();
 
     // Browser window title
-    watch(() => playlist.currentSong, (song) => {
+    watch(() => playback.currentSong, (song) => {
         if (!song) {
             document.title = "Polaris";
             return;
@@ -28,7 +28,7 @@ export default function setupBroadcasts() {
     });
 
     // Media session
-    watch(() => playlist.currentSong, (song) => {
+    watch(() => playback.currentSong, (song) => {
         if (!navigator.mediaSession || !MediaMetadata) {
             return;
         }
@@ -56,14 +56,14 @@ export default function setupBroadcasts() {
         navigator.mediaSession.metadata = metadata;
     });
 
-    watch(() => [playlist.elapsedSeconds, playlist.duration], () => {
+    watch(() => [playback.elapsedSeconds, playback.duration], () => {
         if (!navigator.mediaSession || !navigator.mediaSession.setPositionState) {
             return;
         }
 
         navigator.mediaSession.setPositionState({
-            position: playlist.elapsedSeconds,
-            duration: playlist.duration,
+            position: playback.elapsedSeconds,
+            duration: playback.duration,
             playbackRate: 1,
         });
     });

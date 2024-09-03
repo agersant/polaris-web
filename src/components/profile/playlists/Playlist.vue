@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { Ref, ref, watchEffect } from "vue";
 import Explorer from "@/components/collection/layout/Explorer.vue";
-import { usePlaylistStore } from "@/stores/playlist";
+import { usePlaybackStore } from "@/stores/playback";
 import { getPlaylist, deletePlaylist as doDeletePlaylist } from "@/api/endpoints";
 import { SongList } from "@/api/dto";
 import { useRouter } from "vue-router";
@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
-const playlist= usePlaylistStore();
+const playback= usePlaybackStore();
 
 const songList: Ref<SongList | null> = ref(null);
 
@@ -38,7 +38,7 @@ watchEffect(async () => {
 });
 
 function play() {
-	playlist.queuePlaylist(props.name);
+	playback.queuePlaylist(props.name);
 }
 
 async function deletePlaylist() {
@@ -49,7 +49,7 @@ async function deletePlaylist() {
 // TODO fixme
 // function onItemClicked(item: CollectionItem) {
 	// 	if (item.variant == "Song") {
-		// 		playlist.queueTracks([{ ...item }]);
+		// 		playback.queueTracks([{ ...item }]);
 		// 	}
 		// }
 		

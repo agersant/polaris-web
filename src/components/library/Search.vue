@@ -15,11 +15,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watch} from "vue";
+import { ref, Ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import {BrowserEntry, Song} from "@/api/dto"
-import {search} from "@/api/endpoints"
-import { usePlaylistStore } from "@/stores/playlist";
+import { BrowserEntry, Song } from "@/api/dto"
+import { search } from "@/api/endpoints"
+import { usePlaybackStore } from "@/stores/playback";
 import Explorer from "@/components/collection/layout/Explorer.vue"
 import SearchInput from "./SearchInput.vue"
 
@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 
 const results: Ref<BrowserEntry[] | null> = ref(null);
 
@@ -38,7 +38,7 @@ watch(
 		results.value = null;
 		results.value = await search(query);
 	},
-	{immediate: true}
+	{ immediate: true }
 );
 
 function queueAll() {
@@ -57,18 +57,18 @@ function queueAll() {
 		}
 	});
 
-	playlist.queueTracks(songItems);
+	playback.queueTracks(songItems);
 	directoryItems.forEach(item => {
-		playlist.queueDirectory(item.path);
+		playback.queueDirectory(item.path);
 	});
 }
 
 function onItemClicked(item: BrowserEntry) {
 	if (item.is_directory) {
-		router.push("/browse/" + item.path).catch(err => {});
+		router.push("/browse/" + item.path).catch(err => { });
 	} else {
 		// TODO fixme
-		// playlist.queueTracks([{...item}]);
+		// playback.queueTracks([{...item}]);
 	}
 }
 

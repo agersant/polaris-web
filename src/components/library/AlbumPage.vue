@@ -9,7 +9,8 @@
 				<div class="header">{{ header }}</div>
 				<button v-if="album?.songs.length" v-on:click="onQueueAll" class="small">Queue All</button>
 			</div>
-			<Album v-bind:songs="album?.songs || []" v-on:item-click="onItemClicked" v-bind:on-items-drag-start="onItemsDragStart" />
+			<Album v-bind:songs="album?.songs || []" v-on:item-click="onItemClicked"
+				v-bind:on-items-drag-start="onItemsDragStart" />
 		</div>
 	</div>
 </template>
@@ -18,12 +19,12 @@
 import { computed, ref, Ref, watch } from "vue";
 import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
 import { get_album } from "@/api/endpoints";
-import { usePlaylistStore } from "@/stores/playlist";
+import { usePlaybackStore } from "@/stores/playback";
 import Album from "./layout/Album.vue";
 
-const props = defineProps<{album_key: AlbumKey}>();
+const props = defineProps<{ album_key: AlbumKey }>();
 
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 
 const album: Ref<AlbumDTO | null> = ref(null);
 const paneContent: Ref<HTMLElement | null> = ref(null);
@@ -36,12 +37,12 @@ watch(
 	{ immediate: true }
 );
 
-const header = computed((): string =>{
+const header = computed((): string => {
 	return props.album_key.name || "Unknown Album";
 });
 
 function onItemClicked(song: Song) {
-	playlist.queueTracks([{ ...song }]);
+	playback.queueTracks([{ ...song }]);
 }
 
 function onItemsDragStart(event: DragEvent, items: Song[]) {
@@ -53,6 +54,6 @@ function onItemsDragStart(event: DragEvent, items: Song[]) {
 }
 
 function onQueueAll() {
-	playlist.queueTracks((album.value?.songs || []).map(s => { return {...s} }));
+	playback.queueTracks((album.value?.songs || []).map(s => { return { ...s } }));
 }
 </script>

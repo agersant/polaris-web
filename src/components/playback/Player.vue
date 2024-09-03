@@ -20,12 +20,12 @@ import PlayerSong from "@/components/playback/PlayerSong.vue";
 import { loadForCurrentUser, saveForCurrentUser } from "@/disk";
 import { formatArtists, formatTitle } from "@/format";
 import notify from "@/notify";
-import { usePlaylistStore } from "@/stores/playlist";
+import { usePlaybackStore } from "@/stores/playback";
 import { usePreferencesStore } from "@/stores/preferences";
 import { useSongsStore } from "@/stores/songs";
 import { useTimeoutPoll } from "@vueuse/core";
 
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 const songs = useSongsStore();
 const preferences = usePreferencesStore();
 
@@ -37,8 +37,8 @@ const buffering = ref(false);
 const canScrobble = ref(false);
 const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
 
-const audioURL = computed(() => playlist.currentTrack ? makeAudioURL(playlist.currentTrack.path) : null);
-const artworkURL = computed(() => playlist.currentSong && playlist.currentSong.artwork ? makeThumbnailURL(playlist.currentSong.artwork, "small") : null);
+const audioURL = computed(() => playback.currentTrack ? makeAudioURL(playback.currentTrack.path) : null);
+const artworkURL = computed(() => playback.currentSong && playback.currentSong.artwork ? makeThumbnailURL(playback.currentSong.artwork, "small") : null);
 
 useTimeoutPoll(() => {
 	if (htmlAudio.value) {
@@ -75,12 +75,12 @@ onMounted(() => {
 		volume.value = savedVolume;
 	}
 
-	if (playlist.currentTrack) {
+	if (playback.currentTrack) {
 		handleCurrentTrackChanged();
 	}
 
-	if (playlist.elapsedSeconds && playlist.elapsedSeconds > 0) {
-		seekTo(playlist.elapsedSeconds);
+	if (playback.elapsedSeconds && playback.elapsedSeconds > 0) {
+		seekTo(playback.elapsedSeconds);
 	}
 
 	if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
@@ -91,8 +91,8 @@ onMounted(() => {
 
 function handleCurrentTrackChanged() {
 	canScrobble.value = true;
-	if (playlist.currentTrack && preferences.lastFMUsername) {
-		lastFMNowPlaying(playlist.currentTrack.path);
+	if (playback.currentTrack && preferences.lastFMUsername) {
+		lastFMNowPlaying(playback.currentTrack.path);
 	}
 }
 
@@ -132,8 +132,8 @@ function pause() {
 }
 
 async function skipPrevious() {
-	const oldTrack = playlist.currentTrack;
-	const newTrack = await playlist.previous();
+	const oldTrack = playback.currentTrack;
+	const newTrack = await playback.previous();
 	if (newTrack?.key == oldTrack?.key) {
 		handleCurrentTrackChanged();
 		playFromStart();
@@ -141,8 +141,8 @@ async function skipPrevious() {
 }
 
 async function skipNext() {
-	const oldTrack = playlist.currentTrack;
-	const newTrack = await playlist.next();
+	const oldTrack = playback.currentTrack;
+	const newTrack = await playback.next();
 	if (newTrack?.key == oldTrack?.key) {
 		handleCurrentTrackChanged();
 		playFromStart();
@@ -150,12 +150,12 @@ async function skipNext() {
 }
 
 function updateScrobble() {
-	if (!canScrobble.value || !playlist.currentTrack) {
+	if (!canScrobble.value || !playback.currentTrack) {
 		return;
 	}
 	const shouldScrobble = preferences.lastFMUsername && duration.value > 30 && (trackProgress.value > 0.5 || secondsPlayed.value > 4 * 60);
 	if (shouldScrobble) {
-		lastFMScrobble(playlist.currentTrack.path);
+		lastFMScrobble(playback.currentTrack.path);
 		canScrobble.value = false;
 	}
 }
@@ -192,8 +192,8 @@ function onTimeUpdate(event: Event) {
 	if (!htmlAudio.value) {
 		return;
 	}
-	playlist.setDuration(htmlAudio.value.duration || 1);
-	playlist.setElapsedSeconds(htmlAudio.value.currentTime);
+	playback.setDuration(htmlAudio.value.duration || 1);
+	playback.setElapsedSeconds(htmlAudio.value.currentTime);
 	updateScrobble();
 }
 

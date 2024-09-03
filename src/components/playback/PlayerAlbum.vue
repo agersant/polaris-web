@@ -40,7 +40,7 @@ import { useRouter } from "vue-router";
 
 import { makeThumbnailURL } from '@/api/endpoints';
 import AlbumArt from '@/components/AlbumArt.vue';
-import { usePlaylistStore } from '@/stores/playlist';
+import { usePlaybackStore } from '@/stores/playback';
 import { makeAlbumURL } from '@/router';
 
 interface Artist {
@@ -49,9 +49,9 @@ interface Artist {
 }
 
 const router = useRouter();
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 
-const song = computed(() => playlist.currentSong);
+const song = computed(() => playback.currentSong);
 
 const artworkURL = computed(() => song.value && song.value.artwork ? makeThumbnailURL(song.value.artwork, "small") : undefined);
 

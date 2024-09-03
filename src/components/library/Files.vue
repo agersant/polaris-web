@@ -56,12 +56,12 @@ import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";
 import { DnDPayload, DndPayloadFiles, endDrag, startDrag, updateDrag } from '@/dnd';
 import { getPathTail } from '@/format';
-import { usePlaylistStore } from "@/stores/playlist";
+import { usePlaybackStore } from "@/stores/playback";
 import { useUserStore } from '@/stores/user';
 
 const router = useRouter();
 const user = useUserStore();
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 
 const { state: treeModel, isReady, isLoading, error } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
 
@@ -146,11 +146,11 @@ async function queueSelection(replace: boolean) {
 	).flat();
 
 	if (replace) {
-		playlist.clear();
+		playback.clear();
 	}
-	playlist.queueTracks(tracks);
+	playback.queueTracks(tracks);
 	if (replace) {
-		playlist.next();
+		playback.next();
 	}
 }
 </script>

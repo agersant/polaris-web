@@ -19,11 +19,11 @@
 import { Song } from "@/api/dto";
 import { putPlaylist } from "@/api/endpoints";
 import StateButton, { State } from "@/components/StateButton.vue";
-import { usePlaylistStore } from "@/stores/playlist";
+import { usePlaybackStore } from "@/stores/playback";
 import { usePlaylistsStore } from "@/stores/playlists";
 import { computed, onMounted, ref, Ref } from "vue";
 
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 const playlists = usePlaylistsStore();
 
 const props = defineProps<{
@@ -44,16 +44,16 @@ const states: Ref<Record<string, State>> = ref({
 const state: Ref = ref(states.value.ready);
 const initialName = ref("");
 const newName = computed({
-	get: () => playlist.name,
-	set: (value) => playlist.setName(value),
+	get: () => playback.name,
+	set: (value) => playback.setName(value),
 });
 
 onMounted(() => {
-	initialName.value = playlist.name;
+	initialName.value = playback.name;
 });
 
 function cancel() {
-	playlist.setName(initialName.value);
+	playback.setName(initialName.value);
 	emits("cancel");
 }
 

@@ -3,10 +3,10 @@
 	<div
 		class="flex flex-col py-8 pl-16 pr-8 border-l border-ls-200 dark:border-ds-700 select-none bg-ls-0 dark:bg-ds-900">
 
-		<SectionTitle :label="playlist.name || 'New Playlist'">
+		<SectionTitle :label="playback.name || 'New Playlist'">
 			<template #right>
 				<div class="flex gap-2">
-					<Button label="Clear" severity="secondary" icon="clear" @click="playlist.clear" />
+					<Button label="Clear" severity="secondary" icon="clear" @click="playback.clear" />
 					<!-- TODO show playlist stats (duration, number of songs, songs per year bar chart? most represented artists? longest songs?) -->
 					<Button label="Stats" severity="secondary" icon="bar_chart" />
 					<!-- TODO save functionality -->
@@ -18,16 +18,16 @@
 		<div class="mb-8 flex items-center justify-between">
 			<div class="flex gap-4">
 				<Select class="w-48" v-model="playbackOrder" :options="playbackOrderOptions" />
-				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playlist.shuffle" />
+				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playback.shuffle" />
 			</div>
 			<MultiSwitch v-model="listMode"
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
 		<div class="grow relative min-h-0">
-			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playlist.entries"
+			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playback.entries"
 				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @keydown="onKeyDown"
-				@list-reorder="onReorder" @list-delete="playlist.removeTracks" @list-drop="onDrop">
+				@list-reorder="onReorder" @list-delete="playback.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :entry="item" :compact="compact" :height="itemHeight" :index="index"
 						:selected="selected" :focused="focused" />
@@ -44,7 +44,7 @@
 					</div>
 				</template>
 			</OrderableList>
-			<div v-if="!playlist.entries.length"
+			<div v-if="!playback.entries.length"
 				class="pointer-events-none absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center text-center">
 				<BlankStateFiller icon="queue">
 					Make a playlist by dragging music<br />from your collection to here.
@@ -68,10 +68,10 @@ import Select from '@/components/basic/Select.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
-import { usePlaylistStore, PlaylistEntry, PlaybackOrder } from '@/stores/playlist';
+import { usePlaybackStore, PlaylistEntry, PlaybackOrder } from '@/stores/playback';
 import { SelectOption } from "../basic/Select.vue";
 
-const playlist = usePlaylistStore();
+const playback = usePlaybackStore();
 
 const orderableList: Ref<ComponentExposed<typeof OrderableList<PlaylistEntry>> | null> = ref(null);
 
@@ -89,43 +89,43 @@ const playbackOrderOptions: SelectOption<PlaybackOrder>[] = [
 
 const playbackOrder = computed({
 	set(option: SelectOption<PlaybackOrder>) {
-		playlist.setPlaybackOrder(option.value);
+		playback.setPlaybackOrder(option.value);
 	},
 	get() {
-		return playbackOrderOptions.find(o => o.value == playlist.playbackOrder) || playbackOrderOptions[0];
+		return playbackOrderOptions.find(o => o.value == playback.playbackOrder) || playbackOrderOptions[0];
 	},
 });
 
 const { payload: dragPayload } = useDragAndDrop();
 
-watch(() => playlist.currentTrack, () => {
+watch(() => playback.currentTrack, () => {
 	nextTick(() => {
-		if (!orderableList.value || !playlist.currentTrack) {
+		if (!orderableList.value || !playback.currentTrack) {
 			return;
 		}
 		if (orderableList.value.isIdle()) {
-			orderableList.value.selectItem(playlist.currentTrack);
+			orderableList.value.selectItem(playback.currentTrack);
 			orderableList.value.snapScrolling("center", "smooth");
 		}
 	});
 });
 
 function onReorder(tracks: PlaylistEntry[], newIndex: number) {
-	playlist.reorder(tracks, newIndex);
+	playback.reorder(tracks, newIndex);
 }
 
 function onKeyDown(event: KeyboardEvent) {
 	if (event.code == "Enter") {
 		const entry = orderableList.value?.selection[0];
 		if (entry) {
-			playlist.play(entry);
+			playback.play(entry);
 		}
 	}
 }
 
 async function onDrop(atIndex: number) {
 	if (dragPayload.value) {
-		playlist.queueTracks(await dragPayload.value.getTracks(), atIndex);
+		playback.queueTracks(await dragPayload.value.getTracks(), atIndex);
 	}
 }
 
