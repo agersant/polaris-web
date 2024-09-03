@@ -20,7 +20,7 @@ export interface PlaylistEntry {
 	path: string,
 }
 
-export const usePlaybackStore = defineStore("playlist", () => {
+export const usePlaybackStore = defineStore("playback", () => {
 	const user = useUserStore();
 	const songs = useSongsStore();
 
