@@ -145,6 +145,7 @@ function onEnded(event: Event) {
 
 function onPaused(event: Event) {
 	buffering.value = false;
+	paused.value = true;
 }
 
 function onPlaying(event: Event) {
