@@ -57,9 +57,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, Ref, ref } from "vue";
+import { computed, nextTick, onMounted, Ref, ref, watch } from "vue";
 import { ComponentExposed } from "vue-component-type-helpers";
-import { watchImmediate } from "@vueuse/core";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
@@ -99,17 +98,21 @@ const playbackOrder = computed({
 
 const { payload: dragPayload } = useDragAndDrop();
 
-watchImmediate(() => playback.currentTrack, () => {
+onMounted(() => autoScroll("instant"));
+watch(() => playback.currentTrack, () => autoScroll("smooth"));
+
+function autoScroll(scrollBehavior: ScrollBehavior) {
+	console.log(scrollBehavior);
 	nextTick(() => {
 		if (!orderableList.value || !playback.currentTrack) {
 			return;
 		}
 		if (orderableList.value.isIdle()) {
 			orderableList.value.selectItem(playback.currentTrack);
-			orderableList.value.snapScrolling("center", "smooth");
+			orderableList.value.snapScrolling("center", scrollBehavior);
 		}
 	});
-});
+}
 
 function onReorder(tracks: PlaylistEntry[], newIndex: number) {
 	playback.reorder(tracks, newIndex);
