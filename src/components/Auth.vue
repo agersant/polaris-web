@@ -6,8 +6,8 @@
 				<InputText v-model="username" data-cy="username" id="username" name="username" autocomplete="username"
 					label="Username" :error="badCredentials" required autofocus />
 				<InputText v-model="password" data-cy="password" id="password" name="password" autocomplete="password"
-					label="Password" :error="badCredentials" required />
-				<div v-if="badCredentials" class="text-red-600 dark:text-red-500 text-sm rounded-md py-2">
+					label="Password" :error="badCredentials" required password />
+				<div v-if="badCredentials" class="text-red-600 dark:text-red-500 text-sm py-2">
 					Incorrect credentials, please try again.
 				</div>
 				<Button label="Sign In" type="submit" size="xl" class="w-full" />
