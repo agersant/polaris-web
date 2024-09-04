@@ -9,9 +9,9 @@
                     {{ props.icon }}
                 </span>
             </div>
-            <input v-model="model" :id="props.id" :placeholder="props.placeholder" :name="props.name"
-                :autocomplete="props.autocomplete" :autofocus="props.autofocus" :required="props.required"
-                :class="inputClass" class="w-full rounded-md border-0 py-2 shadow-sm text-sm leading-6
+            <input v-model="model" :id="props.id" :type="password ? 'password' : 'text'"
+                :placeholder="props.placeholder" :name="props.name" :autocomplete="props.autocomplete"
+                :autofocus="props.autofocus" :required="props.required" :class="inputClass" class="w-full rounded-md border-0 py-2 shadow-sm text-sm leading-6
                 ring-1 ring-inset focus:ring-2 focus:ring-inset 
                 dark:bg-white/5
                 text-ls-900 dark:text-ds-0
@@ -35,6 +35,7 @@ const props = defineProps<{
     name?: string,
     autocomplete?: string,
     autofocus?: boolean,
+    password?: boolean,
     required?: boolean,
     error?: boolean,
 }>();
