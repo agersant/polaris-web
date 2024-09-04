@@ -102,7 +102,6 @@ onMounted(() => autoScroll("instant"));
 watch(() => playback.currentTrack, () => autoScroll("smooth"));
 
 function autoScroll(scrollBehavior: ScrollBehavior) {
-	console.log(scrollBehavior);
 	nextTick(() => {
 		if (!orderableList.value || !playback.currentTrack) {
 			return;
