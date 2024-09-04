@@ -1,5 +1,5 @@
 <template>
-    <div ref="container" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown"
+    <div ref="viewport" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown"
         @dragenter.prevent @dragover.prevent @drop="onDrop">
         <div ref="wrapper" class="relative min-h-full divide-ls-200 dark:border-ds-700" :class="{ 'divide-y': divider }"
             :style="{ height: `${props.items.length * rowHeight}px` }">
@@ -45,17 +45,18 @@ const emit = defineEmits<{
     'list-delete': [items: T[]]
 }>();
 
-const container: Ref<HTMLElement | null> = ref(null);
+const viewport: Ref<HTMLElement | null> = ref(null);
 const wrapper: Ref<HTMLElement | null> = ref(null);
 
 const blankImage = new Image(0, 0);
 blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
 
-const { y: scrollY } = useScroll(container);
-const { width: containerWidth, height: containerHeight } = useElementSize(container);
-const { elementX: containerMouseX, elementY: containerMouseY, isOutside } = useMouseInElement(container);
+const { y: scrollY } = useScroll(viewport);
+const { width: viewportWidth, height: rawViewportHeight } = useElementSize(viewport);
+const viewportHeight = computed(() => rawViewportHeight.value || viewport.value?.clientHeight || 0);
+const { elementX: viewportMouseX, elementY: viewportMouseY, isOutside } = useMouseInElement(viewport);
 const { elementY: wrapperMouseY } = useMouseInElement(wrapper);
-const { pressed: mousePressed } = useMousePressed({ target: container });
+const { pressed: mousePressed } = useMousePressed({ target: viewport });
 const mouseLastPressed = useLastChanged(mousePressed, { initialValue: 0 });
 
 const selectedKeys: Ref<Set<string | number>> = ref(new Set());
@@ -79,7 +80,7 @@ const firstVirtualIndex = computed(() => {
 });
 
 const numVirtualItems = computed(() => {
-    return 1 + Math.ceil(containerHeight.value / rowHeight.value);
+    return 1 + Math.ceil(viewportHeight.value / rowHeight.value);
 });
 
 const isReordering = ref(false);
@@ -137,10 +138,10 @@ const virtualItems = computed(() => {
 });
 
 watch(() => props.itemHeight, (to, from) => {
-    const halfHeight = containerHeight.value / 2;
+    const halfHeight = viewportHeight.value / 2;
     const y = (scrollY.value + halfHeight) * to / from - halfHeight;
     nextTick(() => {
-        container.value?.scrollTo({ top: y, behavior: "instant" });
+        viewport.value?.scrollTo({ top: y, behavior: "instant" });
     });
 });
 
@@ -322,14 +323,14 @@ function snapScrolling(mode: "clamp" | "center", behavior: ScrollBehavior) {
             y = rowHeight.value * (focusedIndex - (last - first) + padding);
         }
     } else {
-        y = (focusedIndex + 0.5) * rowHeight.value - containerHeight.value / 2;
+        y = (focusedIndex + 0.5) * rowHeight.value - viewportHeight.value / 2;
     }
 
     if (rowHeight.value * props.items.length > 50 * window.innerHeight) {
         behavior = "instant";
     }
 
-    container.value?.scrollTo({ top: y, behavior });
+    viewport.value?.scrollTo({ top: y, behavior });
 }
 
 function deleteSelection() {
@@ -351,7 +352,7 @@ function remap(value: number, fromA: number, fromB: number, toA: number, toB: nu
 }
 
 useRafFn(({ delta }) => {
-    if (!wrapper.value || !container.value) {
+    if (!wrapper.value || !viewport.value) {
         return;
     }
 
@@ -359,34 +360,33 @@ useRafFn(({ delta }) => {
         return;
     }
 
-    if (containerMouseX.value < 0 || containerMouseX.value > containerWidth.value) {
+    if (viewportMouseX.value < 0 || viewportMouseX.value > viewportWidth.value) {
         return;
     }
 
     const triggerRange = 100;
     const maxTracksPerSecond = 40;
-    const viewportHeight = container.value.clientHeight;
 
-    if (containerMouseY.value < triggerRange) {
+    if (viewportMouseY.value < triggerRange) {
         const t = remap(
-            containerMouseY.value,
+            viewportMouseY.value,
             0, triggerRange,
             1, 0
         );
         const tracksPerSecond = -maxTracksPerSecond * Math.pow(t, 1.5);
-        container.value.scrollBy({
+        viewport.value.scrollBy({
             behavior: "instant",
             top: Math.ceil(tracksPerSecond * rowHeight.value * delta / 1000)
         });
-    } else if (containerMouseY.value > viewportHeight - triggerRange) {
+    } else if (viewportMouseY.value > viewportHeight.value - triggerRange) {
         const t = remap(
-            containerMouseY.value,
-            viewportHeight - triggerRange,
-            viewportHeight,
+            viewportMouseY.value,
+            viewportHeight.value - triggerRange,
+            viewportHeight.value,
             0, 1
         );
         const tracksPerSecond = maxTracksPerSecond * Math.pow(t, 3);
-        container.value.scrollBy({
+        viewport.value.scrollBy({
             behavior: "instant",
             top: Math.ceil(tracksPerSecond * rowHeight.value * delta / 1000)
         });

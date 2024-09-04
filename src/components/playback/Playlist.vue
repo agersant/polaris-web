@@ -57,8 +57,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, Ref, ref, watch } from "vue";
+import { computed, nextTick, Ref, ref } from "vue";
 import { ComponentExposed } from "vue-component-type-helpers";
+import { watchImmediate } from "@vueuse/core";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
@@ -98,7 +99,7 @@ const playbackOrder = computed({
 
 const { payload: dragPayload } = useDragAndDrop();
 
-watch(() => playback.currentTrack, () => {
+watchImmediate(() => playback.currentTrack, () => {
 	nextTick(() => {
 		if (!orderableList.value || !playback.currentTrack) {
 			return;
