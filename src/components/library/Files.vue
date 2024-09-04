@@ -2,7 +2,14 @@
 	<div data-cy="browser" class="flex flex-col">
 		<SectionTitle label="Files" data-cy="browser-header" />
 
-		<div v-if="error" class="grow flex items-start justify-center">
+		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
+			<InputText class="mb-8" v-model="searchQuery" id="search" name="search" placeholder="Search"
+				icon="search" />
+			<VirtualTree ref="tree" v-model="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
+				@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
+		</div>
+
+		<div v-if="!treeModel.length && error" class="grow flex items-start justify-center">
 			<div class="rounded-md w-full bg-red-50 dark:bg-red-900 p-4">
 				<div class="flex items-center">
 					<span class="material-icons-round text-red-400 dark:text-red-400 mt-0.5">
@@ -17,7 +24,7 @@
 			</div>
 		</div>
 
-		<div v-else-if="isReady && !treeModel.length" class="grow flex items-start mt-40 justify-center text-center">
+		<div v-else-if="!treeModel.length && isReady" class="grow flex items-start mt-40 justify-center text-center">
 			<BlankStateFiller icon="folder_off">
 				No files found.
 				<span v-if="user.isAdmin">Please verify<br />your
@@ -28,21 +35,15 @@
 			</BlankStateFiller>
 		</div>
 
-		<div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+		<div v-else-if="!treeModel.length && isLoading" class="grow flex mt-24 items-start justify-center">
 			<Spinner class="text-ls-700 dark:text-ds-400" />
 		</div>
 
-		<div v-else class="grow min-h-0 flex flex-col">
-			<InputText class="mb-8" v-model="searchQuery" id="search" name="search" placeholder="Search"
-				icon="search" />
-			<VirtualTree ref="tree" :value="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
-				@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
-		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue";
+import { Ref, ref, shallowRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAsyncState } from "@vueuse/core";
 
@@ -63,7 +64,14 @@ const router = useRouter();
 const user = useUserStore();
 const playback = usePlaybackStore();
 
-const { state: treeModel, isReady, isLoading, error } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
+const treeModel: Ref<Node[]> = shallowRef([]);
+
+const { state: topLevel, isLoading, isReady, error } = useAsyncState(browse("").then(f => makeTreeNodes(f, undefined)), []);
+watch(topLevel, (v) => {
+	if (!treeModel.value.length) {
+		treeModel.value = v;
+	}
+});
 
 const tree: Ref<InstanceType<typeof VirtualTree> | null> = ref(null);
 const searchQuery = ref("");
