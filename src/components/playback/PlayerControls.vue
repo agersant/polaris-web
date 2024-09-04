@@ -19,9 +19,10 @@
             <div @click="togglePlayback" class="material-icons-round py-1 w-12 h-12 
                 text-4xl text-center text-accent-0 rounded-full 
                 ring-accent-500 dark:ring-accent-600 ring-offset-4 ring-offset-ls-0 dark:ring-offset-ds-900
-                active:pt-[5px]" :class="(playback.currentTrack && !error)
+                active:pt-[5px]"
+                :class="(playback.currentTrack && !error)
                     ? 'cursor-pointer bg-accent-600 dark:bg-accent-700 hover:bg-accent-500 dark:hover:bg-accent-600 hover:ring-2'
-                    : 'active:pointer-events-none cursor-not-allowed bg-ls-400 dark:text-ds-400 dark:bg-ds-600'">
+                    : 'active:pointer-events-none cursor-not-allowed text-ls-200 bg-ls-400 dark:text-ds-600 dark:bg-ds-800'">
                 {{ paused ? 'play_arrow' : 'pause' }}
             </div>
 
