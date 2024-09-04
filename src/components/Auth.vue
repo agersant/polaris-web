@@ -10,7 +10,7 @@
 				<div v-if="badCredentials" class="text-red-600 dark:text-red-500 text-sm py-2">
 					Incorrect credentials, please try again.
 				</div>
-				<Button label="Sign In" type="submit" size="xl" class="w-full" />
+				<Button label="Sign In" type="submit" size="xl" class="w-full" :disabled="!username || !password" />
 			</form>
 		</div>
 	</div>
