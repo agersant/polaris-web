@@ -1,6 +1,5 @@
 <template>
-    <div ref="root" @click="snapToCursor" @keydown="onKeyDown" @dragstart="onDragStart" @dragend="endDrag"
-        draggable="true" tabindex="-1"
+    <div ref="root" @click="snapToCursor" @keydown="onKeyDown" tabindex="-1"
         class="cursor-pointer group relative h-1.5 rounded-full bg-ls-300 dark:bg-ds-700">
         <div class="absolute h-full rounded-full bg-accent-600 dark:bg-accent-700" :style="`width: ${100 * model}%`" />
         <div class="cursor-grab
@@ -14,25 +13,26 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, Ref, ref, } from 'vue';
-import { useMouseInElement, watchPausable } from '@vueuse/core';
-
-import { blankElement } from '@/dnd';
+import { onMounted, Ref, ref, watch, } from 'vue';
+import { useMouseInElement, useMousePressed, watchPausable } from '@vueuse/core';
 
 const model = defineModel<number>({ required: true });
 
 const root: Ref<HTMLElement | null> = ref(null);
 
 const { elementX: mouseX, elementWidth: width } = useMouseInElement(root);
-
+const { pressed } = useMousePressed({ target: root })
 const { pause: endDrag, resume: beginDrag } = watchPausable(mouseX, snapToCursor);
 
 onMounted(endDrag);
 
-function onDragStart(event: DragEvent) {
-    event.dataTransfer?.setDragImage(blankElement, 0, 0);
-    beginDrag();
-}
+watch(pressed, (down) => {
+    if (down) {
+        beginDrag();
+    } else {
+        endDrag();
+    }
+});
 
 function onKeyDown(event: KeyboardEvent) {
     switch (event.code) {
