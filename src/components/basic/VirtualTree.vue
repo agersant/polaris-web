@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref, watch } from 'vue';
-import { useVirtualList } from '@vueuse/core';
+import { computed, nextTick, onMounted, Ref, ref, toRaw, watch } from 'vue';
+import { useScroll, useVirtualList, watchDebounced } from '@vueuse/core';
 import { vOnClickOutside } from "@vueuse/components";
 
 import VirtualTreeNode from "./VirtualTreeNode.vue";
@@ -41,9 +41,7 @@ export interface Node {
 
 const itemHeight = ref(36);
 
-const props = defineProps<{
-    value: Node[],
-}>();
+const nodes = defineModel<Node[]>({ required: true });
 
 const emit = defineEmits<{
     "node-expand": [node: Node],
@@ -57,7 +55,7 @@ const virtualList: Ref<HTMLElement | null> = ref(null);
 const visibleKeys = computed(() => {
     let keys = new Set<string>();
     let collapseDepth = Number.POSITIVE_INFINITY;
-    for (const node of props.value) {
+    for (const node of nodes.value) {
         if (node.depth >= collapseDepth) {
             continue;
         }
@@ -72,29 +70,31 @@ const visibleKeys = computed(() => {
 });
 
 const visibleNodes = computed(() => {
-    let nodes = [];
-    const visible = visibleKeys.value;
-    for (const node of props.value) {
-        if (visible.has(node.key)) {
-            nodes.push(node);
+    let visible = [];
+    const keys = visibleKeys.value;
+    for (const node of nodes.value) {
+        if (keys.has(node.key)) {
+            visible.push(node);
         }
     }
-    return nodes;
+    return visible;
 });
 
 const expandedKeys = ref(new Set<string>());
 const selectedKeys = ref(new Set<string>());
 const focusedKey: Ref<string | undefined> = ref();
-let pivotKey: string | undefined;
+const pivotKey: Ref<string | undefined> = ref();
 
 const selection = computed(() =>
-    props.value.filter(n => selectedKeys.value.has(n.key))
+    nodes.value.filter(n => selectedKeys.value.has(n.key))
 );
 
 defineExpose({ selection });
 
 const overscan = 1;
 const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan: overscan });
+const viewport = computed(() => containerProps.ref.value);
+const { y: scrollY } = useScroll(viewport);
 
 const findQuery = ref("");
 const findMatch = computed(() => {
@@ -103,7 +103,7 @@ const findMatch = computed(() => {
     }
     let lowercaseQuery = findQuery.value.toLowerCase();
     const visible = visibleKeys.value;
-    return props.value.find(n => visible.has(n.key) && n.label.toLowerCase().startsWith(lowercaseQuery));
+    return nodes.value.find(n => visible.has(n.key) && n.label.toLowerCase().startsWith(lowercaseQuery));
 });
 watch(findMatch, () => {
     if (findMatch.value) {
@@ -132,7 +132,7 @@ function toggleNode(node: Node) {
 function selectNode(node: Node) {
     selectedKeys.value.clear();
     selectedKeys.value.add(node.key);
-    pivotKey = node.key;
+    pivotKey.value = node.key;
     focusedKey.value = node.key;
 }
 
@@ -140,16 +140,16 @@ function onNodeClick(event: MouseEvent, node: Node) {
 
     focusedKey.value = node.key;
 
-    const pivotIndex = props.value.findIndex(n => n.key == pivotKey);
+    const pivotIndex = nodes.value.findIndex(n => n.key == pivotKey.value);
 
     if (event.shiftKey && pivotIndex >= 0) {
-        const clickedIndex = props.value.findIndex(n => n.key == node.key);
+        const clickedIndex = nodes.value.findIndex(n => n.key == node.key);
         const from = Math.min(pivotIndex, clickedIndex);
         const to = Math.max(pivotIndex, clickedIndex);
 
         if (event.ctrlKey) {
             for (let i = from; i <= to; i++) {
-                const keyIter = props.value[i].key;
+                const keyIter = nodes.value[i].key;
                 if (!visibleKeys.value.has(keyIter)) {
                     continue;
                 }
@@ -158,7 +158,7 @@ function onNodeClick(event: MouseEvent, node: Node) {
         } else {
             selectedKeys.value.clear();
             for (let i = from; i <= to; i++) {
-                const keyIter = props.value[i].key;
+                const keyIter = nodes.value[i].key;
                 if (!visibleKeys.value.has(keyIter)) {
                     continue;
                 }
@@ -173,10 +173,10 @@ function onNodeClick(event: MouseEvent, node: Node) {
     } else if (event.ctrlKey) {
         if (selectedKeys.value.has(node.key)) {
             selectedKeys.value.delete(node.key);
-            pivotKey = undefined;
+            pivotKey.value = undefined;
         } else {
             selectedKeys.value.add(node.key);
-            pivotKey = node.key;
+            pivotKey.value = node.key;
         }
     } else {
         selectNode(node);
@@ -260,7 +260,7 @@ function onKeyDown(event: KeyboardEvent) {
             if (!findQuery.value.length) {
                 selectedKeys.value.clear();
                 focusedKey.value = undefined;
-                pivotKey = undefined;
+                pivotKey.value = undefined;
             }
             break;
         case 'Home':
@@ -270,8 +270,8 @@ function onKeyDown(event: KeyboardEvent) {
         case 'KeyA':
             if (event.ctrlKey) {
                 selectedKeys.value = new Set(visibleKeys.value);
-                focusedKey.value = props.value.find(n => visibleKeys.value.has(n.key))?.key;
-                pivotKey = focusedKey.value;
+                focusedKey.value = nodes.value.find(n => visibleKeys.value.has(n.key))?.key;
+                pivotKey.value = focusedKey.value;
             }
             event.preventDefault();
             break;
@@ -312,7 +312,7 @@ function moveLeft(event: KeyboardEvent) {
             if (priorNode.depth < focusedNode.depth) {
                 selectedKeys.value.clear();
                 selectedKeys.value.add(priorNode.key);
-                pivotKey = priorNode.key;
+                pivotKey.value = priorNode.key;
                 focusedKey.value = priorNode.key;
                 snapScrolling();
                 break;
@@ -341,7 +341,7 @@ function move(delta: number, event: KeyboardEvent) {
         return;
     }
 
-    const pivotIndex = visibleNodes.value.findIndex(n => n.key == pivotKey);
+    const pivotIndex = visibleNodes.value.findIndex(n => n.key == pivotKey.value);
     const fromIndex = Math.max(0, Math.min(visibleNodes.value.findIndex(n => n.key == focusedKey.value), visibleNodes.value.length - 1));
     const toIndex = Math.max(0, Math.min(fromIndex + delta, visibleNodes.value.length - 1));
     const toNode = visibleNodes.value[toIndex];
@@ -349,7 +349,7 @@ function move(delta: number, event: KeyboardEvent) {
     if (!event.shiftKey || pivotIndex < 0) {
         selectedKeys.value.clear();
         selectedKeys.value.add(toNode.key);
-        pivotKey = toNode.key;
+        pivotKey.value = toNode.key;
     } else {
         for (let index = fromIndex; true; index += Math.sign(delta)) {
             if ((delta > 0 && index > pivotIndex) || (delta < 0 && index < pivotIndex)) {
@@ -384,5 +384,38 @@ function snapScrolling() {
         scrollTo(focusedIndex - (last - first) + padding);
     }
 }
+
+const historyStateKey = "virtualTreeState";
+
+// Ideally we would only save state when vue-router calls `onBeforeRouteLeave`
+// However, when the user clicks the browser back button, the browser
+// history updates before vue-router's. When `onBeforeRouteLeave` runs, it
+// is too late to save data for the page we are exiting via `history.replaceState()`.
+watchDebounced([nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, scrollY], () => {
+    const state = {
+        nodes: nodes.value,
+        expandedKeys: toRaw(expandedKeys.value),
+        selectedKeys: toRaw(selectedKeys.value),
+        focusedKey: focusedKey.value,
+        pivotKey: pivotKey.value,
+        scrollY: scrollY.value,
+    };
+    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { debounce: 100, maxWait: 500 });
+
+onMounted(() => {
+    const state = history.state[historyStateKey];
+    if (!state) {
+        return;
+    }
+    nodes.value = state.nodes;
+    expandedKeys.value = state.expandedKeys;
+    selectedKeys.value = state.selectedKeys;
+    focusedKey.value = state.focusedKey;
+    pivotKey.value = state.pivotKey;
+    nextTick(() => {
+        viewport.value?.scrollTo({ top: state.scrollY });
+    });
+});
 
 </script>
