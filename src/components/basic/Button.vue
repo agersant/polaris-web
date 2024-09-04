@@ -1,6 +1,6 @@
 <template>
-    <button type="button" :class="buttonClass"
-        class="inline-flex items-center justify-center gap-x-1.5 rounded-md shadow-sm text-sm font-semibold [&>*]:active:translate-y-px">
+    <button type="button" :class="buttonClass" :disabled="disabled"
+        class="inline-flex items-center justify-center gap-x-1.5 rounded-md shadow-sm text-sm font-semibold">
         <span v-if="props.icon" class="material-icons-round text-ls-400 dark:text-ds-200">
             {{ props.icon }}
         </span>
@@ -14,6 +14,7 @@ import { computed } from 'vue';
 const props = withDefaults(defineProps<{
     label: string,
     icon?: string,
+    disabled?: boolean,
     severity?: "primary" | "secondary",
     size?: "base" | "lg" | "xl",
 }>(), {
@@ -22,6 +23,10 @@ const props = withDefaults(defineProps<{
 });
 
 let palettes = {
+    disabled: `
+        bg-ls-400 text-ls-200
+        dark:bg-ds-800 dark:text-ds-500
+    `,
     primary: `
         bg-accent-600 hover:bg-accent-500 text-ls-0
         dark:bg-accent-600 dark:hover:bg-accent-500 dark:text-ds-0
@@ -38,7 +43,7 @@ let palettes = {
 
 const buttonClass = computed(() => {
 
-    const palette = palettes[props.severity];
+    const palette = props.disabled ? palettes.disabled : palettes[props.severity];
 
     let padding = "px-2.5 py-1.5";
     if (props.size == "lg") {
@@ -48,6 +53,7 @@ const buttonClass = computed(() => {
     }
 
     return [
+        props.disabled ? "cursor-not-allowed" : "cursor-pointer [&>*]:active:translate-y-px",
         padding,
         palette,
     ];
