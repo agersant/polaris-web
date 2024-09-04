@@ -74,7 +74,7 @@ jobs:
 
         steps:
             - name: Retrieve Build
-              uses: actions/download-artifact@v1
+              uses: actions/download-artifact@v4.1.7
               with:
                   name: web
             - name: Compress Build
