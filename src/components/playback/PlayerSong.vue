@@ -13,7 +13,7 @@
             <div v-if="artists" class="text-ls-400 dark:text-ds-200">-</div>
             <!-- TODO song click interaction -->
             <span v-if="song"
-                class="cursor-pointer hover:underline hover:text-accent-600 overflow-hidden text-ellipsis select-text">
+                class="cursor-pointer hover:underline hover:text-accent-600 overflow-hidden text-ellipsis">
                 {{ formatTitle(song) }}
             </span>
             <span v-else class="rounded-full w-40 mt-1 h-3 mb-1 bg-ls-200 dark:bg-ds-700" />
