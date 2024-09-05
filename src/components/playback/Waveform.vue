@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, Ref, watch } from 'vue';
-import { useCssVar, useElementSize, useMouseInElement, watchDebounced, watchPausable } from '@vueuse/core';
+import { refDebounced, useCssVar, useElementSize, useMouseInElement, watchPausable, watchThrottled } from '@vueuse/core';
 
 import { Peaks } from '@/api/dto';
 import { get_peaks } from '@/api/endpoints';
@@ -42,6 +42,7 @@ const root = ref(null);
 
 const peaks: Ref<Peaks | null> = ref(null);
 const loading = ref(false);
+const debouncedLoading = refDebounced(loading, 50);
 
 const fullWaveform: Ref<HTMLCanvasElement | null> = ref(null);
 const playedWaveform: Ref<HTMLCanvasElement | null> = ref(null);
@@ -100,10 +101,10 @@ watch(() => props.path, async () => {
 
 onMounted(redraw);
 
-watchDebounced(
-    [width, height, fullWaveform, playedWaveform, peaks, loading, palette],
+watchThrottled(
+    [width, height, fullWaveform, playedWaveform, peaks, debouncedLoading, palette],
     redraw,
-    { debounce: 20, maxWait: 100 }
+    { throttle: 100 },
 );
 
 function redraw() {

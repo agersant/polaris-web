@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, Ref, ref, toRaw, watch } from 'vue';
-import { useScroll, useVirtualList, watchDebounced } from '@vueuse/core';
+import { useScroll, useVirtualList, watchThrottled } from '@vueuse/core';
 import { vOnClickOutside } from "@vueuse/components";
 
 import VirtualTreeNode from "./VirtualTreeNode.vue";
@@ -391,7 +391,7 @@ const historyStateKey = "virtualTreeState";
 // However, when the user clicks the browser back button, the browser
 // history updates before vue-router's. When `onBeforeRouteLeave` runs, it
 // is too late to save data for the page we are exiting via `history.replaceState()`.
-watchDebounced([nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, scrollY], () => {
+watchThrottled([nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, scrollY], () => {
     const state = {
         nodes: nodes.value,
         expandedKeys: toRaw(expandedKeys.value),
@@ -401,7 +401,7 @@ watchDebounced([nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, scrollY
         scrollY: scrollY.value,
     };
     history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { debounce: 100, maxWait: 500 });
+}, { throttle: 500 });
 
 onMounted(() => {
     const state = history.state[historyStateKey];
