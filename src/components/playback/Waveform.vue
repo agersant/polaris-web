@@ -11,7 +11,8 @@
             https://developer.mozilla.org/en-US/docs/Web/CSS/element
          Until then, we simply draw two distinct pre-colored canvas.
         -->
-        <canvas ref="fullWaveform" class="absolute w-full h-full" />
+        <canvas ref="fullWaveform" class="absolute w-full h-full"
+            :style="`clip-path: xywh(${progress * 100} 0 100% 100%)`" />
         <canvas ref="playedWaveform" class="absolute w-full h-full"
             :style="`clip-path: xywh(0 0 ${progress * 100}% 100%)`" />
     </div>
@@ -140,6 +141,7 @@ function draw(canvas: HTMLCanvasElement, color: string) {
     const read = (i: number) => data[i] / 128 - 1;
     const halfHeight = h / 2;
 
+    context.beginPath();
     if (numPeaks > w) {
         let x = 0;
         let min = 1;
@@ -150,7 +152,7 @@ function draw(canvas: HTMLCanvasElement, color: string) {
             if ((x / w) < (i / numPeaks)) {
                 const y = halfHeight * (1 - max);
                 const height = Math.max(1, halfHeight * Math.abs(max - min));
-                context.fillRect(x, y, 1, height);
+                context.rect(x, y, 1, height);
                 min = 1;
                 max = -1;
                 x += 1;
@@ -171,10 +173,13 @@ function draw(canvas: HTMLCanvasElement, color: string) {
             const max = t * read(2 * sampleLeft + 1) + (1 - t) * read(2 * sampleRight + 1);
             const y = halfHeight * (1 - max);
             const height = Math.max(1, halfHeight * Math.abs(max - min));
-            context.fillRect(x, y, 1, height);
+            context.rect(x, y, 1, height);
         }
 
     }
+
+    context.fill();
+    context.closePath();
 
 }
 </script>
