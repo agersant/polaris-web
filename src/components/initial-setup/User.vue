@@ -1,9 +1,5 @@
 <template>
-	<div class="flex flex-col gap-4">
-		<h2 class="text-2xl font-semibold text-ls-900 dark:text-ds-200">User Account</h2>
-		<p class="mb-4 text-ls-500 dark:text-ds-400">
-			Please choose a username and password.
-		</p>
+	<Step title="User Account" description="Please choose a username and password.">
 		<InputText data-cy="create-username" v-model="username" id="username" name="username" autocomplete="username"
 			label="Username" required />
 		<InputText data-cy="create-password" v-model="password" id="password" name="password" autocomplete="password"
@@ -14,14 +10,16 @@
 			The passwords do not match.
 		</p>
 		<Button data-cy="submit-user" label="Next" size="xl" :disabled="!validate()" @click="proceed" class="mt-8" />
-	</div>
+	</Step>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from "vue";
+
 import Button from "@/components/basic/Button.vue";
 import InputText from "@/components/basic/InputText.vue";
+import Step from "@/components/initial-setup/Step.vue";
 import { useUsersStore } from "@/stores/users";
-import { computed, ref } from "vue";
 
 const users = useUsersStore();
 
