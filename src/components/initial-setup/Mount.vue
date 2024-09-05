@@ -1,9 +1,6 @@
 <template>
-	<div class="flex flex-col gap-4">
-		<h2 class="text-2xl font-semibold text-ls-900 dark:text-ds-200">Music Sources</h2>
-		<p class="mb-4 text-ls-500 dark:text-ds-400">
-			Please indicate which directory Polaris should scan to populate your music collection.
-		</p>
+	<Step title="Music Sources"
+		description="Please indicate which directory Polaris should scan to populate your music collection.">
 		<div class="flex items-stretch gap-6">
 			<InputText class="grow" v-model="mountDir.source" id="location" name="location" label="Location"
 				placeholder="C:\MyMusic" required />
@@ -14,7 +11,7 @@
 		<p class="mt-4 text-ls-500 text-xs">
 			You can change this or add more directories later from the settings menu.
 		</p>
-	</div>
+	</Step>
 </template>
 
 <script setup lang="ts">
@@ -23,6 +20,7 @@ import { ref, Ref } from "vue";
 import { MountDir } from "@/api/dto";
 import Button from "@/components/basic/Button.vue";
 import InputText from "@/components/basic/InputText.vue";
+import Step from "@/components/initial-setup/Step.vue";
 import { useMountDirsStore } from "@/stores/mount-dirs";
 import { triggerIndex } from "@/api/endpoints";
 
