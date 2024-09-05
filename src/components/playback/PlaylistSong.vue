@@ -94,9 +94,8 @@ const rowClass = computed(() => {
         text,
         background,
         isCurrent.value ? "font-semibold" : "",
-        props.compact ? "px-3" : "",
-        !props.compact && props.selected ? "-ml-2 pl-2 pr-2" : "",
-        !props.compact && !props.selected ? "pr-2" : "",
+        props.compact ? "px-3" : "pr-2",
+        !props.compact && props.selected ? "-ml-2 pl-2" : "",
         props.focused ? "outline-1 outline-dotted outline-accent-500 -outline-offset-1" : "",
         "mr-2"
     ];
