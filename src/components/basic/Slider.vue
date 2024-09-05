@@ -13,12 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, Ref, ref, watch, } from 'vue';
+import { onMounted, useTemplateRef, watch, } from 'vue';
 import { useMouseInElement, useMousePressed, watchPausable } from '@vueuse/core';
 
 const model = defineModel<number>({ required: true });
 
-const root: Ref<HTMLElement | null> = ref(null);
+const root = useTemplateRef("root");
 
 const { elementX: mouseX, elementWidth: width } = useMouseInElement(root);
 const { pressed } = useMousePressed({ target: root })

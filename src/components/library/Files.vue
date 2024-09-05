@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, shallowRef, watch } from "vue";
+import { Ref, ref, shallowRef, useTemplateRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAsyncState } from "@vueuse/core";
 
@@ -73,7 +73,7 @@ watch(topLevel, (v) => {
 	}
 });
 
-const tree: Ref<InstanceType<typeof VirtualTree> | null> = ref(null);
+const tree = useTemplateRef("tree");
 const searchQuery = ref("");
 
 async function openDirectory(node: Node) {

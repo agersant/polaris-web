@@ -29,15 +29,15 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, nextTick, Ref, ref, toRaw, watch } from 'vue';
+import { computed, nextTick, Ref, ref, toRaw, useTemplateRef, watch } from 'vue';
 import { useCached, useElementSize, useLastChanged, useMouseInElement, useMousePressed, useRafFn, useScroll } from '@vueuse/core';
 
-const props = withDefaults(defineProps<{
+const { divider = false, ...props } = defineProps<{
     items: T[],
     itemHeight: number,
     divider?: boolean,
     showDropPreview: boolean,
-}>(), { divider: false });
+}>();
 
 const emit = defineEmits<{
     'list-drop': [toIndex: number]
@@ -45,8 +45,8 @@ const emit = defineEmits<{
     'list-delete': [items: T[]]
 }>();
 
-const viewport: Ref<HTMLElement | null> = ref(null);
-const wrapper: Ref<HTMLElement | null> = ref(null);
+const viewport = useTemplateRef("viewport");
+const wrapper = useTemplateRef("wrapper");
 
 const blankImage = new Image(0, 0);
 blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
@@ -68,7 +68,7 @@ const selection = computed(() => {
     return props.items.filter(i => keys.has(i.key));
 });
 
-const dividerHeight = computed(() => props.divider ? 1 : 0);
+const dividerHeight = computed(() => divider ? 1 : 0);
 const rowHeight = computed(() => props.itemHeight + dividerHeight.value);
 
 function rowOffset(index: number) {

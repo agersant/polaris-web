@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, Ref, watch } from 'vue';
+import { computed, onMounted, ref, Ref, useTemplateRef, watch } from 'vue';
 import { refDebounced, useCssVar, useElementSize, useMouseInElement, watchPausable, watchThrottled } from '@vueuse/core';
 
 import { Peaks } from '@/api/dto';
@@ -38,17 +38,16 @@ const emit = defineEmits<{
     "seek": [seconds: number],
 }>();
 
-const root = ref(null);
+const root = useTemplateRef("root");
+const fullWaveform: Ref<HTMLCanvasElement | null> = useTemplateRef("fullWaveform");
+const playedWaveform: Ref<HTMLCanvasElement | null> = useTemplateRef("playedWaveform");
+const { width, height } = useElementSize(fullWaveform);
+const { elementX: mouseX } = useMouseInElement(root);
 
 const peaks: Ref<Peaks | null> = ref(null);
 const loading = ref(false);
 const debouncedLoading = refDebounced(loading, 50);
 
-const fullWaveform: Ref<HTMLCanvasElement | null> = ref(null);
-const playedWaveform: Ref<HTMLCanvasElement | null> = ref(null);
-const { width, height } = useElementSize(fullWaveform);
-
-const { elementX: mouseX } = useMouseInElement(root);
 const { pause: endDrag, resume: beginDrag } = watchPausable(mouseX, seekToCursor);
 
 onMounted(endDrag);

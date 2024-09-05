@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, watch } from "vue";
+import { computed, nextTick, onMounted, Ref, ref, useTemplateRef, watch } from "vue";
 
 import { makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import PlayerAlbum from "@/components/playback/PlayerAlbum.vue";
@@ -30,7 +30,7 @@ const duration = ref(1);
 const paused = ref(true);
 const buffering = ref(false);
 const error: Ref<string | null> = ref(null);
-const htmlAudio: Ref<HTMLAudioElement | null> = ref(null);
+const htmlAudio = useTemplateRef("htmlAudio");
 
 const audioURL = computed(() => playback.currentTrack ? makeAudioURL(playback.currentTrack.path) : null);
 const artworkURL = computed(() => playback.currentSong && playback.currentSong.artwork ? makeThumbnailURL(playback.currentSong.artwork, "small") : null);

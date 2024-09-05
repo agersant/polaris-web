@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, toRaw, watch } from 'vue';
+import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch } from 'vue';
 import { useScroll, useVirtualList, watchThrottled } from '@vueuse/core';
 import { vOnClickOutside } from "@vueuse/components";
 
@@ -50,7 +50,7 @@ const emit = defineEmits<{
     "nodes-drag-end": [event: DragEvent],
 }>();
 
-const virtualList: Ref<HTMLElement | null> = ref(null);
+const virtualList = useTemplateRef("virtualList");
 
 const visibleKeys = computed(() => {
     let keys = new Set<string>();

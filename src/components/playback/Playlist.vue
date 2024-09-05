@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { ComponentExposed } from "vue-component-type-helpers";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
@@ -73,7 +73,7 @@ import { SelectOption } from "../basic/Select.vue";
 
 const playback = usePlaybackStore();
 
-const orderableList: Ref<ComponentExposed<typeof OrderableList<PlaylistEntry>> | null> = ref(null);
+const orderableList = useTemplateRef("orderableList");
 
 // TODO save to preferences
 const listMode = ref("compact");
