@@ -99,6 +99,8 @@ const roleFilters: SelectOption<ArtistRole>[] = [
 ];
 const roleFilter = ref(roleFilters[0]);
 
+// TODO scroll to top when filter, roleFilter or displayMode changes
+
 const filtered = computed(() => {
     const query = filter.value.toLowerCase();
     const role = roleFilter.value.value;
