@@ -25,13 +25,8 @@
 		</div>
 
 		<div v-else-if="!treeModel.length && isReady" class="grow flex items-start mt-40 justify-center text-center">
-			<BlankStateFiller icon="folder_off">
+			<BlankStateFiller icon="folder_off" suggestion="collectionSettings">
 				No files found.
-				<span v-if="user.isAdmin">Please verify<br />your
-					<a @click="router.push('/settings/collection')" class="cursor-pointer text-accent-600 underline">
-						Collection settings
-					</a>.
-				</span>
 			</BlankStateFiller>
 		</div>
 
