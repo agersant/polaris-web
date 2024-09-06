@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed, ref, Ref, watch } from "vue";
 import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
-import { get_album } from "@/api/endpoints";
+import { getAlbum } from "@/api/endpoints";
 import { usePlaybackStore } from "@/stores/playback";
 import Album from "./layout/Album.vue";
 
@@ -32,7 +32,7 @@ const paneContent: Ref<HTMLElement | null> = ref(null);
 watch(
 	() => props.album_key,
 	async (album_key) => {
-		album.value = await get_album(album_key);
+		album.value = await getAlbum(album_key);
 	},
 	{ immediate: true }
 );

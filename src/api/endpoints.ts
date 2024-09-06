@@ -3,6 +3,7 @@ import {
 	AlbumHeader,
 	AlbumKey,
 	API_ARRAY_SEPARATOR,
+	ArtistHeader,
 	Authorization,
 	BrowserEntry,
 	DDNSConfig,
@@ -175,13 +176,18 @@ export async function flatten(path: string): Promise<SongList> {
 
 // Semantic
 
-export async function get_album(album_key: AlbumKey): Promise<Album> {
+export async function getArtists(): Promise<ArtistHeader[]> {
+	const response = await request("/artists");
+	return await response.json();
+}
+
+export async function getAlbum(album_key: AlbumKey): Promise<Album> {
 	const songs = useSongsStore();
 	const response = await request("/artists/" + encodeURIComponent(album_key.artists.join(API_ARRAY_SEPARATOR)) + "/albums/" + encodeURIComponent(album_key.name || ""));
 	return await response.json().then((album: Album) => {
 		songs.ingest(album.songs);
 		return album;
-	});;
+	});
 }
 
 export async function random(): Promise<AlbumHeader[]> {
