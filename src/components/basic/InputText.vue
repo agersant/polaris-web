@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label v-if="label" :for="props.name" class="block text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">
+        <label v-if="label" :for="name" class="block text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">
             {{ props.label }}
         </label>
         <div :class="{ 'mt-2': label }" class="relative rounded-md shadow-sm">
@@ -9,9 +9,9 @@
                     {{ props.icon }}
                 </span>
             </div>
-            <input v-model="model" :id="props.id" :type="password ? 'password' : 'text'"
-                :placeholder="props.placeholder" :name="props.name" :autocomplete="props.autocomplete"
-                :autofocus="props.autofocus" :required="props.required" :class="inputClass" class="w-full rounded-md border-0 py-2 shadow-sm text-sm leading-6
+            <input v-focus="autofocus" v-model="model" :id="id" :type="password ? 'password' : 'text'"
+                :placeholder="placeholder" :name="name" :autocomplete="autocomplete" :autofocus="autofocus"
+                :required="required" :class="inputClass" class="w-full rounded-md border-0 py-2 shadow-sm text-sm leading-6
                 ring-1 ring-inset focus:ring-2 focus:ring-inset 
                 dark:bg-white/5
                 text-ls-900 dark:text-ds-0
@@ -26,6 +26,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+
+const vFocus = {
+    mounted: (el: HTMLElement, binding: { value: any }) => {
+        if (binding.value) {
+            el.focus();
+        }
+    }
+};
 
 const props = defineProps<{
     id: string,
