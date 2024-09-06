@@ -82,6 +82,14 @@ export interface SongList {
 	first_songs: Song[];
 }
 
+export interface ArtistHeader {
+	name: string;
+	num_albums_as_performer: number;
+	num_albums_as_additional_performer: number;
+	num_albums_as_composer: number;
+	num_albums_as_lyricist: number;
+}
+
 export interface AlbumKey {
 	artists: string[],
 	name?: string,

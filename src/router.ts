@@ -5,6 +5,7 @@ import App from "@/components/App.vue";
 import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
 import AlbumPage from "@/components/library/AlbumPage.vue";
+import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
 // import Playlist from "@/components/profile/playlists/Playlist.vue";
 import Playlists from "@/components/profile/playlists/Playlists.vue";
@@ -52,6 +53,7 @@ const routes = [
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: "/files", component: Files },
+			{ path: "/artists", component: Artists },
 			{ path: "/albums/:artists/:name", component: AlbumPage, props: extractAlbumKey },
 			{ path: "/random", component: Random },
 			{ path: "/recent", component: Recent },
@@ -124,6 +126,11 @@ router.beforeEach(async (to, from, next) => {
 	next();
 });
 
+export function makeArtistURL(name: string) {
+	// TODO this breaks when artists or album name contain `/` character (eg. OCRemix)
+	return `/artist/${name}`;
+};
+
 export function makeAlbumURL(song: Song) {
 	if (!song.album) {
 		// TODO support for orphaned songs?
@@ -133,8 +140,8 @@ export function makeAlbumURL(song: Song) {
 	if (song.album_artists?.length) {
 		artists = song.album_artists;
 	}
-	// TODO this breaks when artists or album name contain `/` character (eg. OCRemix)
-	return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${song.album}`;
+	// TODO this breaks when artists or album name contain `/ ` character (eg. OCRemix)
+	return `/ albums / ${(artists || []).join(URI_ARRAY_SEPARATOR)}/${song.album}`;
 };
 
 export default router;
