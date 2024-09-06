@@ -26,7 +26,7 @@
                     :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />
             </div>
 
-            <div class="grow min-h-0 overflow-y-scroll relative -mr-3 pr-3" tabindex="-1">
+            <div class="grow min-h-0 -mr-4 pr-4" v-bind="containerProps" tabindex="-1">
 
                 <div v-if="!filtered.length" class="grow flex mt-40 justify-center text-center">
                     <BlankStateFiller icon="person_off">
@@ -34,29 +34,22 @@
                     </BlankStateFiller>
                 </div>
 
-                <!-- TODO virtualize -->
-                <ul class="flex flex-col divide-y divide-ls-200">
-                    <li v-for="artist of filtered" class="flex items-center first:pt-1 py-4 gap-4">
+                <ul class="flex flex-col divide-y divide-ls-200" v-bind="wrapperProps">
+                    <li v-for="item of virtualArtists" :key="item.data.name"
+                        class="flex items-center first:pt-1 py-4 gap-4" :style="`height: ${itemHeight}px`">
                         <span
                             class="material-icons-round rounded-full flex items-center justify-center text-ls-500 bg-ls-200 p-2">person</span>
                         <div class="flex flex-col w-96">
-                            <span @click="router.push(makeArtistURL(artist.name))"
-                                class="cursor-pointer mb-1 font-semibold text-ls-900 text-sm overflow-hidden text-ellipsis hover:text-accent-600 hover:underline">
-                                {{ artist.name || "Unknown Artist" }}
+                            <span @click="router.push(makeArtistURL(item.data.name))"
+                                class="cursor-pointer mb-1 font-semibold text-sm text-ls-700 overflow-hidden text-ellipsis hover:text-accent-600 hover:underline">
+                                {{ item.data.name || "" }}
                             </span>
                             <span class="text-ls-500 text-xs">
-                                {{ formatReleaseCount(artist) }}
+                                {{ formatReleaseCount(item.data) }}
                             </span>
                         </div>
-                        <!-- TODO real genre tags -->
                         <div class="grow flex justify-end gap-2">
-                            <span
-                                class="inline-flex items-center rounded-md bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700">Rock</span>
-                            <span
-                                class="inline-flex items-center rounded-md bg-indigo-100 px-1.5 py-0.5 text-xs font-medium text-indigo-700">Metal</span>
-                            <span
-                                class="inline-flex items-center rounded-md bg-purple-100 px-1.5 py-0.5 text-xs font-medium text-purple-700">Progressive
-                                Rock</span>
+                            <Badge v-for="genre of getMainGenres(item.data)" :label="genre" :auto-color="true" />
                         </div>
                     </li>
                 </ul>
@@ -68,11 +61,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useAsyncState } from "@vueuse/core";
+import { useAsyncState, useVirtualList } from "@vueuse/core";
 
 import { getArtists } from "@/api/endpoints";
+import Badge from "@/components/basic/Badge.vue";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import InputText from "@/components/basic/InputText.vue";
 import MultiSwitch from "@/components/basic/MultiSwitch.vue";
@@ -98,8 +92,6 @@ const roleFilters: SelectOption<ArtistRole>[] = [
     { label: "Lyricists", value: "lyricist" },
 ];
 const roleFilter = ref(roleFilters[0]);
-
-// TODO scroll to top when filter, roleFilter or displayMode changes
 
 const filtered = computed(() => {
     const query = filter.value.toLowerCase();
@@ -128,6 +120,19 @@ const filtered = computed(() => {
         return a.name.toLowerCase().includes(query);
     });
 });
+
+const itemHeight = 73;
+const { list: virtualArtists, containerProps, wrapperProps, scrollTo } = useVirtualList(filtered, { itemHeight });
+
+watch(filtered, () => scrollTo(0));
+
+function getMainGenres(artist: ArtistHeader) {
+    let genres = Object.entries(artist.num_songs_by_genre).map(([genre, count]) => ({ genre, count }));
+    genres.sort((a, b) => a.count - b.count);
+    let displayGenres = genres.slice(0, 3).map(({ genre }) => genre);
+    displayGenres.sort();
+    return displayGenres;
+}
 
 function formatReleaseCount(artist: ArtistHeader) {
     const plural = (n: number) => n > 1 ? "s" : "";
