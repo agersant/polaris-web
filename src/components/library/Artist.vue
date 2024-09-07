@@ -13,8 +13,11 @@
             <div class="flex justify-end gap-2">
                 <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
             </div>
-            <MultiSwitch v-model="displayMode"
-                :items="[{ icon: 'apps', value: 'grid' }, { icon: 'timeline', value: 'feed' }]" />
+            <MultiSwitch v-model="displayMode" :items="[
+                { icon: 'apps', value: 'grid5' },
+                { icon: 'grid_view', value: 'grid3' },
+                { icon: 'timeline', value: 'feed' }
+            ]" />
         </div>
 
         <div v-if="artist" class="grow min-h-0 -mr-4 pr-4 overflow-y-scroll flex flex-col">
@@ -38,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, Ref, ref } from "vue";
 import { useAsyncState } from "@vueuse/core";
 
 import Badge from '@/components/basic/Badge.vue';
@@ -52,11 +55,20 @@ const props = defineProps<{
     name: string,
 }>();
 
+type DisplayMode = "grid5" | "grid3" | "timeline";
+
 // TODO save in preferences
-const displayMode = ref("grid");
+const displayMode: Ref<DisplayMode> = ref("grid5");
+
+const numColumns = computed(() => {
+    switch (displayMode.value) {
+        case "grid5": return 5;
+        case "grid3": return 3;
+        case "timeline": return 1;
+    };
+});
 
 const gapSize = ref(32);
-const numColumns = ref(5);
 const itemStyle = computed(() => {
     return {
         width: `calc(${100 / numColumns.value}% - ${gapSize.value * (numColumns.value - 1) / numColumns.value}px)`,
