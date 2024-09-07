@@ -34,12 +34,13 @@
                     </BlankStateFiller>
                 </div>
 
-                <ul class="flex flex-col divide-y divide-ls-200" v-bind="wrapperProps">
+                <ul class="flex flex-col overflow-x-hidden divide-y divide-ls-200" v-bind="wrapperProps">
                     <li v-for="item of virtualArtists" :key="item.data.name"
                         class="flex items-center first:pt-1 py-4 gap-4" :style="`height: ${itemHeight}px`">
                         <span
                             class="material-icons-round rounded-full flex items-center justify-center text-ls-500 bg-ls-200 p-2">person</span>
-                        <div class="flex flex-col w-96">
+                        <div class="grow shrink min-w-0 pr-8 flex flex-col">
+                            <!-- TODO drag and drop artist to playlist -->
                             <span @click="router.push(makeArtistURL(item.data.name))"
                                 class="cursor-pointer font-semibold text-ls-700 overflow-hidden text-ellipsis hover:text-accent-600 hover:underline"
                                 :class="displayMode == 'fixed' ? 'text-sm' : ''"
@@ -50,7 +51,8 @@
                                 {{ formatReleaseCount(item.data) }}
                             </span>
                         </div>
-                        <div class="grow flex justify-end gap-2">
+                        <div class="min-w-fit overflow-hidden flex justify-end gap-2">
+                            <!-- TODO clickable genres -->
                             <Badge v-for="genre of getMainGenres(item.data)" :label="genre" :auto-color="true" />
                         </div>
                     </li>
