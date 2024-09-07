@@ -41,10 +41,12 @@
                             class="material-icons-round rounded-full flex items-center justify-center text-ls-500 bg-ls-200 p-2">person</span>
                         <div class="flex flex-col w-96">
                             <span @click="router.push(makeArtistURL(item.data.name))"
-                                class="cursor-pointer mb-1 font-semibold text-sm text-ls-700 overflow-hidden text-ellipsis hover:text-accent-600 hover:underline">
-                                {{ item.data.name || "" }}
+                                class="cursor-pointer font-semibold text-ls-700 overflow-hidden text-ellipsis hover:text-accent-600 hover:underline"
+                                :class="displayMode == 'fixed' ? 'text-sm' : ''"
+                                :style="proportionalStyle[item.data.name]">
+                                {{ item.data.name }}
                             </span>
-                            <span class="text-ls-500 text-xs">
+                            <span v-if="displayMode == 'fixed'" class="mt-1 text-ls-500 text-xs">
                                 {{ formatReleaseCount(item.data) }}
                             </span>
                         </div>
@@ -61,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, CSSProperties, Ref, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAsyncState, useVirtualList } from "@vueuse/core";
 
@@ -82,7 +84,7 @@ const { state: artists, isLoading, isReady, error } = useAsyncState(getArtists()
 
 const filter = ref("");
 
-// TODO add proportional mode (maybe)
+// TODO save in preferences
 const displayMode = ref("fixed");
 
 type ArtistRole = "performer" | "composer" | "lyricist";
@@ -125,6 +127,34 @@ const itemHeight = 73;
 const { list: virtualArtists, containerProps, wrapperProps, scrollTo } = useVirtualList(filtered, { itemHeight });
 
 watch(filtered, () => scrollTo(0));
+
+function remap(value: number, fromA: number, fromB: number, toA: number, toB: number) {
+    return toA + (toB - toA) * Math.max(0, Math.min((value - fromA) / (fromB - fromA), 1));
+}
+
+const proportionalStyle: Ref<{ [key: string]: CSSProperties }> = computed(() => {
+    if (displayMode.value != "proportional" || !filtered.value.length) {
+        return {};
+    }
+
+    let style: { [key: string]: CSSProperties } = {};
+
+    let sorted = [...filtered.value];
+    sorted.sort((a, b) => a.num_songs - b.num_songs);
+    let pHigh = sorted[Math.floor(sorted.length * 0.9)].num_songs;
+    let pLow = sorted[Math.floor(sorted.length * 0)].num_songs;
+
+    for (const artist of sorted) {
+        const t = remap(artist.num_songs, pLow, pHigh, 0, 1);
+        const size = remap(artist.num_songs, pLow, pHigh, 0.75, 1.75);
+        style[artist.name] = {
+            "color": `color-mix(in oklch, rgb(var(--surface-400)), rgb(var(--surface-800)) ${100 * t}%)`,
+            "font-size": `${size}em`
+        };
+    }
+
+    return style;
+});
 
 function getMainGenres(artist: ArtistHeader) {
     let genres = Object.entries(artist.num_songs_by_genre).map(([genre, count]) => ({ genre, count }));
