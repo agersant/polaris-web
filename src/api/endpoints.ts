@@ -3,6 +3,7 @@ import {
 	AlbumHeader,
 	AlbumKey,
 	API_ARRAY_SEPARATOR,
+	Artist,
 	ArtistHeader,
 	Authorization,
 	BrowserEntry,
@@ -178,6 +179,11 @@ export async function flatten(path: string): Promise<SongList> {
 
 export async function getArtists(): Promise<ArtistHeader[]> {
 	const response = await request("/artists");
+	return await response.json();
+}
+
+export async function getArtist(name: string): Promise<Artist> {
+	const response = await request(`/artists/${encodeURIComponent(name)}`);
 	return await response.json();
 }
 
