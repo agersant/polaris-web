@@ -41,7 +41,7 @@ import { useRouter } from "vue-router";
 import { makeThumbnailURL } from '@/api/endpoints';
 import AlbumArt from '@/components/AlbumArt.vue';
 import { usePlaybackStore } from '@/stores/playback';
-import { makeAlbumURL } from '@/router';
+import { makeAlbumURL, makeArtistURL } from '@/router';
 
 interface Artist {
     name: string,
@@ -88,7 +88,7 @@ const artists = computed(() => {
     return names.map(n => {
         return {
             name: n,
-            url: `/artists/${n}`,
+            url: makeArtistURL(n),
         };
     });
 });
