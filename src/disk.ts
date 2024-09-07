@@ -40,3 +40,20 @@ export function loadForCurrentUser(key: string): any {
 	}
 	return loadForAnyUser(user.name + "." + key);
 }
+
+export function compress(string: string): Promise<ArrayBuffer> {
+	const byteArray = new TextEncoder().encode(string);
+	const cs = new CompressionStream("gzip");
+	const writer = cs.writable.getWriter();
+	writer.write(byteArray);
+	writer.close();
+	return new Response(cs.readable).arrayBuffer();
+}
+
+export function decompress(byteArray: Uint8Array): Promise<string> {
+	const cs: DecompressionStream = new DecompressionStream("gzip");
+	const writer = cs.writable.getWriter();
+	writer.write(byteArray);
+	writer.close();
+	return new Response(cs.readable).arrayBuffer().then((arrayBuffer) => new TextDecoder().decode(arrayBuffer));
+}
