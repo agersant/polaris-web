@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { Ref, ref, shallowRef, useTemplateRef, watch } from "vue";
-import { useRouter } from "vue-router";
 import { useAsyncState } from "@vueuse/core";
 
 import { BrowserEntry } from "@/api/dto";
@@ -43,10 +42,7 @@ import { Node } from "@/components/basic/VirtualTree.vue";
 import { DnDPayload, DndPayloadFiles, endDrag, startDrag, updateDrag } from '@/dnd';
 import { getPathTail } from '@/format';
 import { usePlaybackStore } from "@/stores/playback";
-import { useUserStore } from '@/stores/user';
 
-const router = useRouter();
-const user = useUserStore();
 const playback = usePlaybackStore();
 
 const treeModel: Ref<Node[]> = shallowRef([]);
