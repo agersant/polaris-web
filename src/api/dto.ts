@@ -89,6 +89,7 @@ export interface ArtistHeader {
 	num_albums_as_composer: number;
 	num_albums_as_lyricist: number;
 	num_songs_by_genre: { [key: string]: number };
+	num_songs: number;
 }
 
 export interface AlbumKey {
