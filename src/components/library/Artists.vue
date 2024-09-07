@@ -2,21 +2,7 @@
     <div class="flex flex-col whitespace-nowrap select-none">
         <SectionTitle label="Artists" />
 
-        <div v-if="isLoading" class="grow flex mt-24 items-start justify-center">
-            <Spinner class="text-ls-700 dark:text-ds-400" />
-        </div>
-
-        <Error v-else-if="error">
-            Something went wrong while listing artists.
-        </Error>
-
-        <div v-else-if="isReady && !artists.length" class="grow flex mt-40 justify-center text-center">
-            <BlankStateFiller icon="person_off" suggestion="collectionSettings">
-                No artists found.
-            </BlankStateFiller>
-        </div>
-
-        <div v-else class="grow min-h-0 flex flex-col">
+        <div v-if="artists.length" class="grow min-h-0 flex flex-col">
 
             <div class="mb-8 flex items-center justify-between">
                 <div class="shrink basis-[500px] flex gap-4">
@@ -63,14 +49,29 @@
 
         </div>
 
+        <div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+            <Spinner class="text-ls-700 dark:text-ds-400" />
+        </div>
+
+        <Error v-else-if="error">
+            Something went wrong while listing artists.
+        </Error>
+
+        <div v-else-if="isReady && !artists.length" class="grow flex mt-40 justify-center text-center">
+            <BlankStateFiller icon="person_off" suggestion="collectionSettings">
+                No artists found.
+            </BlankStateFiller>
+        </div>
+
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, CSSProperties, Ref, ref, watch } from "vue";
+import { computed, CSSProperties, nextTick, onMounted, Ref, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useAsyncState, useVirtualList } from "@vueuse/core";
+import { useAsyncState, useScroll, useVirtualList, watchThrottled } from "@vueuse/core";
 
+import { compress, decompress } from "@/disk";
 import { getArtists } from "@/api/endpoints";
 import Badge from "@/components/basic/Badge.vue";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
@@ -85,7 +86,14 @@ import { makeArtistURL } from "@/router";
 
 const router = useRouter();
 
-const { state: artists, isLoading, isReady, error } = useAsyncState(getArtists(), []);
+const artists: Ref<ArtistHeader[]> = ref([]);
+
+const { state: fetchedArtists, isLoading, isReady, error } = useAsyncState(getArtists(), []);
+watch(fetchedArtists, (a) => {
+    if (!artists.value.length) {
+        artists.value = a;
+    }
+});
 
 const filter = ref("");
 
@@ -100,13 +108,23 @@ const roleFilters: SelectOption<ArtistRole>[] = [
 ];
 const roleFilter = ref(roleFilters[0]);
 
+function isRelevant(artist: ArtistHeader) {
+    return artist.num_albums_as_performer > 0
+        || artist.num_albums_as_composer > 0
+        || artist.num_albums_as_lyricist > 0
+        || artist.num_albums_as_additional_performer > 1;
+}
+
 const filtered = computed(() => {
     const query = filter.value.toLowerCase();
     const role = roleFilter.value.value;
     return artists.value.filter(a => {
+        if (!isRelevant(a)) {
+            return false;
+        }
         switch (role) {
             case "performer":
-                if (a.num_albums_as_performer <= 0 && a.num_albums_as_additional_performer < 2) {
+                if (a.num_albums_as_performer < 1 && a.num_albums_as_additional_performer < 1) {
                     return false;
                 }
                 break;
@@ -130,6 +148,9 @@ const filtered = computed(() => {
 
 const itemHeight = 73;
 const { list: virtualArtists, containerProps, wrapperProps, scrollTo } = useVirtualList(filtered, { itemHeight });
+
+const viewport = computed(() => containerProps.ref.value);
+const { y: scrollY } = useScroll(viewport);
 
 watch(filtered, () => scrollTo(0));
 
@@ -198,4 +219,29 @@ function formatReleaseCount(artist: ArtistHeader) {
     }
 
 }
+
+const historyStateKey = "artists";
+
+watchThrottled([artists, filter, roleFilter, scrollY], async () => {
+    const state = {
+        artists: await compress(JSON.stringify((artists.value.filter(isRelevant)))),
+        filter: filter.value,
+        roleFilter: roleFilter.value.value,
+        scrollY: scrollY.value || 0,
+    };
+    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { throttle: 500 });
+
+onMounted(async () => {
+    const state = history.state[historyStateKey];
+    if (!state) {
+        return;
+    }
+    artists.value = JSON.parse(await decompress(state.artists));
+    filter.value = state.filter;
+    roleFilter.value = roleFilters.find(f => f.value == state.roleFilter) || roleFilters[0];
+    nextTick(() => {
+        viewport.value?.scrollTo({ top: state.scrollY });
+    });
+});
 </script>
