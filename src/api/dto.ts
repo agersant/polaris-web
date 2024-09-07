@@ -92,6 +92,15 @@ export interface ArtistHeader {
 	num_songs: number;
 }
 
+export interface Artist {
+	name: String,
+	albums_as_performer: AlbumHeader[],
+	albums_as_additional_performer: AlbumHeader[],
+	albums_as_composer: AlbumHeader[],
+	albums_as_lyricist: AlbumHeader[],
+	num_songs_by_genre: { [key: string]: number };
+}
+
 export interface AlbumKey {
 	artists: string[],
 	name?: string,

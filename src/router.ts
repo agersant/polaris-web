@@ -5,6 +5,7 @@ import App from "@/components/App.vue";
 import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
 import AlbumPage from "@/components/library/AlbumPage.vue";
+import Artist from "@/components/library/Artist.vue";
 import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
 // import Playlist from "@/components/profile/playlists/Playlist.vue";
@@ -53,6 +54,7 @@ const routes = [
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: "/files", component: Files },
+			{ path: "/artists/:name", component: Artist, props: true },
 			{ path: "/artists", component: Artists },
 			{ path: "/albums/:artists/:name", component: AlbumPage, props: extractAlbumKey },
 			{ path: "/random", component: Random },
@@ -128,7 +130,7 @@ router.beforeEach(async (to, from, next) => {
 
 export function makeArtistURL(name: string) {
 	// TODO this breaks when artists or album name contain `/` character (eg. OCRemix)
-	return `/artist/${name}`;
+	return `/artists/${name}`;
 };
 
 export function makeAlbumURL(song: Song) {
