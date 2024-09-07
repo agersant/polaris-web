@@ -20,6 +20,7 @@
 				<Select class="w-48" v-model="playbackOrder" :options="playbackOrderOptions" />
 				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playback.shuffle" />
 			</div>
+			<!-- TODO tooltips -->
 			<MultiSwitch v-model="listMode"
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>

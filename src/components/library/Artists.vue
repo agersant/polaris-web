@@ -7,9 +7,11 @@
             <div class="mb-8 flex items-center justify-between">
                 <div class="shrink basis-[500px] flex gap-4">
                     <Select class="grow basis-0" v-model="roleFilter" :options="roleFilters" />
+                    <!-- TODO tooltips -->
                     <InputText class="grow basis-0" v-model="filter" id="filter" name="filter" placeholder="Filter"
                         icon="filter_alt" autofocus />
                 </div>
+                <!-- TODO tooltips -->
                 <MultiSwitch v-model="displayMode"
                     :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />
             </div>
