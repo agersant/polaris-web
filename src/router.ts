@@ -141,7 +141,7 @@ export function makeAlbumURL(song: Song) {
 		artists = song.album_artists;
 	}
 	// TODO this breaks when artists or album name contain `/ ` character (eg. OCRemix)
-	return `/ albums / ${(artists || []).join(URI_ARRAY_SEPARATOR)}/${song.album}`;
+	return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${song.album}`;
 };
 
 export default router;
