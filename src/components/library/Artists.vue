@@ -186,7 +186,7 @@ const proportionalStyle: Ref<{ [key: string]: CSSProperties }> = computed(() => 
 
 function getMainGenres(artist: ArtistHeader) {
     let genres = Object.entries(artist.num_songs_by_genre).map(([genre, count]) => ({ genre, count }));
-    genres.sort((a, b) => a.count - b.count);
+    genres.sort((a, b) => a.count - b.count).reverse();
     let displayGenres = genres.slice(0, 3).map(({ genre }) => genre);
     displayGenres.sort();
     return displayGenres;
