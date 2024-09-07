@@ -6,7 +6,9 @@
             <Spinner class="text-ls-700 dark:text-ds-400" />
         </div>
 
-        <!-- TODO error state -->
+        <Error v-else-if="error">
+            Something went wrong while listing artists.
+        </Error>
 
         <div v-else-if="isReady && !artists.length" class="grow flex mt-40 justify-center text-center">
             <BlankStateFiller icon="person_off" suggestion="collectionSettings">
@@ -72,6 +74,7 @@ import { useAsyncState, useVirtualList } from "@vueuse/core";
 import { getArtists } from "@/api/endpoints";
 import Badge from "@/components/basic/Badge.vue";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
+import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import MultiSwitch from "@/components/basic/MultiSwitch.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
