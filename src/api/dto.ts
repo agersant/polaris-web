@@ -107,14 +107,14 @@ export interface AlbumKey {
 }
 
 export interface AlbumHeader {
-	name?: string,
+	name: string,
 	artwork?: string,
 	artists?: string[],
 	year?: number,
 }
 
 export interface Album {
-	name?: string,
+	name: string,
 	artwork?: string,
 	artists?: string[],
 	year?: number,
