@@ -24,20 +24,26 @@
                     </BlankStateFiller>
                 </div>
 
-                <ul class="flex flex-col overflow-x-hidden divide-y divide-ls-200" v-bind="wrapperProps">
+                <ul class="flex flex-col overflow-x-hidden
+                divide-y divide-ls-200 dark:divide-ds-700" v-bind="wrapperProps">
                     <li v-for="item of virtualArtists" :key="item.data.name"
                         class="flex items-center first:pt-1 py-4 gap-4" :style="`height: ${itemHeight}px`">
-                        <span
-                            class="material-icons-round rounded-full flex items-center justify-center text-ls-500 bg-ls-200 p-2">person</span>
+                        <span class="material-icons-round rounded-full p-2
+                            flex items-center justify-center
+                            text-ls-500 dark:text-ds-400
+                            bg-ls-200 dark:bg-ds-700 ">
+                            person
+                        </span>
                         <div class="grow shrink min-w-0 pr-8 flex flex-col">
                             <!-- TODO drag and drop artist to playlist -->
-                            <span @click="router.push(makeArtistURL(item.data.name))"
-                                class="cursor-pointer font-semibold text-ls-700 overflow-hidden text-ellipsis hover:text-accent-600 hover:underline"
-                                :class="displayMode == 'fixed' ? 'text-sm' : ''"
+                            <span @click="router.push(makeArtistURL(item.data.name))" class="cursor-pointer font-semibold
+                                overflow-hidden text-ellipsis
+                                text-ls-700 dark:text-ds-300
+                                hover:text-accent-600 hover:underline" :class="displayMode == 'fixed' ? 'text-sm' : ''"
                                 :style="proportionalStyle[item.data.name]">
                                 {{ item.data.name }}
                             </span>
-                            <span v-if="displayMode == 'fixed'" class="mt-1 text-ls-500 text-xs">
+                            <span v-if="displayMode == 'fixed'" class="mt-1 text-xs text-ls-500 dark:text-ds-500">
                                 {{ formatReleaseCount(item.data) }}
                             </span>
                         </div>
@@ -85,8 +91,10 @@ import Select, { SelectOption } from "@/components/basic/Select.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import { ArtistHeader } from "@/api/dto";
 import { makeArtistURL } from "@/router";
+import { usePreferencesStore } from "@/stores/preferences";
 
 const router = useRouter();
+const preferences = usePreferencesStore();
 
 const artists: Ref<ArtistHeader[]> = ref([]);
 
@@ -169,14 +177,18 @@ const proportionalStyle: Ref<{ [key: string]: CSSProperties }> = computed(() => 
 
     let sorted = [...filtered.value];
     sorted.sort((a, b) => a.num_songs - b.num_songs);
+
     let pHigh = sorted[Math.floor(sorted.length * 0.9)].num_songs;
     let pLow = sorted[Math.floor(sorted.length * 0)].num_songs;
+
+    const lowColor = preferences.effectivePolarity == "light" ? "--surface-400" : "--surface-400";
+    const highColor = preferences.effectivePolarity == "light" ? "--surface-800" : "--surface-50";
 
     for (const artist of sorted) {
         const t = remap(artist.num_songs, pLow, pHigh, 0, 1);
         const size = remap(artist.num_songs, pLow, pHigh, 0.75, 1.75);
         style[artist.name] = {
-            "color": `color-mix(in oklch, rgb(var(--surface-400)), rgb(var(--surface-800)) ${100 * t}%)`,
+            "color": `color-mix(in oklch, rgb(var(${lowColor})), rgb(var(${highColor})) ${100 * t}%)`,
             "font-size": `${size}em`
         };
     }

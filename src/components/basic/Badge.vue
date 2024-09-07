@@ -1,6 +1,9 @@
 <template>
-    <span
-        class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-ls-900 ring-1 ring-inset ring-ls-200">
+    <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1
+        font-medium text-xs
+        text-ls-700 dark:text-ds-300
+        ring-1 ring-inset
+        ring-ls-200 dark:ring-white/10">
         <svg class="h-1.5 w-1.5" viewBox="0 0 6 6" :class="palette">
             <circle cx="3" cy="3" r="3" />
         </svg>
@@ -20,23 +23,23 @@ const props = defineProps<{
 }>();
 
 const palettes = {
-    red: "fill-red-500",
-    orange: "fill-orange-500",
-    amber: "fill-amber-500",
-    yellow: "fill-yellow-500",
-    lime: "fill-lime-500",
-    green: "fill-green-500",
-    emerald: "fill-emerald-500",
-    teal: "fill-teal-500",
-    cyan: "fill-cyan-500",
-    sky: "fill-sky-500",
-    blue: "fill-blue-500",
-    indigo: "fill-indigo-500",
-    violet: "fill-violet-500",
-    purple: "fill-purple-500",
-    fuchsia: "fill-fuchsia-500",
-    pink: "fill-pink-500",
-    rose: "fill-rose-500",
+    red: "fill-red-500 dark:fill-red-600",
+    orange: "fill-orange-500 dark:fill-orange-600",
+    amber: "fill-amber-500 dark:fill-amber-600",
+    yellow: "fill-yellow-500 dark:fill-yellow-600",
+    lime: "fill-lime-500 dark:fill-lime-600",
+    green: "fill-green-500 dark:fill-green-600",
+    emerald: "fill-emerald-500 dark:fill-emerald-600",
+    teal: "fill-teal-500 dark:fill-teal-600",
+    cyan: "fill-cyan-500 dark:fill-cyan-600",
+    sky: "fill-sky-500 dark:fill-sky-600",
+    blue: "fill-blue-500 dark:fill-blue-600",
+    indigo: "fill-indigo-500 dark:fill-indigo-600",
+    violet: "fill-violet-500 dark:fill-violet-600",
+    purple: "fill-purple-500 dark:fill-purple-600",
+    fuchsia: "fill-fuchsia-500 dark:fill-fuchsia-600",
+    pink: "fill-pink-500 dark:fill-pink-600",
+    rose: "fill-rose-500 dark:fill-rose-600",
 };
 
 // https://en.wikipedia.org/wiki/Pearson_hashing
