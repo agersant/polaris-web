@@ -8,6 +8,7 @@
                 <div class="shrink basis-[500px] flex gap-4">
                     <Select class="grow basis-0" v-model="roleFilter" :options="roleFilters" />
                     <!-- TODO tooltips -->
+                    <!-- TODO clear filter icon -->
                     <InputText class="grow basis-0" v-model="filter" id="filter" name="filter" placeholder="Filter"
                         icon="filter_alt" autofocus />
                 </div>
