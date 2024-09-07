@@ -38,6 +38,7 @@ import { useRouter } from 'vue-router';
 import Waveform from '@/components/playback/Waveform.vue';
 import { formatDuration, formatTitle } from "@/format";
 import { usePlaybackStore } from '@/stores/playback';
+import { makeArtistURL } from '@/router';
 
 const router = useRouter();
 const playback = usePlaybackStore();
@@ -79,7 +80,7 @@ const artists = computed(() => {
     return names.map(n => {
         return {
             name: n,
-            url: `/artists/${n}`,
+            url: makeArtistURL(n),
         };
     });
 });
