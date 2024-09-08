@@ -21,23 +21,7 @@
         </div>
 
         <div v-if="artist" class="grow min-h-0 -m-4 p-4 overflow-y-scroll flex flex-col">
-
-            <div class="flex flex-wrap content-start gap-y-8" :style="`column-gap: ${gapSize}px`">
-                <div v-for="album of artist.albums_as_performer" class="flex flex-col gap-2" :style="itemStyle">
-                    <div class="cursor-pointer aspect-square w-full transition-all ease-out duration-100 origin-center "
-                        @click="router.push(makeAlbumURL(album.artists, album.name))"
-                        :class="displayMode == 'grid3' ? 'hover:opacity-90 hover:scale-105' : 'hover:scale-110'">
-                        <AlbumArt :url="album.artwork ? makeThumbnailURL(album.artwork, 'small') : undefined" />
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <div class="font-medium text-sm line-clamp-2 text-ls-900 ">
-                            {{ album.name }}
-                        </div>
-                        <div class="font-medium text-sm text-ls-500">{{ album.year }}</div>
-                    </div>
-                </div>
-            </div>
-
+            <AlbumGrid :albums="artist.albums_as_performer" :num-columns="numColumns" />
         </div>
     </div>
 </template>
@@ -45,17 +29,13 @@
 <script setup lang="ts">
 import { computed, Ref, ref } from "vue";
 import { useAsyncState, watchImmediate } from "@vueuse/core";
-import { useRouter } from "vue-router";
 
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
 import MultiSwitch from '@/components/basic/MultiSwitch.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
-import AlbumArt from '@/components/AlbumArt.vue';
-import { getArtist, makeThumbnailURL } from "@/api/endpoints";
-import { makeAlbumURL } from "@/router";
-
-const router = useRouter();
+import AlbumGrid from '@/components/library/AlbumGrid.vue';
+import { getArtist, } from "@/api/endpoints";
 
 const props = defineProps<{
     name: string,
