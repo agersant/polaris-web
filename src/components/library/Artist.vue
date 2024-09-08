@@ -21,7 +21,7 @@
                 ]" />
             </div>
 
-            <div class="grow -m-4 p-4 overflow-y-scroll flex flex-col">
+            <div ref="viewport" class="grow -m-4 p-4 overflow-y-scroll flex flex-col">
                 <div v-if="mainWorks?.length" class="mb-16">
                     <div class="mb-8 flex items-center">
                         <span class="material-icons-round text-ls-400">library_music</span>
@@ -54,9 +54,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref } from "vue";
-import { useAsyncState, watchImmediate } from "@vueuse/core";
+import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch } from "vue";
+import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
 
+import { Artist } from "@/api/dto";
+import { getArtist, } from "@/api/endpoints";
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
 import Error from '@/components/basic/Error.vue';
@@ -64,11 +66,27 @@ import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
-import { getArtist, } from "@/api/endpoints";
 
 const props = defineProps<{
     name: string,
 }>();
+
+const { state: fetchedArtist, isLoading, error, execute: fetchArtist } = useAsyncState(
+    (name: string) => getArtist(name),
+    undefined,
+    { immediate: false, resetOnExecute: true }
+);
+
+watchImmediate(() => props.name, () => {
+    fetchArtist(0, props.name);
+});
+
+const artist: Ref<Artist | undefined> = ref(undefined);
+watch(fetchedArtist, a => {
+    if (!artist.value || !a) {
+        artist.value = a;
+    }
+});
 
 type DisplayMode = "grid5" | "grid3" | "timeline";
 
@@ -119,14 +137,32 @@ const additionalWorks = computed(() => {
     return albums.filter(a => !main.includes(a));
 });
 
-// TODO scroll state in history
 // TODO dark mode
 // TODO timeline view
 // TODO play/queue buttons
 // TODO genre links
-const { state: artist, isLoading, isReady, error, execute: fetchArtist } = useAsyncState((name: string) => getArtist(name), undefined, { immediate: false });
-watchImmediate(() => props.name, () => {
-    fetchArtist(0, props.name);
-});
 
+const viewport = useTemplateRef("viewport");
+const { y: scrollY } = useScroll(viewport);
+
+const historyStateKey = "artist";
+
+watchThrottled([artist, scrollY], async () => {
+    const state = {
+        artist: toRaw(artist.value),
+        scrollY: scrollY.value || 0,
+    };
+    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { throttle: 500 });
+
+onMounted(async () => {
+    const state = history.state[historyStateKey];
+    if (!state) {
+        return;
+    }
+    artist.value = state.artist;
+    nextTick(() => {
+        viewport.value?.scrollTo({ top: state.scrollY });
+    });
+});
 </script>
