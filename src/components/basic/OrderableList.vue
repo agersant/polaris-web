@@ -15,8 +15,7 @@
 
                     <slot name="default" v-else :item="item" :index="firstVirtualIndex + index"
                         :selected="selectedKeys.has(item.key)" :focused="focusedKey == item.key">
-                        <div class="whitespace-nowrap select-none"
-                            :class="{ 'bg-accent-500': selectedKeys.has(item.key) }"
+                        <div class="whitespace-nowrap" :class="{ 'bg-accent-500': selectedKeys.has(item.key) }"
                             :style="{ height: itemHeight + 'px' }">
                             {{ item }}
                         </div>

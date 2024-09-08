@@ -21,7 +21,7 @@
                     <ListboxOption as="template" v-for="option, index in options" :key="option.key || index"
                         :value="option" v-slot="{ active, selected }">
                         <li
-                            :class="[active ? 'bg-accent-600 text-ls-0 dark:bg-ds-800' : 'text-ls-900 dark:text-ds-0', 'relative cursor-default select-none py-2 pl-3 pr-9']">
+                            :class="[active ? 'bg-accent-600 text-ls-0 dark:bg-ds-800' : 'text-ls-900 dark:text-ds-0', 'relative cursor-default py-2 pl-3 pr-9']">
                             <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
                                 {{ option.label }}
                             </span>

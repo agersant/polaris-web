@@ -1,5 +1,5 @@
 <template>
-	<div class="h-full flex flex-col bg-ls-50 dark:bg-ds-800">
+	<div class="h-full flex flex-col bg-ls-50 dark:bg-ds-800 select-none">
 		<div class="flex flex-1 min-h-0">
 			<Sidebar class="shrink-0 m-8 mr-0" />
 			<div class="grow grid grid-cols-2">

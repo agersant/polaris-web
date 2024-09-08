@@ -1,6 +1,6 @@
 <template>
     <div class="relative min-h-0">
-        <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="select-none h-full">
+        <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="h-full">
             <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
                 <VirtualTreeNode v-for="node in virtualNodes" :style="`height: ${itemHeight}px`" :node="node.data"
                     tabindex="-1" @node-toggle="toggleNode" @click="onNodeClick($event, node.data)"

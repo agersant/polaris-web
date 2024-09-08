@@ -1,5 +1,5 @@
 <template>
-	<div class="relative flex items-center px-8 py-4 bg-ls-0 dark:bg-ds-900 whitespace-nowrap select-none">
+	<div class="relative flex items-center px-8 py-4 bg-ls-0 dark:bg-ds-900 whitespace-nowrap">
 		<audio ref="htmlAudio" v-if="audioURL" v-bind:src="audioURL" @timeupdate="onTimeUpdate" @error="onPlaybackError"
 			@ended="onEnded" @pause="onPaused" @playing="onPlaying" @waiting="onWaiting" />
 		<PlayerAlbum class="basis-80 min-w-0 grow shrink" />
