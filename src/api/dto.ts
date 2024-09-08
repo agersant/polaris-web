@@ -58,6 +58,51 @@ export type BrowserEntry = {
 	path: string;
 };
 
+export interface ArtistHeader {
+	name: string;
+	num_albums_as_performer: number;
+	num_albums_as_additional_performer: number;
+	num_albums_as_composer: number;
+	num_albums_as_lyricist: number;
+	num_songs_by_genre: { [key: string]: number };
+	num_songs: number;
+}
+
+export interface Contribution {
+	performer: boolean,
+	composer: boolean,
+	lyricist: boolean,
+}
+
+export interface ArtistAlbum extends AlbumHeader {
+	contributions: Contribution[],
+}
+
+export interface Artist extends ArtistHeader {
+	albums: ArtistAlbum[]
+}
+
+export interface AlbumKey {
+	artists: string[],
+	name?: string,
+}
+
+export interface AlbumHeader {
+	name: string,
+	main_artists: string[],
+	artwork?: string,
+	year?: number,
+}
+
+export interface Album extends AlbumHeader {
+	songs: Song[],
+}
+
+export interface SongList {
+	paths: string[];
+	first_songs: Song[];
+}
+
 export interface Song {
 	path: string;
 	track_number?: number;
@@ -76,50 +121,6 @@ export interface Song {
 }
 
 export type Peaks = Uint8Array;
-
-export interface SongList {
-	paths: string[];
-	first_songs: Song[];
-}
-
-export interface ArtistHeader {
-	name: string;
-	num_albums_as_performer: number;
-	num_albums_as_additional_performer: number;
-	num_albums_as_composer: number;
-	num_albums_as_lyricist: number;
-	num_songs_by_genre: { [key: string]: number };
-	num_songs: number;
-}
-
-export interface Artist {
-	name: String,
-	albums_as_performer: AlbumHeader[],
-	albums_as_additional_performer: AlbumHeader[],
-	albums_as_composer: AlbumHeader[],
-	albums_as_lyricist: AlbumHeader[],
-	num_songs_by_genre: { [key: string]: number };
-}
-
-export interface AlbumKey {
-	artists: string[],
-	name?: string,
-}
-
-export interface AlbumHeader {
-	name: string,
-	artists: string[],
-	artwork?: string,
-	year?: number,
-}
-
-export interface Album {
-	name: string,
-	artists: string[],
-	artwork?: string,
-	year?: number,
-	songs: Song[],
-}
 
 export type SavePlaylistInput = {
 	tracks: string[];
