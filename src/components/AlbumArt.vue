@@ -20,5 +20,7 @@ import { UseImage } from "@vueuse/components";
 
 import Spinner from "@/components/basic/Spinner.vue"
 
-defineProps<{ url: string | undefined }>();
+defineProps<{
+    url: string | undefined,
+}>();
 </script>
