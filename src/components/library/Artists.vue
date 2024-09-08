@@ -36,7 +36,7 @@
                             bg-ls-200 dark:bg-ds-700 ">
                             person
                         </span>
-                        <div class="grow shrink min-w-0 pr-8 flex flex-col">
+                        <div class="basis-fit shrink min-w-0 pr-8 flex flex-col">
                             <!-- TODO drag and drop artist to playlist -->
                             <span @click="router.push(makeArtistURL(item.data.name))" class="cursor-pointer font-semibold
                                 overflow-hidden text-ellipsis
@@ -49,7 +49,8 @@
                                 {{ `${item.data.num_songs} ${pluralize('song', item.data.num_songs)}` }}
                             </span>
                         </div>
-                        <div class="min-w-fit overflow-hidden flex justify-end gap-2">
+                        <div
+                            class="basis-1/4 grow shrink-[10] overflow-hidden flex max-h-14 flex-wrap justify-end gap-2">
                             <!-- TODO clickable genres -->
                             <Badge v-for="genre of getMainGenres(item.data)" :label="genre" :auto-color="true" />
                         </div>
@@ -201,9 +202,14 @@ const proportionalStyle: Ref<{ [key: string]: CSSProperties }> = computed(() => 
 
 function getMainGenres(artist: ArtistHeader) {
     let genres = Object.entries(artist.num_songs_by_genre).map(([genre, count]) => ({ genre, count }));
-    genres.sort((a, b) => a.count - b.count).reverse();
-    let displayGenres = genres.slice(0, 3).map(({ genre }) => genre);
-    displayGenres.sort();
+    genres.sort((a, b) => {
+        if (a.count != b.count) {
+            return a.count - b.count
+        } else {
+            return a.genre < b.genre ? 1 : -1;
+        }
+    }).reverse();
+    let displayGenres = genres.slice(0, 10).map(({ genre }) => genre);
     return displayGenres;
 }
 
