@@ -2,7 +2,7 @@
     <div class="flex flex-col whitespace-nowrap">
         <SectionTitle label="Artists">
             <template #left>
-                <SwitchText class="pl-6 border-l border-ls-200 dark:border-ds-700" v-model="roleFilter" :items="[
+                <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="roleFilter" :items="[
                     { label: 'Performers', value: 'performer' },
                     { label: 'Composers', value: 'composer' },
                     { label: 'Lyricists', value: 'lyricist' }
