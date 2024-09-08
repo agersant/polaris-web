@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { computed, Ref, ref } from "vue";
-import { useAsyncState } from "@vueuse/core";
+import { useAsyncState, watchImmediate } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
 import Badge from '@/components/basic/Badge.vue';
@@ -92,11 +92,12 @@ const genres = computed(() => {
 // TODO scroll state in history
 // TODO composer/lyricist/additional performer grids
 // TODO dark mode
-// TODO handle artist URL change
 // TODO timeline view
 // TODO play/queue buttons
 // TODO genre links
-const { state: artist, isLoading, isReady, error } = useAsyncState(getArtist(props.name), undefined);
-
+const { state: artist, isLoading, isReady, error, execute: fetchArtist } = useAsyncState((name: string) => getArtist(name), undefined, { immediate: false });
+watchImmediate(() => props.name, () => {
+    fetchArtist(0, props.name);
+});
 
 </script>
