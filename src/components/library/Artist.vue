@@ -95,7 +95,7 @@ const genres = computed(() => {
 // TODO handle artist URL change
 // TODO timeline view
 // TODO play/queue buttons
-// TODO album links
+// TODO genre links
 const { state: artist, isLoading, isReady, error } = useAsyncState(getArtist(props.name), undefined);
 
 
