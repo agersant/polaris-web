@@ -82,3 +82,11 @@ export function formatSong(song: Song) {
 	const titleText = formatTitle(song);
 	return `${artistText} - ${titleText}`;
 }
+
+export function pluralize(word: string, n: number) {
+	if (n > 1) {
+		return `${word}s`;
+	} else {
+		return word;
+	}
+} 
