@@ -136,7 +136,7 @@ const filtered = computed(() => {
         }
         switch (role) {
             case "performer":
-                if (a.num_albums_as_performer < 1 && a.num_albums_as_additional_performer < 1) {
+                if (a.num_albums_as_performer < 1 && a.num_albums_as_additional_performer < 2) {
                     return false;
                 }
                 break;
