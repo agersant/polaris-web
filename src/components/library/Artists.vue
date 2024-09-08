@@ -1,19 +1,24 @@
 <template>
-    <div class="flex flex-col whitespace-nowrap select-none">
-        <SectionTitle label="Artists" />
+    <div class="flex flex-col whitespace-nowrap">
+        <SectionTitle label="Artists">
+            <template #left>
+                <SwitchText class="pl-6 border-l border-ls-200" v-model="roleFilter" :items="[
+                    { label: 'Performers', value: 'performer' },
+                    { label: 'Composers', value: 'composer' },
+                    { label: 'Lyricists', value: 'lyricist' }
+                ]" />
+            </template>
+        </SectionTitle>
 
         <div v-if="artists.length" class="grow min-h-0 flex flex-col">
 
             <div class="mb-8 flex items-center justify-between">
-                <div class="shrink basis-[500px] flex gap-4">
-                    <Select class="grow basis-0" v-model="roleFilter" :options="roleFilters" />
-                    <!-- TODO tooltips -->
-                    <!-- TODO clear filter icon -->
-                    <InputText class="grow basis-0" v-model="filter" id="filter" name="filter" placeholder="Filter"
-                        icon="filter_alt" autofocus />
-                </div>
                 <!-- TODO tooltips -->
-                <MultiSwitch v-model="displayMode"
+                <!-- TODO clear filter icon -->
+                <InputText class="w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
+                    icon="filter_alt" autofocus />
+                <!-- TODO tooltips -->
+                <Switch v-model="displayMode"
                     :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />
             </div>
 
@@ -88,9 +93,9 @@ import Badge from "@/components/basic/Badge.vue";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
-import MultiSwitch from "@/components/basic/MultiSwitch.vue";
+import Switch from "@/components/basic/Switch.vue";
+import SwitchText from "@/components/basic/SwitchText.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
-import Select, { SelectOption } from "@/components/basic/Select.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import { ArtistHeader } from "@/api/dto";
 import { pluralize } from "@/format";
@@ -115,12 +120,7 @@ const filter = ref("");
 const displayMode = ref("fixed");
 
 type ArtistRole = "performer" | "composer" | "lyricist";
-const roleFilters: SelectOption<ArtistRole>[] = [
-    { label: "Performers", value: "performer" },
-    { label: "Composers", value: "composer" },
-    { label: "Lyricists", value: "lyricist" },
-];
-const roleFilter = ref(roleFilters[0]);
+const roleFilter: Ref<ArtistRole> = ref("performer");
 
 function isRelevant(artist: ArtistHeader) {
     return artist.num_albums_as_performer > 0
@@ -131,12 +131,11 @@ function isRelevant(artist: ArtistHeader) {
 
 const filtered = computed(() => {
     const query = filter.value.toLowerCase();
-    const role = roleFilter.value.value;
     return artists.value.filter(a => {
         if (!isRelevant(a)) {
             return false;
         }
-        switch (role) {
+        switch (roleFilter.value) {
             case "performer":
                 if (a.num_albums_as_performer < 1 && a.num_albums_as_additional_performer < 2) {
                     return false;
