@@ -20,7 +20,7 @@
 				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playback.shuffle" />
 			</div>
 			<!-- TODO tooltips -->
-			<MultiSwitch v-model="listMode"
+			<Switch v-model="listMode"
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
@@ -61,9 +61,9 @@ import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
-import MultiSwitch from '@/components/basic/MultiSwitch.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Select from '@/components/basic/Select.vue';
+import Switch from '@/components/basic/Switch.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
