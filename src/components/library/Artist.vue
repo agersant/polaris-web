@@ -14,7 +14,7 @@
                 <div class="flex flex-wrap gap-2">
                     <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
                 </div>
-                <MultiSwitch v-model="displayMode" :items="[
+                <Switch v-model="displayMode" :items="[
                     { icon: 'apps', value: 'grid5' },
                     { icon: 'grid_view', value: 'grid3' },
                     { icon: 'timeline', value: 'feed' }
@@ -60,8 +60,8 @@ import { useAsyncState, watchImmediate } from "@vueuse/core";
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
 import Error from '@/components/basic/Error.vue';
-import MultiSwitch from '@/components/basic/MultiSwitch.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
+import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
 import { getArtist, } from "@/api/endpoints";

@@ -10,21 +10,21 @@
 </template>
 
 <script setup lang="ts">
-export type MultiSwitchItem = {
+export type SwitchItem = {
     icon: string,
     value: any,
     disabled?: boolean,
 };
 
-const props = defineProps<{ items: MultiSwitchItem[] }>();
+defineProps<{ items: SwitchItem[] }>();
 
 const model = defineModel<any>({ required: true });
 
-function isSelected(item: MultiSwitchItem) {
+function isSelected(item: SwitchItem) {
     return item.value == model.value;
 }
 
-function itemClass(item: MultiSwitchItem) {
+function itemClass(item: SwitchItem) {
     if (item.disabled) {
         return;
     }
@@ -35,7 +35,7 @@ function itemClass(item: MultiSwitchItem) {
     ];
 }
 
-function onItemClicked(item: MultiSwitchItem) {
+function onItemClicked(item: SwitchItem) {
     model.value = item.value;
 }
 </script>
