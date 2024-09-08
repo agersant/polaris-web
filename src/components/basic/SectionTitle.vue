@@ -1,8 +1,8 @@
 <template>
     <div class="mt-11 mb-8 pb-3 border-b border-ls-200 dark:border-ds-700 flex items-center justify-between">
-        <div class="flex items-center">
+        <div class="min-w-0 flex items-center">
             <h3
-                class="min-w-0 mr-8 text-4xl tracking-wider text-ls-500 dark:text-ds-400 whitespace-nowrap overflow-hidden text-ellipsis">
+                class="text-4xl tracking-wider text-ls-500 dark:text-ds-400 whitespace-nowrap overflow-hidden text-ellipsis">
                 {{ label }}
             </h3>
             <slot name="left" />

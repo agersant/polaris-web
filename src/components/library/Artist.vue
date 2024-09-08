@@ -2,17 +2,17 @@
     <div class="flex flex-col">
         <SectionTitle :label="name" class="mb-8">
             <template #right>
-                <div class="flex justify-end gap-4">
-                    <Button label="Play All" icon="play_arrow" severity="secondary" />
-                    <Button label="Queue All" icon="playlist_add" severity="secondary" />
+                <div class="basis-0 grow max-h-6 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
+                    <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
                 </div>
             </template>
         </SectionTitle>
 
         <div v-if="artist" class="flex flex-col min-h-0">
             <div class="mb-8 flex items-center justify-between gap-16">
-                <div class="flex flex-wrap gap-2">
-                    <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
+                <div class="flex gap-4">
+                    <Button label="Play All" icon="play_arrow" severity="secondary" />
+                    <Button label="Queue All" icon="playlist_add" severity="secondary" />
                 </div>
                 <Switch v-model="displayMode" :items="[
                     { icon: 'apps', value: 'grid5' },
