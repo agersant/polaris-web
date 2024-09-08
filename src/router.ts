@@ -129,12 +129,12 @@ router.beforeEach(async (to, from, next) => {
 });
 
 export function makeArtistURL(name: string) {
-	// TODO this breaks when artists or album name contain `/` character (eg. OCRemix)
+	// TODO this breaks when artists or album name contains `/`, `? or `&`
 	return `/artists/${name}`;
 };
 
 export function makeAlbumURL(artists: string[], name: string) {
-	// TODO this breaks when artists or album name contain `/ ` character (eg. OCRemix)
+	// TODO this breaks when artists or album name contains `/`, `? or `&`
 	return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${name}`;
 }
 

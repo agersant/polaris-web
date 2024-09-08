@@ -9,20 +9,47 @@
             </template>
         </SectionTitle>
 
-        <div class="mb-8 flex items-center justify-between gap-16">
-            <div class="flex flex-wrap gap-2">
-                <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
+        <div v-if="artist" class="flex flex-col min-h-0">
+            <div class="mb-8 flex items-center justify-between gap-16">
+                <div class="flex flex-wrap gap-2">
+                    <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
+                </div>
+                <MultiSwitch v-model="displayMode" :items="[
+                    { icon: 'apps', value: 'grid5' },
+                    { icon: 'grid_view', value: 'grid3' },
+                    { icon: 'timeline', value: 'feed' }
+                ]" />
             </div>
-            <MultiSwitch v-model="displayMode" :items="[
-                { icon: 'apps', value: 'grid5' },
-                { icon: 'grid_view', value: 'grid3' },
-                { icon: 'timeline', value: 'feed' }
-            ]" />
+
+            <div class="grow -m-4 p-4 overflow-y-scroll flex flex-col">
+                <div v-if="mainWorks?.length" class="mb-16">
+                    <div class="mb-8 flex items-center">
+                        <span class="material-icons-round text-ls-400">library_music</span>
+                        <div class="px-2 font-medium text-ls-500">Main Releases</div>
+                    </div>
+                    <AlbumGrid :albums="mainWorks" :num-columns="numColumns" />
+                </div>
+                <div v-if="additionalWorks?.length">
+                    <div class="mb-8 flex items-center">
+                        <span class="material-icons-round text-ls-400">group_add</span>
+                        <div class="px-2 font-medium text-ls-500">Featured On</div>
+                    </div>
+                    <AlbumGrid :albums="additionalWorks" :num-columns="numColumns" />
+                </div>
+            </div>
+
+            <!-- TODO orphaned song support -->
+
         </div>
 
-        <div v-if="artist" class="grow min-h-0 -m-4 p-4 overflow-y-scroll flex flex-col">
-            <AlbumGrid :albums="artist.albums_as_performer" :num-columns="numColumns" />
+        <div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+            <Spinner class="text-ls-700 dark:text-ds-400" />
         </div>
+
+        <Error v-else-if="error">
+            Something went wrong while listing releases.
+        </Error>
+
     </div>
 </template>
 
@@ -32,8 +59,10 @@ import { useAsyncState, watchImmediate } from "@vueuse/core";
 
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
+import Error from '@/components/basic/Error.vue';
 import MultiSwitch from '@/components/basic/MultiSwitch.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
+import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
 import { getArtist, } from "@/api/endpoints";
 
@@ -61,9 +90,36 @@ const genres = computed(() => {
     return displayGenres.map(({ genre }) => genre);
 });
 
-// TODO error state, load state
+const mainWorks = computed(() => {
+    if (!artist.value) {
+        return undefined;
+    }
+
+    let works = [];
+    for (const album of artist.value.albums) {
+        if (album.main_artists.includes(artist.value.name)) {
+            works.push(album);
+        } else {
+            const numContributions = album.contributions.filter(c => c.composer || c.lyricist || c.performer).length;
+            if (numContributions >= album.contributions.length / 2) {
+                works.push(album);
+            }
+        }
+    }
+
+    return works;
+});
+
+const additionalWorks = computed(() => {
+    const albums = artist.value?.albums;
+    const main = mainWorks.value;
+    if (!albums || !main) {
+        return undefined;
+    }
+    return albums.filter(a => !main.includes(a));
+});
+
 // TODO scroll state in history
-// TODO composer/lyricist/additional performer grids
 // TODO dark mode
 // TODO timeline view
 // TODO play/queue buttons
