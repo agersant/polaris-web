@@ -46,7 +46,7 @@
                                 {{ item.data.name }}
                             </span>
                             <span v-if="displayMode == 'fixed'" class="mt-1 text-xs text-ls-500 dark:text-ds-500">
-                                {{ formatReleaseCount(item.data) }}
+                                {{ `${item.data.num_songs} ${pluralize('song', item.data.num_songs)}` }}
                             </span>
                         </div>
                         <div class="min-w-fit overflow-hidden flex justify-end gap-2">
@@ -92,6 +92,7 @@ import SectionTitle from "@/components/basic/SectionTitle.vue";
 import Select, { SelectOption } from "@/components/basic/Select.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import { ArtistHeader } from "@/api/dto";
+import { pluralize } from "@/format";
 import { makeArtistURL } from "@/router";
 import { usePreferencesStore } from "@/stores/preferences";
 
@@ -204,36 +205,6 @@ function getMainGenres(artist: ArtistHeader) {
     let displayGenres = genres.slice(0, 3).map(({ genre }) => genre);
     displayGenres.sort();
     return displayGenres;
-}
-
-function formatReleaseCount(artist: ArtistHeader) {
-    const plural = (n: number) => n > 1 ? "s" : "";
-    const role = roleFilter.value.value;
-    switch (role) {
-        case "performer":
-            {
-                const albums = artist.num_albums_as_performer;
-                const appearances = artist.num_albums_as_additional_performer;
-                if (albums && appearances) {
-                    return `${albums} release${plural(albums)}, ${appearances} other appearance${plural(appearances)}`;
-                } else if (appearances) {
-                    return `${appearances} appearance${plural(appearances)}`;
-                } else {
-                    return `${albums} release${plural(albums)}`;
-                }
-            }
-        case "composer":
-            {
-                const albums = artist.num_albums_as_composer;
-                return `${albums} release${plural(albums)}`;
-            }
-        case "lyricist":
-            {
-                const albums = artist.num_albums_as_lyricist;
-                return `${albums} release${plural(albums)}`;
-            }
-    }
-
 }
 
 const historyStateKey = "artists";
