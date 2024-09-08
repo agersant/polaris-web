@@ -54,13 +54,6 @@ const numColumns = computed(() => {
     };
 });
 
-const gapSize = ref(32);
-const itemStyle = computed(() => {
-    return {
-        width: `calc(${100 / numColumns.value}% - ${gapSize.value * (numColumns.value - 1) / numColumns.value}px)`,
-    }
-});
-
 const genres = computed(() => {
     let entries = Object.entries(artist.value?.num_songs_by_genre || {});
     let displayGenres = entries.map(([genre, count]) => ({ genre, count }));
