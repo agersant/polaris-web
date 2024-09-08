@@ -218,7 +218,7 @@ watchThrottled([artists, filter, roleFilter, scrollY], async () => {
     const state = {
         artists: await compress(JSON.stringify((artists.value.filter(isRelevant)))),
         filter: filter.value,
-        roleFilter: roleFilter.value.value,
+        roleFilter: roleFilter.value,
         scrollY: scrollY.value || 0,
     };
     history.replaceState({ ...history.state, [historyStateKey]: state }, "");
@@ -231,7 +231,7 @@ onMounted(async () => {
     }
     artists.value = JSON.parse(await decompress(state.artists));
     filter.value = state.filter;
-    roleFilter.value = roleFilters.find(f => f.value == state.roleFilter) || roleFilters[0];
+    roleFilter.value = state.roleFilter;
     nextTick(() => {
         viewport.value?.scrollTo({ top: state.scrollY });
     });
