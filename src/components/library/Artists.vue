@@ -229,9 +229,9 @@ onMounted(async () => {
     if (!state) {
         return;
     }
-    artists.value = JSON.parse(await decompress(state.artists));
     filter.value = state.filter;
     roleFilter.value = state.roleFilter;
+    artists.value = JSON.parse(await decompress(state.artists));
     nextTick(() => {
         viewport.value?.scrollTo({ top: state.scrollY });
     });
