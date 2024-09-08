@@ -133,17 +133,23 @@ export function makeArtistURL(name: string) {
 	return `/artists/${name}`;
 };
 
-export function makeAlbumURL(song: Song) {
+export function makeAlbumURL(artists: string[], name: string) {
+	// TODO this breaks when artists or album name contain `/ ` character (eg. OCRemix)
+	return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${name}`;
+}
+
+export function makeAlbumURLFromSong(song: Song) {
 	if (!song.album) {
-		// TODO support for orphaned songs?
 		return undefined;
 	}
 	let artists = song.artists;
 	if (song.album_artists?.length) {
 		artists = song.album_artists;
 	}
-	// TODO this breaks when artists or album name contain `/ ` character (eg. OCRemix)
-	return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${song.album}`;
+	if (!artists?.length) {
+		return undefined;
+	}
+	return makeAlbumURL(artists, song.album);
 };
 
 export default router;

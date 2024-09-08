@@ -108,15 +108,15 @@ export interface AlbumKey {
 
 export interface AlbumHeader {
 	name: string,
+	artists: string[],
 	artwork?: string,
-	artists?: string[],
 	year?: number,
 }
 
 export interface Album {
 	name: string,
+	artists: string[],
 	artwork?: string,
-	artists?: string[],
 	year?: number,
 	songs: Song[],
 }
