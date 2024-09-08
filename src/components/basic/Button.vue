@@ -1,6 +1,6 @@
 <template>
     <button type="button" :class="buttonClass" :disabled="disabled"
-        class="inline-flex items-center justify-center gap-x-1.5 rounded-md shadow-sm text-sm font-semibold">
+        class="inline-flex items-center justify-center gap-x-1.5 rounded-md shadow-sm text-sm font-semibold whitespace-nowrap">
         <span v-if="icon" class="material-icons-round text-ls-400 dark:text-ds-200">
             {{ icon }}
         </span>
