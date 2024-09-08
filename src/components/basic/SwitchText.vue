@@ -22,9 +22,9 @@ function isSelected(item: SwitchTextItem) {
 
 function itemClass(item: SwitchTextItem) {
     if (isSelected(item)) {
-        return "text-accent-600";
+        return "text-accent-600 dark:text-accent-700";
     } else {
-        return "text-ls-700";
+        return "text-ls-700 dark:text-ds-300";
     }
 }
 
