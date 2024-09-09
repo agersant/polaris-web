@@ -6,7 +6,7 @@
 			<InputText class="mb-8" v-model="searchQuery" id="search" name="search" placeholder="Search"
 				icon="search" />
 			<VirtualTree ref="tree" v-model="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
-				@nodes-drag-start="onDragStart" @nodes-drag="onDrag" @nodes-drag-end="onDragEnd" class="grow" />
+				@nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag" class="grow" />
 		</div>
 
 		<Error v-if="!treeModel.length && error">
@@ -22,6 +22,13 @@
 		<div v-else-if="!treeModel.length && isLoading" class="grow flex mt-24 items-start justify-center">
 			<Spinner class="text-ls-700 dark:text-ds-400" />
 		</div>
+
+		<Teleport :to="dragPreview" v-if="draggedFiles == activeDnD">
+			<div class="flex items-center gap-2">
+				<span class="material-icons-round">{{ draggedFiles?.getIcon() }}</span>
+				<span>{{ draggedFiles?.getDescription() }}</span>
+			</div>
+		</Teleport>
 
 	</div>
 </template>
@@ -39,11 +46,12 @@ import SectionTitle from "@/components/basic/SectionTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";
-import { DnDPayload, DndPayloadFiles, endDrag, startDrag, updateDrag } from '@/dnd';
+import { DndPayloadFiles, useDragAndDrop } from '@/dnd';
 import { getPathTail } from '@/format';
 import { usePlaybackStore } from "@/stores/playback";
 
 const playback = usePlaybackStore();
+const { activeDnD, startDrag, updateDrag, endDrag, dragPreview } = useDragAndDrop();
 
 const treeModel: Ref<Node[]> = shallowRef([]);
 
@@ -56,6 +64,7 @@ watch(topLevel, (v) => {
 
 const tree = useTemplateRef("tree");
 const searchQuery = ref("");
+const draggedFiles: Ref<DndPayloadFiles | null> = ref(null);
 
 async function openDirectory(node: Node) {
 	{
@@ -102,21 +111,13 @@ function onKeyDown(event: KeyboardEvent) {
 }
 
 function onDragStart(event: DragEvent, nodes: Node[]) {
-	const payload: DnDPayload = new DndPayloadFiles(nodes.map(n => {
+	draggedFiles.value = new DndPayloadFiles(nodes.map(n => {
 		return {
 			path: n.key,
 			is_directory: !n.leaf,
 		};
 	}));
-	startDrag(event, payload);
-}
-
-function onDrag(event: DragEvent) {
-	updateDrag(event);
-}
-
-function onDragEnd(event: DragEvent) {
-	endDrag(event);
+	startDrag(event, draggedFiles.value);
 }
 
 async function queueSelection(replace: boolean) {
