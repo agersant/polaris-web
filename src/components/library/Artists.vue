@@ -38,7 +38,7 @@
                         <span class="material-icons-round rounded-full p-2
                             flex items-center justify-center
                             text-ls-500 dark:text-ds-400
-                            bg-ls-200 dark:bg-ds-700 ">
+                            bg-ls-200 dark:bg-ds-700">
                             person
                         </span>
                         <div class="basis-fit shrink min-w-0 pr-8 flex flex-col">
