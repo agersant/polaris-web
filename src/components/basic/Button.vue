@@ -1,10 +1,10 @@
 <template>
     <button type="button" :class="buttonClass" :disabled="disabled"
         class="inline-flex items-center justify-center gap-x-1.5 rounded-md shadow-sm text-sm font-semibold whitespace-nowrap">
-        <span v-if="icon" class="material-icons-round text-ls-400 dark:text-ds-200">
+        <span v-if="icon" class="material-icons-round" :class="iconClass">
             {{ icon }}
         </span>
-        <span>{{ label }}</span>
+        <span v-if="label?.length">{{ label }}</span>
     </button>
 </template>
 
@@ -12,11 +12,11 @@
 import { computed } from 'vue';
 
 const { severity = "primary", size = "base", ...props } = defineProps<{
-    label: string,
+    label?: string,
     icon?: string,
     disabled?: boolean,
     severity?: "primary" | "secondary",
-    size?: "base" | "lg" | "xl",
+    size?: "sm" | "base" | "lg" | "xl",
 }>();
 
 let palettes = {
@@ -38,21 +38,25 @@ let palettes = {
     `,
 };
 
+let sizes = {
+    sm: "px-1.5 py-1",
+    base: "px-2.5 py-1.5",
+    lg: "px-3 py-2",
+    xl: "px-3.5 py-2.5",
+};
+
 const buttonClass = computed(() => {
-
     const palette = props.disabled ? palettes.disabled : palettes[severity];
-
-    let padding = "px-2.5 py-1.5";
-    if (size == "lg") {
-        padding = "px-3 py-2";
-    } else if (size == "xl") {
-        padding = "px-3.5 py-2.5";
-    }
-
     return [
         props.disabled ? "cursor-not-allowed" : "cursor-pointer [&>*]:active:translate-y-px",
-        padding,
+        sizes[size],
         palette,
+    ];
+});
+
+const iconClass = computed(() => {
+    return [
+        props.label?.length ? "text-ls-400 dark:text-ds-200" : "text-ls-900 dark:text-ds-0",
     ];
 });
 </script>
