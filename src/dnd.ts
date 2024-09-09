@@ -1,11 +1,11 @@
 import { Ref, ref } from 'vue';
 import { useMouse } from '@vueuse/core'
 
-import { BrowserEntry } from "./api/dto";
-import { flatten } from "./api/endpoints";
+import { AlbumHeader, AlbumKey, BrowserEntry } from "./api/dto";
+import { flatten, getAlbum } from "./api/endpoints";
 import { getPathTail } from "./format";
 
-export type DnDPayload = DndPayloadFiles;
+export type DnDPayload = DndPayloadFiles | DndPayloadAlbum;
 
 const { x: mouseX, y: mouseY } = useMouse();
 
@@ -25,7 +25,7 @@ yeet(blankElement);
 
 const dragElement = document.createElement("div");
 dragElement.id = "dnd-drag";
-dragElement.className = "flex items-center gap-2 w-fit bg-ls-0 dark:bg-ds-950 px-2 py-1 rounded-md text-sm border-2 border-accent-200 dark:border-accent-800 text-accent-700 ring-2 ring-ls-0 dark:ring-ds-950";
+dragElement.className = "w-fit bg-ls-0 dark:bg-ds-950 px-2 py-1 rounded-md text-sm border-2 border-accent-200 dark:border-accent-800 text-accent-700 ring-2 ring-ls-0 dark:ring-ds-950";
 dragElement.style.pointerEvents = "none";
 document.body.appendChild(dragElement);
 yeet(dragElement);
@@ -34,28 +34,31 @@ let storage: Ref<DnDPayload | undefined> = ref(undefined);
 
 export function useDragAndDrop() {
     return {
-        payload: storage,
+        startDrag,
+        updateDrag,
+        endDrag,
+        dragPreview: "#dnd-drag",
+        activeDnD: storage,
     };
 }
 
-export function startDrag(event: DragEvent, payload: DnDPayload) {
+function startDrag(event: DragEvent, payload: DnDPayload) {
     if (!event.dataTransfer) {
         return;
     }
     event.dataTransfer.setDragImage(blankElement, 0, 0);
-    dragElement.innerHTML = `<span class="material-icons-round">${payload.getIcon()}</span>${payload.getDescription()}`;
     dragElement.style.position = "fixed";
     dragElement.style.left = `${mouseX.value}px`;
     dragElement.style.top = `${mouseY.value}px`;
     storage.value = payload;
 }
 
-export function updateDrag(event: DragEvent) {
+function updateDrag(event: DragEvent) {
     dragElement.style.left = `${mouseX.value}px`;
     dragElement.style.top = `${mouseY.value}px`;
 }
 
-export function endDrag(event: DragEvent) {
+function endDrag(event: DragEvent) {
     yeet(dragElement);
     storage.value = undefined;
 }
@@ -67,7 +70,6 @@ export class DndPayloadFiles {
 
     constructor(files: BrowserEntry[]) {
         this.files = files;
-
         this.tracks = (
             Promise.all(this.files.map((f) => {
                 if (f.is_directory) {
@@ -103,5 +105,24 @@ export class DndPayloadFiles {
         } else {
             return `${this.files.length} Files & Directories`;
         }
+    }
+};
+
+export class DndPayloadAlbum {
+    kind = "album";
+    album: AlbumHeader;
+    tracks: Promise<string[]>;
+
+    constructor(album: AlbumHeader) {
+        this.album = album;
+        const key: AlbumKey = {
+            name: album.name,
+            artists: album.main_artists,
+        };
+        this.tracks = getAlbum(key).then(album => album.songs.map(s => s.path));
+    }
+
+    getTracks(): Promise<string[]> {
+        return this.tracks;
     }
 };

@@ -26,7 +26,7 @@
 
 		<div class="grow relative min-h-0">
 			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playback.playlist"
-				:item-height="itemHeight" :show-drop-preview="dragPayload != undefined" @keydown="onKeyDown"
+				:item-height="itemHeight" :show-drop-preview="activeDnD != undefined" @keydown="onKeyDown"
 				@list-reorder="onReorder" @list-delete="playback.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :entry="item" :compact="compact" :height="itemHeight" :index="index"
@@ -95,7 +95,7 @@ const playbackOrder = computed({
 	},
 });
 
-const { payload: dragPayload } = useDragAndDrop();
+const { activeDnD } = useDragAndDrop();
 
 onMounted(() => autoScroll("instant"));
 watch(() => playback.currentTrack, () => autoScroll("smooth"));
@@ -126,8 +126,8 @@ function onKeyDown(event: KeyboardEvent) {
 }
 
 async function onDrop(atIndex: number) {
-	if (dragPayload.value) {
-		playback.queueTracks(await dragPayload.value.getTracks(), atIndex);
+	if (activeDnD.value) {
+		playback.queueTracks(await activeDnD.value.getTracks(), atIndex);
 	}
 }
 
