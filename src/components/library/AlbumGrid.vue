@@ -37,7 +37,7 @@ const gapSize = ref(32);
 
 const itemClass = computed(() => {
     return [
-        props.numColumns <= 3 ? 'hover:opacity-90 hover:scale-105' : 'hover:scale-110',
+        props.numColumns <= 3 ? 'hover:scale-105' : 'hover:scale-110',
     ];
 });
 
