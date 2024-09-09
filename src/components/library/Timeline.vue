@@ -31,7 +31,8 @@
                                 <span>'s&nbsp;</span>
                             </span>
 
-                            <span @click="onAlbumClicked(event.album)" class="cursor-pointer font-medium text-ls-900">
+                            <span @click="onAlbumClicked(event.album)"
+                                class="cursor-pointer font-medium text-ls-900 hover:underline">
                                 {{ event.album.name }}
                             </span>
 
