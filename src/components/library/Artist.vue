@@ -9,33 +9,36 @@
         </SectionTitle>
 
         <div v-if="artist" class="flex flex-col min-h-0">
-            <div class="mb-8 flex items-center justify-between gap-16">
-                <div class="flex gap-4">
-                    <Button label="Play All" icon="play_arrow" severity="secondary" />
-                    <Button label="Queue All" icon="playlist_add" severity="secondary" />
-                </div>
-                <Switch v-model="displayMode" :items="[
+            <div ref="viewport" class="relative grow -m-4 p-4 overflow-y-scroll flex flex-col gap-16">
+
+                <Switch class="absolute top-4 right-4" v-model="displayMode" :items="[
                     { icon: 'apps', value: 'grid5' },
                     { icon: 'grid_view', value: 'grid3' },
                     { icon: 'timeline', value: 'feed' }
                 ]" />
-            </div>
 
-            <div ref="viewport" class="grow -m-4 p-4 overflow-y-scroll flex flex-col">
-                <div v-if="mainWorks?.length" class="mb-16">
-                    <div class="mb-8 flex items-center">
-                        <span class="material-icons-round text-ls-400">library_music</span>
-                        <div class="px-2 font-medium text-ls-500">Main Releases</div>
+                <div v-if="mainWorks?.length">
+                    <div class="mb-8 flex items-center gap-4">
+                        <div class="text-sm uppercase font-medium text-ls-500">Main Releases</div>
+                        <ButtonGroup>
+                            <Button icon="play_arrow" severity="secondary" size="sm" @click="play(mainWorks)" />
+                            <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(mainWorks)" />
+                        </ButtonGroup>
                     </div>
                     <AlbumGrid :albums="mainWorks" :num-columns="numColumns" />
                 </div>
-                <div v-if="additionalWorks?.length">
-                    <div class="mb-8 flex items-center">
-                        <span class="material-icons-round text-ls-400">group_add</span>
-                        <div class="px-2 font-medium text-ls-500">Featured On</div>
+
+                <div v-if="otherWorks?.length">
+                    <div class="mb-8 flex items-center gap-4">
+                        <div class="text-sm uppercase font-medium text-ls-500">Featured On</div>
+                        <ButtonGroup>
+                            <Button icon="play_arrow" severity="secondary" size="sm" @click="play(otherWorks)" />
+                            <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(otherWorks)" />
+                        </ButtonGroup>
                     </div>
-                    <AlbumGrid :albums="additionalWorks" :num-columns="numColumns" />
+                    <AlbumGrid :albums="otherWorks" :num-columns="numColumns" />
                 </div>
+
             </div>
 
             <!-- TODO orphaned song support -->
@@ -57,15 +60,19 @@
 import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch } from "vue";
 import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
 
-import { Artist } from "@/api/dto";
-import { getArtist, } from "@/api/endpoints";
+import { AlbumHeader, AlbumKey, Artist } from "@/api/dto";
+import { getAlbum, getArtist, } from "@/api/endpoints";
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
+import ButtonGroup from '@/components/basic/ButtonGroup.vue';
 import Error from '@/components/basic/Error.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
+import { usePlaybackStore } from "@/stores/playback";
+
+const playback = usePlaybackStore();
 
 const props = defineProps<{
     name: string,
@@ -128,7 +135,7 @@ const mainWorks = computed(() => {
     return works;
 });
 
-const additionalWorks = computed(() => {
+const otherWorks = computed(() => {
     const albums = artist.value?.albums;
     const main = mainWorks.value;
     if (!albums || !main) {
@@ -139,13 +146,37 @@ const additionalWorks = computed(() => {
 
 // TODO dark mode
 // TODO timeline view
-// TODO play/queue buttons
+// TODO album drag and drop
 // TODO genre links
 
 const viewport = useTemplateRef("viewport");
 const { y: scrollY } = useScroll(viewport);
 
 const historyStateKey = "artist";
+
+async function play(albums: AlbumHeader[]) {
+    const songs = await listSongs(albums);
+    playback.clear();
+    playback.queueTracks(songs);
+    playback.next();
+}
+
+async function queue(albums: AlbumHeader[]) {
+    const songs = await listSongs(albums);
+    playback.queueTracks(songs);
+}
+
+async function listSongs(albums: AlbumHeader[]) {
+    return (
+        await Promise.all(albums.map((a) => {
+            const key: AlbumKey = {
+                name: a.name,
+                artists: a.main_artists,
+            };
+            return getAlbum(key).then(album => album.songs.map(s => s.path));
+        }))
+    ).flat();
+}
 
 watchThrottled([artist, scrollY], async () => {
     const state = {
