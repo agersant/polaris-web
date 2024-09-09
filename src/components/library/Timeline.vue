@@ -1,12 +1,12 @@
 <template>
     <div>
         <div v-for="(event, index) in events">
-            <div class="relative flex gap-x-4 items-center">
+            <div class="flex gap-x-4 items-center">
 
                 <!-- TODO drag and drop -->
                 <div @click="onAlbumClicked(event.album)"
                     :class="event.isMainRelease ? 'h-24 w-24 rounded-lg' : 'h-12 w-12 mx-6 rounded-full'" class="
-                    overflow-hidden shadow-md
+                    shrink-0 overflow-hidden shadow-md
                     cursor-pointer origin-center
                     transition-all ease-out duration-100
                     hover:opacity-90 hover:scale-125
