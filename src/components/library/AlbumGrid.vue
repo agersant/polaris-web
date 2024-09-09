@@ -1,6 +1,7 @@
 <template>
     <div class="flex flex-wrap content-start gap-y-8" :style="`column-gap: ${gapSize}px`">
         <div v-for="album of albums" class="flex flex-col gap-2" :style="itemStyle">
+            <!-- TODO drag and drop -->
             <div @click="router.push(makeAlbumURL(album.main_artists, album.name))" :class="itemClass" class="
             cursor-pointer aspect-square w-full origin-center 
             transition-all ease-out duration-100

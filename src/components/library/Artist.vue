@@ -9,15 +9,15 @@
         </SectionTitle>
 
         <div v-if="artist" class="flex flex-col min-h-0">
-            <div ref="viewport" class="relative grow -m-4 p-4 overflow-y-scroll flex flex-col gap-16">
+            <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-scroll flex flex-col gap-16">
 
                 <Switch class="absolute top-4 right-4" v-model="displayMode" :items="[
                     { icon: 'apps', value: 'grid5' },
                     { icon: 'grid_view', value: 'grid3' },
-                    { icon: 'timeline', value: 'feed' }
+                    { icon: 'timeline', value: 'timeline' }
                 ]" />
 
-                <div v-if="mainWorks?.length">
+                <div v-if="displayMode != 'timeline' && mainWorks?.length">
                     <div class="mb-8 flex items-center gap-4">
                         <div class="text-sm uppercase font-medium text-ls-500">Main Releases</div>
                         <ButtonGroup>
@@ -28,7 +28,7 @@
                     <AlbumGrid :albums="mainWorks" :num-columns="numColumns" />
                 </div>
 
-                <div v-if="otherWorks?.length">
+                <div v-if="displayMode != 'timeline' && otherWorks?.length">
                     <div class="mb-8 flex items-center gap-4">
                         <div class="text-sm uppercase font-medium text-ls-500">Featured On</div>
                         <ButtonGroup>
@@ -38,6 +38,8 @@
                     </div>
                     <AlbumGrid :albums="otherWorks" :num-columns="numColumns" />
                 </div>
+
+                <Timeline v-if="displayMode == 'timeline'" :artist="artist.name" :albums="artist.albums" class="m-16" />
 
             </div>
 
@@ -70,6 +72,7 @@ import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
+import Timeline from '@/components/library/Timeline.vue';
 import { usePlaybackStore } from "@/stores/playback";
 
 const playback = usePlaybackStore();
@@ -145,8 +148,6 @@ const otherWorks = computed(() => {
 });
 
 // TODO dark mode
-// TODO timeline view
-// TODO album drag and drop
 // TODO genre links
 
 const viewport = useTemplateRef("viewport");
