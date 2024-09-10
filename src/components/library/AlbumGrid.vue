@@ -14,8 +14,8 @@
                 </Draggable>
             </div>
             <div class="flex flex-col gap-1">
-                <div class="font-medium text-sm line-clamp-2 text-ls-900" v-text="album.name" />
-                <div class="font-medium text-sm text-ls-500" v-text="album.year" />
+                <div class="font-medium text-sm line-clamp-2 text-ls-900 dark:text-ds-200" v-text="album.name" />
+                <div class="font-medium text-sm text-ls-500 dark:text-ds-400" v-text="album.year" />
             </div>
         </div>
     </div>

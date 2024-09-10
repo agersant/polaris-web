@@ -19,7 +19,7 @@
                 </div>
 
                 <div class="flex min-w-0 flex-1 justify-between space-x-4">
-                    <div class="mr-8 flex flex-col text-sm text-ls-500">
+                    <div class="mr-8 flex flex-col text-sm text-ls-500 dark:text-ds-400">
 
                         <p class="whitespace-pre-line leading-6">
 
@@ -27,7 +27,8 @@
 
                             <span v-if="event.albumOwners?.length">
                                 <span v-for="(artist, index) of event.albumOwners" class="inline-flex">
-                                    <span v-text="artist" class="cursor-pointer text-accent-600 underline"
+                                    <span v-text="artist"
+                                        class="cursor-pointer underline text-accent-600 dark:text-accent-700"
                                         @click="onArtistClicked(artist)" />
                                     <span v-if="index == event.albumOwners.length - 2">&nbsp;&&nbsp;</span>
                                     <span v-else-if="index < event.albumOwners.length - 1">,&nbsp;</span>
@@ -36,14 +37,15 @@
                             </span>
 
                             <span @click="onAlbumClicked(event.album)"
-                                class="cursor-pointer font-medium text-ls-900 hover:underline">
+                                class="cursor-pointer font-medium text-ls-900 dark:text-ds-200 hover:underline">
                                 {{ event.album.name }}
                             </span>
 
                             <span v-if="event.albumCollaborators?.length">
                                 <span>&nbsp;with&nbsp;</span>
                                 <span v-for="(artist, index) of event.albumCollaborators" class="inline-flex">
-                                    <span v-text="artist" class="cursor-pointer text-accent-600 underline"
+                                    <span v-text="artist"
+                                        class="cursor-pointer underline text-accent-600 dark:text-accent-700"
                                         @click="onArtistClicked(artist)" />
                                     <span v-if="index == event.albumCollaborators.length - 2">&nbsp;&&nbsp;</span>
                                     <span v-else-if="index < event.albumCollaborators.length - 1">,&nbsp;</span>
@@ -53,12 +55,12 @@
 
                     </div>
 
-                    <div class="whitespace-nowrap text-right text-sm text-ls-500">
+                    <div class="whitespace-nowrap text-right text-sm text-ls-500 dark:text-ds-400">
                         {{ event.year || "????" }}
                     </div>
                 </div>
             </div>
-            <div v-if="index != events.length - 1" class="h-6 mx-12 my-2 w-px bg-ls-300" />
+            <div v-if="index != events.length - 1" class="h-6 mx-12 my-2 w-px bg-ls-300 dark:bg-ds-600" />
         </div>
     </div>
 </template>

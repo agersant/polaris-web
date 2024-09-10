@@ -3,6 +3,7 @@
         <SectionTitle :label="name" class="mb-8">
             <template #right>
                 <div class="basis-0 grow max-h-6 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
+                    <!-- TODO genre links -->
                     <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
                 </div>
             </template>
@@ -19,7 +20,7 @@
 
                 <div v-if="displayMode != 'timeline' && mainWorks?.length">
                     <div class="mb-8 flex items-center gap-4">
-                        <div class="text-sm uppercase font-medium text-ls-500">Main Releases</div>
+                        <div class="text-sm uppercase font-medium text-ls-500 dark:text-ds-400">Main Releases</div>
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(mainWorks)" />
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(mainWorks)" />
@@ -30,7 +31,7 @@
 
                 <div v-if="displayMode != 'timeline' && otherWorks?.length">
                     <div class="mb-8 flex items-center gap-4">
-                        <div class="text-sm uppercase font-medium text-ls-500">Featured On</div>
+                        <div class="text-sm uppercase font-medium text-ls-500 dark:text-ds-400">Featured On</div>
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(otherWorks)" />
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(otherWorks)" />
@@ -146,9 +147,6 @@ const otherWorks = computed(() => {
     }
     return albums.filter(a => !main.includes(a));
 });
-
-// TODO dark mode
-// TODO genre links
 
 const viewport = useTemplateRef("viewport");
 const { y: scrollY } = useScroll(viewport);
