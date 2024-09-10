@@ -23,7 +23,7 @@
 			<Spinner class="text-ls-700 dark:text-ds-400" />
 		</div>
 
-		<Teleport :to="dragPreview" v-if="draggedFiles == activeDnD">
+		<Teleport :to="dragPreview" v-if="draggedFiles === activeDnD">
 			<div class="flex items-center gap-2">
 				<span class="material-icons-round">{{ draggedFiles?.getIcon() }}</span>
 				<span>{{ draggedFiles?.getDescription() }}</span>

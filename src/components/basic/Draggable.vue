@@ -6,7 +6,7 @@
                 <slot />
             </div>
         </div>
-        <Teleport :to="dragPreview" v-if="draggablePayload == activeDnD">
+        <Teleport :to="dragPreview" v-if="draggablePayload === activeDnD">
             <slot name="drag-preview" />
         </Teleport>
     </div>
