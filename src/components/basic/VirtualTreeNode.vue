@@ -9,8 +9,8 @@
                 {{ expanded ? "expand_more" : "chevron_right" }}
             </span>
         </button>
-        <span :class="iconClass" class="material-icons-round mr-2">{{ node.icon }}</span>
-        <span class="text-nowrap">{{ props.node.label }}</span>
+        <span v-text="node.icon" :class="iconClass" class="material-icons-round mr-2" />
+        <span v-text="props.node.label" class="text-nowrap" />
     </div>
 </template>
 

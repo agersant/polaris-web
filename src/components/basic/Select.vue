@@ -8,7 +8,7 @@
 
             <ListboxButton
                 class="relative w-full cursor-default rounded-md bg-ls-0 dark:bg-white/5 py-2 pl-3 pr-10 text-left text-ls-900 dark:text-ds-0 shadow-sm ring-1 ring-inset ring-ls-300 dark:ring-white/10 focus:outline-none focus:ring-2 focus:ring-accent-600 sm:text-sm sm:leading-6">
-                <span class="block truncate">{{ selected?.label }}</span>
+                <span v-text="selected?.label" class="block truncate" />
                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <span class="material-icons-round text-ls-400 dark:text-ds-600">arrow_drop_down</span>
                 </span>

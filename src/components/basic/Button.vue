@@ -4,7 +4,7 @@
         <span v-if="icon" class="material-icons-round" :class="iconClass">
             {{ icon }}
         </span>
-        <span v-if="label?.length">{{ label }}</span>
+        <span v-if="label?.length" v-text="label" />
     </button>
 </template>
 
