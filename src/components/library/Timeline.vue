@@ -3,7 +3,6 @@
         <div v-for="(event, index) in events">
             <div class="flex gap-x-4 items-center">
 
-                <!-- TODO drag and drop -->
                 <div @click="onAlbumClicked(event.album)"
                     :class="event.isMainRelease ? 'h-24 w-24 rounded-lg' : 'h-12 w-12 mx-6 rounded-full'" class="
                     shrink-0 overflow-hidden shadow-md
@@ -11,7 +10,12 @@
                     transition-all ease-out duration-100
                     hover:opacity-90 hover:scale-125
                 ">
-                    <AlbumArt :url="event.artworkURL" />
+                    <Draggable :make-payload="() => new DndPayloadAlbum(event.album)">
+                        <AlbumArt :url="event.artworkURL" />
+                        <template #drag-preview>
+                            <AlbumDragPreview :album="event.album" />
+                        </template>
+                    </Draggable>
                 </div>
 
                 <div class="flex min-w-0 flex-1 justify-between space-x-4">
@@ -23,8 +27,8 @@
 
                             <span v-if="event.albumOwners?.length">
                                 <span v-for="(artist, index) of event.albumOwners" class="inline-flex">
-                                    <span class="cursor-pointer text-accent-600 underline"
-                                        @click="onArtistClicked(artist)">{{ artist }}</span>
+                                    <span v-text="artist" class="cursor-pointer text-accent-600 underline"
+                                        @click="onArtistClicked(artist)" />
                                     <span v-if="index == event.albumOwners.length - 2">&nbsp;&&nbsp;</span>
                                     <span v-else-if="index < event.albumOwners.length - 1">,&nbsp;</span>
                                 </span>
@@ -39,8 +43,8 @@
                             <span v-if="event.albumCollaborators?.length">
                                 <span>&nbsp;with&nbsp;</span>
                                 <span v-for="(artist, index) of event.albumCollaborators" class="inline-flex">
-                                    <span class="cursor-pointer text-accent-600 underline"
-                                        @click="onArtistClicked(artist)">{{ artist }}</span>
+                                    <span v-text="artist" class="cursor-pointer text-accent-600 underline"
+                                        @click="onArtistClicked(artist)" />
                                     <span v-if="index == event.albumCollaborators.length - 2">&nbsp;&&nbsp;</span>
                                     <span v-else-if="index < event.albumCollaborators.length - 1">,&nbsp;</span>
                                 </span>
@@ -66,6 +70,9 @@ import { useRouter } from 'vue-router';
 import { AlbumHeader, ArtistAlbum } from '@/api/dto';
 import { makeThumbnailURL } from '@/api/endpoints';
 import AlbumArt from '@/components/AlbumArt.vue';
+import Draggable from '@/components/basic/Draggable.vue';
+import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
+import { DndPayloadAlbum } from '@/dnd';
 import { pluralize } from '@/format';
 import { makeAlbumURL, makeArtistURL } from '@/router';
 
