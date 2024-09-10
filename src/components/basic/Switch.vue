@@ -3,7 +3,7 @@
         <div v-for="item of items" @click="onItemClicked(item)">
             <div class="flex flex-1 p-1.5 items-center justify-center rounded-md font-semibold"
                 :class="itemClass(item)">
-                <span class="material-icons-round">{{ item.icon }}</span>
+                <span v-text="item.icon" class="material-icons-round" />
             </div>
         </div>
     </div>

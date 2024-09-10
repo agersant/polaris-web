@@ -25,8 +25,8 @@
 
 		<Teleport :to="dragPreview" v-if="draggedFiles === activeDnD">
 			<div class="flex items-center gap-2">
-				<span class="material-icons-round">{{ draggedFiles?.getIcon() }}</span>
-				<span>{{ draggedFiles?.getDescription() }}</span>
+				<span v-text="draggedFiles?.getIcon()" class="material-icons-round" />
+				<span v-text="draggedFiles?.getDescription()" />
 			</div>
 		</Teleport>
 

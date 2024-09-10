@@ -10,7 +10,7 @@
                 <AlbumArt :url="artworkURL" />
             </div>
             <div class="grow basis-0 pr-4 text-ellipsis" :class="{ 'overflow-hidden': song }">
-                <span v-if="song">{{ formatTrackContext(song) }}</span>
+                <span v-if="song" v-text="formatTrackContext(song)" />
                 <div v-else class="-mr-8 bg-black/5 dark:bg-white/5 h-3 rounded-full" />
             </div>
             <div class="basis-8 shrink-0 text-right mr-1">
