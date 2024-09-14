@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center gap-2">
-        <div class="w-10 h-10">
+        <div class="size-10">
             <AlbumArt :url="album.artwork ? makeThumbnailURL(album.artwork, 'tiny') : undefined" />
         </div>
         <div class="max-w-80 font-medium text-sm" v-text="album.name" />

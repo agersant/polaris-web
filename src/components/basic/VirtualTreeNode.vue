@@ -2,7 +2,7 @@
     <div tabindex="0"
         class="group flex items-center px-2 py-1 rounded-sm cursor-pointer hover:bg-ls-100 dark:hover:bg-ds-800"
         :class="rootClass" :style="rootStyle">
-        <button type="button" @mousedown.prevent @click.stop="toggle" class="w-7 h-7 pt-1"
+        <button type="button" @mousedown.prevent @click.stop="toggle" class="size-7 pt-1"
             :class="{ invisible: node.leaf }" tabindex="-1">
             <Spinner v-if="node.loading" class="mb-1 ml-1 mr-3" />
             <span v-else :class="iconClass" class="material-icons-round -mt-0.5">
