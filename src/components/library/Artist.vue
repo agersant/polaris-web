@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col">
-        <SectionTitle :label="name" class="mb-8">
+        <SectionTitle :label="name">
             <template #right>
                 <div class="basis-0 grow max-h-6 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
                     <!-- TODO genre links -->
