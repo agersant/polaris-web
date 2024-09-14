@@ -4,7 +4,7 @@ import { Song } from "@/api/dto";
 import App from "@/components/App.vue";
 import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
-import AlbumPage from "@/components/library/AlbumPage.vue";
+import Album from "@/components/library/Album.vue";
 import Artist from "@/components/library/Artist.vue";
 import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
@@ -30,7 +30,7 @@ function extractAlbumKey(route: RouteLocation) {
 		artists = route.params.artists.split(URI_ARRAY_SEPARATOR);
 	}
 	return {
-		album_key: {
+		albumKey: {
 			artists,
 			name: route.params.name,
 		}
@@ -56,7 +56,7 @@ const routes = [
 			{ path: "/files", component: Files },
 			{ path: "/artists/:name", component: Artist, props: true },
 			{ path: "/artists", component: Artists },
-			{ path: "/albums/:artists/:name", component: AlbumPage, props: extractAlbumKey },
+			{ path: "/albums/:artists/:name", component: Album, props: extractAlbumKey },
 			{ path: "/random", component: Random },
 			{ path: "/recent", component: Recent },
 			{ path: "/playlists", component: Playlists },
