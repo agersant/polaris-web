@@ -17,7 +17,7 @@
 			<div class="min-h-0 flex items-start gap-8">
 				<div class="basis-2/5 shrink-0">
 					<!-- TODO wrong aspect ratio while loading -->
-					<AlbumArt :url="artworkURL" />
+					<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100" />
 				</div>
 				<div class="grow -mr-4 pr-4 self-stretch overflow-scroll flex flex-col">
 					<div v-for="song of fetchedAlbum.songs" class="group flex gap-4">
