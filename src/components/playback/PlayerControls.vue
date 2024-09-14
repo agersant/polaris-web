@@ -7,7 +7,7 @@
         <Spinner v-else-if="debouncedBuffering" class="text-ls-700 dark:text-ls-500" />
         <div class="flex gap-2 items-center">
 
-            <span @click="skipPrevious" class="material-icons-round w-9 h-9 mb-0.5
+            <span @click="skipPrevious" class="material-icons-round size-9 mb-0.5
                 text-3xl text-center
                 rounded-lg border border-ls-0 dark:border-ds-900
                 active:py-px" :class="playback.hasPrevious()
@@ -16,7 +16,7 @@
                 skip_previous
             </span>
 
-            <div @click="togglePlayback" class="material-icons-round py-1 w-12 h-12 
+            <div @click="togglePlayback" class="material-icons-round py-1 size-12 
                 text-4xl text-center text-accent-0 rounded-full 
                 ring-accent-500 dark:ring-accent-600 ring-offset-4 ring-offset-ls-0 dark:ring-offset-ds-900
                 active:pt-[5px]"
@@ -26,7 +26,7 @@
                 {{ paused ? 'play_arrow' : 'pause' }}
             </div>
 
-            <span @click="skipNext" class="material-icons-round w-9 h-9 mb-0.5
+            <span @click="skipNext" class="material-icons-round size-9 mb-0.5
                 text-3xl text-center
                 rounded-lg border border-ls-0 dark:border-ds-900
                 active:pt-px" :class="playback.hasNext()

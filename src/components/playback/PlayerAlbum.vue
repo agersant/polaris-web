@@ -53,7 +53,7 @@ const playback = usePlaybackStore();
 
 const song = computed(() => playback.currentSong);
 
-const artworkURL = computed(() => song.value && song.value.artwork ? makeThumbnailURL(song.value.artwork, "small") : undefined);
+const artworkURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "small") : undefined);
 
 const albumName = computed(() => {
     if (!song.value) {

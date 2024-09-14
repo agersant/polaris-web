@@ -33,7 +33,7 @@ const error: Ref<string | null> = ref(null);
 const htmlAudio = useTemplateRef("htmlAudio");
 
 const audioURL = computed(() => playback.currentTrack ? makeAudioURL(playback.currentTrack.path) : null);
-const artworkURL = computed(() => playback.currentSong && playback.currentSong.artwork ? makeThumbnailURL(playback.currentSong.artwork, "small") : null);
+const artworkURL = computed(() => playback.currentSong?.artwork ? makeThumbnailURL(playback.currentSong.artwork, "small") : null);
 
 const volume = computed({
 	get: () => playback.volume,
