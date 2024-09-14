@@ -2,7 +2,7 @@
 
 	<div class="flex flex-col py-8 pl-16 pr-8 border-l border-ls-200 dark:border-ds-700 bg-ls-0 dark:bg-ds-900">
 
-		<SectionTitle :label="playback.name || 'New Playlist'">
+		<PageTitle :label="playback.name || 'New Playlist'">
 			<template #right>
 				<div class="flex gap-2">
 					<Button label="Clear" severity="secondary" icon="clear" @click="playback.clear" />
@@ -12,7 +12,7 @@
 					<Button label="Save" severity="secondary" icon="save" />
 				</div>
 			</template>
-		</SectionTitle>
+		</PageTitle>
 
 		<div class="mb-8 flex items-center justify-between">
 			<div class="flex gap-4">
@@ -61,7 +61,7 @@ import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
-import SectionTitle from '@/components/basic/SectionTitle.vue';
+import PageTitle from '@/components/basic/PageTitle.vue';
 import Select from '@/components/basic/Select.vue';
 import Switch from '@/components/basic/Switch.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
