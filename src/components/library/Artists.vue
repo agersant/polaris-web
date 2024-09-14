@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col whitespace-nowrap">
-        <SectionTitle label="Artists">
+        <PageTitle label="Artists">
             <template #left>
                 <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="roleFilter" :items="[
                     { label: 'Performers', value: 'performer' },
@@ -8,7 +8,7 @@
                     { label: 'Lyricists', value: 'lyricist' }
                 ]" />
             </template>
-        </SectionTitle>
+        </PageTitle>
 
         <div v-if="artists.length" class="grow min-h-0 flex flex-col">
 
@@ -95,7 +95,7 @@ import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import Switch from "@/components/basic/Switch.vue";
 import SwitchText from "@/components/basic/SwitchText.vue";
-import SectionTitle from "@/components/basic/SectionTitle.vue";
+import PageTitle from "@/components/basic/PageTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import { ArtistHeader } from "@/api/dto";
 import { pluralize } from "@/format";

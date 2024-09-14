@@ -1,6 +1,6 @@
 <template>
 	<div data-cy="browser" class="flex flex-col">
-		<SectionTitle label="Files" data-cy="browser-header" />
+		<PageTitle label="Files" data-cy="browser-header" />
 
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="searchQuery" id="search" name="search" placeholder="Search"
@@ -42,7 +42,7 @@ import { browse, flatten } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
-import SectionTitle from "@/components/basic/SectionTitle.vue";
+import PageTitle from "@/components/basic/PageTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";
