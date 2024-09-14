@@ -8,7 +8,7 @@
 		</div>
 		<div v-if="fetchedAlbum" class="grow min-h-0 flex flex-col">
 			<div class="min-h-0 flex items-start gap-8">
-				<div class="basis-2/5">
+				<div class="basis-2/5 shrink-0">
 					<!-- TODO wrong aspect ratio while loading -->
 					<AlbumArt :url="artworkURL" />
 				</div>
