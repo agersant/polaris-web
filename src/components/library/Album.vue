@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col whitespace-nowrap">
+	<div class="flex flex-col">
 		<PageTitle :label="header" />
 		<div class="mb-8">
 			<span v-for="artist of albumKey.artists">
@@ -13,9 +13,10 @@
 					<AlbumArt :url="artworkURL" />
 				</div>
 				<div class="grow -mr-4 pr-4 self-stretch overflow-scroll flex flex-col">
-					<div v-for="song of fetchedAlbum.songs" class="flex gap-4">
+					<div v-for="song of fetchedAlbum.songs" class="group flex gap-4">
 						<div class="w-6 text-right text-ls-500" v-text="`${song.track_number}.`" />
-						<div class="grow mb-2 pb-2 text-ls-700 whitespace-normal border-b" v-text="formatTitle(song)" />
+						<div class="grow mb-2 pb-2 text-ls-700 border-b group-last:border-0"
+							v-text="formatTitle(song)" />
 					</div>
 				</div>
 			</div>
