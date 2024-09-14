@@ -1,6 +1,13 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle :label="header" />
+		<PageTitle :label="header">
+			<template #right>
+				<div class="ml-8 flex gap-2">
+					<Button label="Play All" severity="secondary" icon="play_arrow" />
+					<Button label="Queue All" severity="secondary" icon="playlist_add" />
+				</div>
+			</template>
+		</PageTitle>
 		<div class="mb-8">
 			<span v-for="artist of albumKey.artists">
 				{{ artist }}
@@ -31,6 +38,7 @@ import { useAsyncState, watchImmediate } from "@vueuse/core";
 import { AlbumKey } from "@/api/dto";
 import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
+import Button from '@/components/basic/Button.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import { formatTitle } from "@/format";
 
