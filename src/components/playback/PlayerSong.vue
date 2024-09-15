@@ -36,7 +36,7 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Waveform from '@/components/playback/Waveform.vue';
-import { formatDuration, formatTitle } from "@/format";
+import { formatDuration, formatTitle, isFakeArtist } from "@/format";
 import { usePlaybackStore } from '@/stores/playback';
 import { makeArtistURL } from '@/router';
 
@@ -80,7 +80,7 @@ const artists = computed(() => {
     return names.map(n => {
         return {
             name: n,
-            url: makeArtistURL(n),
+            url: isFakeArtist(n) ? undefined : makeArtistURL(n),
         };
     });
 });

@@ -1,5 +1,9 @@
 import { Song } from "@/api/dto";
 
+export function isFakeArtist(name: string) {
+	return name == "Various Artists" || name == "VA";
+}
+
 export function getPathTail(path: string) {
 	path = path.replace(/\\/g, "/");
 	let slices = path.split("/");
