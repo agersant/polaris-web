@@ -19,11 +19,14 @@
 					<!-- TODO wrong aspect ratio while loading -->
 					<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100" />
 				</div>
-				<div class="grow -mr-4 pr-4 self-stretch overflow-scroll flex flex-col">
-					<div v-for="song of fetchedAlbum.songs" class="group flex gap-4">
-						<div class="w-6 text-right text-ls-500" v-text="`${song.track_number}.`" />
-						<div class="grow mb-2 pb-2 text-ls-700 border-b group-last:border-0"
-							v-text="formatTitle(song)" />
+				<div class="grow -mr-4 pr-4 self-stretch overflow-scroll flex flex-col gap-8">
+					<div v-for="[discNumber, songs] of discs" class="flex flex-col">
+						<SectionTitle v-if="discs?.size && discNumber" icon="numbers" :label="`Disc ${discNumber}`" />
+						<div v-for="song of songs" class="group flex gap-4">
+							<div class="w-6 text-right text-ls-700" v-text="`${song.track_number}.`" />
+							<div class="grow mb-2 pb-2 text-ls-900 border-b group-last:border-0"
+								v-text="formatTitle(song)" />
+						</div>
 					</div>
 				</div>
 			</div>
@@ -35,17 +38,17 @@
 import { computed, } from "vue";
 import { useAsyncState, watchImmediate } from "@vueuse/core";
 
-import { AlbumKey } from "@/api/dto";
+import { AlbumKey, Song } from "@/api/dto";
 import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
 import Button from '@/components/basic/Button.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
+import SectionTitle from '@/components/basic/SectionTitle.vue';
 import { formatTitle } from "@/format";
 
 /* TODOS
 Genres
 Year
-Disc headers
 Song artists
 Artist links
 Loading state
@@ -75,4 +78,20 @@ const header = computed((): string => {
 });
 
 const artworkURL = computed(() => fetchedAlbum.value?.artwork ? makeThumbnailURL(fetchedAlbum.value.artwork, "large") : undefined);
+
+const discs = computed(() => {
+	if (!fetchedAlbum.value) {
+		return undefined;
+	}
+	let discs = new Map<number | undefined, Song[]>();
+	for (const song of fetchedAlbum.value?.songs) {
+		let disc = discs.get(song.disc_number);
+		if (!disc) {
+			disc = [];
+			discs.set(song.disc_number, disc);
+		}
+		disc.push(song);
+	}
+	return discs;
+});
 </script>
