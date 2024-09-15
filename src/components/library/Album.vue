@@ -39,8 +39,18 @@
 						<SectionTitle v-if="discs?.size && discNumber" icon="numbers" :label="`Disc ${discNumber}`" />
 						<div v-for="song of songs" class="group flex gap-4">
 							<div class="w-6 text-right text-ls-700" v-text="`${song.track_number}.`" />
-							<div class="grow mb-2 pb-2 text-ls-900 border-b group-last:border-0"
-								v-text="formatTitle(song)" />
+							<div class="grow mb-2 pb-2 border-b group-last:border-0">
+								<span class="text-ls-900 " v-text="formatTitle(song)" />
+								<span v-if="songArtists.get(song)?.length" class="text-ls-400">
+									<span v-text="` (`" />
+									<span v-for="(artist, index) of songArtists.get(song)">
+										<span v-text="artist" @click="onArtistClicked(artist)"
+											class="cursor-pointer hover:underline" />
+										<span v-if="index < (songArtists.get(song)?.length || 0) - 1" v-text="`, `" />
+									</span>
+									<span v-text="`)`" />
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -66,7 +76,6 @@ import { makeArtistURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 
 /* TODOS
-Song artists w/ links
 Loading state
 Error state
 Art drag and drop
@@ -127,6 +136,14 @@ const genres = computed(() => {
 	let names = [...counts.keys()];
 	names.sort((a, b) => (counts.get(b) || 0) - (counts.get(a) || 0));
 	return names;
+});
+
+const songArtists = computed(() => {
+	let bySong = new Map<Song, string[]>();
+	for (const song of fetchedAlbum.value?.songs || []) {
+		bySong.set(song, song.artists?.filter(a => !props.albumKey.artists.includes(a)) || []);
+	}
+	return bySong;
 });
 
 function onArtistClicked(name: string) {
