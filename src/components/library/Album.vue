@@ -3,8 +3,8 @@
 		<PageTitle :label="header">
 			<template #right>
 				<div class="ml-8 flex gap-2">
-					<Button label="Play All" severity="secondary" icon="play_arrow" />
-					<Button label="Queue All" severity="secondary" icon="playlist_add" />
+					<Button label="Play All" severity="secondary" icon="play_arrow" @click="play" />
+					<Button label="Queue All" severity="secondary" icon="playlist_add" @click="queue" />
 				</div>
 			</template>
 		</PageTitle>
@@ -45,6 +45,7 @@ import Button from '@/components/basic/Button.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import { formatTitle } from "@/format";
+import { usePlaybackStore } from "@/stores/playback";
 
 /* TODOS
 Genres
@@ -53,13 +54,14 @@ Song artists
 Artist links
 Loading state
 Error state
-Play buttons
 Art drag and drop
 Song multiselect
 Song drag and drop
 Dark mode
 Context menus
 */
+
+const playback = usePlaybackStore();
 
 const props = defineProps<{ albumKey: AlbumKey }>();
 
@@ -94,4 +96,23 @@ const discs = computed(() => {
 	}
 	return discs;
 });
+
+async function play() {
+	const songs = await listSongs();
+	playback.clear();
+	playback.queueTracks(songs);
+	playback.next();
+}
+
+async function queue() {
+	const songs = await listSongs();
+	playback.queueTracks(songs);
+}
+
+async function listSongs() {
+	if (fetchedAlbum.value) {
+		return fetchedAlbum.value.songs.map(s => s.path);
+	}
+	return getAlbum(props.albumKey).then(a => a.songs.map(s => s.path));
+}
 </script>

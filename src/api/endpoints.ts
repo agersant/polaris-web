@@ -187,9 +187,9 @@ export async function getArtist(name: string): Promise<Artist> {
 	return await response.json();
 }
 
-export async function getAlbum(album_key: AlbumKey): Promise<Album> {
+export async function getAlbum(albumKey: AlbumKey): Promise<Album> {
 	const songs = useSongsStore();
-	const response = await request("/artists/" + encodeURIComponent(album_key.artists.join(API_ARRAY_SEPARATOR)) + "/albums/" + encodeURIComponent(album_key.name || ""));
+	const response = await request("/artists/" + encodeURIComponent(albumKey.artists.join(API_ARRAY_SEPARATOR)) + "/albums/" + encodeURIComponent(albumKey.name || ""));
 	return await response.json().then((album: Album) => {
 		songs.ingest(album.songs);
 		return album;
