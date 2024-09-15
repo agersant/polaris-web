@@ -75,7 +75,7 @@ import AlbumArt from '@/components/AlbumArt.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
 import { DndPayloadAlbum } from '@/dnd';
-import { pluralize } from '@/format';
+import { isFakeArtist, pluralize } from '@/format';
 import { makeAlbumURL, makeArtistURL } from '@/router';
 
 const router = useRouter();
@@ -104,7 +104,7 @@ const events = computed(() => {
         const numContributions = album.contributions.filter(c => c.performer || c.composer || c.lyricist).length;
         const multiRole = [numPerformerCredits, numComposerCredits, numLyricistCredits].filter(n => n > 0).length > 1;
         const isMainArtist = album.main_artists.includes(props.artist);
-        const albumOwners = isMainArtist ? undefined : album.main_artists.filter(a => a != props.artist && a != "Various Artists" && a != "VA");
+        const albumOwners = isMainArtist ? undefined : album.main_artists.filter(a => a != props.artist && !isFakeArtist(a));
         const albumCollaborators = isMainArtist ? album.main_artists.filter(a => a != props.artist) : undefined;
         const isMainRelease = isMainArtist || numContributions >= album.contributions.length / 2;
 

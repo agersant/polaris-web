@@ -40,6 +40,7 @@ import { useRouter } from "vue-router";
 
 import { makeThumbnailURL } from '@/api/endpoints';
 import AlbumArt from '@/components/AlbumArt.vue';
+import { isFakeArtist } from '@/format';
 import { usePlaybackStore } from '@/stores/playback';
 import { makeAlbumURLFromSong, makeArtistURL } from '@/router';
 
@@ -88,7 +89,7 @@ const artists = computed(() => {
     return names.map(n => {
         return {
             name: n,
-            url: makeArtistURL(n),
+            url: isFakeArtist(n) ? undefined : makeArtistURL(n),
         };
     });
 });
