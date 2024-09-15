@@ -29,7 +29,6 @@
 
 			<div class="min-h-0 flex items-start gap-8">
 				<div class="basis-2/5 shrink-0">
-					<!-- TODO wrong aspect ratio while loading -->
 					<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100" />
 					<div v-text="`${albumKey.name} (${fetchedAlbum.year})`"
 						class="mt-2 px-4 italic text-ls-500 text-xs text-center" />
