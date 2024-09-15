@@ -12,14 +12,14 @@
         <div v-if="artist" class="flex flex-col min-h-0">
             <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-scroll flex flex-col gap-16">
 
-                <Switch class="absolute top-4 right-4" v-model="displayMode" :items="[
+                <Switch class="absolute mt-0.5 top-4 right-4" v-model="displayMode" :items="[
                     { icon: 'apps', value: 'grid5' },
                     { icon: 'grid_view', value: 'grid3' },
                     { icon: 'timeline', value: 'timeline' }
                 ]" />
 
                 <div v-if="displayMode != 'timeline' && mainWorks?.length">
-                    <SectionTitle label="Main Releases">
+                    <SectionTitle label="Main Releases" class="h-10">
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(mainWorks)" />
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(mainWorks)" />
@@ -29,7 +29,7 @@
                 </div>
 
                 <div v-if="displayMode != 'timeline' && otherWorks?.length">
-                    <SectionTitle label="Featured On">
+                    <SectionTitle label="Featured On" class="h-10">
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(otherWorks)" />
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(otherWorks)" />
