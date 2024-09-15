@@ -84,7 +84,7 @@ export interface Artist extends ArtistHeader {
 
 export interface AlbumKey {
 	artists: string[],
-	name?: string,
+	name: string,
 }
 
 export interface AlbumHeader {

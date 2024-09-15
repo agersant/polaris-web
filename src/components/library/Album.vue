@@ -8,12 +8,29 @@
 				</div>
 			</template>
 		</PageTitle>
-		<div class="mb-8">
-			<span v-for="artist of albumKey.artists">
-				{{ artist }}
-			</span>
-		</div>
+
 		<div v-if="fetchedAlbum" class="grow min-h-0 flex flex-col">
+
+			<div class="mb-8 flex items-center">
+				<div class="flex flex-col">
+					<div class="font-medium text-ls-700">
+						<span v-text="`By `" />
+						<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
+							<span v-text="artist" :class="isFakeArtist(artist) ? '' :
+								'cursor-pointer underline text-accent-600 dark:text-accent-700'" @click="onArtistClicked(artist)" />
+							<span v-if="index == albumKey.artists.length - 2">&nbsp;&&nbsp;</span>
+							<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
+						</span>
+					</div>
+					<div v-if="fetchedAlbum.year" v-text="`${fetchedAlbum.year}`"
+						class="text-ls-500 dark:text-ds-500" />
+				</div>
+				<div class="basis-0 grow max-h-14 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
+					<!-- TODO genre links -->
+					<Badge v-for="genre of genres" :label="genre" :auto-color="true" />
+				</div>
+			</div>
+
 			<div class="min-h-0 flex items-start gap-8">
 				<div class="basis-2/5 shrink-0">
 					<!-- TODO wrong aspect ratio while loading -->
@@ -37,31 +54,33 @@
 <script setup lang="ts">
 import { computed, } from "vue";
 import { useAsyncState, watchImmediate } from "@vueuse/core";
+import { useRouter } from "vue-router";
 
 import { AlbumKey, Song } from "@/api/dto";
 import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
+import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
-import { formatTitle } from "@/format";
+import { formatTitle, isFakeArtist } from "@/format";
+import { makeArtistURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 
 /* TODOS
-Genres
-Year
-Song artists
-Artist links
+Song artists w/ links
 Loading state
 Error state
 Art drag and drop
 Song multiselect
+Song double-click
 Song drag and drop
 Dark mode
 Context menus
 */
 
 const playback = usePlaybackStore();
+const router = useRouter();
 
 const props = defineProps<{ albumKey: AlbumKey }>();
 
@@ -86,7 +105,7 @@ const discs = computed(() => {
 		return undefined;
 	}
 	let discs = new Map<number | undefined, Song[]>();
-	for (const song of fetchedAlbum.value?.songs) {
+	for (const song of fetchedAlbum.value.songs) {
 		let disc = discs.get(song.disc_number);
 		if (!disc) {
 			disc = [];
@@ -96,6 +115,27 @@ const discs = computed(() => {
 	}
 	return discs;
 });
+
+const genres = computed(() => {
+	if (!fetchedAlbum.value) {
+		return undefined;
+	}
+	let counts = new Map<string, number>();
+	for (const song of fetchedAlbum.value.songs) {
+		for (const genre of song.genres || []) {
+			counts.set(genre, 1 + (counts.get(genre) || 0));
+		}
+	}
+	let names = [...counts.keys()];
+	names.sort((a, b) => (counts.get(b) || 0) - (counts.get(a) || 0));
+	return names;
+});
+
+function onArtistClicked(name: string) {
+	if (!isFakeArtist(name)) {
+		router.push(makeArtistURL(name));
+	}
+}
 
 async function play() {
 	const songs = await listSongs();
