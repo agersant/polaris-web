@@ -12,7 +12,7 @@
 		<div v-if="fetchedAlbum" class="grow min-h-0 flex flex-col">
 
 			<div class="mb-8 flex items-center">
-				<div class="flex flex-col">
+				<div class="flex flex-col text-lg ">
 					<div class="font-medium text-ls-700">
 						<span v-text="`By `" />
 						<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
