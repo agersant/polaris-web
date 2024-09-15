@@ -55,6 +55,14 @@
 				</div>
 			</div>
 		</div>
+
+		<div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+			<Spinner class="text-ls-700 dark:text-ds-400" />
+		</div>
+
+		<Error v-else-if="error">
+			Something went wrong while listing songs.
+		</Error>
 	</div>
 </template>
 
@@ -68,15 +76,15 @@ import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
+import Error from '@/components/basic/Error.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
+import Spinner from '@/components/basic/Spinner.vue';
 import { formatTitle, isFakeArtist } from "@/format";
 import { makeArtistURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 
 /* TODOS
-Loading state
-Error state
 Art drag and drop
 Song multiselect
 Song double-click
