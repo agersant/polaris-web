@@ -4,7 +4,7 @@
         <div ref="wrapper" class="relative min-h-full divide-ls-200 dark:border-ds-700" :class="{ 'divide-y': divider }"
             :style="{ height: `${props.items.length * rowHeight}px` }">
             <TransitionGroup :name="isReordering ? 'reorder' : 'drop'" :css="isReordering">
-                <div v-for="item, index of virtualItems" @click="e => onItemClick(e, item)" :key="item.key"
+                <div v-for="item, index of virtualItems" @click="e => clickItem(e, item)" :key="item.key"
                     :draggable="true" @dragstart="e => onDragStart(e, item)" @dragend="onDragEnd"
                     class="absolute w-full"
                     :style="{ translate: `0 ${rowOffset(firstVirtualIndex + index)}px`, height: `${itemHeight}px` }">
@@ -28,8 +28,10 @@
 </template>
 
 <script setup lang="ts" generic="T extends { key: string | number }">
-import { computed, nextTick, Ref, ref, toRaw, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, ref, toRaw, useTemplateRef, watch } from 'vue';
 import { useCached, useElementSize, useLastChanged, useMouseInElement, useMousePressed, useRafFn, useScroll } from '@vueuse/core';
+
+import useMultiselect from '@/multiselect';
 
 const { divider = false, ...props } = defineProps<{
     items: T[],
@@ -57,15 +59,6 @@ const { elementX: viewportMouseX, elementY: viewportMouseY, isOutside } = useMou
 const { elementY: wrapperMouseY } = useMouseInElement(wrapper);
 const { pressed: mousePressed } = useMousePressed({ target: viewport });
 const mouseLastPressed = useLastChanged(mousePressed, { initialValue: 0 });
-
-const selectedKeys: Ref<Set<string | number>> = ref(new Set());
-const focusedKey: Ref<string | number | undefined> = ref();
-let pivotKey: string | number | undefined;
-
-const selection = computed(() => {
-    let keys = selectedKeys.value;
-    return props.items.filter(i => keys.has(i.key));
-});
 
 const dividerHeight = computed(() => divider ? 1 : 0);
 const rowHeight = computed(() => props.itemHeight + dividerHeight.value);
@@ -96,6 +89,11 @@ const rawDropIndex = computed(() => {
     return Math.max(0, Math.min(Math.floor(wrapperMouseY.value / rowHeight.value), max));
 });
 const dropIndex = useCached(rawDropIndex, (i) => i == undefined);
+
+const { clickItem, multiselect, focusedKey, pivotKey, selectedKeys, selection, selectItem } = useMultiselect(
+    () => props.items,
+    { onMove: () => snapScrolling("clamp", "instant") }
+);
 
 const orderedItems = computed(() => {
     let selected = toRaw(selectedKeys.value);
@@ -153,12 +151,6 @@ function isIdle() {
     return (Date.now() - mouseLastPressed.value) > 200;
 }
 
-function selectItem(item: T) {
-    selectedKeys.value.clear();
-    selectedKeys.value.add(item.key);
-    pivotKey = item.key;
-    focusedKey.value = item.key;
-}
 
 function onDragStart(event: DragEvent, item: T) {
     isReordering.value = true;
@@ -179,126 +171,16 @@ function onDrop() {
     emit("list-drop", dropIndex.value || 0);
 }
 
-function onItemClick(event: MouseEvent, item: T) {
-
-    focusedKey.value = item.key;
-
-    const pivotIndex = pivotKey ? props.items.findIndex(i => i.key == pivotKey) : -1;
-
-    if (event.shiftKey && pivotIndex >= 0) {
-        const clickedIndex = props.items.findIndex(i => i.key == item.key);
-        const from = Math.min(pivotIndex, clickedIndex);
-        const to = Math.max(pivotIndex, clickedIndex);
-
-        if (event.ctrlKey) {
-            for (let i = from; i <= to; i++) {
-                const keyIter = props.items[i].key;
-                selectedKeys.value.add(keyIter);
-            }
-        } else {
-            selectedKeys.value.clear();
-            for (let i = from; i <= to; i++) {
-                const keyIter = props.items[i].key;
-                if (selectedKeys.value.has(keyIter)) {
-                    selectedKeys.value.delete(keyIter);
-                } else {
-                    selectedKeys.value.add(keyIter);
-                }
-            }
-        }
-
-    } else if (event.ctrlKey) {
-        if (selectedKeys.value.has(item.key)) {
-            selectedKeys.value.delete(item.key);
-            pivotKey = undefined;
-        } else {
-            selectedKeys.value.add(item.key);
-            pivotKey = item.key;
-        }
-    } else {
-        selectItem(item);
-    }
-
-}
-
 function onKeyDown(event: KeyboardEvent) {
+    multiselect.onKeyDown(event);
     switch (event.code) {
-        case 'ArrowUp':
-            move(-1, event);
-            event.preventDefault();
-            break;
-        case 'ArrowDown':
-            move(1, event);
-            event.preventDefault();
-            break;
-        case 'PageUp':
-            move(-10, event);
-            event.preventDefault();
-            break;
-        case 'PageDown':
-            move(10, event);
-            event.preventDefault();
-            break;
-        case 'Home':
-            move(Number.NEGATIVE_INFINITY, event);
-            event.preventDefault();
-            break;
-        case 'End':
-            move(Number.POSITIVE_INFINITY, event);
-            event.preventDefault();
-            break;
         case 'Delete':
             deleteSelection();
             event.preventDefault();
             break;
-        case 'Escape':
-            selectedKeys.value.clear();
-            focusedKey.value = undefined;
-            pivotKey = undefined;
-            break;
-        case 'KeyA':
-            if (event.ctrlKey) {
-                selectedKeys.value = new Set(props.items.map(i => i.key));
-                focusedKey.value = props.items[0]?.key;
-                pivotKey = focusedKey.value;
-            }
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            break;
         default:
             break;
     }
-}
-
-function move(delta: number, event: KeyboardEvent) {
-    if (delta == 0) {
-        return;
-    }
-
-    const pivotIndex = props.items.findIndex(i => i.key == pivotKey);
-    const fromIndex = Math.max(0, Math.min(props.items.findIndex(item => item.key == focusedKey.value), props.items.length - 1));
-    const toIndex = Math.max(0, Math.min(fromIndex + delta, props.items.length - 1));
-    const toItem = props.items[toIndex];
-
-    if (!event.shiftKey || pivotIndex < 0) {
-        selectedKeys.value.clear();
-        selectedKeys.value.add(toItem.key);
-        pivotKey = toItem.key;
-    } else {
-        for (let index = fromIndex; true; index += Math.sign(delta)) {
-            if ((delta > 0 && index > pivotIndex) || (delta < 0 && index < pivotIndex)) {
-                selectedKeys.value.add(props.items[index].key);
-            } else if (index != pivotIndex && index != toIndex) {
-                selectedKeys.value.delete(props.items[index].key);
-            }
-            if (index == toIndex) {
-                break;
-            }
-        }
-    }
-
-    focusedKey.value = toItem.key;
-    snapScrolling("clamp", "instant");
 }
 
 function snapScrolling(mode: "clamp" | "center", behavior: ScrollBehavior) {
@@ -333,7 +215,7 @@ function snapScrolling(mode: "clamp" | "center", behavior: ScrollBehavior) {
 }
 
 function deleteSelection() {
-    const pivot = props.items.findIndex(i => i.key == pivotKey);
+    const pivot = props.items.findIndex(i => i.key == pivotKey.value);
     const newSelection = props.items.find((item, index) =>
         pivot >= 0 && index > pivot && !selectedKeys.value.has(item.key)
     );
