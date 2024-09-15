@@ -12,7 +12,7 @@
 		<div v-if="fetchedAlbum" class="grow min-h-0 flex flex-col">
 
 			<div class="basis-10 shrink-0 mb-8 flex items-center">
-				<div class="font-medium text-ls-700">
+				<div class="text-sm uppercase font-medium text-ls-500">
 					<span v-text="`By `" />
 					<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
 						<span v-text="artist" :class="isFakeArtist(artist) ? '' :
