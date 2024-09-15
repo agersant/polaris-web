@@ -3,7 +3,7 @@
         <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="h-full">
             <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
                 <VirtualTreeNode v-for="node in virtualNodes" :style="`height: ${itemHeight}px`" :node="node.data"
-                    tabindex="-1" @node-toggle="toggleNode" @click="onNodeClick($event, node.data)"
+                    tabindex="-1" @node-toggle="toggleNode" @click="clickNode($event, node.data)"
                     @dblclick="onNodeDoubleClick($event, node.data)" draggable="true"
                     @dragstart="onDragStart($event, node.data)" @drag="onDrag($event)" @dragend="onDragEnd($event)"
                     :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
@@ -24,11 +24,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, toRaw, useTemplateRef, watch } from 'vue';
 import { useScroll, useVirtualList, watchThrottled } from '@vueuse/core';
 import { vOnClickOutside } from "@vueuse/components";
 
-import VirtualTreeNode from "./VirtualTreeNode.vue";
+import VirtualTreeNode from "@/components/basic/VirtualTreeNode.vue";
+import useMultiselect from '@/multiselect';
 
 export interface Node {
     depth: number,
@@ -81,12 +82,10 @@ const visibleNodes = computed(() => {
 });
 
 const expandedKeys = ref(new Set<string>());
-const selectedKeys = ref(new Set<string>());
-const focusedKey: Ref<string | undefined> = ref();
-const pivotKey: Ref<string | undefined> = ref();
 
-const selection = computed(() =>
-    nodes.value.filter(n => selectedKeys.value.has(n.key))
+const { clickItem: clickNode, focusedKey, multiselect, pivotKey, selectedKeys, selection, selectItem: selectNode } = useMultiselect<Node>(
+    visibleNodes,
+    { onMove: snapScrolling },
 );
 
 defineExpose({ selection });
@@ -129,60 +128,6 @@ function toggleNode(node: Node) {
     virtualList.value?.focus();
 }
 
-function selectNode(node: Node) {
-    selectedKeys.value.clear();
-    selectedKeys.value.add(node.key);
-    pivotKey.value = node.key;
-    focusedKey.value = node.key;
-}
-
-function onNodeClick(event: MouseEvent, node: Node) {
-
-    focusedKey.value = node.key;
-
-    const pivotIndex = nodes.value.findIndex(n => n.key == pivotKey.value);
-
-    if (event.shiftKey && pivotIndex >= 0) {
-        const clickedIndex = nodes.value.findIndex(n => n.key == node.key);
-        const from = Math.min(pivotIndex, clickedIndex);
-        const to = Math.max(pivotIndex, clickedIndex);
-
-        if (event.ctrlKey) {
-            for (let i = from; i <= to; i++) {
-                const keyIter = nodes.value[i].key;
-                if (!visibleKeys.value.has(keyIter)) {
-                    continue;
-                }
-                selectedKeys.value.add(keyIter);
-            }
-        } else {
-            selectedKeys.value.clear();
-            for (let i = from; i <= to; i++) {
-                const keyIter = nodes.value[i].key;
-                if (!visibleKeys.value.has(keyIter)) {
-                    continue;
-                }
-                if (selectedKeys.value.has(keyIter)) {
-                    selectedKeys.value.delete(keyIter);
-                } else {
-                    selectedKeys.value.add(keyIter);
-                }
-            }
-        }
-
-    } else if (event.ctrlKey) {
-        if (selectedKeys.value.has(node.key)) {
-            selectedKeys.value.delete(node.key);
-            pivotKey.value = undefined;
-        } else {
-            selectedKeys.value.add(node.key);
-            pivotKey.value = node.key;
-        }
-    } else {
-        selectNode(node);
-    }
-
-}
 
 function onNodeDoubleClick(event: MouseEvent, node: Node) {
     if (!node.leaf) {
@@ -214,6 +159,10 @@ function onKeyDown(event: KeyboardEvent) {
         return;
     }
 
+    if (event.code != "Escape" || !findQuery.value.length) {
+        multiselect.onKeyDown(event);
+    }
+
     let preserveFindQuery = false;
     switch (event.code) {
         case 'AltLeft':
@@ -228,14 +177,6 @@ function onKeyDown(event: KeyboardEvent) {
             moveRight(event);
             event.preventDefault();
             break;
-        case 'ArrowUp':
-            move(-1, event);
-            event.preventDefault();
-            break;
-        case 'ArrowDown':
-            move(1, event);
-            event.preventDefault();
-            break;
         case 'Backspace':
             findQuery.value = findQuery.value.slice(0, -1);
             preserveFindQuery = true;
@@ -245,42 +186,10 @@ function onKeyDown(event: KeyboardEvent) {
         case 'ControlRight':
             preserveFindQuery = true;
             break;
-        case 'End':
-            move(Number.POSITIVE_INFINITY, event);
-            snapScrolling();
-            event.preventDefault();
-            break;
         case 'Enter':
             if (findQuery.value.length) {
                 event.stopImmediatePropagation();
             }
-            event.preventDefault();
-            break;
-        case 'Escape':
-            if (!findQuery.value.length) {
-                selectedKeys.value.clear();
-                focusedKey.value = undefined;
-                pivotKey.value = undefined;
-            }
-            break;
-        case 'Home':
-            move(Number.NEGATIVE_INFINITY, event);
-            event.preventDefault();
-            break;
-        case 'KeyA':
-            if (event.ctrlKey) {
-                selectedKeys.value = new Set(visibleKeys.value);
-                focusedKey.value = nodes.value.find(n => visibleKeys.value.has(n.key))?.key;
-                pivotKey.value = focusedKey.value;
-            }
-            event.preventDefault();
-            break;
-        case 'PageUp':
-            move(-10, event);
-            event.preventDefault();
-            break;
-        case 'PageDown':
-            move(10, event);
             event.preventDefault();
             break;
         case 'ShiftLeft':
@@ -310,10 +219,7 @@ function moveLeft(event: KeyboardEvent) {
         for (let i = focusedIndex - 1; i >= 0; i--) {
             const priorNode = visibleNodes.value[i];
             if (priorNode.depth < focusedNode.depth) {
-                selectedKeys.value.clear();
-                selectedKeys.value.add(priorNode.key);
-                pivotKey.value = priorNode.key;
-                focusedKey.value = priorNode.key;
+                selectNode(priorNode);
                 snapScrolling();
                 break;
             }
@@ -330,41 +236,10 @@ function moveRight(event: KeyboardEvent) {
     if (focusedNode.leaf || focusedNode.loading) {
         return;
     } else if (expandedKeys.value.has(focusedNode.key)) {
-        move(1, event);
+        multiselect.move(event, 1);
     } else {
         toggleNode(focusedNode);
     }
-}
-
-function move(delta: number, event: KeyboardEvent) {
-    if (delta == 0) {
-        return;
-    }
-
-    const pivotIndex = visibleNodes.value.findIndex(n => n.key == pivotKey.value);
-    const fromIndex = Math.max(0, Math.min(visibleNodes.value.findIndex(n => n.key == focusedKey.value), visibleNodes.value.length - 1));
-    const toIndex = Math.max(0, Math.min(fromIndex + delta, visibleNodes.value.length - 1));
-    const toNode = visibleNodes.value[toIndex];
-
-    if (!event.shiftKey || pivotIndex < 0) {
-        selectedKeys.value.clear();
-        selectedKeys.value.add(toNode.key);
-        pivotKey.value = toNode.key;
-    } else {
-        for (let index = fromIndex; true; index += Math.sign(delta)) {
-            if ((delta > 0 && index > pivotIndex) || (delta < 0 && index < pivotIndex)) {
-                selectedKeys.value.add(visibleNodes.value[index].key);
-            } else if (index != pivotIndex && index != toIndex) {
-                selectedKeys.value.delete(visibleNodes.value[index].key);
-            }
-            if (index == toIndex) {
-                break;
-            }
-        }
-    }
-
-    focusedKey.value = toNode.key;
-    snapScrolling();
 }
 
 function snapScrolling() {
