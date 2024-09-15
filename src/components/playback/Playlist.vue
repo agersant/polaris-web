@@ -1,6 +1,6 @@
 <template>
 
-	<div class="flex flex-col py-8 pl-16 pr-8 border-l border-ls-200 dark:border-ds-700 bg-ls-0 dark:bg-ds-900">
+	<div class="flex flex-col py-8 pl-16 pr-8 bg-ls-0 dark:bg-ds-900">
 
 		<PageTitle :label="playback.name || 'New Playlist'">
 			<template #right>
