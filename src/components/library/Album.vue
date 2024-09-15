@@ -29,7 +29,12 @@
 
 			<div class="min-h-0 flex items-start gap-8">
 				<div class="basis-2/5 shrink-0">
-					<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100" />
+					<Draggable :make-payload="() => new DndPayloadAlbum(fetchedAlbum as AlbumDTO)" class="cursor-grab">
+						<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100" />
+						<template #drag-preview>
+							<AlbumDragPreview :album="fetchedAlbum" />
+						</template>
+					</Draggable>
 					<div v-text="`${albumKey.name} (${fetchedAlbum.year})`"
 						class="mt-2 px-4 italic text-ls-500 text-xs text-center" />
 				</div>
@@ -71,21 +76,23 @@ import { computed, } from "vue";
 import { useAsyncState, watchImmediate } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
-import { AlbumKey, Song } from "@/api/dto";
+import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
 import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
+import Draggable from '@/components/basic/Draggable.vue';
 import Error from '@/components/basic/Error.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
+import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
+import { DndPayloadAlbum } from "@/dnd";
 import { formatTitle, isFakeArtist } from "@/format";
 import { makeArtistURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 
 /* TODOS
-Art drag and drop
 Song multiselect
 Song double-click
 Song drag and drop

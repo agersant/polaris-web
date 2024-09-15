@@ -10,7 +10,7 @@
                     transition-all ease-out duration-100
                     hover:opacity-90 hover:scale-125
                 ">
-                    <Draggable :make-payload="() => new DndPayloadAlbum(event.album)">
+                    <Draggable :make-payload="() => new DndPayloadAlbumHeader(event.album)">
                         <AlbumArt :url="event.artworkURL" />
                         <template #drag-preview>
                             <AlbumDragPreview :album="event.album" />
@@ -74,7 +74,7 @@ import { makeThumbnailURL } from '@/api/endpoints';
 import AlbumArt from '@/components/AlbumArt.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
-import { DndPayloadAlbum } from '@/dnd';
+import { DndPayloadAlbumHeader } from '@/dnd';
 import { isFakeArtist, pluralize } from '@/format';
 import { makeAlbumURL, makeArtistURL } from '@/router';
 
