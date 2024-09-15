@@ -19,24 +19,22 @@
                 ]" />
 
                 <div v-if="displayMode != 'timeline' && mainWorks?.length">
-                    <div class="mb-8 flex items-center gap-4">
-                        <div class="text-sm uppercase font-medium text-ls-500 dark:text-ds-400">Main Releases</div>
+                    <SectionTitle label="Main Releases">
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(mainWorks)" />
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(mainWorks)" />
                         </ButtonGroup>
-                    </div>
+                    </SectionTitle>
                     <AlbumGrid :albums="mainWorks" :num-columns="numColumns" />
                 </div>
 
                 <div v-if="displayMode != 'timeline' && otherWorks?.length">
-                    <div class="mb-8 flex items-center gap-4">
-                        <div class="text-sm uppercase font-medium text-ls-500 dark:text-ds-400">Featured On</div>
+                    <SectionTitle label="Featured On">
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(otherWorks)" />
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(otherWorks)" />
                         </ButtonGroup>
-                    </div>
+                    </SectionTitle>
                     <AlbumGrid :albums="otherWorks" :num-columns="numColumns" />
                 </div>
 
@@ -70,6 +68,7 @@ import Button from '@/components/basic/Button.vue';
 import ButtonGroup from '@/components/basic/ButtonGroup.vue';
 import Error from '@/components/basic/Error.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
+import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
