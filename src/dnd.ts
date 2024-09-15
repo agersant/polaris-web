@@ -1,11 +1,11 @@
 import { Ref, ref } from 'vue';
 import { useMouse } from '@vueuse/core'
 
-import { AlbumHeader, AlbumKey, BrowserEntry } from "./api/dto";
+import { Album, AlbumHeader, AlbumKey, BrowserEntry } from "./api/dto";
 import { flatten, getAlbum } from "./api/endpoints";
 import { getPathTail } from "./format";
 
-export type DnDPayload = DndPayloadFiles | DndPayloadAlbum;
+export type DnDPayload = DndPayloadFiles | DndPayloadAlbumHeader | DndPayloadAlbum;
 
 const { x: mouseX, y: mouseY } = useMouse();
 
@@ -64,7 +64,6 @@ function endDrag(event: DragEvent) {
 }
 
 export class DndPayloadFiles {
-    kind = "files";
     files: BrowserEntry[];
     tracks: Promise<string[]>;
 
@@ -108,8 +107,7 @@ export class DndPayloadFiles {
     }
 };
 
-export class DndPayloadAlbum {
-    kind = "album";
+export class DndPayloadAlbumHeader {
     album: AlbumHeader;
     tracks: Promise<string[]>;
 
@@ -120,6 +118,20 @@ export class DndPayloadAlbum {
             artists: album.main_artists,
         };
         this.tracks = getAlbum(key).then(album => album.songs.map(s => s.path));
+    }
+
+    getTracks(): Promise<string[]> {
+        return this.tracks;
+    }
+};
+
+export class DndPayloadAlbum {
+    album: Album;
+    tracks: Promise<string[]>;
+
+    constructor(album: Album) {
+        this.album = album;
+        this.tracks = Promise.resolve(album.songs?.map(s => s.path) || []);
     }
 
     getTracks(): Promise<string[]> {

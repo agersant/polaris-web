@@ -6,7 +6,7 @@
                 transition-all ease-out duration-100
                 hover:opacity-90
                 ">
-                <Draggable :make-payload="() => new DndPayloadAlbum(album)">
+                <Draggable :make-payload="() => new DndPayloadAlbumHeader(album)">
                     <AlbumArt :url="album.artwork ? makeThumbnailURL(album.artwork, 'small') : undefined" />
                     <template #drag-preview>
                         <AlbumDragPreview :album="album" />
@@ -30,7 +30,7 @@ import Draggable from '@/components/basic/Draggable.vue';
 import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
 import { AlbumHeader } from '@/api/dto';
 import { makeThumbnailURL } from '@/api/endpoints';
-import { DndPayloadAlbum } from '@/dnd';
+import { DndPayloadAlbumHeader } from '@/dnd';
 import { makeAlbumURL } from '@/router';
 
 const router = useRouter();
