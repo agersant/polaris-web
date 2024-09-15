@@ -11,19 +11,15 @@
 
 		<div v-if="fetchedAlbum" class="grow min-h-0 flex flex-col">
 
-			<div class="mb-8 flex items-center">
-				<div class="flex flex-col text-lg ">
-					<div class="font-medium text-ls-700">
-						<span v-text="`By `" />
-						<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
-							<span v-text="artist" :class="isFakeArtist(artist) ? '' :
-								'cursor-pointer underline text-accent-600 dark:text-accent-700'" @click="onArtistClicked(artist)" />
-							<span v-if="index == albumKey.artists.length - 2">&nbsp;&&nbsp;</span>
-							<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
-						</span>
-					</div>
-					<div v-if="fetchedAlbum.year" v-text="`${fetchedAlbum.year}`"
-						class="text-ls-500 dark:text-ds-500" />
+			<div class="basis-10 shrink-0 mb-8 flex items-center">
+				<div class="font-medium text-ls-700">
+					<span v-text="`By `" />
+					<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
+						<span v-text="artist" :class="isFakeArtist(artist) ? '' :
+							'cursor-pointer underline text-accent-600 dark:text-accent-700'" @click="onArtistClicked(artist)" />
+						<span v-if="index == albumKey.artists.length - 2">&nbsp;&&nbsp;</span>
+						<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
+					</span>
 				</div>
 				<div class="basis-0 grow max-h-14 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
 					<!-- TODO genre links -->
@@ -35,6 +31,8 @@
 				<div class="basis-2/5 shrink-0">
 					<!-- TODO wrong aspect ratio while loading -->
 					<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100" />
+					<div v-text="`${albumKey.name} (${fetchedAlbum.year})`"
+						class="mt-2 px-4 italic text-ls-500 text-xs text-center" />
 				</div>
 				<div class="grow -mr-4 pr-4 self-stretch overflow-scroll flex flex-col gap-8">
 					<div v-for="[discNumber, songs] of discs" class="flex flex-col">
