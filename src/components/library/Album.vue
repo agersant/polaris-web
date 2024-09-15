@@ -12,7 +12,7 @@
 		<div v-if="fetchedAlbum" class="grow min-h-0 flex flex-col">
 
 			<div class="basis-10 shrink-0 mb-8 flex items-center">
-				<div class="text-sm uppercase font-medium text-ls-500">
+				<div class="text-sm uppercase font-medium text-ls-500 dark:text-ds-400">
 					<span v-text="`By `" />
 					<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
 						<span v-text="artist" :class="isFakeArtist(artist) ? '' :
@@ -30,22 +30,22 @@
 			<div class="min-h-0 flex items-start gap-8">
 				<div class="basis-2/5 shrink-0">
 					<Draggable :make-payload="() => new DndPayloadAlbum(fetchedAlbum as AlbumDTO)" class="cursor-grab">
-						<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100" />
+						<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100 dark:shadow-ds-900" />
 						<template #drag-preview>
 							<AlbumDragPreview :album="fetchedAlbum" />
 						</template>
 					</Draggable>
 					<div v-text="`${albumKey.name} (${fetchedAlbum.year})`"
-						class="mt-2 px-4 italic text-ls-500 text-xs text-center" />
+						class="mt-3 px-4 italic text-ls-500 dark:text-ds-400 text-xs text-center" />
 				</div>
 				<div class="grow -mr-4 pr-4 self-stretch overflow-scroll flex flex-col gap-8">
 					<div v-for="[discNumber, songs] of discs" class="flex flex-col">
 						<SectionTitle v-if="discs?.size && discNumber" icon="numbers" :label="`Disc ${discNumber}`" />
 						<div v-for="song of songs" class="group flex gap-4">
-							<div class="w-6 text-right text-ls-700" v-text="`${song.track_number}.`" />
-							<div class="grow mb-2 pb-2 border-b group-last:border-0">
-								<span class="text-ls-900 " v-text="formatTitle(song)" />
-								<span v-if="songArtists.get(song)?.length" class="text-ls-400">
+							<div class="w-6 text-right text-ls-500 dark:text-ds-400" v-text="`${song.track_number}.`" />
+							<div class="grow mb-2 pb-2 border-b border-ls-200 dark:border-ds-700 group-last:border-0">
+								<span class="text-ls-700 dark:text-ds-300" v-text="formatTitle(song)" />
+								<span v-if="songArtists.get(song)?.length" class="text-ls-400 dark:text-ds-500">
 									<span v-text="` (`" />
 									<span v-for="(artist, index) of songArtists.get(song)">
 										<span v-text="artist" @click="onArtistClicked(artist)"
@@ -96,7 +96,7 @@ import { usePlaybackStore } from "@/stores/playback";
 Song multiselect
 Song double-click
 Song drag and drop
-Dark mode
+Dark mode (WIP)
 Context menus
 */
 
