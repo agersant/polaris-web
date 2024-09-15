@@ -21,7 +21,7 @@
 						<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
 					</span>
 				</div>
-				<div class="basis-0 grow max-h-14 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
+				<div class="basis-0 grow max-h-14 ml-6 overflow-hidden flex flex-wrap justify-end gap-2">
 					<!-- TODO genre links -->
 					<Badge v-for="genre of genres" :label="genre" :auto-color="true" />
 				</div>
