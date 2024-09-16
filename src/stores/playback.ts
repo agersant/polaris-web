@@ -167,7 +167,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 	}
 
 	function queueTracks(tracks: string[], index?: number) {
-		enqueue(tracks, index || playlist.value.length);
+		enqueue(tracks, index != undefined ? index : playlist.value.length);
 		savePlaylist();
 	}
 
