@@ -1,12 +1,23 @@
 <template>
-    <div class="group flex gap-4">
-        <div class="w-6 text-right text-ls-500 dark:text-ds-400" v-text="`${song.track_number}.`" />
-        <div class="grow mb-2 pb-2 border-b border-ls-200 dark:border-ds-700 group-last:border-0">
-            <span class="text-ls-700 dark:text-ds-300" v-text="formatTitle(song)" />
-            <span v-if="artists?.length" class="text-ls-400 dark:text-ds-500">
+    <div class="relative group flex gap-4">
+        <div class="
+        absolute -left-1 right-0 bottom-3.5 -top-0.5 rounded-sm
+        group-hover:bg-ls-100 group-hover:dark:bg-accent-900
+        outline-dotted outline-accent-500 dark:outline-accent-700
+        " :class="[
+            focused ? 'outline-1' : 'outline-0',
+        ]" />
+        <div class="z-10 w-6 text-right" v-text="`${song.track_number}.`"
+            :class="selected ? 'text-accent-500 dark:text-accent-700' : 'text-ls-500 dark:text-ds-400'" />
+        <div class="z-10 grow mb-2 pb-2 border-b border-ls-200 dark:border-ds-700 group-last:border-0">
+            <span v-text="formatTitle(song)"
+                :class="selected ? 'text-accent-700 dark:text-accent-600' : 'text-ls-700 dark:text-ds-300'" />
+            <span v-if="artists?.length"
+                :class="selected ? 'text-accent-400 dark:text-accent-800' : 'text-ls-400 dark:text-ds-500'">
                 <span v-text="` (`" />
                 <span v-for="(artist, index) of artists">
-                    <span v-text="artist" @click="onArtistClicked(artist)" class="cursor-pointer hover:underline" />
+                    <span v-text="artist" @click="onArtistClicked($event, artist)"
+                        :class="selected ? '' : 'cursor-pointer hover:underline'" />
                     <span v-if="index < artists.length - 1" v-text="`, `" />
                 </span>
                 <span v-text="`)`" />
@@ -25,9 +36,13 @@ import { makeArtistURL } from '@/router';
 
 const router = useRouter();
 
-const { song } = defineProps<{
-    song: Song
+const { song, ...props } = defineProps<{
+    song: Song,
+    selected: boolean,
+    focused: boolean,
 }>();
+
+defineExpose({ song });
 
 const artists = computed(() => {
     if (!song.album_artists?.length || !song.artists?.length) {
@@ -36,7 +51,10 @@ const artists = computed(() => {
     return song.artists.filter(a => !song.album_artists?.includes(a));
 });
 
-function onArtistClicked(name: string) {
+function onArtistClicked(event: MouseEvent, name: string) {
+    if (props.selected || event.ctrlKey || event.shiftKey) {
+        return;
+    }
     if (!isFakeArtist(name)) {
         router.push(makeArtistURL(name));
     }
