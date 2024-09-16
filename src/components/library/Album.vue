@@ -71,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import equals from "array-equal"
 import { computed, nextTick, ref, Ref, toRaw, useTemplateRef, watch, } from "vue";
 import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
 import { useRouter } from "vue-router";
@@ -105,18 +106,11 @@ const props = defineProps<{ albumKey: AlbumKey }>();
 const viewport = useTemplateRef("viewport");
 const albumSongs = useTemplateRef("albumSongs");
 
-const { state: fetchedAlbum, isLoading, error, execute: fetchAlbum } = useAsyncState(
+const { state: album, isLoading, error, execute: fetchAlbum } = useAsyncState(
 	(key: AlbumKey) => getAlbum(key),
 	undefined,
 	{ immediate: false, resetOnExecute: true }
 );
-
-const album: Ref<AlbumDTO | undefined> = ref(undefined);
-watch(fetchedAlbum, a => {
-	if (!album.value || !a) {
-		album.value = a;
-	}
-});
 
 const header = computed((): string => {
 	return props.albumKey.name || "Unknown Album";
@@ -167,8 +161,16 @@ const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect,
 
 const historyStateKey = "albumState";
 
+interface State {
+	album?: AlbumDTO,
+	selectedKeys: Set<string | number>,
+	focusedKey?: string | number,
+	pivotKey?: string | number,
+	scrollY: number,
+}
+
 watchThrottled([album, selectedKeys, focusedKey, pivotKey, scrollY], async () => {
-	const state = {
+	const state: State = {
 		album: toRaw(album.value),
 		selectedKeys: toRaw(selectedKeys.value),
 		focusedKey: focusedKey.value,
@@ -179,8 +181,8 @@ watchThrottled([album, selectedKeys, focusedKey, pivotKey, scrollY], async () =>
 }, { throttle: 500 });
 
 watchImmediate(() => props.albumKey, () => {
-	const state = history.state[historyStateKey];
-	if (!state) {
+	const state = history.state[historyStateKey] as State | undefined;
+	if (state?.album?.name != props.albumKey.name || !equals(state.album.main_artists, props.albumKey.artists)) {
 		fetchAlbum(0, props.albumKey);
 		return;
 	}
@@ -281,4 +283,5 @@ function snapScrolling() {
 
 	viewport.value.scrollTo({ top: scrollY, behavior: "instant" });
 }
+
 </script>

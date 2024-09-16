@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch } from "vue";
+import { computed, nextTick, Ref, ref, toRaw, useTemplateRef } from "vue";
 import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
 
 import { AlbumHeader, AlbumKey, Artist } from "@/api/dto";
@@ -81,22 +81,11 @@ const props = defineProps<{
     name: string,
 }>();
 
-const { state: fetchedArtist, isLoading, error, execute: fetchArtist } = useAsyncState(
+const { state: artist, isLoading, error, execute: fetchArtist } = useAsyncState(
     (name: string) => getArtist(name),
     undefined,
     { immediate: false, resetOnExecute: true }
 );
-
-watchImmediate(() => props.name, () => {
-    fetchArtist(0, props.name);
-});
-
-const artist: Ref<Artist | undefined> = ref(undefined);
-watch(fetchedArtist, a => {
-    if (!artist.value || !a) {
-        artist.value = a;
-    }
-});
 
 type DisplayMode = "grid5" | "grid3" | "timeline";
 
@@ -152,6 +141,31 @@ const { y: scrollY } = useScroll(viewport);
 
 const historyStateKey = "artist";
 
+interface State {
+    artist?: Artist,
+    scrollY: number,
+}
+
+watchThrottled([artist, scrollY], async () => {
+    const state: State = {
+        artist: toRaw(artist.value),
+        scrollY: scrollY.value || 0,
+    };
+    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { throttle: 500 });
+
+watchImmediate(() => props.name, () => {
+    const state = history.state[historyStateKey] as State | undefined;
+    if (state?.artist?.name != props.name) {
+        fetchArtist(0, props.name);
+        return;
+    }
+    artist.value = state.artist;
+    nextTick(() => {
+        viewport.value?.scrollTo({ top: state.scrollY });
+    });
+});
+
 async function play(albums: AlbumHeader[]) {
     const songs = await listSongs(albums);
     playback.clear();
@@ -176,22 +190,4 @@ async function listSongs(albums: AlbumHeader[]) {
     ).flat();
 }
 
-watchThrottled([artist, scrollY], async () => {
-    const state = {
-        artist: toRaw(artist.value),
-        scrollY: scrollY.value || 0,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-onMounted(async () => {
-    const state = history.state[historyStateKey];
-    if (!state) {
-        return;
-    }
-    artist.value = state.artist;
-    nextTick(() => {
-        viewport.value?.scrollTo({ top: state.scrollY });
-    });
-});
 </script>
