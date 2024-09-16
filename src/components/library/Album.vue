@@ -38,10 +38,13 @@
 					<div v-text="`${albumKey.name} (${fetchedAlbum.year})`"
 						class="mt-3 px-4 italic text-ls-500 dark:text-ds-400 text-xs text-center" />
 				</div>
-				<div class="grow -mr-4 pr-4 self-stretch overflow-scroll flex flex-col gap-8">
+				<div ref="viewport" class="grow -mx-4 px-4 self-stretch overflow-scroll flex flex-col gap-8"
+					tabindex="-1" @keydown="onKeyDown">
 					<div v-for="[discNumber, songs] of discs" class="flex flex-col">
 						<SectionTitle v-if="discs?.size && discNumber" icon="numbers" :label="`Disc ${discNumber}`" />
-						<AlbumSong v-for="song of songs" :song="song" />
+						<AlbumSong ref="albumSongs" v-for="song of songs" :song="song"
+							:selected="selectedKeys.has(song.path)" :focused="focusedKey == song.path"
+							@click="clickItem($event, { key: song.path, ...song })" />
 					</div>
 				</div>
 			</div>
@@ -58,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, } from "vue";
+import { computed, useTemplateRef, } from "vue";
 import { useAsyncState, watchImmediate } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
@@ -75,9 +78,10 @@ import Spinner from '@/components/basic/Spinner.vue';
 import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
 import AlbumSong from '@/components/library/AlbumSong.vue';
 import { DndPayloadAlbum } from "@/dnd";
-import { formatTitle, isFakeArtist } from "@/format";
+import { isFakeArtist } from "@/format";
 import { makeArtistURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
+import useMultiselect from "@/multiselect";
 
 /* TODOS
 Song multiselect
@@ -91,6 +95,9 @@ const playback = usePlaybackStore();
 const router = useRouter();
 
 const props = defineProps<{ albumKey: AlbumKey }>();
+
+const viewport = useTemplateRef("viewport");
+const albumSongs = useTemplateRef("albumSongs");
 
 const { state: fetchedAlbum, isLoading, error, execute: fetchAlbum } = useAsyncState(
 	(key: AlbumKey) => getAlbum(key),
@@ -139,11 +146,12 @@ const genres = computed(() => {
 	return names;
 });
 
-function onArtistClicked(name: string) {
-	if (!isFakeArtist(name)) {
-		router.push(makeArtistURL(name));
-	}
-}
+const { selectedKeys, focusedKey, clickItem, onKeyDown } = useMultiselect(
+	() => {
+		return fetchedAlbum.value?.songs.map(s => ({ key: s.path, ...s })) || [];
+	},
+	{ onMove: snapScrolling }
+);
 
 async function play() {
 	const songs = await listSongs();
@@ -162,5 +170,42 @@ async function listSongs() {
 		return fetchedAlbum.value.songs.map(s => s.path);
 	}
 	return getAlbum(props.albumKey).then(a => a.songs.map(s => s.path));
+}
+
+
+function onArtistClicked(name: string) {
+	if (!isFakeArtist(name)) {
+		router.push(makeArtistURL(name));
+	}
+}
+
+function snapScrolling() {
+	if (!viewport.value) {
+		return;
+	}
+
+	const songElement = albumSongs.value?.find(s => s?.song.path == focusedKey.value);
+	if (!songElement) {
+		return;
+	}
+
+	const viewportTop = viewport.value.scrollTop;
+	const viewportHeight = viewport.value.clientHeight;
+	const viewportBottom = viewportTop + viewportHeight;
+
+	const elementTop = (songElement.$el as HTMLElement).offsetTop - viewport.value.offsetTop;
+	const elementHeight = (songElement.$el as HTMLElement).offsetHeight;
+	const elementBottom = elementTop + elementHeight;
+
+	const padding = 4 * elementHeight;
+
+	let scrollY = viewportTop;
+	if (elementTop < viewportTop + padding) {
+		scrollY = Math.min(scrollY, elementTop - padding);
+	} else if (elementBottom > viewportBottom - padding) {
+		scrollY = Math.max(scrollY, elementTop - viewportHeight + padding);
+	}
+
+	viewport.value.scrollTo({ top: scrollY, behavior: "instant" });
 }
 </script>
