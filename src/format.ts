@@ -11,10 +11,7 @@ export function getPathTail(path: string) {
 	return slices[slices.length - 1] || "";
 }
 
-export function stripFileExtension(path: string | null): string | null {
-	if (!path) {
-		return null;
-	}
+export function stripFileExtension(path: string): string {
 	return path.replace(/\.[^/.]+$/, "");
 }
 

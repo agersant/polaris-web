@@ -1,11 +1,11 @@
 import { Ref, ref } from 'vue';
 import { useMouse } from '@vueuse/core'
 
-import { Album, AlbumHeader, AlbumKey, BrowserEntry } from "./api/dto";
+import { Album, AlbumHeader, AlbumKey, BrowserEntry, Song } from "./api/dto";
 import { flatten, getAlbum } from "./api/endpoints";
-import { getPathTail } from "./format";
+import { formatTitle, getPathTail } from "./format";
 
-export type DnDPayload = DndPayloadFiles | DndPayloadAlbumHeader | DndPayloadAlbum;
+export type DnDPayload = DndPayloadFiles | DndPayloadAlbumHeader | DndPayloadAlbum | DndPayloadSongs;
 
 const { x: mouseX, y: mouseY } = useMouse();
 
@@ -50,6 +50,7 @@ function startDrag(event: DragEvent, payload: DnDPayload) {
     dragElement.style.position = "fixed";
     dragElement.style.left = `${mouseX.value}px`;
     dragElement.style.top = `${mouseY.value}px`;
+    dragElement.style.zIndex = "1000";
     storage.value = payload;
 }
 
@@ -136,5 +137,27 @@ export class DndPayloadAlbum {
 
     getTracks(): Promise<string[]> {
         return this.tracks;
+    }
+};
+
+export class DndPayloadSongs {
+    songs: Song[];
+    tracks: Promise<string[]>;
+
+    constructor(songs: Song[]) {
+        this.songs = songs;
+        this.tracks = Promise.resolve(songs?.map(s => s.path) || []);
+    }
+
+    getTracks(): Promise<string[]> {
+        return this.tracks;
+    }
+
+    getDescription(): string {
+        if (this.songs.length == 1) {
+            return formatTitle(this.songs[0]);
+        } else {
+            return `${this.songs.length} Songs`;
+        }
     }
 };
