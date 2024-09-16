@@ -7,8 +7,10 @@
         " :class="[
             focused ? 'outline-1' : 'outline-0',
         ]" />
-        <div class="z-10 w-6 text-right" v-text="`${song.track_number}.`"
-            :class="selected ? 'text-accent-500 dark:text-accent-700' : 'text-ls-500 dark:text-ds-400'" />
+        <div class="z-10 w-6 text-right" v-text="`${song.track_number}.`" :class="[
+            selected ? 'text-accent-500 dark:text-accent-700' : 'text-ls-500 dark:text-ds-400',
+            song.track_number ? '' : 'opacity-0',
+        ]" />
         <div class="z-10 grow mb-2 pb-2 border-ls-200 dark:border-ds-700" :class="isLast ? 'border-0' : 'border-b'">
             <span v-text="formatTitle(song)"
                 :class="selected ? 'text-accent-700 dark:text-accent-600' : 'text-ls-700 dark:text-ds-300'" />

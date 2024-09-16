@@ -14,7 +14,7 @@
                 <div v-else class="-mr-8 bg-black/5 dark:bg-white/5 h-3 rounded-full" />
             </div>
             <div class="basis-8 shrink-0 text-right mr-1">
-                <span v-if="song"> {{ formatTrackNumber(song) }}.</span>
+                <span v-if="song && song.track_number"> {{ formatTrackNumber(song) }}.</span>
             </div>
             <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis">
                 <span v-if="song">
