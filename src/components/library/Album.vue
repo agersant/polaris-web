@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import equals from "array-equal"
-import { computed, nextTick, ref, Ref, toRaw, useTemplateRef, watch, } from "vue";
+import { computed, nextTick, toRaw, useTemplateRef, } from "vue";
 import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
