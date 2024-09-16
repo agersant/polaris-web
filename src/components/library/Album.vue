@@ -38,13 +38,23 @@
 					<div v-text="`${albumKey.name} (${fetchedAlbum.year})`"
 						class="mt-3 px-4 italic text-ls-500 dark:text-ds-400 text-xs text-center" />
 				</div>
-				<div ref="viewport" class="grow -mx-4 px-4 self-stretch overflow-scroll flex flex-col gap-8"
-					tabindex="-1" @keydown="onKeyDown">
+				<div ref="viewport" class="grow -m-4 p-4 self-stretch overflow-scroll flex flex-col gap-8" tabindex="-1"
+					@keydown="onKeyDown">
 					<div v-for="[discNumber, songs] of discs" class="flex flex-col">
 						<SectionTitle v-if="discs?.size && discNumber" icon="numbers" :label="`Disc ${discNumber}`" />
-						<AlbumSong ref="albumSongs" v-for="song of songs" :song="song"
-							:selected="selectedKeys.has(song.path)" :focused="focusedKey == song.path"
-							@click="clickItem($event, { key: song.path, ...song })" />
+						<Draggable :make-payload="() => new DndPayloadSongs(selection)" v-for="(song, index) of songs"
+							@draggable-start="onDragStart($event, song)" :allow-pointer-events-inside="true">
+							<AlbumSong ref="albumSongs" :song="song" :selected="selectedKeys.has(song.path)"
+								:focused="focusedKey == song.path" :is-last="index == songs.length - 1"
+								@click="clickItem($event, { key: song.path, ...song })"
+								@dblclick="onSongDoubleClicked(song)" />
+							<template #drag-preview="{ payload }">
+								<div class="flex items-center gap-2">
+									<span v-text="`music_note`" class="material-icons-round" />
+									<span v-text="payload.getDescription()" />
+								</div>
+							</template>
+						</Draggable>
 					</div>
 				</div>
 			</div>
@@ -77,17 +87,13 @@ import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
 import AlbumSong from '@/components/library/AlbumSong.vue';
-import { DndPayloadAlbum } from "@/dnd";
+import { DndPayloadAlbum, DndPayloadSongs } from "@/dnd";
 import { isFakeArtist } from "@/format";
 import { makeArtistURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import useMultiselect from "@/multiselect";
 
 /* TODOS
-Song multiselect
-Song double-click
-Song drag and drop
-Dark mode (WIP)
 Context menus
 */
 
@@ -146,7 +152,7 @@ const genres = computed(() => {
 	return names;
 });
 
-const { selectedKeys, focusedKey, clickItem, onKeyDown } = useMultiselect(
+const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect } = useMultiselect(
 	() => {
 		return fetchedAlbum.value?.songs.map(s => ({ key: s.path, ...s })) || [];
 	},
@@ -172,10 +178,43 @@ async function listSongs() {
 	return getAlbum(props.albumKey).then(a => a.songs.map(s => s.path));
 }
 
-
 function onArtistClicked(name: string) {
 	if (!isFakeArtist(name)) {
 		router.push(makeArtistURL(name));
+	}
+}
+
+function onSongDoubleClicked(song: Song) {
+	playback.clear();
+	playback.queueTracks([song.path]);
+	playback.next();
+}
+
+function onDragStart(event: DragEvent, song: Song) {
+	if (!selectedKeys.value.has(song.path)) {
+		selectItem({ key: song.path, ...song });
+	}
+}
+
+function onKeyDown(event: KeyboardEvent) {
+	multiselect.onKeyDown(event);
+	if (event.code == "Enter") {
+		queueSelection(!event.shiftKey);
+	}
+}
+
+async function queueSelection(replace: boolean) {
+	const tracks = selection.value.map(s => s.path);
+	if (!tracks.length) {
+		return;
+	}
+
+	if (replace) {
+		playback.clear();
+	}
+	playback.queueTracks(tracks);
+	if (replace) {
+		playback.next();
 	}
 }
 
