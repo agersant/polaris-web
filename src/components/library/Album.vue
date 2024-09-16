@@ -9,7 +9,7 @@
 			</template>
 		</PageTitle>
 
-		<div v-if="fetchedAlbum" class="grow min-h-0 flex flex-col">
+		<div v-if="album" class="grow min-h-0 flex flex-col">
 
 			<div class="basis-10 shrink-0 mb-8 flex items-center">
 				<div class="text-sm uppercase font-medium text-ls-500 dark:text-ds-400">
@@ -29,13 +29,13 @@
 
 			<div class="min-h-0 flex items-start gap-8">
 				<div class="basis-2/5 shrink-0">
-					<Draggable :make-payload="() => new DndPayloadAlbum(fetchedAlbum as AlbumDTO)" class="cursor-grab">
+					<Draggable :make-payload="() => new DndPayloadAlbum(album as AlbumDTO)" class="cursor-grab">
 						<AlbumArt :url="artworkURL" size="lg" class="shadow-lg shadow-ls-100 dark:shadow-ds-900" />
 						<template #drag-preview>
-							<AlbumDragPreview :album="fetchedAlbum" />
+							<AlbumDragPreview :album="album" />
 						</template>
 					</Draggable>
-					<div v-text="`${albumKey.name} (${fetchedAlbum.year})`"
+					<div v-text="`${albumKey.name} (${album.year})`"
 						class="mt-3 px-4 italic text-ls-500 dark:text-ds-400 text-xs text-center" />
 				</div>
 				<div ref="viewport" class="grow -m-4 p-4 self-stretch overflow-scroll flex flex-col gap-8" tabindex="-1"
@@ -71,8 +71,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef, } from "vue";
-import { useAsyncState, watchImmediate } from "@vueuse/core";
+import { computed, nextTick, ref, Ref, toRaw, useTemplateRef, watch, } from "vue";
+import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
 import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
@@ -111,22 +111,25 @@ const { state: fetchedAlbum, isLoading, error, execute: fetchAlbum } = useAsyncS
 	{ immediate: false, resetOnExecute: true }
 );
 
-watchImmediate(() => props.albumKey, () => {
-	fetchAlbum(0, props.albumKey);
+const album: Ref<AlbumDTO | undefined> = ref(undefined);
+watch(fetchedAlbum, a => {
+	if (!album.value || !a) {
+		album.value = a;
+	}
 });
 
 const header = computed((): string => {
 	return props.albumKey.name || "Unknown Album";
 });
 
-const artworkURL = computed(() => fetchedAlbum.value?.artwork ? makeThumbnailURL(fetchedAlbum.value.artwork, "large") : undefined);
+const artworkURL = computed(() => album.value?.artwork ? makeThumbnailURL(album.value.artwork, "large") : undefined);
 
 const discs = computed(() => {
-	if (!fetchedAlbum.value) {
+	if (!album.value) {
 		return undefined;
 	}
 	let discs = new Map<number | undefined, Song[]>();
-	for (const song of fetchedAlbum.value.songs) {
+	for (const song of album.value.songs) {
 		let disc = discs.get(song.disc_number);
 		if (!disc) {
 			disc = [];
@@ -138,11 +141,11 @@ const discs = computed(() => {
 });
 
 const genres = computed(() => {
-	if (!fetchedAlbum.value) {
+	if (!album.value) {
 		return undefined;
 	}
 	let counts = new Map<string, number>();
-	for (const song of fetchedAlbum.value.songs) {
+	for (const song of album.value.songs) {
 		for (const genre of song.genres || []) {
 			counts.set(genre, 1 + (counts.get(genre) || 0));
 		}
@@ -152,12 +155,43 @@ const genres = computed(() => {
 	return names;
 });
 
-const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect } = useMultiselect(
+const { y: scrollY } = useScroll(viewport);
+
+const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect, pivotKey } = useMultiselect(
 	() => {
-		return fetchedAlbum.value?.songs.map(s => ({ key: s.path, ...s })) || [];
+		return album.value?.songs.map(s => ({ key: s.path, ...s })) || [];
 	},
 	{ onMove: snapScrolling }
 );
+
+
+const historyStateKey = "albumState";
+
+watchThrottled([album, selectedKeys, focusedKey, pivotKey, scrollY], async () => {
+	const state = {
+		album: toRaw(album.value),
+		selectedKeys: toRaw(selectedKeys.value),
+		focusedKey: focusedKey.value,
+		pivotKey: pivotKey.value,
+		scrollY: scrollY.value,
+	};
+	history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { throttle: 500 });
+
+watchImmediate(() => props.albumKey, () => {
+	const state = history.state[historyStateKey];
+	if (!state) {
+		fetchAlbum(0, props.albumKey);
+		return;
+	}
+	album.value = state.album;
+	selectedKeys.value = state.selectedKeys;
+	focusedKey.value = state.focusedKey;
+	pivotKey.value = state.pivotKey;
+	nextTick(() => {
+		viewport.value?.scrollTo({ top: state.scrollY });
+	});
+});
 
 async function play() {
 	const songs = await listSongs();
@@ -172,8 +206,8 @@ async function queue() {
 }
 
 async function listSongs() {
-	if (fetchedAlbum.value) {
-		return fetchedAlbum.value.songs.map(s => s.path);
+	if (album.value) {
+		return album.value.songs.map(s => s.path);
 	}
 	return getAlbum(props.albumKey).then(a => a.songs.map(s => s.path));
 }
