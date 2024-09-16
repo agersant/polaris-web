@@ -2,7 +2,7 @@
     <div class="relative group flex gap-4">
         <div class="
         absolute -left-1 right-0 bottom-3.5 -top-0.5 rounded-sm
-        group-hover:bg-ls-100 group-hover:dark:bg-accent-900
+        group-hover:bg-ls-100 group-hover:dark:bg-ds-900
         outline-dotted outline-accent-500 dark:outline-accent-700
         " :class="[
             focused ? 'outline-1' : 'outline-0',
