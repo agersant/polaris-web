@@ -5,6 +5,7 @@ import App from "@/components/App.vue";
 import Auth from "@/components/Auth.vue";
 import NotFound from "@/components/NotFound.vue";
 import Album from "@/components/library/Album.vue";
+import Albums from "@/components/library/Albums.vue";
 import Artist from "@/components/library/Artist.vue";
 import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
@@ -54,11 +55,10 @@ const routes = [
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: "/files", component: Files },
-			{ path: "/artists/:name", component: Artist, props: true },
 			{ path: "/artists", component: Artists },
+			{ path: "/artists/:name", component: Artist, props: true },
+			{ path: "/albums", component: Albums },
 			{ path: "/albums/:artists/:name", component: Album, props: extractAlbumKey },
-			{ path: "/random", component: Random },
-			{ path: "/recent", component: Recent },
 			{ path: "/playlists", component: Playlists },
 			// { path: "/playlist/:name", component: Playlist, props: true },
 			// { path: "/search/:query?", component: Search, props: true },

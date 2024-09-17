@@ -25,7 +25,7 @@
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(mainWorks)" />
                         </ButtonGroup>
                     </SectionTitle>
-                    <AlbumGrid :albums="mainWorks" :num-columns="numColumns" />
+                    <AlbumGrid :albums="mainWorks" :num-columns="numColumns" :show-artists="false" />
                 </div>
 
                 <div v-if="displayMode != 'timeline' && otherWorks?.length">
@@ -35,7 +35,7 @@
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(otherWorks)" />
                         </ButtonGroup>
                     </SectionTitle>
-                    <AlbumGrid :albums="otherWorks" :num-columns="numColumns" />
+                    <AlbumGrid :albums="otherWorks" :num-columns="numColumns" :show-artists="true" />
                 </div>
 
                 <Timeline v-if="displayMode == 'timeline'" :artist="artist.name" :albums="artist.albums" class="m-16" />

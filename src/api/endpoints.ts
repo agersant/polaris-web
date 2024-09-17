@@ -177,6 +177,21 @@ export async function flatten(path: string): Promise<SongList> {
 
 // Semantic
 
+export async function getAlbums(): Promise<AlbumHeader[]> {
+	const response = await request("/albums");
+	return await response.json();
+}
+
+export async function getRandomAlbums(): Promise<AlbumHeader[]> {
+	const response = await request("/albums/random");
+	return await response.json();
+}
+
+export async function getRecentAlbums(): Promise<AlbumHeader[]> {
+	const response = await request("/albums/recent");
+	return await response.json();
+}
+
 export async function getArtists(): Promise<ArtistHeader[]> {
 	const response = await request("/artists");
 	return await response.json();
@@ -194,16 +209,6 @@ export async function getAlbum(albumKey: AlbumKey): Promise<Album> {
 		songs.ingest(album.songs);
 		return album;
 	});
-}
-
-export async function random(): Promise<AlbumHeader[]> {
-	const response = await request("/random");
-	return await response.json();
-}
-
-export async function recent(): Promise<AlbumHeader[]> {
-	const response = await request("/recent");
-	return await response.json();
 }
 
 // Search
