@@ -42,7 +42,6 @@
                             person
                         </span>
                         <div class="basis-fit shrink min-w-0 pr-8 flex flex-col">
-                            <!-- TODO drag and drop artist to playlist -->
                             <span @click="router.push(makeArtistURL(item.data.name))" class="cursor-pointer font-semibold
                                 overflow-hidden text-ellipsis
                                 text-ls-700 dark:text-ds-300
