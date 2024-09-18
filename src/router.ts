@@ -11,8 +11,6 @@ import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
 // import Playlist from "@/components/profile/playlists/Playlist.vue";
 import Playlists from "@/components/profile/playlists/Playlists.vue";
-import Random from "@/components/library/Random.vue";
-import Recent from "@/components/library/Recent.vue";
 // import Search from "@/components/library/Search.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
 import Settings from "@/components/profile/settings/Settings.vue";
