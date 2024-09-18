@@ -182,13 +182,13 @@ export async function getAlbums(): Promise<AlbumHeader[]> {
 	return await response.json();
 }
 
-export async function getRandomAlbums(): Promise<AlbumHeader[]> {
-	const response = await request("/albums/random");
+export async function getRandomAlbums(seed: number, offset: number, count: number): Promise<AlbumHeader[]> {
+	const response = await request(`/albums/random?seed=${seed}&offset=${offset}&count=${count}`);
 	return await response.json();
 }
 
-export async function getRecentAlbums(): Promise<AlbumHeader[]> {
-	const response = await request("/albums/recent");
+export async function getRecentAlbums(offset: number, count: number): Promise<AlbumHeader[]> {
+	const response = await request(`/albums/recent?offset=${offset}&count=${count}`);
 	return await response.json();
 }
 
