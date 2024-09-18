@@ -18,6 +18,7 @@
                 <!-- TODO clear filter icon -->
                 <Button v-if="viewMode == 'random'" severity="secondary" size="lg" label="Play Anything"
                     icon="auto_awesome" @click="playAnything" />
+                <!-- TODO find something else to show for recent albums -->
                 <InputText v-else class="w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
                     icon="filter_alt" autofocus />
                 <!-- TODO tooltips -->
