@@ -11,16 +11,6 @@
 				</li>
 			</ul>
 
-			<div>
-				<div class="text-xs text-ls-400 dark:text-ds-400 uppercase">Playlists</div>
-				<ul class="-mx-2 mt-2 space-y-1">
-					<li v-for="playlist in playlists">
-						<SidebarItem :action="() => { }" :label="playlist.name" icon="queue_music"
-							class="italic !font-normal text-sm text-ls-500 dark:text-ds-500" />
-					</li>
-				</ul>
-			</div>
-
 			<div class="-mx-6 mt-auto">
 				<a @click="user.logout" class="cursor-pointer flex items-center gap-x-4 px-6 py-3 text-sm font-semibold
 						text-ls-700 dark:text-ds-400
@@ -70,10 +60,4 @@ const navigation: Ref<Item[]> = ref([
 	{ label: "Search", icon: "search", "data-cy": "search", pattern: new RegExp("^/search"), action: navigateTo("/search") },
 	{ label: "Settings", icon: "settings", "data-cy": "settings", pattern: new RegExp("^/settings"), action: navigateTo("/settings/preferences") },
 ]);
-
-const playlists = [
-	{ name: "Summer 2024" },
-	{ name: "Winter 2023" },
-	{ name: "Fall 2023" },
-];
 </script>
