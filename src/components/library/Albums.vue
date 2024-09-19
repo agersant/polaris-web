@@ -57,25 +57,15 @@ import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch }
 import { useAsyncState, useElementSize, useScroll, watchPausable, watchThrottled, whenever } from "@vueuse/core";
 
 import { AlbumHeader } from "@/api/dto";
-import { getAlbum, getAlbums, getRandomAlbums, getRecentAlbums } from "@/api/endpoints";
+import { getAlbums, getRandomAlbums, getRecentAlbums } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
-import Button from "@/components/basic/Button.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import SwitchText from "@/components/basic/SwitchText.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
-import Switch from "@/components/basic/Switch.vue";
 import AlbumGrid from "@/components/library/AlbumGrid.vue";
-import { usePlaybackStore } from "@/stores/playback";
 
-const playback = usePlaybackStore();
-
-/* TODO
-    dark mode
-*/
-
-// TODO save in preferences
 const numColumns = ref(5);
 
 type ViewMode = "recent" | "random" | "all";
