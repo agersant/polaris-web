@@ -1,7 +1,7 @@
 <template>
     <div class="leading-7 flex gap-x-8 text-sm font-semibold">
-        <div v-for="item of items" @click="onItemClicked(item)">
-            <span v-text="item.label" class="cursor-pointer" :class="itemClass(item)" />
+        <div v-for="item of items" @click="onItemClicked(item)" class="cursor-pointer">
+            <span v-text="item.label" :class="itemClass(item)" />
         </div>
     </div>
 </template>
