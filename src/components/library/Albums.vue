@@ -13,15 +13,9 @@
 
         <div v-if="albums.length" class="grow min-h-0 flex flex-col">
 
-            <div class="mb-8 flex items-center justify-between">
-                <!-- TODO tooltips -->
-                <!-- TODO clear filter icon -->
-                <Button v-if="viewMode == 'random'" severity="secondary" size="lg" label="Play Anything"
-                    icon="auto_awesome" @click="playAnything" />
-                <!-- TODO find something else to show for recent albums -->
-                <InputText v-else class="w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
-                    icon="filter_alt" autofocus />
-            </div>
+            <!-- TODO clear filter icon -->
+            <InputText v-if="viewMode == 'all'" class="mb-8 w-80" v-model="filter" id="filter" name="filter"
+                placeholder="Filter" icon="filter_alt" autofocus />
 
             <div v-if="!filtered.length" class="grow flex mt-40 justify-center text-center">
                 <BlankStateFiller icon="filter_alt_off">
@@ -205,18 +199,5 @@ onMounted(() => {
 
 function generateSeed() {
     return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-}
-
-async function playAnything() {
-    const seed = Date.now();
-    const album = (await getRandomAlbums(seed, 0, 1))[0];
-    const key = {
-        name: album.name,
-        artists: album.main_artists,
-    };
-    const tracks = (await getAlbum(key)).songs.map(s => s.path);
-    playback.clear();
-    playback.queueTracks(tracks);
-    playback.next();
 }
 </script>
