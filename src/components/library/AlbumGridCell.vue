@@ -17,7 +17,8 @@
             <span v-text="album.name" class="mb-1 line-clamp-2 text-ls-900 dark:text-ds-200" />
             <span v-if="showArtists" class="line-clamp-1">
                 <span v-for="(artist, index) of album.main_artists">
-                    <span v-text="artist" />
+                    <span v-text="artist" @click="onArtistClicked(artist)"
+                        :class="{ 'cursor-pointer hover:underline hover:text-accent-600': !isFakeArtist(artist) }" />
                     <span v-if="index < album.main_artists.length - 1" v-text="`, `" />
                 </span>
             </span>
@@ -35,7 +36,8 @@ import AlbumArt from '@/components/AlbumArt.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
 import { DndPayloadAlbumHeader } from '@/dnd';
-import { makeAlbumURL } from '@/router';
+import { isFakeArtist } from '@/format';
+import { makeAlbumURL, makeArtistURL } from '@/router';
 
 const router = useRouter();
 
@@ -44,5 +46,11 @@ defineProps<{
     showArtists: boolean,
     size: "md" | "lg",
 }>();
+
+function onArtistClicked(name: string) {
+    if (!isFakeArtist(name)) {
+        router.push(makeArtistURL(name));
+    }
+}
 
 </script>
