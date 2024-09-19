@@ -86,7 +86,6 @@ const playback = usePlaybackStore();
     dark mode
     persistence
     random
-    clickable artists
     preserve scrolling when display mode changes
 */
 
