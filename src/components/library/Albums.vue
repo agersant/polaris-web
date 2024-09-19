@@ -64,8 +64,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref, useTemplateRef, watch } from "vue";
-import { useAsyncState, useScroll, whenever } from "@vueuse/core";
+import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch } from "vue";
+import { useAsyncState, useElementSize, useScroll, watchPausable, watchThrottled, whenever } from "@vueuse/core";
 
 import { AlbumHeader } from "@/api/dto";
 import { getAlbum, getAlbums, getRandomAlbums, getRecentAlbums } from "@/api/endpoints";
@@ -84,8 +84,6 @@ const playback = usePlaybackStore();
 
 /* TODO
     dark mode
-    persistence
-    random
     preserve scrolling when display mode changes
 */
 
@@ -103,6 +101,8 @@ type ViewMode = "recent" | "random" | "all";
 const viewMode: Ref<ViewMode> = ref("recent");
 
 const albums: Ref<AlbumHeader[]> = ref([]);
+const fetchedAll = ref(false);
+const seed = ref(generateSeed());
 
 const { state: fetchedAlbums, isLoading, isReady, error, execute: fetchAlbums } = useAsyncState(async () => {
     switch (viewMode.value) {
@@ -111,25 +111,45 @@ const { state: fetchedAlbums, isLoading, isReady, error, execute: fetchAlbums } 
         case "recent":
             return getRecentAlbums(albums.value.length, numColumns.value * 20);
         case "random":
-            return getRandomAlbums(0, albums.value.length, numColumns.value * 20);
+            return getRandomAlbums(seed.value, albums.value.length, numColumns.value * 20);
     }
-}, []);
+}, [], { immediate: false });
 
 const grid = useTemplateRef("grid");
-const { arrivedState } = useScroll(() => grid.value?.$el);
+const { y: scrollY } = useScroll(() => grid.value?.$el);
+const { height: viewportHeight } = useElementSize(grid);
+const gridContentHeight = computed(() => grid.value?.contentHeight);
 
-whenever(() => arrivedState.bottom, () => {
-    if (viewMode.value != "all" && !isLoading.value) {
-        fetchAlbums();
+const needsMoreAlbums = computed(() => {
+    if (isLoading.value || fetchedAll.value || !gridContentHeight.value || viewMode.value == "all") {
+        return false;
     }
+    return Math.abs(scrollY.value + viewportHeight.value - gridContentHeight.value) < 100;
 });
 
-watch(viewMode, () => {
+watchThrottled(needsMoreAlbums, () => {
+    if (needsMoreAlbums.value) {
+        fetchAlbums();
+    }
+}, { throttle: 200 });
+
+const autoScroll: Ref<number | undefined> = ref(undefined);
+whenever(() => autoScroll.value && gridContentHeight.value && autoScroll.value <= gridContentHeight.value, () => {
+    const top = autoScroll.value;
+    autoScroll.value = undefined;
+    nextTick(() => {
+        grid.value?.$el.scrollTo({ top });
+    });
+});
+
+const viewModeWatch = watchPausable(viewMode, () => {
     albums.value = [];
+    fetchedAll.value = false;
     fetchAlbums();
 });
 
 watch(fetchedAlbums, () => {
+    fetchedAll.value = !fetchedAlbums.value.length;
     switch (viewMode.value) {
         case "all":
             albums.value = fetchedAlbums.value;
@@ -159,6 +179,46 @@ const filtered = computed(() => {
         return false;
     });
 });
+
+const historyStateKey = "albumsState";
+
+interface State {
+    albums: AlbumHeader[],
+    filter: string,
+    viewMode: ViewMode,
+    seed: number,
+    scrollY: number,
+}
+
+watchThrottled([albums, filter, viewMode, seed, scrollY], async () => {
+    const state: State = {
+        albums: toRaw(albums.value),
+        filter: filter.value,
+        viewMode: viewMode.value,
+        seed: seed.value,
+        scrollY: scrollY.value,
+    };
+    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { throttle: 500 });
+
+onMounted(() => {
+    const state = history.state[historyStateKey] as State | undefined;
+    if (!state) {
+        fetchAlbums();
+        return;
+    }
+    viewModeWatch.pause();
+    viewMode.value = state.viewMode;
+    albums.value = state.albums;
+    filter.value = state.filter;
+    seed.value = state.seed;
+    autoScroll.value = state.scrollY;
+    nextTick(() => viewModeWatch.resume());
+});
+
+function generateSeed() {
+    return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+}
 
 async function playAnything() {
     const seed = Date.now();

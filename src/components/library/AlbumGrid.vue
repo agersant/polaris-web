@@ -59,4 +59,6 @@ const sampleAlbum = {
     main_artists: ["WWWW ".repeat(10)],
     year: 2000,
 };
+
+defineExpose({ contentHeight });
 </script>
