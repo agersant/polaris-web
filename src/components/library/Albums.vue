@@ -21,11 +21,6 @@
                 <!-- TODO find something else to show for recent albums -->
                 <InputText v-else class="w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
                     icon="filter_alt" autofocus />
-                <!-- TODO tooltips -->
-                <Switch v-model="displayMode" :items="[
-                    { icon: 'apps', value: 'grid5' },
-                    { icon: 'grid_view', value: 'grid3' },
-                ]" />
             </div>
 
             <div v-if="!filtered.length" class="grow flex mt-40 justify-center text-center">
@@ -84,18 +79,10 @@ const playback = usePlaybackStore();
 
 /* TODO
     dark mode
-    preserve scrolling when display mode changes
 */
 
 // TODO save in preferences
-type DisplayMode = "grid5" | "grid3";
-const displayMode: Ref<DisplayMode> = ref("grid5");
-const numColumns = computed(() => {
-    switch (displayMode.value) {
-        case "grid5": return 5;
-        case "grid3": return 3;
-    };
-});
+const numColumns = ref(5);
 
 type ViewMode = "recent" | "random" | "all";
 const viewMode: Ref<ViewMode> = ref("recent");
