@@ -3,8 +3,8 @@
 		<PageTitle label="Files" data-cy="browser-header" />
 
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
-			<InputText class="mb-8" v-model="searchQuery" id="search" name="search" placeholder="Search"
-				icon="search" />
+			<InputText class="mb-8" v-model="filterQuery" id="filter" name="filter" placeholder="Filter"
+				icon="filter_alt" />
 			<VirtualTree ref="tree" v-model="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
 				@nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag" class="grow" />
 		</div>
@@ -63,7 +63,7 @@ watch(topLevel, (v) => {
 });
 
 const tree = useTemplateRef("tree");
-const searchQuery = ref("");
+const filterQuery = ref("");
 const draggedFiles: Ref<DndPayloadFiles | null> = ref(null);
 
 async function openDirectory(node: Node) {
