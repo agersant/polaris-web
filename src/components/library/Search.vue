@@ -2,11 +2,23 @@
 	<div class="flex flex-col">
 		<PageTitle label="Search" />
 
-		<!-- TODO clear query icon -->
-		<InputText class="mb-8" v-model="query" id="search" name="search" placeholder="Search" icon=" search" />
-		<!-- TODO Syntax help -->
+		<div class="mb-8 flex gap-2">
+			<!-- TODO clear query icon -->
+			<InputText class="grow" v-model="query" id="search" name="search" placeholder="Search" icon=" search" />
+			<!-- TODO Tooltip -->
+			<Button icon="help_outline" severity="tertiary" />
+		</div>
 
-		<div v-if="results?.paths.length" class="min-h-0">
+		<div v-if="results?.paths.length" class="">
+			<SectionTitle :label="`${results.paths.length} ${pluralize('song', results.paths.length)} found`"
+				class="h-10">
+				<template #right>
+					<div class="flex justify-end gap-2">
+						<Button icon="play_arrow" label="Play All" severity="secondary" />
+						<Button icon="playlist_add" label="Queue All" severity="secondary" />
+					</div>
+				</template>
+			</SectionTitle>
 			<div v-for="song of results.paths.slice(0, 30)">
 				{{ song }}
 			</div>
@@ -36,18 +48,30 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { useAsyncState } from "@vueuse/core";
+import { refDebounced, useAsyncState } from "@vueuse/core";
 
 import { search } from "@/api/endpoints"
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
+import Button from "@/components/basic/Button.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
+import SectionTitle from "@/components/basic/SectionTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
+import { pluralize } from "@/format";
+
+/* TODO
+play/queue buttons
+results visualization
+syntax help
+something about 1 character search terms killing queries
+history persistence
+dark mode
+*/
 
 const query = ref("");
 
-const { state: results, isLoading, error, execute: runQuery } = useAsyncState(
+const { state: rawResults, isLoading, error, execute: runQuery } = useAsyncState(
 	() => {
 		if (!query.value) {
 			return Promise.resolve(undefined);
@@ -57,6 +81,8 @@ const { state: results, isLoading, error, execute: runQuery } = useAsyncState(
 	undefined,
 	{ immediate: false, resetOnExecute: true }
 );
+
+const results = refDebounced(rawResults, 50);
 
 watch(query, () => {
 	runQuery(0);
