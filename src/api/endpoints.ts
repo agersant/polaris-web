@@ -213,7 +213,7 @@ export async function getAlbum(albumKey: AlbumKey): Promise<Album> {
 
 // Search
 
-export async function search(query: string): Promise<BrowserEntry[]> {
+export async function search(query: string): Promise<SongList> {
 	const response = await request("/search/" + encodeURIComponent(query));
 	return await response.json();
 }

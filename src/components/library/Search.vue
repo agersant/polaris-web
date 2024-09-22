@@ -1,83 +1,65 @@
 <template>
-	<div class="pane">
-		<div class="paneHeader">
-			<h2>Search</h2>
-			<SearchInput />
-		</div>
-		<div v-if="query && results" class="paneContent" ref="paneContent">
-			<div class="viewActions">
-				<div class="header">{{ results.length }} results found for '{{ query }}'</div>
-				<button v-if="results.length > 0" v-on:click="queueAll" class="small">Queue All</button>
+	<div class="flex flex-col">
+		<PageTitle label="Search" />
+
+		<!-- TODO clear query icon -->
+		<InputText class="mb-8" v-model="query" id="search" name="search" placeholder="Search" icon=" search" />
+		<!-- TODO Syntax help -->
+
+		<div v-if="results?.paths.length" class="min-h-0">
+			<div v-for="song of results.paths.slice(0, 30)">
+				{{ song }}
 			</div>
-			<Explorer v-bind:items="results" v-on:item-click="onItemClicked" v-on:items-drag-start="onItemsDragStart" />
+		</div>
+
+		<div v-else-if="query.trim().length < 2" class="grow flex items-start mt-40 justify-center text-center">
+			<BlankStateFiller icon="manage_search">
+				Type a search query to get started.
+			</BlankStateFiller>
+		</div>
+
+		<div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+			<Spinner class="text-ls-700 dark:text-ds-400" />
+		</div>
+
+		<Error v-else-if="error">
+			Something went wrong while searching for songs. Please verify the query syntax is correct.
+		</Error>
+
+		<div v-else-if="results?.paths.length == 0" class="grow flex items-start mt-40 justify-center text-center">
+			<BlankStateFiller icon="search_off">
+				No songs found for this query.
+			</BlankStateFiller>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import { BrowserEntry, Song } from "@/api/dto"
+import { ref, watch } from "vue";
+import { useAsyncState } from "@vueuse/core";
+
 import { search } from "@/api/endpoints"
-import { usePlaybackStore } from "@/stores/playback";
-import Explorer from "@/components/collection/layout/Explorer.vue"
-import SearchInput from "./SearchInput.vue"
+import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
+import Error from "@/components/basic/Error.vue";
+import InputText from "@/components/basic/InputText.vue";
+import PageTitle from "@/components/basic/PageTitle.vue";
+import Spinner from "@/components/basic/Spinner.vue";
 
-const props = defineProps<{
-	query: string
-}>();
+const query = ref("");
 
-const router = useRouter();
-const playback = usePlaybackStore();
-
-const results: Ref<BrowserEntry[] | null> = ref(null);
-
-watch(
-	() => props.query,
-	async (query) => {
-		results.value = null;
-		results.value = await search(query);
+const { state: results, isLoading, error, execute: runQuery } = useAsyncState(
+	() => {
+		if (!query.value) {
+			return Promise.resolve(undefined);
+		}
+		return search(query.value);
 	},
-	{ immediate: true }
+	undefined,
+	{ immediate: false, resetOnExecute: true }
 );
 
-function queueAll() {
-	let songItems: Song[] = [];
-	let directoryItems: BrowserEntry[] = [];
-	if (!results.value) {
-		return;
-	}
+watch(query, () => {
+	runQuery(0);
+});
 
-	results.value.forEach(item => {
-		if (item.is_directory) {
-			directoryItems.push(item);
-		} else {
-			// TODO fixme
-			// songItems.push({...item});
-		}
-	});
-
-	// TODO fixme
-	// playback.queueTracks(songItems);
-	directoryItems.forEach(item => {
-		// TODO fixme
-		// playback.queueDirectory(item.path);
-	});
-}
-
-function onItemClicked(item: BrowserEntry) {
-	if (item.is_directory) {
-		router.push("/browse/" + item.path).catch(err => { });
-	} else {
-		// TODO fixme
-		// playback.queueTracks([{...item}]);
-	}
-}
-
-function onItemsDragStart(event: DragEvent, items: BrowserEntry[]) {
-	if (!event || !event.dataTransfer) {
-		return;
-	}
-	event.dataTransfer.setData("text/json", JSON.stringify(items));
-}
 </script>

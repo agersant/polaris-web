@@ -9,9 +9,9 @@ import Albums from "@/components/library/Albums.vue";
 import Artist from "@/components/library/Artist.vue";
 import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
+import Search from "@/components/library/Search.vue";
 // import Playlist from "@/components/profile/playlists/Playlist.vue";
 import Playlists from "@/components/profile/playlists/Playlists.vue";
-// import Search from "@/components/library/Search.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
 import Settings from "@/components/profile/settings/Settings.vue";
 import SettingsCollection from "@/components/profile/settings/Collection.vue";
@@ -59,7 +59,7 @@ const routes = [
 			{ path: "/albums/:artists/:name", component: Album, props: extractAlbumKey },
 			{ path: "/playlists", component: Playlists },
 			// { path: "/playlist/:name", component: Playlist, props: true },
-			// { path: "/search/:query?", component: Search, props: true },
+			{ path: "/search", component: Search },
 			{
 				path: "/settings",
 				component: Settings,
