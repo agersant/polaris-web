@@ -1,6 +1,6 @@
 <template>
     <button type="button" :class="buttonClass" :disabled="disabled"
-        class="inline-flex items-center justify-center gap-x-1.5 rounded-md shadow-sm text-sm font-semibold whitespace-nowrap">
+        class="inline-flex items-center justify-center gap-x-1.5 rounded-md text-sm font-semibold whitespace-nowrap">
         <span v-if="icon" class="material-icons-round" :class="iconClass">
             {{ icon }}
         </span>
@@ -15,7 +15,7 @@ const { severity = "primary", size = "base", ...props } = defineProps<{
     label?: string,
     icon?: string,
     disabled?: boolean,
-    severity?: "primary" | "secondary",
+    severity?: "primary" | "secondary" | "tertiary",
     size?: "sm" | "base" | "lg" | "xl",
 }>();
 
@@ -23,18 +23,26 @@ let palettes = {
     disabled: `
         bg-ls-400 text-ls-200
         dark:bg-ds-800 dark:text-ds-500
-    `,
+        shadow-sm
+        `,
     primary: `
         bg-accent-600 hover:bg-accent-500 text-ls-0
         dark:bg-accent-600 dark:hover:bg-accent-500 dark:text-ds-0
         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600 
-    `,
+        shadow-sm
+        `,
     secondary: `
         bg-ls-0 hover:bg-ls-50 text-ls-900
         dark:bg-ds-0/10 dark:hover:bg-ds-0/20 dark:text-ds-0
         ring-1 ring-inset ring-ls-300
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 
         dark:ring-0
+        shadow-sm
+    `,
+    tertiary: `
+        hover:bg-ls-100 text-ls-700
+        dark:hover:bg-ds-0/20 dark:text-ds-0
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 
     `,
 };
 
@@ -56,7 +64,7 @@ const buttonClass = computed(() => {
 
 const iconClass = computed(() => {
     return [
-        props.label?.length ? "text-ls-400 dark:text-ds-200" : "text-ls-900 dark:text-ds-0",
+        props.label?.length ? "text-ls-400 dark:text-ds-200" : "text-ls-700 dark:text-ds-0",
     ];
 });
 </script>
