@@ -51,7 +51,7 @@ const emit = defineEmits<{
     "nodes-drag-end": [event: DragEvent],
 }>();
 
-const virtualList = useTemplateRef<HTMLElement>("virtualList");
+const virtualList = useTemplateRef("virtualList");
 
 const visibleKeys = computed(() => {
     let keys = new Set<string>();

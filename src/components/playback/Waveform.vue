@@ -39,7 +39,7 @@ const emit = defineEmits<{
     "seek": [seconds: number],
 }>();
 
-const root = useTemplateRef<HTMLElement>("root");
+const root = useTemplateRef("root");
 const fullWaveform: Ref<HTMLCanvasElement | null> = useTemplateRef("fullWaveform");
 const playedWaveform: Ref<HTMLCanvasElement | null> = useTemplateRef("playedWaveform");
 const { width, height } = useElementSize(fullWaveform);
