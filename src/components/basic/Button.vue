@@ -41,7 +41,7 @@ let palettes = {
     `,
     tertiary: `
         hover:bg-ls-100 text-ls-700
-        dark:hover:bg-ds-0/20 dark:text-ds-0
+        dark:hover:bg-ds-0/20 dark:text-ds-200
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 
     `,
 };
@@ -63,8 +63,14 @@ const buttonClass = computed(() => {
 });
 
 const iconClass = computed(() => {
-    return [
-        props.label?.length ? "text-ls-400 dark:text-ds-200" : "text-ls-700 dark:text-ds-0",
-    ];
+    if (severity == "tertiary") {
+        return [
+            props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200",
+        ];
+    } else {
+        return [
+            props.label?.length ? "text-ls-400 dark:text-ds-200" : "text-ls-700 dark:text-ds-0",
+        ];
+    }
 });
 </script>
