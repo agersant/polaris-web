@@ -6,17 +6,22 @@
 			<!-- TODO clear query icon -->
 			<InputText class="grow" v-model="query" id="search" name="search" placeholder="Search" icon=" search" />
 			<!-- TODO Tooltip -->
-			<Button icon="help_outline" severity="tertiary" />
+			<Button icon="menu_book" label="Help" severity="tertiary" />
 		</div>
 
 		<div v-if="results?.paths.length" class="">
 			<SectionTitle :label="`${results.paths.length} ${pluralize('song', results.paths.length)} found`"
 				class="h-10">
+				<div class="flex justify-between">
+					<ButtonGroup>
+						<Button icon="play_arrow" severity="secondary" size="sm" />
+						<Button icon="playlist_add" severity="secondary" size="sm" />
+					</ButtonGroup>
+				</div>
 				<template #right>
-					<div class="flex justify-end gap-2">
-						<Button icon="play_arrow" label="Play All" severity="secondary" />
-						<Button icon="playlist_add" label="Queue All" severity="secondary" />
-					</div>
+					<!-- TODO tooltips -->
+					<Switch v-model="listMode"
+						:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 				</template>
 			</SectionTitle>
 			<div v-for="song of results.paths.slice(0, 30)">
@@ -53,11 +58,13 @@ import { refDebounced, useAsyncState } from "@vueuse/core";
 import { search } from "@/api/endpoints"
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Button from "@/components/basic/Button.vue";
+import ButtonGroup from "@/components/basic/ButtonGroup.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
+import Switch from "@/components/basic/Switch.vue";
 import { pluralize } from "@/format";
 
 /* TODO
@@ -70,6 +77,9 @@ dark mode
 */
 
 const query = ref("");
+
+// TODO save to preferences
+const listMode = ref("compact");
 
 const { state: rawResults, isLoading, error, execute: runQuery } = useAsyncState(
 	() => {
