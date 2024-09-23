@@ -127,13 +127,13 @@ router.beforeEach(async (to, from, next) => {
 });
 
 export function makeArtistURL(name: string) {
-	// TODO this breaks when artists or album name contains `/`, `? or `&`
-	return `/artists/${name}`;
+	return `/artists/${encodeURIComponent(name)}`;
 };
 
 export function makeAlbumURL(artists: string[], name: string) {
-	// TODO this breaks when artists or album name contains `/`, `? or `&`
-	return `/albums/${(artists || []).join(URI_ARRAY_SEPARATOR)}/${name}`;
+	const artistsComponent = encodeURIComponent((artists || []).join(URI_ARRAY_SEPARATOR));
+	const nameComponent = encodeURIComponent(name);
+	return `/albums/${artistsComponent}/${nameComponent}`;
 }
 
 export function makeAlbumURLFromSong(song: Song) {
