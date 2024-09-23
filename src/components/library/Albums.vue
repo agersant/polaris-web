@@ -13,9 +13,8 @@
 
         <div v-if="albums.length" class="grow min-h-0 flex flex-col">
 
-            <!-- TODO clear filter icon -->
             <InputText v-if="viewMode == 'all'" class="mb-8 w-80" v-model="filter" id="filter" name="filter"
-                placeholder="Filter" icon="filter_alt" autofocus />
+                placeholder="Filter" icon="filter_alt" autofocus clearable />
 
             <div v-if="!filtered.length" class="grow flex mt-40 justify-center text-center">
                 <BlankStateFiller icon="filter_alt_off">

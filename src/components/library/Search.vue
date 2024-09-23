@@ -3,9 +3,8 @@
 		<PageTitle label="Search" />
 
 		<div class="mb-8 flex gap-2">
-			<!-- TODO clear query icon -->
 			<InputText class="grow" v-model="query" id="search" name="search" placeholder="Search" icon=" search"
-				autofocus />
+				autofocus clearable />
 			<!-- TODO Tooltip -->
 			<Button icon="menu_book" label="Help" severity="tertiary" />
 		</div>
