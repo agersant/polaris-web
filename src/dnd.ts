@@ -3,9 +3,9 @@ import { useMouse } from '@vueuse/core'
 
 import { Album, AlbumHeader, AlbumKey, BrowserEntry, Song } from "./api/dto";
 import { flatten, getAlbum } from "./api/endpoints";
-import { formatTitle, getPathTail } from "./format";
+import { formatTitle, getPathTail, pluralize } from "./format";
 
-export type DnDPayload = DndPayloadFiles | DndPayloadAlbumHeader | DndPayloadAlbum | DndPayloadSongs;
+export type DnDPayload = DndPayloadAlbum | DndPayloadAlbumHeader | DndPayloadFiles | DndPayloadPaths | DndPayloadSongs;
 
 const { x: mouseX, y: mouseY } = useMouse();
 
@@ -137,6 +137,22 @@ export class DndPayloadAlbum {
 
     getTracks(): Promise<string[]> {
         return this.tracks;
+    }
+};
+
+export class DndPayloadPaths {
+    paths: string[];
+
+    constructor(paths: string[]) {
+        this.paths = paths;
+    }
+
+    getTracks(): Promise<string[]> {
+        return Promise.resolve(this.paths);
+    }
+
+    getDescription(): string {
+        return `${this.paths.length} ${pluralize('Song', this.paths.length)}`;
     }
 };
 
