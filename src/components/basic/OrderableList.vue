@@ -46,8 +46,8 @@ const emit = defineEmits<{
     'list-delete': [items: T[]]
 }>();
 
-const viewport = useTemplateRef<HTMLElement>("viewport");
-const wrapper = useTemplateRef<HTMLElement>("wrapper");
+const viewport = useTemplateRef("viewport");
+const wrapper = useTemplateRef("wrapper");
 
 const blankImage = new Image(0, 0);
 blankImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
