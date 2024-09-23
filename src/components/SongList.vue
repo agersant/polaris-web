@@ -1,10 +1,10 @@
 <template>
     <div v-bind="containerProps" tabindex="-1" @keydown="onKeyDown" class="-mx-4 px-4">
         <div v-bind="wrapperProps">
-            <SongListRow v-for="item in virtualItems" :style="`height: ${itemHeight}px`" :path="item.data.key"
-                :index="item.index + +!!invertStripes" :compact="compact" :selected="selectedKeys.has(item.data.key)"
-                :focused="focusedKey == item.data.key" @dblclick="onSongDoubleClicked(item.data.key)"
-                @click="e => clickItem(e, item.data)" />
+            <SongListRow v-for="item in virtualItems" :key="item.index" :style="`height: ${itemHeight}px`"
+                :path="item.data.key" :index="item.index + +!!invertStripes" :compact="compact"
+                :selected="selectedKeys.has(item.data.key)" :focused="focusedKey == item.data.key"
+                @dblclick="onSongDoubleClicked(item.data.key)" @click="e => clickItem(e, item.data)" />
         </div>
     </div>
 </template>
