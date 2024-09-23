@@ -59,6 +59,10 @@ watch(itemHeight, (to, from) => {
     });
 });
 
+watch(() => props.paths, () => {
+    viewport.value?.scrollTo({ top: 0, behavior: "instant" });
+});
+
 function snapScrolling() {
     const focusedIndex = items.value.findIndex(n => n.key == focusedKey.value);
     if (focusedIndex < 0) {
