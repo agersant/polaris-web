@@ -68,7 +68,7 @@ import { pluralize } from "@/format";
 
 /* TODO
 play/queue buttons
-results visualization
+sort results
 syntax help
 something about 1 character search terms killing queries
 history persistence

@@ -1,10 +1,19 @@
 <template>
     <div v-bind="containerProps" tabindex="-1" @keydown="onKeyDown" class="-mx-4 px-4">
         <div v-bind="wrapperProps">
-            <SongListRow v-for="item in virtualItems" :key="item.index" :style="`height: ${itemHeight}px`"
-                :path="item.data.key" :index="item.index + +!!invertStripes" :compact="compact"
-                :selected="selectedKeys.has(item.data.key)" :focused="focusedKey == item.data.key"
-                @dblclick="onSongDoubleClicked(item.data.key)" @click="e => clickItem(e, item.data)" />
+            <Draggable v-for="item in virtualItems" :key="item.index" :allow-pointer-events-inside="true"
+                @draggable-start="onDragStart($event, item.data.key)"
+                :make-payload="() => new DndPayloadPaths(selection.map(s => s.key))" :style="`height: ${itemHeight}px`">
+                <SongListRow :path="item.data.key" :index="item.index + +!!invertStripes" :compact="compact"
+                    :selected="selectedKeys.has(item.data.key)" :focused="focusedKey == item.data.key"
+                    @dblclick="onSongDoubleClicked(item.data.key)" @click="e => clickItem(e, item.data)" />
+                <template #drag-preview="{ payload }">
+                    <div class="flex items-center gap-2">
+                        <span v-text="'audiotrack'" class="material-icons-round" />
+                        <span v-text="payload?.getDescription()" />
+                    </div>
+                </template>
+            </Draggable>
         </div>
     </div>
 </template>
@@ -13,7 +22,9 @@
 import { computed, nextTick, watch } from 'vue';
 import { useElementSize, useScroll, useVirtualList } from '@vueuse/core';
 
+import { DndPayloadPaths } from '@/dnd';
 import useMultiselect from '@/multiselect';
+import Draggable from '@/components/basic/Draggable.vue';
 import SongListRow from '@/components/SongListRow.vue';
 import { usePlaybackStore } from '@/stores/playback';
 
@@ -35,7 +46,7 @@ const viewport = computed(() => containerProps.ref.value);
 const { y: scrollY } = useScroll(viewport);
 const { height: viewportHeight } = useElementSize(viewport);
 
-const { clickItem, multiselect, focusedKey, selectedKeys, selection } = useMultiselect(
+const { clickItem, multiselect, focusedKey, selectedKeys, selectItem, selection } = useMultiselect(
     items,
     { onMove: snapScrolling }
 );
@@ -85,6 +96,12 @@ async function queueSelection(replace: boolean) {
     playback.queueTracks(tracks);
     if (replace) {
         playback.next();
+    }
+}
+
+function onDragStart(event: DragEvent, path: string) {
+    if (!selectedKeys.value.has(path)) {
+        selectItem({ key: path });
     }
 }
 
