@@ -136,7 +136,7 @@ const otherWorks = computed(() => {
     return albums.filter(a => !main.includes(a));
 });
 
-const viewport = useTemplateRef("viewport");
+const viewport = useTemplateRef<HTMLElement>("viewport");
 const { y: scrollY } = useScroll(viewport);
 
 const historyStateKey = "artist";

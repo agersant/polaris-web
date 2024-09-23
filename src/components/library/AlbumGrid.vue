@@ -35,11 +35,11 @@ const cellSize = computed(() =>
     props.numColumns <= 3 ? "lg" : "md",
 );
 
-const viewport = useTemplateRef("viewport");
+const viewport = useTemplateRef<HTMLElement>("viewport");
 const { width: viewportWidth, height: viewportHeight } = useElementSize(viewport);
 const { y: scrollY } = useScroll(viewport);
 
-const sampleCell = useTemplateRef("sampleCell");
+const sampleCell = useTemplateRef<HTMLElement>("sampleCell");
 const itemWidth = computed(() =>
     (viewportWidth.value - (props.numColumns - 1) * gapSize.value) / props.numColumns
 );

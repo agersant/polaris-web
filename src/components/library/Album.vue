@@ -103,7 +103,7 @@ const router = useRouter();
 
 const props = defineProps<{ albumKey: AlbumKey }>();
 
-const viewport = useTemplateRef("viewport");
+const viewport = useTemplateRef<HTMLElement>("viewport");
 const albumSongs = useTemplateRef("albumSongs");
 
 const { state: album, isLoading, error, execute: fetchAlbum } = useAsyncState(
