@@ -30,7 +30,7 @@ const duration = ref(1);
 const paused = ref(true);
 const buffering = ref(false);
 const error: Ref<string | null> = ref(null);
-const htmlAudio = useTemplateRef("htmlAudio");
+const htmlAudio = useTemplateRef<HTMLAudioElement>("htmlAudio");
 
 const audioURL = computed(() => playback.currentTrack ? makeAudioURL(playback.currentTrack.path) : null);
 const artworkURL = computed(() => playback.currentSong?.artwork ? makeThumbnailURL(playback.currentSong.artwork, "small") : null);
