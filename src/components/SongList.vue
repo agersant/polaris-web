@@ -3,7 +3,8 @@
         <div v-bind="wrapperProps">
             <SongListRow v-for="item in virtualItems" :style="`height: ${itemHeight}px`" :path="item.data.key"
                 :index="item.index + +!!invertStripes" :compact="compact" :selected="selectedKeys.has(item.data.key)"
-                :focused="focusedKey == item.data.key" @click="e => clickItem(e, item.data)" />
+                :focused="focusedKey == item.data.key" @dblclick="onSongDoubleClicked(item.data.key)"
+                @click="e => clickItem(e, item.data)" />
         </div>
     </div>
 </template>
@@ -14,6 +15,9 @@ import { useElementSize, useScroll, useVirtualList } from '@vueuse/core';
 
 import useMultiselect from '@/multiselect';
 import SongListRow from '@/components/SongListRow.vue';
+import { usePlaybackStore } from '@/stores/playback';
+
+const playback = usePlaybackStore();
 
 const props = defineProps<{
     paths: string[],
@@ -62,4 +66,9 @@ function snapScrolling() {
     }
 }
 
+function onSongDoubleClicked(path: string) {
+    playback.clear();
+    playback.queueTracks([path]);
+    playback.next();
+}
 </script>
