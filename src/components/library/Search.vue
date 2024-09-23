@@ -14,8 +14,8 @@
 				class="h-10">
 				<div class="flex justify-between">
 					<ButtonGroup>
-						<Button icon="play_arrow" severity="secondary" size="sm" />
-						<Button icon="playlist_add" severity="secondary" size="sm" />
+						<Button icon="play_arrow" severity="secondary" size="sm" @click="play" />
+						<Button icon="playlist_add" severity="secondary" size="sm" @click="queue" />
 					</ButtonGroup>
 				</div>
 				<template #right>
@@ -65,14 +65,16 @@ import Spinner from "@/components/basic/Spinner.vue";
 import Switch from "@/components/basic/Switch.vue";
 import SongList from "@/components/SongList.vue";
 import { pluralize } from "@/format";
+import { usePlaybackStore } from "@/stores/playback";
 
 /* TODO
-play/queue buttons
 syntax help
 something about 1 character search terms killing queries
 history persistence
 dark mode
 */
+
+const playback = usePlaybackStore();
 
 const query = ref("");
 
@@ -95,5 +97,21 @@ const results = refDebounced(rawResults, 50);
 watch(query, () => {
 	runQuery(0);
 });
+
+function play() {
+	if (!results.value) {
+		return;
+	}
+	playback.clear();
+	playback.queueTracks(results.value?.paths);
+	playback.next();
+}
+
+function queue() {
+	if (!results.value) {
+		return;
+	}
+	playback.queueTracks(results.value?.paths);
+}
 
 </script>
