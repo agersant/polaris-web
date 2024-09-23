@@ -214,8 +214,16 @@ export async function getAlbum(albumKey: AlbumKey): Promise<Album> {
 // Search
 
 export async function search(query: string): Promise<SongList> {
+	const songs = useSongsStore();
 	const response = await request("/search/" + encodeURIComponent(query));
-	return await response.json();
+
+	const songList = response.json().then((list: SongList) => {
+		songs.ingest(list.first_songs);
+		songs.request(list.paths);
+		return list;
+	});
+
+	return await songList;
 }
 
 // Playlist management

@@ -1,5 +1,5 @@
 <template>
-    <div class="relative grow h-full min-w-0 rounded-sm flex items-center" :class="rowClass">
+    <div class="relative grow h-full min-w-0 rounded-sm flex items-center whitespace-nowrap text-xs" :class="rowClass">
         <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
             <AlbumArt :url="artworkURL" />
         </div>
