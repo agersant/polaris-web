@@ -9,7 +9,7 @@
 			<Button icon="menu_book" label="Help" severity="tertiary" />
 		</div>
 
-		<div v-if="results?.paths.length" class="">
+		<div v-if="results?.paths.length" class="flex flex-col min-h-0">
 			<SectionTitle :label="`${results.paths.length} ${pluralize('song', results.paths.length)} found`"
 				class="h-10">
 				<div class="flex justify-between">
@@ -24,9 +24,7 @@
 						:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 				</template>
 			</SectionTitle>
-			<div v-for="song of results.paths.slice(0, 30)">
-				{{ song }}
-			</div>
+			<SongList :paths="results.paths" :compact="listMode == 'compact'" invert-stripes />
 		</div>
 
 		<div v-else-if="query.trim().length < 2" class="grow flex items-start mt-40 justify-center text-center">
@@ -65,6 +63,7 @@ import PageTitle from "@/components/basic/PageTitle.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import Switch from "@/components/basic/Switch.vue";
+import SongList from "@/components/SongList.vue";
 import { pluralize } from "@/format";
 
 /* TODO
