@@ -60,11 +60,11 @@ const rowClass = computed(() => {
     if (props.selected) {
         background = "bg-accent-100 dark:bg-accent-900";
     } else if (props.compact) {
-        background = isOdd ? "bg-ls-50 hover:bg-ls-100 dark:bg-ds-800/20 dark:hover:bg-ds-800" : "bg-ls-0 hover:bg-ls-100 dark:bg-ds-900 dark:hover:bg-ds-800";
+        background = isOdd ? "bg-ls-50 hover:bg-ls-100 dark:bg-ds-800/30 dark:hover:bg-ds-700/30" : "bg-ls-0 hover:bg-ls-100 dark:bg-ds-900/30 dark:hover:bg-ds-700/30";
     } else {
         background = [
-            "bg-gradient-to-r from-ls-0 dark:from-ds-900 to-[50px] hover:to-ls-100 dark:hover:to-ds-800",
-            isOdd ? "to-ls-50 dark:to-ds-800/20" : "to-ls-0 dark:to-ds-900",
+            "bg-gradient-to-r from-ls-0/0 dark:from-ds-900/0 to-[50px] hover:to-ls-100 dark:hover:to-ds-700/20",
+            isOdd ? "to-ls-50 dark:to-ds-800/20" : "to-ls-0 dark:to-ds-900/20",
         ];
     }
 
