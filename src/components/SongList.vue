@@ -35,7 +35,7 @@ const viewport = computed(() => containerProps.ref.value);
 const { y: scrollY } = useScroll(viewport);
 const { height: viewportHeight } = useElementSize(viewport);
 
-const { clickItem, onKeyDown, focusedKey, selectedKeys } = useMultiselect(
+const { clickItem, multiselect, focusedKey, selectedKeys, selection } = useMultiselect(
     items,
     { onMove: snapScrolling }
 );
@@ -63,6 +63,28 @@ function snapScrolling() {
         scrollTo(Math.max(0, focusedIndex - padding));
     } else if (focusedIndex >= last - padding) {
         scrollTo(focusedIndex - (last - first) + padding);
+    }
+}
+
+function onKeyDown(event: KeyboardEvent) {
+    multiselect.onKeyDown(event);
+    if (event.code == "Enter") {
+        queueSelection(!event.shiftKey);
+    }
+}
+
+async function queueSelection(replace: boolean) {
+    const tracks = selection.value.map(s => s.key);
+    if (!tracks.length) {
+        return;
+    }
+
+    if (replace) {
+        playback.clear();
+    }
+    playback.queueTracks(tracks);
+    if (replace) {
+        playback.next();
     }
 }
 
