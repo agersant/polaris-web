@@ -25,7 +25,7 @@
 		</div>
 
 		<div class="grow relative min-h-0">
-			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-2" :items="playback.playlist"
+			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-4 pr-4" :items="playback.playlist"
 				:item-height="itemHeight" :show-drop-preview="activeDnD != undefined" @keydown="onKeyDown"
 				@list-reorder="onReorder" @list-delete="playback.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">

@@ -86,7 +86,6 @@ const rowClass = computed(() => {
         props.compact ? "px-3" : "pr-2",
         !props.compact && props.selected ? "-ml-2 pl-2" : "",
         props.focused ? "outline-1 outline-dotted outline-accent-500 -outline-offset-1" : "",
-        "mr-2"
     ];
 
 });
