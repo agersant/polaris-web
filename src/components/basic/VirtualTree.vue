@@ -91,7 +91,7 @@ const { clickItem: clickNode, focusedKey, multiselect, pivotKey, selectedKeys, s
 defineExpose({ selection });
 
 const overscan = 1;
-const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan: overscan });
+const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan });
 const viewport = computed(() => containerProps.ref.value);
 const { y: scrollY } = useScroll(viewport);
 
@@ -253,9 +253,9 @@ function snapScrolling() {
     const first = nodes[0].index;
     const last = nodes[nodes.length - 1].index;
 
-    if (focusedIndex < first + padding) {
-        scrollTo(focusedIndex - padding);
-    } else if (focusedIndex > last - padding) {
+    if (focusedIndex <= first + padding) {
+        scrollTo(Math.max(0, focusedIndex - padding));
+    } else if (focusedIndex >= last - padding) {
         scrollTo(focusedIndex - (last - first) + padding);
     }
 }
