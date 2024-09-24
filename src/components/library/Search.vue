@@ -11,7 +11,7 @@
 
 		<div v-if="results?.paths.length" class="flex flex-col min-h-0">
 			<SectionTitle :label="`${results.paths.length} ${pluralize('song', results.paths.length)} found`"
-				class="h-10">
+				class="basis-10 shrink-0">
 				<div class="flex justify-between">
 					<ButtonGroup>
 						<Button icon="play_arrow" severity="secondary" size="sm" @click="play" />
