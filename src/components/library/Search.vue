@@ -69,7 +69,6 @@ import { usePlaybackStore } from "@/stores/playback";
 
 /* TODO
 syntax help
-something about 1 character search terms killing queries
 history persistence
 dark mode
 */
