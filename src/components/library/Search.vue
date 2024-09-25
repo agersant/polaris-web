@@ -63,22 +63,6 @@
 				<p>All searches are case insensitive.</p>
 
 				<SectionTitle class="mt-4 !mb-0" label="Querying Specific Fields" icon="rule" />
-				<p>The supported fields are:
-				<ul class="ml-8 mt-2 list-disc">
-					<li><span class="font-medium text-accent-600 font-mono">album</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">albumartist</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">artist</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">composer</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">discnumber</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">genre</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">label</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">lyricist</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">path</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">title</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">tracknumber</span></li>
-					<li><span class="font-medium text-accent-600 font-mono">year</span></li>
-				</ul>
-				</p>
 				<p>Partial matches for text fields can be expressed with the % operator. For example, <span
 						class="font-medium text-accent-600 font-mono">composer % bac</span> would returns pieces with
 					J.S.
@@ -103,6 +87,22 @@
 				<p>Queries separated by spaces are implicitely joined by &&. For example searching for <span
 						class="font-medium text-accent-600 font-mono">sonata beethoven</span> will list pieces with
 					"sonata" appearing in any field and "beethoven" appearing in any field.</p>
+
+				<SectionTitle class="mt-4 !mb-0" label="Supported Fields" icon="checklist" />
+				<ul class="ml-8 list-disc">
+					<li><span class="font-medium text-accent-600 font-mono">album</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">albumartist</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">artist</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">composer</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">discnumber</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">genre</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">label</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">lyricist</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">path</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">title</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">tracknumber</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">year</span></li>
+				</ul>
 			</div>
 		</SidePanel>
 	</div>
