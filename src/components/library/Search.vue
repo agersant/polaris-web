@@ -5,8 +5,7 @@
 		<div class="mb-8 flex gap-2">
 			<InputText class="grow" v-model="query" id="search" name="search" placeholder="Search" icon=" search"
 				autofocus clearable />
-			<!-- TODO Tooltip -->
-			<Button icon="menu_book" label="Help" severity="tertiary" />
+			<Button icon="menu_book" label="Help" severity="tertiary" @click="showHelp = true" />
 		</div>
 
 		<div v-if="results?.paths.length" class="flex flex-col min-h-0">
@@ -46,6 +45,66 @@
 				No songs found for this query.
 			</BlankStateFiller>
 		</div>
+
+		<SidePanel v-model="showHelp">
+			<div class="flex flex-col gap-4 text-sm">
+				<div class="text-2xl font-semibold leading-6 text-ls-700 mb-8">Search Syntax</div>
+
+				<SectionTitle class="!mb-0" label="Querying Any Field" icon="auto_awesome" />
+
+				<p>Searching for <span class="font-medium text-accent-600 font-mono">sonata</span> will find any song
+					with "sonata" in its title, artist, file path, album name etc.</p>
+
+				<p>Search terms containing spaces should be wrapped with quotes, fpr example <span
+						class="font-medium text-accent-600 font-mono">"moonlight sonata"</span>.
+					Spaces can also be omitted altogether for the same result (ie. <span
+						class="font-medium text-accent-600 font-mono">moonlightsonata</span>).</p>
+
+				<p>All searches are case insensitive.</p>
+
+				<SectionTitle class="mt-4 !mb-0" label="Querying Specific Fields" icon="rule" />
+				<p>The supported fields are:
+				<ul class="ml-8 mt-2 list-disc">
+					<li><span class="font-medium text-accent-600 font-mono">album</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">albumartist</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">artist</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">composer</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">discnumber</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">genre</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">label</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">lyricist</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">path</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">title</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">tracknumber</span></li>
+					<li><span class="font-medium text-accent-600 font-mono">year</span></li>
+				</ul>
+				</p>
+				<p>Partial matches for text fields can be expressed with the % operator. For example, <span
+						class="font-medium text-accent-600 font-mono">composer % bac</span> would returns pieces with
+					J.S.
+					Bach or Jacques Offenbach as their composer.</p>
+				<p>Exact matches can be expressed with the = operator. For example, <span
+						class="font-medium text-accent-600 font-mono">genre = metal</span> would return songs that have
+					a "Metal"
+					tag, but not those with only a "Doom Metal" tag.</p>
+				<p>For number fields (track number, disc number, year), comparisons using
+					<span class="font-medium text-accent-600 font-mono">&lt;</span>,
+					<span class="font-medium text-accent-600 font-mono">&lt;=</span>,
+					<span class="font-medium text-accent-600 font-mono">&gt;</span> and
+					<span class="font-medium text-accent-600 font-mono">&gt;= </span>
+					are also supported.
+				</p>
+
+				<SectionTitle class="mt-4 !mb-0" label="Combining Queries" icon="join_left" />
+				<p>Queries can be combined with || and && to express logical OR and AND operations. Parenthesis can be
+					used to alter precedence. For example, <span class="font-medium text-accent-600 font-mono">
+						(composer % mozart || composer % beethoven) && sonata</span>.
+				</p>
+				<p>Queries separated by spaces are implicitely joined by &&. For example searching for <span
+						class="font-medium text-accent-600 font-mono">sonata beethoven</span> will list pieces with
+					"sonata" appearing in any field and "beethoven" appearing in any field.</p>
+			</div>
+		</SidePanel>
 	</div>
 </template>
 
@@ -61,6 +120,7 @@ import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
+import SidePanel from "@/components/basic/SidePanel.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import Switch from "@/components/basic/Switch.vue";
 import SongList from "@/components/SongList.vue";
@@ -79,6 +139,8 @@ const query = ref("");
 
 // TODO save to preferences
 const listMode = ref("compact");
+
+const showHelp = ref(false);
 
 const { state: rawResults, isLoading, error, execute: runQuery } = useAsyncState(
 	() => {

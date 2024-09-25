@@ -2,15 +2,17 @@
     <div class="absolute h-full w-full pointer-events-none">
         <div class="relative h-full w-full">
             <Transition appear name="fade">
-                <div v-show="open" class="pointer-events-auto absolute h-full w-full bg-ls-900/40" @click="close" />
+                <div v-show="open"
+                    class="pointer-events-auto absolute h-full w-full backdrop-brightness-50 backdrop-grayscale backdrop-blur-sm"
+                    @click="close" />
             </Transition>
             <Transition appear name="slide">
                 <div v-show="open"
-                    class="pointer-events-auto absolute right-0 h-full flex flex-col w-screen max-w-xl bg-ls-0 p-8 shadow-xl">
-                    <div class="flex justify-end">
-                        <span class="material-icons-round cursor-pointer" v-text="'close'" @click="close" />
+                    class="pointer-events-auto absolute right-0 h-full flex flex-col w-screen max-w-2xl bg-ls-0 p-12 shadow-xl">
+                    <div class="absolute right-12 top-11">
+                        <Button icon="close" severity="tertiary" @click="close" />
                     </div>
-                    <div ref="panelContent" id="side-panel" />
+                    <div ref="panelContent" id="side-panel" class="-mr-4 pr-4 overflow-y-scroll" />
                 </div>
             </Transition>
         </div>
@@ -20,6 +22,8 @@
 <script setup lang="ts">
 import { useEventBus } from '@vueuse/core';
 import { ref, useTemplateRef } from 'vue';
+
+import Button from "@/components/basic/Button.vue";
 
 export type PanelEvent = "OPEN_PANEL" | "CLOSE_PANEL";
 
