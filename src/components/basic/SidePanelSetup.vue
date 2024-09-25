@@ -8,7 +8,7 @@
             </Transition>
             <Transition appear name="slide">
                 <div v-show="open"
-                    class="pointer-events-auto absolute right-0 h-full flex flex-col w-screen max-w-2xl bg-ls-0 p-12 shadow-xl">
+                    class="pointer-events-auto absolute right-0 h-full flex flex-col w-screen max-w-2xl bg-ls-0 dark:bg-ds-900 p-12 shadow-xl">
                     <div class="absolute right-12 top-11">
                         <Button icon="close" severity="tertiary" @click="close" />
                     </div>

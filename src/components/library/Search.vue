@@ -47,8 +47,8 @@
 		</div>
 
 		<SidePanel v-model="showHelp">
-			<div class="flex flex-col gap-4 text-sm">
-				<div class="text-2xl font-semibold leading-6 text-ls-700 mb-8">Search Syntax</div>
+			<div class="flex flex-col gap-4 text-ls-900 dark:text-ds-200 text-sm">
+				<div class="text-2xl font-semibold leading-6 text-ls-700 dark:text-ds-200 mb-8">Search Syntax</div>
 
 				<SectionTitle class="!mb-0" label="Querying Any Field" icon="auto_awesome" />
 
@@ -128,9 +128,7 @@ import { pluralize } from "@/format";
 import { usePlaybackStore } from "@/stores/playback";
 
 /* TODO
-syntax help
 history persistence
-dark mode
 */
 
 const playback = usePlaybackStore();
