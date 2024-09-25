@@ -8,11 +8,13 @@
 			</div>
 		</div>
 		<Player class="border-t border-ls-200 dark:border-ds-700" />
+		<SidePanelSetup />
 	</div>
 </template>
 
 <script setup lang="ts">
-import Sidebar from './Sidebar.vue';
-import Player from './playback/Player.vue';
-import Playlist from './playback/Playlist.vue';
+import SidePanelSetup from '@/components/basic/SidePanelSetup.vue';
+import Sidebar from '@/components/Sidebar.vue';
+import Player from '@/components/playback/Player.vue';
+import Playlist from '@/components/playback/Playlist.vue';
 </script>
