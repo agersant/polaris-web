@@ -150,7 +150,7 @@ const filtered = computed(() => {
     });
 });
 
-const historyStateKey = "albumsState";
+const historyStateKey = "albums";
 
 interface State {
     albums: AlbumHeader[],

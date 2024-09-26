@@ -159,7 +159,7 @@ const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect,
 );
 
 
-const historyStateKey = "albumState";
+const historyStateKey = "album";
 
 interface State {
 	album?: AlbumDTO,
