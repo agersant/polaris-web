@@ -260,7 +260,7 @@ function snapScrolling() {
     }
 }
 
-const historyStateKey = "virtualTreeState";
+const historyStateKey = "virtualTree";
 
 // Ideally we would only save state when vue-router calls `onBeforeRouteLeave`
 // However, when the user clicks the browser back button, the browser

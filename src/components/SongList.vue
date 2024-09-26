@@ -19,24 +19,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, watch } from 'vue';
-import { useElementSize, useScroll, useVirtualList } from '@vueuse/core';
+import { computed, nextTick, onMounted, toRaw, watch } from 'vue';
+import { useElementSize, useScroll, useVirtualList, watchThrottled } from '@vueuse/core';
 
 import { DndPayloadPaths } from '@/dnd';
 import useMultiselect from '@/multiselect';
 import Draggable from '@/components/basic/Draggable.vue';
 import SongListRow from '@/components/SongListRow.vue';
 import { usePlaybackStore } from '@/stores/playback';
+import { useSongsStore } from '@/stores/songs';
 
 const playback = usePlaybackStore();
+const songs = useSongsStore();
 
 const props = defineProps<{
-    paths: string[],
     compact: boolean,
     invertStripes?: boolean,
 }>();
 
-const items = computed(() => props.paths.map(p => ({ key: p })));
+const paths = defineModel<string[]>({ required: true });
+
+const items = computed(() => paths.value.map(p => ({ key: p })));
 
 const itemHeight = computed(() => props.compact ? 32 : 48);
 
@@ -46,7 +49,7 @@ const viewport = computed(() => containerProps.ref.value);
 const { y: scrollY } = useScroll(viewport);
 const { height: viewportHeight } = useElementSize(viewport);
 
-const { clickItem, multiselect, focusedKey, selectedKeys, selectItem, selection } = useMultiselect(
+const { clickItem, focusedKey, multiselect, pivotKey, selectedKeys, selectItem, selection } = useMultiselect(
     items,
     { onMove: snapScrolling }
 );
@@ -59,7 +62,7 @@ watch(itemHeight, (to, from) => {
     });
 });
 
-watch(() => props.paths, () => {
+watch(paths, () => {
     viewport.value?.scrollTo({ top: 0, behavior: "instant" });
 });
 
@@ -114,4 +117,40 @@ function onSongDoubleClicked(path: string) {
     playback.queueTracks([path]);
     playback.next();
 }
+
+const historyStateKey = "songList";
+
+interface State {
+    paths: string[],
+    selectedKeys: Set<string | number>,
+    focusedKey?: string | number,
+    pivotKey?: string | number,
+    scrollY: number,
+}
+
+watchThrottled([paths, selectedKeys, pivotKey, focusedKey, scrollY], async () => {
+    const state: State = {
+        paths: toRaw(paths.value),
+        selectedKeys: toRaw(selectedKeys.value),
+        focusedKey: focusedKey.value,
+        pivotKey: pivotKey.value,
+        scrollY: scrollY.value,
+    };
+    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { throttle: 500 });
+
+onMounted(() => {
+    const state = history.state[historyStateKey] as State | undefined;
+    if (!state) {
+        return;
+    }
+    songs.request(state.paths);
+    paths.value = state.paths;
+    selectedKeys.value = state.selectedKeys;
+    focusedKey.value = state.focusedKey;
+    pivotKey.value = state.pivotKey;
+    nextTick(() => {
+        containerProps.ref.value?.scrollTo({ top: state.scrollY });
+    });
+});
 </script>

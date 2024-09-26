@@ -8,8 +8,8 @@
 			<Button icon="menu_book" label="Help" severity="tertiary" @click="showHelp = true" />
 		</div>
 
-		<div v-if="results?.paths.length" class="flex flex-col min-h-0">
-			<SectionTitle :label="`${results.paths.length} ${pluralize('song', results.paths.length)} found`"
+		<div v-show="songPaths.length" class="flex flex-col min-h-0">
+			<SectionTitle :label="`${songPaths.length} ${pluralize('song', songPaths.length)} found`"
 				class="basis-10 shrink-0">
 				<div class="flex justify-between">
 					<ButtonGroup>
@@ -23,8 +23,10 @@
 						:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 				</template>
 			</SectionTitle>
-			<SongList :paths="results.paths" :compact="listMode == 'compact'" invert-stripes />
+			<SongList v-model="songPaths" :compact="listMode == 'compact'" invert-stripes />
 		</div>
+
+		<div v-if="songPaths.length" />
 
 		<div v-else-if="query.trim().length < 2" class="grow flex items-start mt-40 justify-center text-center">
 			<BlankStateFiller icon="manage_search">
@@ -40,7 +42,7 @@
 			Something went wrong while searching for songs. Please verify the query syntax is correct.
 		</Error>
 
-		<div v-else-if="results?.paths.length == 0" class="grow flex items-start mt-40 justify-center text-center">
+		<div v-else class="grow flex items-start mt-40 justify-center text-center">
 			<BlankStateFiller icon="search_off">
 				No songs found for this query.
 			</BlankStateFiller>
@@ -122,8 +124,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { refDebounced, useAsyncState } from "@vueuse/core";
+import { nextTick, onMounted, Ref, ref, watch } from "vue";
+import { useAsyncState, watchPausable } from "@vueuse/core";
 
 import { search } from "@/api/endpoints"
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
@@ -140,10 +142,6 @@ import SongList from "@/components/SongList.vue";
 import { pluralize } from "@/format";
 import { usePlaybackStore } from "@/stores/playback";
 
-/* TODO
-history persistence
-*/
-
 const playback = usePlaybackStore();
 
 const query = ref("");
@@ -153,37 +151,73 @@ const listMode = ref("compact");
 
 const showHelp = ref(false);
 
-const { state: rawResults, isLoading, error, execute: runQuery } = useAsyncState(
-	() => {
+const { state: results, isLoading, error, execute: runQuery } = useAsyncState(
+	async () => {
 		if (!query.value) {
 			return Promise.resolve(undefined);
 		}
-		return search(query.value);
+		return search(query.value).then(r => r.paths);
 	},
 	undefined,
-	{ immediate: false, resetOnExecute: true }
+	{ immediate: false, resetOnExecute: false }
 );
 
-const results = refDebounced(rawResults, 50);
+const songPaths: Ref<string[]> = ref([]);
 
-watch(query, () => {
+watch(results, () => {
+	songPaths.value = results.value || [];
+});
+
+watch(error, (isError) => {
+	if (isError) {
+		songPaths.value = [];
+	}
+});
+
+const queryWatch = watchPausable(query, (to, from) => {
+	if (!results.value || !to.startsWith(from)) {
+		songPaths.value = [];
+	}
 	runQuery(0);
 });
 
 function play() {
-	if (!results.value) {
+	if (!songPaths.value) {
 		return;
 	}
 	playback.clear();
-	playback.queueTracks(results.value?.paths);
+	playback.queueTracks(songPaths.value);
 	playback.next();
 }
 
 function queue() {
-	if (!results.value) {
+	if (!songPaths.value) {
 		return;
 	}
-	playback.queueTracks(results.value?.paths);
+	playback.queueTracks(songPaths.value);
 }
+
+const historyStateKey = "search";
+
+interface State {
+	query: string,
+}
+
+watch(query, async () => {
+	const state: State = {
+		query: query.value,
+	};
+	history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+});
+
+onMounted(() => {
+	const state = history.state[historyStateKey] as State | undefined;
+	if (!state) {
+		return;
+	}
+	queryWatch.pause();
+	query.value = state.query;
+	nextTick(() => queryWatch.resume());
+});
 
 </script>
