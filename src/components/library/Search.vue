@@ -55,12 +55,12 @@
 				<p>Searching for <span class="font-medium text-accent-600 font-mono">sonata</span> will find any song
 					with "sonata" in its title, artist, file path, album name etc.</p>
 
-				<p>Search terms containing spaces should be wrapped with quotes, fpr example <span
+				<p>Search terms containing spaces should be wrapped with quotes, for example <span
 						class="font-medium text-accent-600 font-mono">"moonlight sonata"</span>.
 					Spaces can also be omitted altogether for the same result (ie. <span
 						class="font-medium text-accent-600 font-mono">moonlightsonata</span>).</p>
 
-				<p>All searches are case insensitive.</p>
+				<p>Search terms must be at least two character long. All searches are case insensitive.</p>
 
 				<SectionTitle class="mt-4 !mb-0" label="Querying Specific Fields" icon="rule" />
 				<p>Partial matches for text fields can be expressed with the % operator. For example, <span
@@ -80,10 +80,23 @@
 				</p>
 
 				<SectionTitle class="mt-4 !mb-0" label="Combining Queries" icon="join_left" />
-				<p>Queries can be combined with || and && to express logical OR and AND operations. Parenthesis can be
-					used to alter precedence. For example, <span class="font-medium text-accent-600 font-mono">
-						(composer % mozart || composer % beethoven) && sonata</span>.
-				</p>
+				<p>Queries can be combined with ||, && and !! to express logical OR, AND and NOT operations. Parenthesis
+					can be used to alter precedence.</p>
+
+				<p>For example:</p>
+				<ul class="ml-8 list-disc">
+					<li>
+						<span class="font-medium text-accent-600 font-mono">
+							sonata !! moonlight
+						</span>
+					</li>
+					<li>
+						<span class="font-medium text-accent-600 font-mono">
+							(composer % mozart || composer % beethoven) && sonata
+						</span>
+					</li>
+				</ul>
+
 				<p>Queries separated by spaces are implicitely joined by &&. For example searching for <span
 						class="font-medium text-accent-600 font-mono">sonata beethoven</span> will list pieces with
 					"sonata" appearing in any field and "beethoven" appearing in any field.</p>
