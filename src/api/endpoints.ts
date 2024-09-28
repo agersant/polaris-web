@@ -8,6 +8,7 @@ import {
 	Authorization,
 	BrowserEntry,
 	DDNSConfig,
+	Genre,
 	GenreHeader,
 	InitialSetup,
 	LastFMLinkToken,
@@ -180,6 +181,11 @@ export async function flatten(path: string): Promise<SongList> {
 
 export async function getGenres(): Promise<GenreHeader[]> {
 	const response = await request("/genres");
+	return await response.json();
+}
+
+export async function getGenre(name: string): Promise<Genre> {
+	const response = await request(`/genres/${encodeURIComponent(name)}`);
 	return await response.json();
 }
 

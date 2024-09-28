@@ -60,7 +60,10 @@ export type BrowserEntry = {
 
 export interface GenreHeader {
 	name: string;
-	artists: string[];
+}
+
+export interface Genre extends GenreHeader {
+	artists: ArtistHeader[];
 }
 
 export interface ArtistHeader {
