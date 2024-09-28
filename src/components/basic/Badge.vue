@@ -1,5 +1,5 @@
 <template>
-    <span class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1
+    <span class="cursor-pointer inline-flex items-center gap-x-1.5 rounded-md px-2 py-1
         font-medium text-xs whitespace-nowrap
         text-ls-700 dark:text-ds-300
         ring-1 ring-inset

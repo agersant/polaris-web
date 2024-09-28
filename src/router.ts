@@ -9,6 +9,7 @@ import Albums from "@/components/library/Albums.vue";
 import Artist from "@/components/library/Artist.vue";
 import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
+import Genres from "@/components/library/Genres.vue";
 import Search from "@/components/library/Search.vue";
 // import Playlist from "@/components/profile/playlists/Playlist.vue";
 import Playlists from "@/components/profile/playlists/Playlists.vue";
@@ -53,6 +54,7 @@ const routes = [
 		meta: { requiresAuth: true, requiresInitialSetupComplete: true },
 		children: [
 			{ path: "/files", component: Files },
+			{ path: "/genres/:genre?", component: Genres, props: true },
 			{ path: "/artists", component: Artists },
 			{ path: "/artists/:name", component: Artist, props: true },
 			{ path: "/albums", component: Albums },
@@ -125,6 +127,10 @@ router.beforeEach(async (to, from, next) => {
 
 	next();
 });
+
+export function makeGenreURL(name: string) {
+	return `/genres/${encodeURIComponent(name)}`;
+};
 
 export function makeArtistURL(name: string) {
 	return `/artists/${encodeURIComponent(name)}`;

@@ -54,8 +54,8 @@
                         </div>
                         <div
                             class="basis-1/4 grow shrink-[10] overflow-hidden flex max-h-14 flex-wrap justify-end gap-2">
-                            <!-- TODO clickable genres -->
-                            <Badge v-for="genre of getMainGenres(item.data)" :label="genre" :auto-color="true" />
+                            <Badge v-for="genre of getMainGenres(item.data)" :label="genre" :auto-color="true"
+                                @click="onGenreClicked(genre)" />
                         </div>
                     </li>
                 </ul>
@@ -97,7 +97,7 @@ import PageTitle from "@/components/basic/PageTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import { ArtistHeader } from "@/api/dto";
 import { pluralize } from "@/format";
-import { makeArtistURL } from "@/router";
+import { makeArtistURL, makeGenreURL } from "@/router";
 import { usePreferencesStore } from "@/stores/preferences";
 
 const router = useRouter();
@@ -234,4 +234,9 @@ onMounted(async () => {
         viewport.value?.scrollTo({ top: state.scrollY });
     });
 });
+
+function onGenreClicked(name: string) {
+    router.push(makeGenreURL(name));
+}
+
 </script>
