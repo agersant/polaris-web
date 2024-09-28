@@ -3,8 +3,7 @@
         <PageTitle :label="name">
             <template #right>
                 <div class="basis-0 grow max-h-6 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
-                    <!-- TODO genre links -->
-                    <Badge v-for="genre of genres" :label="genre" :auto-color="true" />
+                    <Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
                 </div>
             </template>
         </PageTitle>
@@ -60,6 +59,7 @@
 <script setup lang="ts">
 import { computed, nextTick, Ref, ref, toRaw, useTemplateRef } from "vue";
 import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
+import { useRouter } from "vue-router";
 
 import { AlbumHeader, AlbumKey, Artist } from "@/api/dto";
 import { getAlbum, getArtist, } from "@/api/endpoints";
@@ -73,8 +73,10 @@ import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
 import Timeline from '@/components/library/Timeline.vue';
+import { makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 
+const router = useRouter();
 const playback = usePlaybackStore();
 
 const props = defineProps<{
@@ -165,6 +167,10 @@ watchImmediate(() => props.name, () => {
         viewport.value?.scrollTo({ top: state.scrollY });
     });
 });
+
+function onGenreClicked(name: string) {
+    router.push(makeGenreURL(name));
+}
 
 async function play(albums: AlbumHeader[]) {
     const songs = await listSongs(albums);

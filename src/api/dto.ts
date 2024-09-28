@@ -58,6 +58,11 @@ export type BrowserEntry = {
 	path: string;
 };
 
+export interface GenreHeader {
+	name: string;
+	artists: string[];
+}
+
 export interface ArtistHeader {
 	name: string;
 	num_albums_as_performer: number;

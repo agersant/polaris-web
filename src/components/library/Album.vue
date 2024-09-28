@@ -22,8 +22,7 @@
 					</span>
 				</div>
 				<div class="basis-0 grow max-h-14 ml-6 overflow-hidden flex flex-wrap justify-end gap-2">
-					<!-- TODO genre links -->
-					<Badge v-for="genre of genres" :label="genre" :auto-color="true" />
+					<Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
 				</div>
 			</div>
 
@@ -90,7 +89,7 @@ import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
 import AlbumSong from '@/components/library/AlbumSong.vue';
 import { DndPayloadAlbum, DndPayloadSongs } from "@/dnd";
 import { isFakeArtist } from "@/format";
-import { makeArtistURL } from "@/router";
+import { makeArtistURL, makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import useMultiselect from "@/multiselect";
 
@@ -218,6 +217,10 @@ function onArtistClicked(name: string) {
 	if (!isFakeArtist(name)) {
 		router.push(makeArtistURL(name));
 	}
+}
+
+function onGenreClicked(name: string) {
+	router.push(makeGenreURL(name));
 }
 
 function onSongDoubleClicked(song: Song) {
