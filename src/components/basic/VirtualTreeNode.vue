@@ -14,21 +14,21 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Node">
 import { computed, StyleValue } from 'vue';
 
 import Spinner from '@/components/basic/Spinner.vue';
 import { Node } from "@/components/basic/VirtualTree.vue";
 
 const props = defineProps<{
-    node: Node,
+    node: T,
     expanded: boolean,
     selected: boolean,
     focused: boolean,
 }>();
 
 const emit = defineEmits<{
-    'node-toggle': [node: Node],
+    'node-toggle': [node: T],
 }>();
 
 function toggle() {
