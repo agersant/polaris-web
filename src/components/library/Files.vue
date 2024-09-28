@@ -50,6 +50,8 @@ import { DndPayloadFiles, useDragAndDrop } from '@/dnd';
 import { getPathTail } from '@/format';
 import { usePlaybackStore } from "@/stores/playback";
 
+// TODO "play all" button?
+
 const playback = usePlaybackStore();
 const { activeDnD, startDrag, updateDrag, endDrag, dragPreview } = useDragAndDrop();
 
