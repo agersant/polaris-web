@@ -23,7 +23,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Node">
 import { computed, nextTick, onMounted, ref, toRaw, useTemplateRef, watch } from 'vue';
 import { useScroll, useVirtualList, watchThrottled } from '@vueuse/core';
 import { vOnClickOutside } from "@vueuse/components";
@@ -42,11 +42,11 @@ export interface Node {
 
 const itemHeight = ref(36);
 
-const nodes = defineModel<Node[]>({ required: true });
+const nodes = defineModel<T[]>({ required: true });
 
 const emit = defineEmits<{
-    "node-expand": [node: Node],
-    "nodes-drag-start": [event: DragEvent, nodes: Node[]],
+    "node-expand": [node: T],
+    "nodes-drag-start": [event: DragEvent, nodes: T[]],
     "nodes-drag": [event: DragEvent],
     "nodes-drag-end": [event: DragEvent],
 }>();
@@ -83,7 +83,7 @@ const visibleNodes = computed(() => {
 
 const expandedKeys = ref(new Set<string>());
 
-const { clickItem: clickNode, focusedKey, multiselect, pivotKey, selectedKeys, selection, selectItem: selectNode } = useMultiselect<Node>(
+const { clickItem: clickNode, focusedKey, multiselect, pivotKey, selectedKeys, selection, selectItem: selectNode } = useMultiselect<T>(
     visibleNodes,
     { onMove: snapScrolling },
 );
@@ -115,7 +115,7 @@ function clearFindQuery() {
     findQuery.value = "";
 }
 
-function toggleNode(node: Node) {
+function toggleNode(node: T) {
     const key = node.key;
 
     if (expandedKeys.value.has(key)) {
@@ -129,13 +129,13 @@ function toggleNode(node: Node) {
 }
 
 
-function onNodeDoubleClick(event: MouseEvent, node: Node) {
+function onNodeDoubleClick(event: MouseEvent, node: T) {
     if (!node.leaf) {
         toggleNode(node);
     }
 }
 
-function onDragStart(event: DragEvent, node: Node) {
+function onDragStart(event: DragEvent, node: T) {
     if (!selectedKeys.value.has(node.key)) {
         selectNode(node);
     }
