@@ -10,6 +10,9 @@ import Artist from "@/components/library/Artist.vue";
 import Artists from "@/components/library/Artists.vue";
 import Files from "@/components/library/Files.vue";
 import Genre from "@/components/library/Genre.vue";
+import GenreAlbums from "@/components/library/GenreAlbums.vue";
+import GenreArtists from "@/components/library/GenreArtists.vue";
+import GenreOverview from "@/components/library/GenreOverview.vue";
 import Genres from "@/components/library/Genres.vue";
 import Search from "@/components/library/Search.vue";
 // import Playlist from "@/components/profile/playlists/Playlist.vue";
@@ -56,7 +59,13 @@ const routes = [
 		children: [
 			{ path: "/files", component: Files },
 			{ path: "/genres", component: Genres },
-			{ path: "/genres/:name", component: Genre, props: true },
+			{
+				path: "/genres/:name", component: Genre, props: true, children: [
+					{ path: "", component: GenreOverview },
+					{ path: "albums", component: GenreAlbums },
+					{ path: "artists", component: GenreArtists },
+				],
+			},
 			{ path: "/artists", component: Artists },
 			{ path: "/artists/:name", component: Artist, props: true },
 			{ path: "/albums", component: Albums },
