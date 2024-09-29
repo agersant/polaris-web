@@ -189,6 +189,17 @@ export async function getGenre(name: string): Promise<Genre> {
 	return await response.json();
 }
 
+export async function getGenreSongs(genre: string): Promise<SongList> {
+	const songs = useSongsStore();
+	const response = await request(`/genres/${encodeURIComponent(genre)}/songs`);
+	const songList = response.json().then((list: SongList) => {
+		songs.ingest(list.first_songs);
+		songs.request(list.paths);
+		return list;
+	});
+	return await songList;
+}
+
 export async function getAlbums(): Promise<AlbumHeader[]> {
 	const response = await request("/albums");
 	return await response.json();
