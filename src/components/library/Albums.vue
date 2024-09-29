@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, toRaw, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onMounted, Ref, ref, ShallowRef, toRaw, useTemplateRef, watch } from "vue";
 import { useAsyncState, useElementSize, useScroll, watchPausable, watchThrottled, whenever } from "@vueuse/core";
 
 import { AlbumHeader } from "@/api/dto";
@@ -70,7 +70,7 @@ const numColumns = ref(5);
 type ViewMode = "recent" | "random" | "all";
 const viewMode: Ref<ViewMode> = ref("recent");
 
-const albums: Ref<AlbumHeader[]> = ref([]);
+const albums: ShallowRef<AlbumHeader[]> = ref([]);
 const fetchedAll = ref(false);
 const seed = ref(generateSeed());
 
@@ -126,7 +126,7 @@ watch(fetchedAlbums, () => {
             break;
         case "recent":
         case "random":
-            albums.value.push(...fetchedAlbums.value);
+            albums.value = [...toRaw(albums.value), ...fetchedAlbums.value];
             break;
     }
 });
@@ -173,7 +173,7 @@ watchThrottled([albums, filter, viewMode, seed, scrollY], async () => {
 
 onMounted(() => {
     const state = history.state[historyStateKey] as State | undefined;
-    if (!state) {
+    if (!state || !state.albums.length) {
         fetchAlbums();
         return;
     }
