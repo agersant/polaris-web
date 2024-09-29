@@ -7,7 +7,7 @@
                 autofocus clearable />
             <div v-if="filtered.length" ref="viewport" class="flex flex-wrap gap-2 -mx-4 px-4 overflow-scroll">
                 <Draggable v-for="genre of filtered" :make-payload="() => new DndPayloadGenre(genre.name)"
-                    class="cursor-pointer w-auto h-auto" :key="genre.name" @click="onGenreClicked(genre)">
+                    class="cursor-pointer !w-fit !h-fit" :key="genre.name" @click="onGenreClicked(genre)">
                     <Badge :label="genre.name" size="lg" auto-color />
                     <template #drag-preview>
                         <div class="flex items-center gap-2">
