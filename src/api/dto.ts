@@ -63,8 +63,6 @@ export interface GenreHeader {
 }
 
 export interface Genre extends GenreHeader {
-	artists: ArtistHeader[];
-	albums: AlbumHeader[];
 }
 
 export interface ArtistHeader {
