@@ -5,7 +5,7 @@
         <div v-if="genres && genres.length" class="grow min-h-0 flex flex-col">
             <InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
                 autofocus clearable />
-            <div v-if="filtered.length" class="flex flex-wrap gap-2 -mx-4 px-4 overflow-scroll">
+            <div v-if="filtered.length" ref="viewport" class="flex flex-wrap gap-2 -mx-4 px-4 overflow-scroll">
                 <Draggable v-for="genre of filtered" :make-payload="() => new DndPayloadGenre(genre.name)"
                     class="cursor-pointer w-auto h-auto" :key="genre.name" @click="onGenreClicked(genre)">
                     <Badge :label="genre.name" size="lg" auto-color />
@@ -42,9 +42,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, toRaw, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAsyncState } from '@vueuse/core';
+import { useAsyncState, useScroll, watchThrottled } from '@vueuse/core';
 
 import { GenreHeader } from '@/api/dto';
 import { getGenres } from '@/api/endpoints';
@@ -58,15 +58,15 @@ import Spinner from '@/components/basic/Spinner.vue';
 import { DndPayloadGenre } from '@/dnd';
 import { makeGenreURL } from '@/router';
 
-// TODO Play all / queue all (entire collection, sorted by genre?)
-// TODO dark mode
-// TODO persistence
-
 const router = useRouter();
 
-const { state: genres, isLoading, error } = useAsyncState(
+const viewport = useTemplateRef("viewport");
+const { y: scrollY } = useScroll(viewport);
+
+const { state: genres, isLoading, error, execute: fetchGenres } = useAsyncState(
     () => getGenres(),
     undefined,
+    { immediate: false }
 );
 
 const filtered = computed(() => {
@@ -82,4 +82,34 @@ const filter = ref("");
 function onGenreClicked(genre: GenreHeader) {
     router.push(makeGenreURL(genre.name));
 }
+
+const historyStateKey = "genres";
+
+interface State {
+    genres?: GenreHeader[],
+    filter: string,
+    scrollY: number,
+}
+
+watchThrottled([genres, filter, scrollY], async () => {
+    const state: State = {
+        genres: toRaw(genres.value),
+        filter: filter.value,
+        scrollY: scrollY.value || 0,
+    };
+    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
+}, { throttle: 500 });
+
+onMounted(async () => {
+    const state = history.state[historyStateKey] as State | undefined;
+    if (!state) {
+        fetchGenres();
+        return;
+    }
+    genres.value = state.genres;
+    filter.value = state.filter;
+    nextTick(() => {
+        viewport.value?.scrollTo({ top: state.scrollY });
+    });
+});
 </script>
