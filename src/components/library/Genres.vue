@@ -2,22 +2,31 @@
     <div class="flex flex-col whitespace-nowrap">
         <PageTitle label="Genres" />
 
-        <InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
-            autofocus clearable />
-
-        <div v-if="genres && filtered.length" class="min-h-0 flex flex-wrap gap-2 -mx-4 px-4 overflow-scroll">
-            <Badge v-for="genre of filtered" :label="genre.name" size="lg" auto-color @click="onGenreClicked(genre)" />
+        <div v-if="genres && genres.length" class="grow min-h-0 flex flex-col">
+            <InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
+                autofocus clearable />
+            <div v-if="filtered.length" class="flex flex-wrap gap-2 -mx-4 px-4 overflow-scroll">
+                <Draggable v-for="genre of filtered" :make-payload="() => new DndPayloadGenre(genre.name)"
+                    class="cursor-pointer w-auto h-auto" :key="genre.name" @click="onGenreClicked(genre)">
+                    <Badge :label="genre.name" size="lg" auto-color />
+                    <template #drag-preview>
+                        <div class="flex items-center gap-2">
+                            <span v-text="'label'" class="material-icons-round" />
+                            <span v-text="genre.name" />
+                        </div>
+                    </template>
+                </Draggable>
+            </div>
+            <div v-else class="grow flex mt-40 justify-center text-center">
+                <BlankStateFiller icon="label_off">
+                    No genres match this filter.
+                </BlankStateFiller>
+            </div>
         </div>
 
         <div v-else-if="genres && !genres.length" class="grow flex mt-40 justify-center text-center">
             <BlankStateFiller icon="label_off">
                 No genres found.
-            </BlankStateFiller>
-        </div>
-
-        <div v-else-if="genres && !filtered.length" class="grow flex mt-40 justify-center text-center">
-            <BlankStateFiller icon="label_off">
-                No genres match this filter.
             </BlankStateFiller>
         </div>
 
@@ -37,18 +46,19 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAsyncState } from '@vueuse/core';
 
+import { GenreHeader } from '@/api/dto';
 import { getGenres } from '@/api/endpoints';
 import Badge from '@/components/basic/Badge.vue';
 import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
+import Draggable from '@/components/basic/Draggable.vue';
 import Error from '@/components/basic/Error.vue';
 import InputText from '@/components/basic/InputText.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
-import { GenreHeader } from '@/api/dto';
+import { DndPayloadGenre } from '@/dnd';
 import { makeGenreURL } from '@/router';
 
 // TODO Play all / queue all (entire collection, sorted by genre?)
-// TODO drag and drop to playlist
 // TODO dark mode
 // TODO persistence
 
