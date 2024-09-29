@@ -94,13 +94,15 @@ const historyStateKey = "genre";
 
 interface State {
     genre?: Genre,
+    filter: string,
     viewMode: ViewMode,
     albumGridScrollY: number,
 }
 
-watchThrottled([genre, viewMode, albumGridScrollY], async () => {
+watchThrottled([genre, viewMode, filter, albumGridScrollY], async () => {
     const state: State = {
         genre: toRaw(genre.value),
+        filter: filter.value,
         viewMode: viewMode.value,
         albumGridScrollY: albumGridScrollY.value,
     };
@@ -114,6 +116,7 @@ watchImmediate(() => props.name, () => {
         return;
     }
     genre.value = state.genre;
+    filter.value = state.filter;
     viewMode.value = state.viewMode;
     autoScrollGrid.value = state.albumGridScrollY;
 });
