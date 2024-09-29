@@ -2,158 +2,74 @@
     <div class="flex flex-col whitespace-nowrap">
         <PageTitle label="Genres" />
 
-        <div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
-            <VirtualTree ref="tree" v-model="treeModel" class="grow" @node-expand="expandNode" />
+        <InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
+            autofocus clearable />
+
+        <div v-if="genres && filtered.length" class="min-h-0 flex flex-wrap gap-2 -mx-4 px-4 overflow-scroll">
+            <Badge v-for="genre of filtered" :label="genre.name" size="lg" auto-color @click="onGenreClicked(genre)" />
         </div>
+
+        <div v-else-if="genres && !genres.length" class="grow flex mt-40 justify-center text-center">
+            <BlankStateFiller icon="label_off">
+                No genres found.
+            </BlankStateFiller>
+        </div>
+
+        <div v-else-if="genres && !filtered.length" class="grow flex mt-40 justify-center text-center">
+            <BlankStateFiller icon="label_off">
+                No genres match this filter.
+            </BlankStateFiller>
+        </div>
+
+        <div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+            <Spinner class="text-ls-700 dark:text-ds-400" />
+        </div>
+
+        <Error v-else-if="error">
+            Something went wrong while listing genres.
+        </Error>
 
     </div>
 </template>
 
 <script setup lang="ts">
-import { Ref, shallowRef, watch } from 'vue';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAsyncState } from '@vueuse/core';
 
-import { AlbumHeader, ArtistHeader, GenreHeader, Song } from '@/api/dto';
-import { getAlbum, getArtist, getGenre, getGenres } from '@/api/endpoints';
+import { getGenres } from '@/api/endpoints';
+import Badge from '@/components/basic/Badge.vue';
+import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
+import Error from '@/components/basic/Error.vue';
+import InputText from '@/components/basic/InputText.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
-import VirtualTree from '@/components/basic/VirtualTree.vue';
-import { Node } from "@/components/basic/VirtualTree.vue";
-
-defineProps<{
-    genre?: string,
-}>();
+import Spinner from '@/components/basic/Spinner.vue';
+import { GenreHeader } from '@/api/dto';
+import { makeGenreURL } from '@/router';
 
 // TODO Play all / queue all (entire collection, sorted by genre?)
-// TODO context menus
-// TODO loading state
-// TODO error state
-// TODO empty state
 // TODO drag and drop to playlist
-// TODO Enter to play selection 
-// TODO Filter albums and songs to only those that match parent genre
-// TODO auto-scroll and expand when following link?
-// TODO genre color dots / draw as badges?
-// TODO tiny album icons?
 // TODO dark mode
 // TODO persistence
 
-type GenreTreeNode = GenreNode | ArtistNode | AlbumNode | SongNode;
-
-interface GenreNode extends Node {
-    kind: "genre",
-    header: GenreHeader,
-}
-
-interface ArtistNode extends Node {
-    kind: "artist",
-    header: ArtistHeader,
-}
-
-interface AlbumNode extends Node {
-    kind: "album",
-    header: AlbumHeader,
-}
-
-interface SongNode extends Node {
-    kind: "song",
-    song: Song,
-}
+const router = useRouter();
 
 const { state: genres, isLoading, error } = useAsyncState(
-    () => getGenres().then(genres => genres.map(makeGenreNode)),
+    () => getGenres(),
     undefined,
 );
 
-const treeModel: Ref<GenreTreeNode[]> = shallowRef([]);
-
-watch(genres, (v) => {
-    if (v && !treeModel.value.length) {
-        treeModel.value = v;
+const filtered = computed(() => {
+    if (!genres.value) {
+        return [];
     }
+    let query = filter.value.toLowerCase();
+    return genres.value.filter(g => g.name.toLowerCase().includes(query));
 });
 
-function makeGenreNode(genre: GenreHeader): GenreNode {
-    return {
-        kind: "genre",
-        header: genre,
-        depth: 0,
-        key: genre.name,
-        label: genre.name,
-        icon: "label",
-        leaf: false,
-    };
+const filter = ref("");
+
+function onGenreClicked(genre: GenreHeader) {
+    router.push(makeGenreURL(genre.name));
 }
-
-function makeArtistNode(artist: ArtistHeader, parent: GenreNode): ArtistNode {
-    return {
-        kind: "artist",
-        header: artist,
-        depth: 1,
-        key: parent.key + artist.name,
-        label: artist.name,
-        icon: "person",
-        leaf: false,
-    };
-}
-
-function makeAlbumNode(album: AlbumHeader, parent: ArtistNode): AlbumNode {
-    return {
-        kind: "album",
-        header: album,
-        depth: 2,
-        key: parent.key + album.name,
-        label: `${album.year || '????'} - ${album.name}`,
-        icon: "album",
-        leaf: false,
-    };
-}
-
-function makeSongNode(song: Song, parent: AlbumNode): SongNode {
-    return {
-        kind: "song",
-        song: song,
-        depth: 3,
-        key: parent.key + song.path,
-        label: `${song.track_number || '??'}. ${song.title}`,
-        icon: "audiotrack",
-        leaf: true,
-    };
-}
-
-async function expandNode(node: GenreTreeNode) {
-    {
-        let parentIndex = treeModel.value.findIndex(n => n.key == node.key);
-        const nextNode = treeModel.value[parentIndex + 1];
-        if (nextNode && nextNode.depth > node.depth) {
-            return;
-        }
-        treeModel.value[parentIndex].loading = true;
-    }
-
-    let children;
-    try {
-        if (node.kind == "genre") {
-            children = (await getGenre(node.header.name)).artists.map(a => makeArtistNode(a, node));
-        } else if (node.kind == "artist") {
-            children = (await getArtist(node.header.name)).albums.map(a => makeAlbumNode(a, node));
-        } else if (node.kind == "album") {
-            const key = {
-                artists: node.header.main_artists,
-                name: node.header.name,
-            };
-            children = (await getAlbum(key)).songs.map(s => makeSongNode(s, node));
-        }
-    } catch (e) { }
-
-    {
-        let parentIndex = treeModel.value.findIndex(n => n.key == node.key);
-        let newModel = [...treeModel.value];
-        if (children) {
-            newModel.splice(parentIndex + 1, 0, ...children);
-        }
-        newModel[parentIndex] = { ...newModel[parentIndex], loading: false };
-        treeModel.value = newModel;
-    }
-}
-
 </script>
