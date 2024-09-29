@@ -56,7 +56,7 @@ const routes = [
 		children: [
 			{ path: "/files", component: Files },
 			{ path: "/genres", component: Genres },
-			{ path: "/genres/:genre", component: Genre, props: true },
+			{ path: "/genres/:name", component: Genre, props: true },
 			{ path: "/artists", component: Artists },
 			{ path: "/artists/:name", component: Artist, props: true },
 			{ path: "/albums", component: Albums },
