@@ -16,9 +16,14 @@
                 <div v-if="viewMode == 'albums'" class="min-h-0 flex flex-col">
                     <InputText class="mb-8 w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
                         icon="filter_alt" autofocus clearable />
-                    <AlbumGrid ref="album-grid" class="-m-4 p-4 overflow-y-scroll" :albums="filteredAlbums"
-                        :num-columns="5" :show-artists="true">
+                    <AlbumGrid v-if="filteredAlbums.length" ref="album-grid" class="-m-4 p-4 overflow-y-scroll"
+                        :albums="filteredAlbums" :num-columns="5" :show-artists="true">
                     </AlbumGrid>
+                    <div v-else class="grow flex mt-40 justify-center text-center">
+                        <BlankStateFiller icon="filter_alt_off">
+                            No albums match this filter.
+                        </BlankStateFiller>
+                    </div>
                 </div>
             </div>
 
@@ -33,6 +38,7 @@ import { useAsyncState, useScroll, watchImmediate, watchThrottled, whenever } fr
 
 import { Genre } from '@/api/dto';
 import { getGenre } from '@/api/endpoints';
+import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
 import InputText from '@/components/basic/InputText.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import SwitchText from '@/components/basic/SwitchText.vue';
