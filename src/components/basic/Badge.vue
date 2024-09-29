@@ -1,9 +1,9 @@
 <template>
-    <span class="cursor-pointer inline-flex items-center gap-x-1.5 rounded-md px-2 py-1
-        font-medium text-xs whitespace-nowrap
+    <span class="cursor-pointer inline-flex items-center rounded-md 
+        whitespace-nowrap
         text-ls-700 dark:text-ds-300
         ring-1 ring-inset
-        ring-ls-200 dark:ring-white/10">
+        ring-ls-200 dark:ring-white/10" :class="sizes[size]">
         <svg class="h-1.5 w-1.5" viewBox="0 0 6 6" :class="palette">
             <circle cx="3" cy="3" r="3" />
         </svg>
@@ -16,10 +16,11 @@ import { computed } from 'vue';
 
 type Tint = "red" | "orange" | "amber" | "yellow" | "lime" | "green" | "emerald" | "teal" | "cyan" | "sky" | "blue" | "indigo" | "violet" | "purple" | "fuchsia" | "pink" | "rose";
 
-const props = defineProps<{
+const { size = 'md', ...props } = defineProps<{
     label: string,
     color?: Tint;
     autoColor: boolean,
+    size?: "md" | "lg",
 }>();
 
 const palettes = {
@@ -40,6 +41,11 @@ const palettes = {
     fuchsia: "fill-fuchsia-500 dark:fill-fuchsia-600",
     pink: "fill-pink-500 dark:fill-pink-600",
     rose: "fill-rose-500 dark:fill-rose-600",
+};
+
+const sizes = {
+    md: "gap-x-1.5 px-2 py-1 font-medium text-xs",
+    lg: "gap-x-2 px-3 py-1.5 font-medium text-sm",
 };
 
 // https://en.wikipedia.org/wiki/Pearson_hashing
