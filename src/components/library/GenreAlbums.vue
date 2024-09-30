@@ -81,7 +81,7 @@ const filteredAlbums = computed(() => {
     });
 });
 
-const historyStateKey = "genre";
+const historyStateKey = "genre-albums";
 
 interface State {
     albums?: AlbumHeader[],

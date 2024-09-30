@@ -24,7 +24,7 @@
                     </span>
                 </div>
                 <div class="basis-1/4 grow shrink-[10] overflow-hidden flex max-h-14 flex-wrap justify-end gap-2">
-                    <Badge v-for="genre of getMainGenres(item.data)" :label="genre" :auto-color="true"
+                    <Badge v-for="genre of getMainGenres(item.data)" :label="genre" auto-color
                         @click="onGenreClicked(genre)" />
                 </div>
             </li>
