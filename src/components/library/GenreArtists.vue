@@ -1,14 +1,19 @@
 <template>
     <div v-if="artists?.length" class="min-h-0 flex flex-col">
         <div class="min-h-0 flex flex-col">
-            <InputText class="mb-8 w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
-                icon="filter_alt" autofocus clearable />
-            <div v-if="filteredArtists.length" ref="viewport" class="-m-4 p-4 overflow-y-scroll">
-                <div v-for="artist of filteredArtists" v-text="artist.name" />
+            <div class="mb-8 flex items-center justify-between">
+                <!-- TODO tooltips -->
+                <InputText class="w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
+                    icon="filter_alt" autofocus clearable />
+                <!-- TODO tooltips -->
+                <Switch v-model="displayMode"
+                    :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />
             </div>
+            <ArtistList ref="list" v-if="filteredArtists.length" :artists="filteredArtists" :display-mode="displayMode"
+                class="-mx-4 px-4" />
             <div v-else class="grow flex mt-40 justify-center text-center">
                 <BlankStateFiller icon="filter_alt_off">
-                    No albums match this filter.
+                    No artists match this filter.
                 </BlankStateFiller>
             </div>
         </div>
@@ -30,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, toRaw, useTemplateRef } from 'vue';
+import { computed, nextTick, Ref, ref, toRaw, useTemplateRef } from 'vue';
 import { useAsyncState, useScroll, watchImmediate, watchThrottled } from '@vueuse/core';
 
 import { ArtistHeader } from '@/api/dto';
@@ -39,18 +44,28 @@ import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
 import Error from '@/components/basic/Error.vue';
 import InputText from '@/components/basic/InputText.vue';
 import Spinner from '@/components/basic/Spinner.vue';
-
-// TODO persistence
-// TODO dark mode
+import Switch from '@/components/basic/Switch.vue';
+import ArtistList, { DisplayMode } from '@/components/library/ArtistList.vue';
 
 const props = defineProps<{ name: string }>();
 
 const filter = ref("");
 
+// TODO save in preferences
+const displayMode: Ref<DisplayMode> = ref("fixed");
+
 const { state: artists, isLoading, error, execute: fetchArtists } = useAsyncState(getGenreArtists, undefined, { immediate: false, resetOnExecute: true });
 
-const viewport = useTemplateRef("viewport");
+const artistList = useTemplateRef("list");
+const viewport = computed(() => artistList.value?.$el);
 const { y: scrollY } = useScroll(viewport);
+
+function isRelevant(artist: ArtistHeader) {
+    return artist.num_albums_as_performer > 0
+        || artist.num_albums_as_composer > 0
+        || artist.num_albums_as_lyricist > 0
+        || artist.num_albums_as_additional_performer > 1;
+}
 
 const filteredArtists = computed(() => {
     if (!artists.value) {
@@ -58,6 +73,9 @@ const filteredArtists = computed(() => {
     }
     const query = filter.value.toLowerCase();
     return artists.value.filter(a => {
+        if (!isRelevant(a)) {
+            return false;
+        }
         if (!query.length) {
             return true;
         }

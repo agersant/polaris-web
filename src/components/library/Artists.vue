@@ -19,7 +19,14 @@
                 <Switch v-model="displayMode"
                     :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />
             </div>
-            <ArtistList ref="list" class="grow min-h-0 -mr-4 pr-4" :artists="filtered" :display-mode="displayMode" />
+            <ArtistList v-if="filtered.length" ref="list" class="grow min-h-0 -mr-4 pr-4" :artists="filtered"
+                :display-mode="displayMode" />
+            <div v-else class="grow flex mt-40 justify-center text-center">
+                <BlankStateFiller icon="filter_alt_off">
+                    No artists match this filter.
+                </BlankStateFiller>
+            </div>
+
         </div>
 
         <div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
