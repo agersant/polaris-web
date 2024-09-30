@@ -27,15 +27,6 @@ import PageTitle from '@/components/basic/PageTitle.vue';
 import SwitchText from '@/components/basic/SwitchText.vue';
 import { makeGenreURL } from '@/router';
 
-// TODO Error state
-// TODO Load state
-// TODO overview main artists (by song count)
-// TODO overview related genres (by correlation)
-// TODO overview recently added albums
-// TODO all artists
-// TODO persistence
-// TODO dark mode
-
 const router = useRouter();
 
 const props = defineProps<{ name: string }>();

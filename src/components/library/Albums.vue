@@ -42,7 +42,7 @@
         </Error>
 
         <div v-else-if="isReady && !albums.length" class="grow flex mt-40 justify-center text-center">
-            <BlankStateFiller icon="person_off" suggestion="collectionSettings">
+            <BlankStateFiller icon="music_off" suggestion="collectionSettings">
                 No albums found.
             </BlankStateFiller>
         </div>
