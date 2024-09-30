@@ -86,7 +86,7 @@ const filteredArtists = computed(() => {
     });
 });
 
-const historyStateKey = "genre";
+const historyStateKey = "genre-artists";
 
 interface State {
     artists?: ArtistHeader[],

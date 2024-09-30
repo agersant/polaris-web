@@ -63,6 +63,7 @@ export interface GenreHeader {
 }
 
 export interface Genre extends GenreHeader {
+	related_genres: { [key: string]: number };
 }
 
 export interface ArtistHeader {
