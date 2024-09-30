@@ -13,17 +13,34 @@
             </div>
         </div>
     </div>
+
+    <div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+        <Spinner class="text-ls-700 dark:text-ds-400" />
+    </div>
+
+    <Error v-else-if="error">
+        Something went wrong while listing albums.
+    </Error>
+
+    <div v-else-if="albums" class="grow flex mt-40 justify-center text-center">
+        <BlankStateFiller icon="music_off">
+            No albums found.
+        </BlankStateFiller>
+    </div>
+
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, Ref, ref, toRaw, useTemplateRef } from 'vue';
 import { useAsyncState, useScroll, watchImmediate, watchThrottled, whenever } from '@vueuse/core';
 
+import { AlbumHeader } from '@/api/dto';
 import { getGenreAlbums } from '@/api/endpoints';
 import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
+import Error from '@/components/basic/Error.vue';
 import InputText from '@/components/basic/InputText.vue';
+import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
-import { AlbumHeader } from '@/api/dto';
 
 const props = defineProps<{ name: string }>();
 
