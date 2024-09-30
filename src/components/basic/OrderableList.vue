@@ -138,7 +138,7 @@ watch(() => props.itemHeight, (to, from) => {
     const halfHeight = viewportHeight.value / 2;
     const y = (scrollY.value + halfHeight) * to / from - halfHeight;
     nextTick(() => {
-        viewport.value?.scrollTo({ top: y, behavior: "instant" });
+        scrollY.value = y;
     });
 });
 

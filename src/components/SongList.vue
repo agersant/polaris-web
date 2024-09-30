@@ -58,12 +58,12 @@ watch(itemHeight, (to, from) => {
     const halfHeight = viewportHeight.value / 2;
     const y = (scrollY.value + halfHeight) * to / from - halfHeight;
     nextTick(() => {
-        viewport.value?.scrollTo({ top: y, behavior: "instant" });
+        scrollY.value = y;
     });
 });
 
 watch(paths, () => {
-    viewport.value?.scrollTo({ top: 0, behavior: "instant" });
+    scrollY.value = 0;
 });
 
 function snapScrolling() {
@@ -150,7 +150,7 @@ onMounted(() => {
     focusedKey.value = state.focusedKey;
     pivotKey.value = state.pivotKey;
     nextTick(() => {
-        containerProps.ref.value?.scrollTo({ top: state.scrollY });
+        scrollY.value = state.scrollY;
     });
 });
 </script>

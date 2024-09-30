@@ -164,8 +164,9 @@ watchImmediate(() => props.name, () => {
     }
     artist.value = state.artist;
     nextTick(() => {
-        viewport.value?.scrollTo({ top: state.scrollY });
-    });
+        // TODO Fix not-working savestate
+        scrollY.value = state.scrollY;
+    })
 });
 
 function onGenreClicked(name: string) {
