@@ -24,7 +24,6 @@
     </div>
 </template>
 
-
 <script setup lang="ts">
 import { computed, ComputedRef, watch } from 'vue';
 import { useRouter } from 'vue-router';
