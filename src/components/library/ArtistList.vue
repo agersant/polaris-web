@@ -1,6 +1,6 @@
 <template>
     <div v-bind="containerProps" tabindex="-1">
-        <ul v-if="artists.length" class="flex flex-col overflow-x-hidden
+        <ul class="flex flex-col overflow-x-hidden
                 divide-y divide-ls-200 dark:divide-ds-700" v-bind="wrapperProps">
             <!-- TODO context menus? -->
             <li v-for="item of virtualArtists" :key="item.data.name" class="flex items-center first:pt-1 py-4 gap-4"
@@ -29,13 +29,6 @@
                 </div>
             </li>
         </ul>
-
-        <div v-else class="grow flex mt-40 justify-center text-center">
-            <BlankStateFiller icon="person_off">
-                No artists match this filter.
-            </BlankStateFiller>
-        </div>
-
     </div>
 </template>
 
@@ -46,7 +39,6 @@ import { useRouter } from 'vue-router';
 
 import { ArtistHeader } from '@/api/dto';
 import Badge from "@/components/basic/Badge.vue";
-import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import { pluralize } from '@/format';
 import { makeArtistURL, makeGenreURL } from "@/router";
 import { usePreferencesStore } from '@/stores/preferences';
