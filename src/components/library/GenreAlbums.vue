@@ -27,7 +27,6 @@
             No albums found.
         </BlankStateFiller>
     </div>
-
 </template>
 
 <script setup lang="ts">
@@ -46,7 +45,7 @@ const props = defineProps<{ name: string }>();
 
 const filter = ref("");
 
-const { state: albums, isLoading, error, execute: fetchGenre } = useAsyncState(getGenreAlbums, undefined, { immediate: false, resetOnExecute: true });
+const { state: albums, isLoading, error, execute: fetchAlbums } = useAsyncState(getGenreAlbums, undefined, { immediate: false, resetOnExecute: true });
 
 const grid = useTemplateRef("album-grid");
 const { y: scrollY } = useScroll(() => grid.value?.$el);
@@ -102,7 +101,7 @@ watchThrottled([albums, filter, scrollY], async () => {
 watchImmediate(() => props.name, () => {
     const state = history.state[historyStateKey] as State | undefined;
     if (!state?.albums?.length) {
-        fetchGenre(0, props.name);
+        fetchAlbums(0, props.name);
         return;
     }
     albums.value = state.albums;
