@@ -94,7 +94,7 @@ watchImmediate(() => props.name, () => {
     artists.value = state.artists;
     filter.value = state.filter;
     nextTick(() => {
-        viewport.value?.scrollTo({ top: state.scrollY });
+        scrollY.value = state.scrollY;
     });
 });
 

@@ -190,7 +190,7 @@ watchImmediate(() => props.albumKey, () => {
 	focusedKey.value = state.focusedKey;
 	pivotKey.value = state.pivotKey;
 	nextTick(() => {
-		viewport.value?.scrollTo({ top: state.scrollY });
+		scrollY.value = state.scrollY;
 	});
 });
 

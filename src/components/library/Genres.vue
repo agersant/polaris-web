@@ -109,7 +109,7 @@ onMounted(async () => {
     genres.value = state.genres;
     filter.value = state.filter;
     nextTick(() => {
-        viewport.value?.scrollTo({ top: state.scrollY });
+        scrollY.value = state.scrollY;
     });
 });
 </script>

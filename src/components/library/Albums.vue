@@ -108,7 +108,7 @@ whenever(() => autoScroll.value && gridContentHeight.value && autoScroll.value <
     const top = autoScroll.value;
     autoScroll.value = undefined;
     nextTick(() => {
-        grid.value?.$el.scrollTo({ top });
+        scrollY.value = top || 0;
     });
 });
 
