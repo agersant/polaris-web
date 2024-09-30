@@ -83,7 +83,6 @@ watch(viewMode, (viewMode) => {
     }
 });
 
-
 async function playAll() {
     const songs = (await getGenreSongs(props.name)).paths;
     playback.clear();
