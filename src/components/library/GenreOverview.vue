@@ -1,15 +1,42 @@
 <template>
-    <div ref="viewport" class="min-h-0">
-        <div v-if="genre" class=" flex flex-col gap-8 overflow-scroll">
+    <div ref="viewport" class="min-h-0 flex flex-col overflow-y-scroll -mx-4 px-4">
+        <div v-if="genre" class="flex flex-col gap-10">
             <div v-if="relatedGenres?.length">
                 <SectionTitle label="Related Genres" icon="label" />
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 max-h-[72px] overflow-hidden">
                     <Badge v-for="genre of relatedGenres" :label="genre" size="lg" auto-color
                         @click="onGenreClicked(genre)" />
                 </div>
             </div>
-            <SectionTitle label="Main Artists" icon="person" />
-            <SectionTitle label="Recently Added" icon="new_releases" />
+            <div v-if="mainArtists?.length">
+                <SectionTitle label="Main Artists" icon="person" />
+                <div class="grid grid-cols-3 gap-4">
+                    <div v-for="artist of mainArtists.slice(0, 6)" class="
+                        cursor-pointer
+                        flex items-center gap-4 px-3 p-4
+                        rounded-md border border-ls-200 dark:border-ds-700
+                        hover:bg-ls-100 hover:dark:bg-ds-700
+                        " @click="onArtistClicked(artist.name)">
+                        <span class="material-icons-round rounded-full p-2
+                            flex items-center justify-center
+                            text-ls-500 dark:text-ds-400
+                            bg-ls-200 dark:bg-ds-700">
+                            person
+                        </span>
+                        <div class="flex flex-col gap-1 overflow-hidden">
+                            <span v-text="artist.name"
+                                class="font-medium text-sm text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis" />
+                            <span
+                                class="text-xs text-ls-500 dark:text-ds-500 whitespace-nowrap overflow-hidden text-ellipsis"
+                                v-text="`${artist.num_songs_by_genre[genre.name]} ${pluralize('song', artist.num_songs_by_genre[genre.name])}`" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="genre.recently_added?.length">
+                <SectionTitle label="Recently Added" icon="new_releases" />
+                <AlbumGrid :albums="genre.recently_added.slice(0, 10)" :num-columns="5" show-artists />
+            </div>
         </div>
 
         <div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
@@ -33,7 +60,9 @@ import Badge from '@/components/basic/Badge.vue';
 import Error from '@/components/basic/Error.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
-import { makeGenreURL } from '@/router';
+import AlbumGrid from '@/components/library/AlbumGrid.vue';
+import { isFakeArtist, pluralize } from '@/format';
+import { makeArtistURL, makeGenreURL } from '@/router';
 
 // TODO overview main artists (by song count)
 // TODO overview related genres (by correlation)
@@ -60,8 +89,20 @@ const relatedGenres = computed(() => {
     return sorted.slice(0, 20);
 });
 
+const mainArtists = computed(() => {
+    const artists = genre.value?.main_artists;
+    if (!artists) {
+        return undefined;
+    }
+    return artists.filter(a => !isFakeArtist(a.name));
+});
+
 const viewport = useTemplateRef("viewport");
 const { y: scrollY } = useScroll(viewport);
+
+function onArtistClicked(name: string) {
+    router.push(makeArtistURL(name));
+}
 
 function onGenreClicked(name: string) {
     router.push(makeGenreURL(name));
@@ -90,6 +131,7 @@ watchImmediate(() => props.name, () => {
     }
     genre.value = state.genre;
     nextTick(() => {
+        // TODO scroll restore not working (probably because of AlbumGrid measurement delay)
         scrollY.value = state.scrollY;
     });
 });
