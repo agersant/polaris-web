@@ -3,7 +3,7 @@
         <div v-if="genre" class="flex flex-col gap-8">
             <div v-if="relatedGenres?.length">
                 <SectionTitle label="Related Genres" icon="label" />
-                <div class="flex flex-wrap gap-2 max-h-[72px] overflow-hidden">
+                <div class="flex flex-wrap gap-2 max-h-8 overflow-hidden">
                     <Badge v-for="genre of relatedGenres" :label="genre" size="lg" auto-color
                         @click="onGenreClicked(genre)" />
                 </div>
