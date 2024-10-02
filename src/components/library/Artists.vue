@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref, useTemplateRef, watch } from "vue";
+import { computed, Ref, ref, toRaw, useTemplateRef, watch } from "vue";
 import { useAsyncState, useScroll } from "@vueuse/core";
 
 import { ArtistHeader } from "@/api/dto";
@@ -123,8 +123,8 @@ const { y: scrollY } = useScroll(viewport);
 watch(filtered, () => scrollY.value = 0);
 
 const saveArtists = {
-    save: async () => artists.value.filter(isRelevant),
-    restore: async (v: ArtistHeader[]) => artists.value = v,
+    save: () => toRaw(artists.value).filter(isRelevant),
+    restore: (v: ArtistHeader[]) => artists.value = v,
 };
 
 useHistory("artists", [saveArtists, filter, roleFilter, saveScrollState(viewport)]);
