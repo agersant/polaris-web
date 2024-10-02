@@ -47,10 +47,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, useTemplateRef, watch } from "vue";
-import { useAsyncState, useScroll, watchThrottled } from "@vueuse/core";
+import { computed, Ref, ref, useTemplateRef, watch } from "vue";
+import { useAsyncState, useScroll } from "@vueuse/core";
 
-import { compress, decompress } from "@/disk";
+import { ArtistHeader } from "@/api/dto";
 import { getArtists } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
@@ -60,7 +60,7 @@ import SwitchText from "@/components/basic/SwitchText.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import ArtistList, { DisplayMode } from "@/components/library/ArtistList.vue";
-import { ArtistHeader } from "@/api/dto";
+import { saveScrollState, useHistory } from "@/history";
 
 const artists: Ref<ArtistHeader[]> = ref([]);
 
@@ -122,29 +122,11 @@ const { y: scrollY } = useScroll(viewport);
 
 watch(filtered, () => scrollY.value = 0);
 
-const historyStateKey = "artists";
+const saveArtists = {
+    save: async () => artists.value.filter(isRelevant),
+    restore: async (v: ArtistHeader[]) => artists.value = v,
+};
 
-watchThrottled([artists, filter, roleFilter, scrollY], async () => {
-    const state = {
-        artists: await compress(JSON.stringify((artists.value.filter(isRelevant)))),
-        filter: filter.value,
-        roleFilter: roleFilter.value,
-        scrollY: scrollY.value || 0,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-onMounted(async () => {
-    const state = history.state[historyStateKey];
-    if (!state) {
-        return;
-    }
-    filter.value = state.filter;
-    roleFilter.value = state.roleFilter;
-    artists.value = JSON.parse(await decompress(state.artists));
-    nextTick(() => {
-        scrollY.value = state.scrollY;
-    });
-});
+useHistory("artists", [saveArtists, filter, roleFilter, saveScrollState(viewport)]);
 
 </script>
