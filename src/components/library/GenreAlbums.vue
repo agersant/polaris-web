@@ -30,16 +30,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, Ref, ref, toRaw, useTemplateRef } from 'vue';
-import { useAsyncState, useScroll, watchImmediate, watchThrottled, whenever } from '@vueuse/core';
+import { computed, ref, useTemplateRef, watch } from 'vue';
+import { useAsyncState } from '@vueuse/core';
 
-import { AlbumHeader } from '@/api/dto';
 import { getGenreAlbums } from '@/api/endpoints';
 import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
 import Error from '@/components/basic/Error.vue';
 import InputText from '@/components/basic/InputText.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
+import { saveScrollState, useHistory } from '@/history';
 
 const props = defineProps<{ name: string }>();
 
@@ -48,17 +48,7 @@ const filter = ref("");
 const { state: albums, isLoading, error, execute: fetchAlbums } = useAsyncState(getGenreAlbums, undefined, { immediate: false, resetOnExecute: true });
 
 const grid = useTemplateRef("album-grid");
-const { y: scrollY } = useScroll(() => grid.value?.$el);
-const gridContentHeight = computed(() => grid.value?.contentHeight);
-
-const autoScrollGrid: Ref<number | undefined> = ref(undefined);
-whenever(() => autoScrollGrid.value && gridContentHeight.value && autoScrollGrid.value <= gridContentHeight.value, () => {
-    const top = autoScrollGrid.value;
-    autoScrollGrid.value = undefined;
-    nextTick(() => {
-        grid.value?.$el.scrollTo({ top });
-    });
-});
+const viewport = computed(() => grid.value?.$el);
 
 const filteredAlbums = computed(() => {
     if (!albums.value) {
@@ -81,32 +71,12 @@ const filteredAlbums = computed(() => {
     });
 });
 
-const historyStateKey = "genre-albums";
-
-interface State {
-    albums?: AlbumHeader[],
-    filter: string,
-    scrollY: number,
+if (!useHistory("genre-albums", [albums, filter, saveScrollState(viewport)])) {
+    fetchAlbums(0, props.name);
 }
 
-watchThrottled([albums, filter, scrollY], async () => {
-    const state: State = {
-        albums: toRaw(albums.value),
-        filter: filter.value,
-        scrollY: scrollY.value,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-watchImmediate(() => props.name, () => {
-    const state = history.state[historyStateKey] as State | undefined;
-    if (!state?.albums?.length) {
-        fetchAlbums(0, props.name);
-        return;
-    }
-    albums.value = state.albums;
-    filter.value = state.filter;
-    autoScrollGrid.value = state.scrollY;
+watch(() => props.name, () => {
+    fetchAlbums(0, props.name);
 });
 
 </script>

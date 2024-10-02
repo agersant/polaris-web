@@ -30,6 +30,10 @@ export function useHistory(key: string, values: (Ref | HistoryValue)[]) {
         }
     });
 
+    // Ideally we would only save state when vue-router calls `onBeforeRouteLeave`
+    // However, when the user clicks the browser back button, the browser
+    // history updates before vue-router's. When `onBeforeRouteLeave` runs, it
+    // is too late to save data for the page we are exiting via `history.replaceState()`.
     watchThrottled(watchSources, () => {
         if (pendingRestores > 0) {
             return;

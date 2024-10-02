@@ -70,9 +70,8 @@
 </template>
 
 <script setup lang="ts">
-import equals from "array-equal"
-import { computed, nextTick, toRaw, useTemplateRef, } from "vue";
-import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
+import { computed, useTemplateRef, watch, } from "vue";
+import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
 import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
@@ -89,13 +88,12 @@ import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';
 import AlbumSong from '@/components/library/AlbumSong.vue';
 import { DndPayloadAlbum, DndPayloadSongs } from "@/dnd";
 import { isFakeArtist } from "@/format";
+import { saveScrollState, useHistory } from "@/history";
 import { makeArtistURL, makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import useMultiselect from "@/multiselect";
 
-/* TODOS
-Context menus
-*/
+// TODO Context menus
 
 const playback = usePlaybackStore();
 const router = useRouter();
@@ -148,8 +146,6 @@ const genres = computed(() => {
 	return names;
 });
 
-const { y: scrollY } = useScroll(viewport);
-
 const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect, pivotKey } = useMultiselect(
 	() => {
 		return album.value?.songs.map(s => ({ key: s.path, ...s })) || [];
@@ -157,41 +153,12 @@ const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect,
 	{ onMove: snapScrolling }
 );
 
-
-const historyStateKey = "album";
-
-interface State {
-	album?: AlbumDTO,
-	selectedKeys: Set<string | number>,
-	focusedKey?: string | number,
-	pivotKey?: string | number,
-	scrollY: number,
+if (!useHistory("album", [album, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)])) {
+	fetchAlbum(0, props.albumKey);
 }
 
-watchThrottled([album, selectedKeys, focusedKey, pivotKey, scrollY], async () => {
-	const state: State = {
-		album: toRaw(album.value),
-		selectedKeys: toRaw(selectedKeys.value),
-		focusedKey: focusedKey.value,
-		pivotKey: pivotKey.value,
-		scrollY: scrollY.value,
-	};
-	history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-watchImmediate(() => props.albumKey, () => {
-	const state = history.state[historyStateKey] as State | undefined;
-	if (state?.album?.name != props.albumKey.name || !equals(state.album.main_artists, props.albumKey.artists)) {
-		fetchAlbum(0, props.albumKey);
-		return;
-	}
-	album.value = state.album;
-	selectedKeys.value = state.selectedKeys;
-	focusedKey.value = state.focusedKey;
-	pivotKey.value = state.pivotKey;
-	nextTick(() => {
-		scrollY.value = state.scrollY;
-	});
+watch(() => props.albumKey, () => {
+	fetchAlbum(0, props.albumKey);
 });
 
 async function play() {

@@ -52,8 +52,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, Ref, ref, ShallowRef, toRaw, useTemplateRef, watch } from "vue";
-import { useAsyncState, useElementSize, useScroll, watchPausable, watchThrottled, whenever } from "@vueuse/core";
+import { computed, Ref, ref, ShallowRef, toRaw, useTemplateRef, watch } from "vue";
+import { useAsyncState, useElementSize, useScroll, watchThrottled } from "@vueuse/core";
 
 import { AlbumHeader } from "@/api/dto";
 import { getAlbums, getRandomAlbums, getRecentAlbums } from "@/api/endpoints";
@@ -64,6 +64,7 @@ import SwitchText from "@/components/basic/SwitchText.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import AlbumGrid from "@/components/library/AlbumGrid.vue";
+import { saveScrollState, useHistory } from "@/history";
 
 const numColumns = ref(5);
 
@@ -86,7 +87,8 @@ const { state: fetchedAlbums, isLoading, isReady, error, execute: fetchAlbums } 
 }, [], { immediate: false });
 
 const grid = useTemplateRef("grid");
-const { y: scrollY } = useScroll(() => grid.value?.$el);
+const viewport = computed(() => grid.value?.$el);
+const { y: scrollY } = useScroll(viewport);
 const { height: viewportHeight } = useElementSize(grid);
 const gridContentHeight = computed(() => grid.value?.contentHeight);
 
@@ -103,16 +105,7 @@ watchThrottled(needsMoreAlbums, () => {
     }
 }, { throttle: 200 });
 
-const autoScroll: Ref<number | undefined> = ref(undefined);
-whenever(() => autoScroll.value && gridContentHeight.value && autoScroll.value <= gridContentHeight.value, () => {
-    const top = autoScroll.value;
-    autoScroll.value = undefined;
-    nextTick(() => {
-        scrollY.value = top || 0;
-    });
-});
-
-const viewModeWatch = watchPausable(viewMode, () => {
+watch(viewMode, () => {
     albums.value = [];
     fetchedAll.value = false;
     fetchAlbums();
@@ -150,43 +143,11 @@ const filtered = computed(() => {
     });
 });
 
-const historyStateKey = "albums";
-
-interface State {
-    albums: AlbumHeader[],
-    filter: string,
-    viewMode: ViewMode,
-    seed: number,
-    scrollY: number,
-}
-
-watchThrottled([albums, filter, viewMode, seed, scrollY], async () => {
-    const state: State = {
-        albums: toRaw(albums.value),
-        filter: filter.value,
-        viewMode: viewMode.value,
-        seed: seed.value,
-        scrollY: scrollY.value,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-onMounted(() => {
-    const state = history.state[historyStateKey] as State | undefined;
-    if (!state || !state.albums.length) {
-        fetchAlbums();
-        return;
-    }
-    viewModeWatch.pause();
-    viewMode.value = state.viewMode;
-    albums.value = state.albums;
-    filter.value = state.filter;
-    seed.value = state.seed;
-    autoScroll.value = state.scrollY;
-    nextTick(() => viewModeWatch.resume());
-});
-
 function generateSeed() {
     return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+}
+
+if (!useHistory("albums", [albums, filter, viewMode, seed, saveScrollState(viewport)])) {
+    fetchAlbums();
 }
 </script>
