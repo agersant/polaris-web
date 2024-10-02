@@ -24,11 +24,12 @@
 </template>
 
 <script setup lang="ts" generic="T extends Node">
-import { computed, nextTick, onMounted, ref, toRaw, useTemplateRef, watch } from 'vue';
-import { useScroll, useVirtualList, watchThrottled } from '@vueuse/core';
+import { computed, ref, useTemplateRef, watch } from 'vue';
+import { useVirtualList } from '@vueuse/core';
 import { vOnClickOutside } from "@vueuse/components";
 
 import VirtualTreeNode from "@/components/basic/VirtualTreeNode.vue";
+import { saveScrollState, useHistory } from '@/history';
 import useMultiselect from '@/multiselect';
 
 export interface Node {
@@ -93,7 +94,6 @@ defineExpose({ selection });
 const overscan = 1;
 const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan });
 const viewport = computed(() => containerProps.ref.value);
-const { y: scrollY } = useScroll(viewport);
 
 const findQuery = ref("");
 const findMatch = computed(() => {
@@ -260,37 +260,6 @@ function snapScrolling() {
     }
 }
 
-const historyStateKey = "virtualTree";
-
-// Ideally we would only save state when vue-router calls `onBeforeRouteLeave`
-// However, when the user clicks the browser back button, the browser
-// history updates before vue-router's. When `onBeforeRouteLeave` runs, it
-// is too late to save data for the page we are exiting via `history.replaceState()`.
-watchThrottled([nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, scrollY], () => {
-    const state = {
-        nodes: nodes.value,
-        expandedKeys: toRaw(expandedKeys.value),
-        selectedKeys: toRaw(selectedKeys.value),
-        focusedKey: focusedKey.value,
-        pivotKey: pivotKey.value,
-        scrollY: scrollY.value,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-onMounted(() => {
-    const state = history.state[historyStateKey];
-    if (!state) {
-        return;
-    }
-    nodes.value = state.nodes;
-    expandedKeys.value = state.expandedKeys;
-    selectedKeys.value = state.selectedKeys;
-    focusedKey.value = state.focusedKey;
-    pivotKey.value = state.pivotKey;
-    nextTick(() => {
-        scrollY.value = state.scrollY;
-    });
-});
+useHistory("virtual-tree", [nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)]);
 
 </script>

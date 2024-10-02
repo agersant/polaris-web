@@ -42,9 +42,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, toRaw, useTemplateRef } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAsyncState, useScroll, watchThrottled } from '@vueuse/core';
+import { useAsyncState } from '@vueuse/core';
 
 import { GenreHeader } from '@/api/dto';
 import { getGenres } from '@/api/endpoints';
@@ -56,12 +56,12 @@ import InputText from '@/components/basic/InputText.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import { DndPayloadGenre } from '@/dnd';
+import { saveScrollState, useHistory } from '@/history';
 import { makeGenreURL } from '@/router';
 
 const router = useRouter();
 
 const viewport = useTemplateRef("viewport");
-const { y: scrollY } = useScroll(viewport);
 
 const { state: genres, isLoading, error, execute: fetchGenres } = useAsyncState(
     () => getGenres(),
@@ -83,33 +83,8 @@ function onGenreClicked(genre: GenreHeader) {
     router.push(makeGenreURL(genre.name));
 }
 
-const historyStateKey = "genres";
-
-interface State {
-    genres?: GenreHeader[],
-    filter: string,
-    scrollY: number,
+if (!useHistory("genres", [genres, filter, saveScrollState(viewport)])) {
+    fetchGenres();
 }
 
-watchThrottled([genres, filter, scrollY], async () => {
-    const state: State = {
-        genres: toRaw(genres.value),
-        filter: filter.value,
-        scrollY: scrollY.value || 0,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-onMounted(async () => {
-    const state = history.state[historyStateKey] as State | undefined;
-    if (!state) {
-        fetchGenres();
-        return;
-    }
-    genres.value = state.genres;
-    filter.value = state.filter;
-    nextTick(() => {
-        scrollY.value = state.scrollY;
-    });
-});
 </script>

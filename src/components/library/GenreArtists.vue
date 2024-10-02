@@ -35,8 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, Ref, ref, toRaw, useTemplateRef } from 'vue';
-import { useAsyncState, useScroll, watchImmediate, watchThrottled } from '@vueuse/core';
+import { computed, Ref, ref, useTemplateRef, watch } from 'vue';
+import { useAsyncState } from '@vueuse/core';
 
 import { ArtistHeader } from '@/api/dto';
 import { getGenreArtists } from '@/api/endpoints';
@@ -46,6 +46,7 @@ import InputText from '@/components/basic/InputText.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import Switch from '@/components/basic/Switch.vue';
 import ArtistList, { DisplayMode } from '@/components/library/ArtistList.vue';
+import { saveScrollState, useHistory } from '@/history';
 
 const props = defineProps<{ name: string }>();
 
@@ -58,7 +59,6 @@ const { state: artists, isLoading, error, execute: fetchArtists } = useAsyncStat
 
 const artistList = useTemplateRef("list");
 const viewport = computed(() => artistList.value?.$el);
-const { y: scrollY } = useScroll(viewport);
 
 function isRelevant(artist: ArtistHeader) {
     return artist.num_albums_as_performer > 0
@@ -86,34 +86,12 @@ const filteredArtists = computed(() => {
     });
 });
 
-const historyStateKey = "genre-artists";
-
-interface State {
-    artists?: ArtistHeader[],
-    filter: string,
-    scrollY: number,
+if (!useHistory("genre-artists", [artists, filter, saveScrollState(viewport)])) {
+    fetchArtists(0, props.name);
 }
 
-watchThrottled([artists, filter, scrollY], async () => {
-    const state: State = {
-        artists: toRaw(artists.value),
-        filter: filter.value,
-        scrollY: scrollY.value,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-watchImmediate(() => props.name, () => {
-    const state = history.state[historyStateKey] as State | undefined;
-    if (!state?.artists?.length) {
-        fetchArtists(0, props.name);
-        return;
-    }
-    artists.value = state.artists;
-    filter.value = state.filter;
-    nextTick(() => {
-        scrollY.value = state.scrollY;
-    });
+watch(() => props.name, () => {
+    fetchArtists(0, props.name);
 });
 
 </script>

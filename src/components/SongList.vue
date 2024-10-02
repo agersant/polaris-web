@@ -19,13 +19,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, toRaw, watch } from 'vue';
-import { useElementSize, useScroll, useVirtualList, watchThrottled } from '@vueuse/core';
+import { computed, nextTick, onMounted, watch } from 'vue';
+import { useElementSize, useScroll, useVirtualList } from '@vueuse/core';
 
 import { DndPayloadPaths } from '@/dnd';
 import useMultiselect from '@/multiselect';
 import Draggable from '@/components/basic/Draggable.vue';
 import SongListRow from '@/components/SongListRow.vue';
+import { saveScrollState, useHistory } from '@/history';
 import { usePlaybackStore } from '@/stores/playback';
 import { useSongsStore } from '@/stores/songs';
 
@@ -118,39 +119,9 @@ function onSongDoubleClicked(path: string) {
     playback.next();
 }
 
-const historyStateKey = "songList";
-
-interface State {
-    paths: string[],
-    selectedKeys: Set<string | number>,
-    focusedKey?: string | number,
-    pivotKey?: string | number,
-    scrollY: number,
-}
-
-watchThrottled([paths, selectedKeys, pivotKey, focusedKey, scrollY], async () => {
-    const state: State = {
-        paths: toRaw(paths.value),
-        selectedKeys: toRaw(selectedKeys.value),
-        focusedKey: focusedKey.value,
-        pivotKey: pivotKey.value,
-        scrollY: scrollY.value,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
+useHistory("song-list", [paths, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)]);
 
 onMounted(() => {
-    const state = history.state[historyStateKey] as State | undefined;
-    if (!state) {
-        return;
-    }
-    songs.request(state.paths);
-    paths.value = state.paths;
-    selectedKeys.value = state.selectedKeys;
-    focusedKey.value = state.focusedKey;
-    pivotKey.value = state.pivotKey;
-    nextTick(() => {
-        scrollY.value = state.scrollY;
-    });
-});
+    songs.request(paths.value);
+})
 </script>

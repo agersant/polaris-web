@@ -57,11 +57,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, Ref, ref, toRaw, useTemplateRef } from "vue";
-import { useAsyncState, useScroll, watchImmediate, watchThrottled } from "@vueuse/core";
+import { computed, Ref, ref, useTemplateRef, watch } from "vue";
+import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
-import { AlbumHeader, AlbumKey, Artist } from "@/api/dto";
+import { AlbumHeader, AlbumKey } from "@/api/dto";
 import { getAlbum, getArtist, } from "@/api/endpoints";
 import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
@@ -73,6 +73,7 @@ import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
 import Timeline from '@/components/library/Timeline.vue';
+import { saveScrollState, useHistory } from "@/history";
 import { makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 
@@ -139,34 +140,13 @@ const otherWorks = computed(() => {
 });
 
 const viewport = useTemplateRef("viewport");
-const { y: scrollY } = useScroll(viewport);
 
-const historyStateKey = "artist";
-
-interface State {
-    artist?: Artist,
-    scrollY: number,
+if (!useHistory("artist", [artist, saveScrollState(viewport)])) {
+    fetchArtist(0, props.name);
 }
 
-watchThrottled([artist, scrollY], async () => {
-    const state: State = {
-        artist: toRaw(artist.value),
-        scrollY: scrollY.value || 0,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-watchImmediate(() => props.name, () => {
-    const state = history.state[historyStateKey] as State | undefined;
-    if (state?.artist?.name != props.name) {
-        fetchArtist(0, props.name);
-        return;
-    }
-    artist.value = state.artist;
-    nextTick(() => {
-        // TODO Fix not-working savestate
-        scrollY.value = state.scrollY;
-    })
+watch(() => props.name, () => {
+    fetchArtist(0, props.name);
 });
 
 function onGenreClicked(name: string) {
