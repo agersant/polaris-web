@@ -28,7 +28,8 @@
 		"material-icons": "^1.13.12",
 		"pinia": "^2.2.2",
 		"vue": "^3.5",
-		"vue-router": "^4.4.3"
+		"vue-router": "^4.4.3",
+		"vue-use-scroll-size-observer": "^1.0.4"
 	},
 	"scripts": {
 		"dev": "vite",

@@ -50,11 +50,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, toRaw, useTemplateRef } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAsyncState, useScroll, watchImmediate, watchThrottled } from '@vueuse/core';
+import { useAsyncState } from '@vueuse/core';
 
-import { Genre } from '@/api/dto';
 import { getGenre } from '@/api/endpoints';
 import Badge from '@/components/basic/Badge.vue';
 import Error from '@/components/basic/Error.vue';
@@ -62,13 +61,8 @@ import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';
 import { isFakeArtist, pluralize } from '@/format';
+import { saveScrollState, useHistory } from '@/history';
 import { makeArtistURL, makeGenreURL } from '@/router';
-
-// TODO overview main artists (by song count)
-// TODO overview related genres (by correlation)
-// TODO overview recently added albums
-// TODO persistence
-// TODO dark mode
 
 const router = useRouter();
 
@@ -98,7 +92,6 @@ const mainArtists = computed(() => {
 });
 
 const viewport = useTemplateRef("viewport");
-const { y: scrollY } = useScroll(viewport);
 
 function onArtistClicked(name: string) {
     router.push(makeArtistURL(name));
@@ -108,32 +101,9 @@ function onGenreClicked(name: string) {
     router.push(makeGenreURL(name));
 }
 
-const historyStateKey = "genre-overview";
-
-interface State {
-    genre?: Genre,
-    scrollY: number,
+watch(() => props.name, () => fetchGenre(0, props.name));
+if (!useHistory("genre-overview", [genre, saveScrollState(viewport)])) {
+    fetchGenre(0, props.name);
 }
-
-watchThrottled([genre, scrollY], async () => {
-    const state: State = {
-        genre: toRaw(genre.value),
-        scrollY: scrollY.value,
-    };
-    history.replaceState({ ...history.state, [historyStateKey]: state }, "");
-}, { throttle: 500 });
-
-watchImmediate(() => props.name, () => {
-    const state = history.state[historyStateKey] as State | undefined;
-    if (!state?.genre) {
-        fetchGenre(0, props.name);
-        return;
-    }
-    genre.value = state.genre;
-    nextTick(() => {
-        // TODO scroll restore not working (probably because of AlbumGrid measurement delay)
-        scrollY.value = state.scrollY;
-    });
-});
 
 </script>
