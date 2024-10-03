@@ -2,14 +2,34 @@
 
 	<div class="flex flex-col py-8 pl-16 pr-8 bg-ls-0 dark:bg-ds-900">
 
-		<PageTitle :label="playback.name || 'New Playlist'">
+		<PageTitle :label="playlistName">
 			<template #right>
-				<div class="flex gap-2">
+				<div class="relative flex gap-2">
 					<Button label="Clear" severity="secondary" icon="clear" @click="playback.clear" />
 					<!-- TODO show playlist stats (duration, number of songs, songs per year bar chart? most represented artists? longest songs?) -->
 					<Button label="Stats" severity="secondary" icon="bar_chart" />
-					<!-- TODO save functionality -->
-					<Button label="Save" severity="secondary" icon="save" />
+					<Button label="Save" severity="secondary" icon="save" @click="savingPlaylist = true" />
+
+					<ScreenFade>
+						<ScreenDarkening v-if="savingPlaylist" class="z-10" />
+					</ScreenFade>
+
+					<Transition appear name="slide">
+						<div v-if="savingPlaylist" v-on-click-outside="cancelSavePlaylist" class="z-10 absolute right-0 -bottom-2 w-80 translate-y-full
+							rounded-md
+							bg-ls-0 dark:bg-ds-950
+							shadow-lg shadow-accent-600/20	
+							dark:shadow-none dark:border dark:border-ds-800
+							">
+							<div class="relative p-6 flex flex-col gap-4">
+								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
+								<Button label="Save" severity="primary" icon="save" @click="savePlaylist" />
+								<div class="absolute right-2 top-2">
+									<Button icon="close" severity="tertiary" @click="cancelSavePlaylist" />
+								</div>
+							</div>
+						</div>
+					</Transition>
 				</div>
 			</template>
 		</PageTitle>
@@ -58,10 +78,15 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
+import { vOnClickOutside } from '@vueuse/components'
 
+import { putPlaylist } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
+import InputText from "@/components/basic/InputText.vue"
 import PageTitle from '@/components/basic/PageTitle.vue';
+import ScreenDarkening from '@/components/basic/ScreenDarkening.vue';
+import ScreenFade from "@/components/basic/ScreenFade.vue"
 import Select from '@/components/basic/Select.vue';
 import Switch from '@/components/basic/Switch.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
@@ -78,6 +103,12 @@ const orderableList = useTemplateRef("orderableList");
 const listMode = ref("compact");
 const compact = computed(() => listMode.value == "compact");
 const itemHeight = computed(() => compact.value ? 32 : 48);
+
+const savingPlaylist = ref(false);
+const playlistName = computed({
+	get: () => playback.name || "New Playlist",
+	set: (value) => playback.setName(value),
+});
 
 const playbackOrderOptions: SelectOption<PlaybackOrder>[] = [
 	{ label: "Play Once", value: "default" },
@@ -131,4 +162,25 @@ async function onDrop(atIndex: number) {
 	}
 }
 
+function savePlaylist() {
+	putPlaylist(playlistName.value, playback.playlist.map(e => e.path));
+	savingPlaylist.value = false;
+}
+
+function cancelSavePlaylist() {
+	savingPlaylist.value = false;
+}
 </script>
+
+<style lang="css" scoped>
+.slide-enter-active,
+.slide-leave-active {
+	transition: all 0.2s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+	translate: 20px 0;
+	opacity: 0;
+}
+</style>
