@@ -1,11 +1,9 @@
 <template>
     <div class="absolute h-full w-full pointer-events-none">
         <div class="relative h-full w-full">
-            <Transition appear name="fade">
-                <div v-show="open"
-                    class="pointer-events-auto absolute h-full w-full backdrop-brightness-50 backdrop-grayscale backdrop-blur-sm"
-                    @click="close" />
-            </Transition>
+            <ScreenFade>
+                <ScreenDarkening v-show="open" @click="close" />
+            </ScreenFade>
             <Transition appear name="slide">
                 <div v-show="open"
                     class="pointer-events-auto absolute right-0 h-full flex flex-col w-screen max-w-2xl bg-ls-0 dark:bg-ds-900 p-12 shadow-xl">
@@ -21,9 +19,11 @@
 
 <script setup lang="ts">
 import { useEventBus } from '@vueuse/core';
-import { ref, useTemplateRef } from 'vue';
+import { ref } from 'vue';
 
 import Button from "@/components/basic/Button.vue";
+import ScreenDarkening from "@/components/basic/ScreenDarkening.vue";
+import ScreenFade from "@/components/basic/ScreenFade.vue";
 
 export type PanelEvent = "OPEN_PANEL" | "CLOSE_PANEL";
 
@@ -44,16 +44,6 @@ function close() {
 </script>
 
 <style lang="css" scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-
 .slide-enter-active,
 .slide-leave-active {
     transition: all 0.2s ease;
