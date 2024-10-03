@@ -64,13 +64,11 @@ const buttonClass = computed(() => {
 
 const iconClass = computed(() => {
     if (severity == "tertiary") {
-        return [
-            props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200",
-        ];
+        return props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200";
+    } else if (severity == "secondary") {
+        return props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200";
     } else {
-        return [
-            props.label?.length ? "text-ls-400 dark:text-ds-200" : "text-ls-700 dark:text-ds-0",
-        ];
+        return "text-ls-50 dark:text-ds-50";
     }
 });
 </script>
