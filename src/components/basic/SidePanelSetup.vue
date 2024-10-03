@@ -27,7 +27,6 @@ import Button from "@/components/basic/Button.vue";
 
 export type PanelEvent = "OPEN_PANEL" | "CLOSE_PANEL";
 
-const panelContent = useTemplateRef("panelContent");
 const open = ref(false);
 
 const bus = useEventBus<PanelEvent>("side-panel");
