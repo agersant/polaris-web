@@ -2,18 +2,34 @@
 	<div class="flex flex-col">
 		<PageTitle label="Playlists" />
 		<div class="grow min-h-0 overflow-scroll">
-			<div v-if="listing?.length">
-				<div v-for="(playlist, index) in listing" @key="index" @click="onPlaylistClicked(playlist)">
-					<Draggable :make-payload="() => new DndPayloadPlaylist(playlist.name)">
-						{{ playlist.name }}
-						<template #drag-preview>
-							<div class="flex items-center gap-2">
-								<span v-text="'playlist_play'" class="material-icons-round" />
-								<span v-text="playlist.name" />
-							</div>
-						</template>
-					</Draggable>
-				</div>
+			<div v-if="listing?.length" class="grid grid-cols-3 gap-4 items-stretch">
+				<Draggable v-for="playlist in listing" @key="playlist.name"
+					:make-payload="() => new DndPayloadPlaylist(playlist.name)" allow-pointer-events-inside
+					@click="onPlaylistClicked(playlist)">
+					<div class="cursor-pointer overflow-hidden
+					h-full flex items-center gap-4 px-3 p-4
+					rounded-md border border-ls-200 dark:border-ds-700
+					hover:bg-ls-100 hover:dark:bg-ds-700">
+						<span class="material-icons-round rounded-full p-2
+                            flex items-center justify-center
+                            text-ls-500 dark:text-ds-400
+                            bg-ls-200 dark:bg-ds-700">
+							playlist_play
+						</span>
+						<div class="flex flex-col">
+							<span v-text="playlist.name"
+								class="line-clamp-2 font-medium text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis" />
+							<span v-text="'20 songs'"
+								class="text-sm text-ls-500 dark:text-ds-500 whitespace-nowrap overflow-hidden text-ellipsis" />
+						</div>
+					</div>
+					<template #drag-preview>
+						<div class="flex items-center gap-2">
+							<span v-text="'playlist_play'" class="material-icons-round" />
+							<span v-text="playlist.name" />
+						</div>
+					</template>
+				</Draggable>
 			</div>
 
 			<div v-else-if="listing && !listing.length" class="grow flex mt-40 justify-center text-center">
