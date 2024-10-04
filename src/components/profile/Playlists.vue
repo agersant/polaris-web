@@ -4,7 +4,15 @@
 		<div class="grow min-h-0 overflow-scroll">
 			<div v-if="listing?.length">
 				<div v-for="(playlist, index) in listing" @key="index" @click="onPlaylistClicked(playlist)">
-					{{ playlist.name }}
+					<Draggable :make-payload="() => new DndPayloadPlaylist(playlist.name)">
+						{{ playlist.name }}
+						<template #drag-preview>
+							<div class="flex items-center gap-2">
+								<span v-text="'playlist_play'" class="material-icons-round" />
+								<span v-text="playlist.name" />
+							</div>
+						</template>
+					</Draggable>
 				</div>
 			</div>
 
@@ -31,13 +39,14 @@ import { useAsyncState } from "@vueuse/core";
 
 import { ListPlaylistsEntry } from "@/api/dto";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
+import Draggable from "@/components/basic/Draggable.vue";
 import Error from "@/components/basic/Error.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
+import { DndPayloadPlaylist } from "@/dnd";
 import { usePlaylistsStore } from "@/stores/playlists";
 
 // TODO presentation
-// TODO drag and drop playlist
 
 const router = useRouter();
 const playlists = usePlaylistsStore();
