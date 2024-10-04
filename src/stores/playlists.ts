@@ -15,6 +15,7 @@ export const usePlaylistsStore = defineStore("playlists", () => {
 
 	async function refresh() {
 		listing.value = await playlists();
+		return listing.value;
 	}
 
 	async function save() {
