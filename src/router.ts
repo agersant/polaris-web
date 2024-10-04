@@ -16,7 +16,7 @@ import GenreOverview from "@/components/library/GenreOverview.vue";
 import Genres from "@/components/library/Genres.vue";
 import Search from "@/components/library/Search.vue";
 // import Playlist from "@/components/profile/playlists/Playlist.vue";
-import Playlists from "@/components/profile/playlists/Playlists.vue";
+import Playlists from "@/components/profile/Playlists.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
 import Settings from "@/components/profile/settings/Settings.vue";
 import SettingsCollection from "@/components/profile/settings/Collection.vue";
