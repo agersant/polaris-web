@@ -80,22 +80,22 @@
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { vOnClickOutside } from '@vueuse/components'
 
-import { putPlaylist } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
 import InputText from "@/components/basic/InputText.vue"
 import PageTitle from '@/components/basic/PageTitle.vue';
 import ScreenDarkening from '@/components/basic/ScreenDarkening.vue';
 import ScreenFade from "@/components/basic/ScreenFade.vue"
-import Select from '@/components/basic/Select.vue';
+import Select, { SelectOption } from '@/components/basic/Select.vue';
 import Switch from '@/components/basic/Switch.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
 import { usePlaybackStore, PlaylistEntry, PlaybackOrder } from '@/stores/playback';
-import { SelectOption } from "../basic/Select.vue";
+import { usePlaylistsStore } from "@/stores/playlists";
 
 const playback = usePlaybackStore();
+const playlists = usePlaylistsStore();
 
 const orderableList = useTemplateRef("orderableList");
 
@@ -163,8 +163,8 @@ async function onDrop(atIndex: number) {
 }
 
 function savePlaylist() {
-	putPlaylist(playlistName.value, playback.playlist.map(e => e.path));
 	savingPlaylist.value = false;
+	playlists.save();
 }
 
 function cancelSavePlaylist() {
