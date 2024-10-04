@@ -2,10 +2,10 @@ import { Ref, ref } from 'vue';
 import { useMouse } from '@vueuse/core'
 
 import { Album, AlbumHeader, AlbumKey, BrowserEntry, Song } from "./api/dto";
-import { flatten, getAlbum, getGenreSongs } from "./api/endpoints";
+import { flatten, getAlbum, getGenreSongs, getPlaylist } from "./api/endpoints";
 import { formatTitle, getPathTail, pluralize } from "./format";
 
-export type DnDPayload = DndPayloadAlbum | DndPayloadAlbumHeader | DndPayloadFiles | DndPayloadGenre | DndPayloadPaths | DndPayloadSongs;
+export type DnDPayload = DndPayloadAlbum | DndPayloadAlbumHeader | DndPayloadFiles | DndPayloadGenre | DndPayloadPaths | DndPayloadPlaylist | DndPayloadSongs;
 
 const { x: mouseX, y: mouseY } = useMouse();
 
@@ -189,5 +189,19 @@ export class DndPayloadSongs {
         } else {
             return `${this.songs.length} Songs`;
         }
+    }
+};
+
+export class DndPayloadPlaylist {
+    name: string;
+    tracks: Promise<string[]>;
+
+    constructor(name: string) {
+        this.name = name;
+        this.tracks = getPlaylist(this.name).then(songList => songList.paths);
+    }
+
+    getTracks(): Promise<string[]> {
+        return this.tracks;
     }
 };
