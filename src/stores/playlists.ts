@@ -1,8 +1,8 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { Ref, ref } from "vue";
+import { markRaw, Ref, ref } from "vue";
 
-import { PlaylistHeader } from "@/api/dto";
-import { playlists, putPlaylist } from "@/api/endpoints";
+import { Playlist, PlaylistHeader } from "@/api/dto";
+import { deletePlaylist as doDeletePlaylist, getPlaylist, listPlaylists, putPlaylist } from "@/api/endpoints";
 import { usePlaybackStore } from "./playback";
 
 export type PlaylistsState = {
@@ -12,22 +12,38 @@ export type PlaylistsState = {
 export const usePlaylistsStore = defineStore("playlists", () => {
 
 	const listing: Ref<PlaylistHeader[]> = ref([]);
+	const playlists: Ref<Map<string, Playlist>> = ref(new Map());
 
-	async function refresh() {
-		listing.value = await playlists();
+	async function fetchList() {
+		listing.value = await listPlaylists();
 		return listing.value;
+	}
+
+	async function fetchPlaylist(name: string) {
+		const playlist = markRaw(await getPlaylist(name));
+		playlists.value.set(name, playlist);
+		return playlist;
 	}
 
 	async function save() {
 		const playback = usePlaybackStore();
-		await putPlaylist(playback.name, playback.playlist.map(e => e.path));
-		await refresh();
+		const name = playback.name;
+		await putPlaylist(name, playback.playlist.map(e => e.path));
+		await Promise.all([fetchList(), fetchPlaylist(name)]);
+	}
+
+	async function deletePlaylist(name: string) {
+		await doDeletePlaylist(name);
+		await fetchList();
 	}
 
 	return {
 		listing,
+		playlists,
 
-		refresh,
+		deletePlaylist,
+		fetchList,
+		fetchPlaylist,
 		save,
 	};
 });

@@ -262,7 +262,7 @@ export async function search(query: string): Promise<SongList> {
 
 // Playlist management
 
-export async function playlists(): Promise<PlaylistHeader[]> {
+export async function listPlaylists(): Promise<PlaylistHeader[]> {
 	return (await request("/playlists")).json();
 }
 

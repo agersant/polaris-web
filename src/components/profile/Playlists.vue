@@ -81,7 +81,7 @@ const error = ref(false);
 onMounted(async () => {
 	try {
 		isLoading.value = true;
-		await playlists.refresh();
+		await playlists.fetchList();
 	} catch (e) {
 		error.value = true;
 	}
@@ -122,7 +122,7 @@ async function play(playlist: PlaylistHeader) {
 }
 
 function onPlaylistClicked(playlist: PlaylistHeader) {
-	router.push("/playlist/" + encodeURIComponent(playlist.name)).catch(err => { });
+	router.push("/playlists/" + encodeURIComponent(playlist.name)).catch(err => { });
 }
 
 function onGenreClicked(name: string) {
