@@ -27,25 +27,6 @@
 				</tr>
 			</table>
 		</div>
-		<div class="field">
-			<label for="lastfm_username">Last.fm scrobbling</label>
-			<div v-if="preferences.lastFMUsername">
-				<p class="explanation">
-					You are scrobbling music as
-					<a v-bind:href="'https://www.last.fm/user/' + preferences.lastFMUsername" target="_blank">
-						{{preferences.lastFMUsername}}
-					</a>.
-				</p>
-				<button v-on:click="unlinkLastFMAccount">Unlink Last.fm account</button>
-			</div>
-			<div v-if="!preferences.lastFMUsername">
-				<p class="explanation">
-					Polaris can automatically submit songs you play to
-					<a href="https://www.last.fm/" target="_blank">Last.fm</a>.
-				</p>
-				<button v-on:click="linkLastFMAccount">Link Last.fm account</button>
-			</div>
-		</div>
 	</form>
 </template>
 
@@ -73,14 +54,6 @@ function onBaseSelected(event: Event) {
 	const theme = <Theme>((event.target as HTMLInputElement).value);
 	preferences.previewTheme(theme);
 	preferences.saveTheming();
-}
-
-function linkLastFMAccount() {
-	preferences.linkLastFM();
-}
-
-function unlinkLastFMAccount() {
-	preferences.unlinkLastFM();
 }
 </script>
 
