@@ -15,7 +15,7 @@ import GenreArtists from "@/components/library/GenreArtists.vue";
 import GenreOverview from "@/components/library/GenreOverview.vue";
 import Genres from "@/components/library/Genres.vue";
 import Search from "@/components/library/Search.vue";
-// import Playlist from "@/components/profile/playlists/Playlist.vue";
+import Playlist from "@/components/profile/Playlist.vue";
 import Playlists from "@/components/profile/Playlists.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
 import Settings from "@/components/profile/settings/Settings.vue";
@@ -71,7 +71,7 @@ const routes = [
 			{ path: "/albums", component: Albums },
 			{ path: "/albums/:artists/:name", component: Album, props: extractAlbumKey },
 			{ path: "/playlists", component: Playlists },
-			// { path: "/playlist/:name", component: Playlist, props: true },
+			{ path: "/playlists/:name", component: Playlist, props: true },
 			{ path: "/search", component: Search },
 			{
 				path: "/settings",
