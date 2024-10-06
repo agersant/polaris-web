@@ -5,35 +5,30 @@
 			<div v-if="listing?.length">
 				<InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter"
 					icon="filter_alt" autofocus clearable />
-				<div v-if="filtered?.length" class="grid grid-cols-2 gap-4">
-					<Draggable v-for="playlist in filtered" @key="playlist.name"
-						:make-payload="() => new DndPayloadPlaylist(playlist.name)" allow-pointer-events-inside
-						@click="onPlaylistClicked(playlist)">
-						<div class="cursor-pointer
-							h-full flex items-center gap-4 p-4
-							rounded-md border border-ls-200 dark:border-ds-700
-							hover:bg-ls-100 hover:dark:bg-ds-700
-							">
-							<span class="material-icons-round rounded-full p-2
-									flex items-center justify-center
-									text-ls-500 dark:text-ds-400
-									bg-ls-200 dark:bg-ds-700">
-								playlist_play
+				<div v-if="filtered?.length" class="flex flex-col overflow-x-hidden
+                divide-y divide-ls-200 dark:divide-ds-700">
+					<div v-for="playlist in filtered" :key="playlist.name"
+						class="flex items-center first:pt-1 py-4 gap-4">
+
+						<Button icon="play_arrow" severity="secondary" @click="play(playlist)" />
+
+						<div class="basis-fit shrink min-w-0 pr-8 flex flex-col">
+							<span @click="onPlaylistClicked(playlist)" class="cursor-pointer
+								font-semibold text-sm
+                                overflow-hidden text-ellipsis
+                                text-ls-700 dark:text-ds-300
+                                hover:text-accent-600 hover:underline">
+								{{ playlist.name }}
 							</span>
-							<div class="flex flex-col min-w-0">
-								<span v-text="playlist.name"
-									class="font-medium text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis" />
-								<span v-text="'20 songs'"
-									class="text-sm text-ls-500 dark:text-ds-500 whitespace-nowrap overflow-hidden text-ellipsis" />
-							</div>
+							<span class="mt-1 text-xs text-ls-500 dark:text-ds-500"
+								v-text="formatLongDuration(playlist.duration)" />
 						</div>
-						<template #drag-preview>
-							<div class="flex items-center gap-2">
-								<span v-text="'playlist_play'" class="material-icons-round" />
-								<span v-text="playlist.name" />
-							</div>
-						</template>
-					</Draggable>
+						<div
+							class="basis-1/4 grow shrink-[10] overflow-hidden flex max-h-14 flex-wrap justify-end gap-2">
+							<Badge v-for="genre of getMainGenres(playlist)" :label="genre" auto-color
+								@click="onGenreClicked(genre)" />
+						</div>
+					</div>
 				</div>
 				<div v-else class="grow flex mt-40 justify-center text-center">
 					<BlankStateFiller icon="filter_alt_off">
@@ -64,22 +59,24 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAsyncState } from "@vueuse/core";
 
-import { ListPlaylistsEntry } from "@/api/dto";
+import { PlaylistHeader } from "@/api/dto";
+import { getPlaylist } from "@/api/endpoints";
+import Badge from "@/components/basic/Badge.vue";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
-import Draggable from "@/components/basic/Draggable.vue";
+import Button from "@/components/basic/Button.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
-import { DndPayloadPlaylist } from "@/dnd";
+import { formatLongDuration } from "@/format";
+import { makeGenreURL } from "@/router";
+import { usePlaybackStore } from "@/stores/playback";
 import { usePlaylistsStore } from "@/stores/playlists";
 
-// TODO num songs
-// TODO genres
-// TODO copy layout from Artists page
 // TODO persistence
 
 const router = useRouter();
+const playback = usePlaybackStore();
 const playlists = usePlaylistsStore();
 
 const { state: listing, isLoading, error } = useAsyncState(playlists.refresh, undefined);
@@ -94,8 +91,32 @@ const filtered = computed(() => {
 	return listing.value.filter(p => p.name.toLowerCase().includes(query));
 });
 
-function onPlaylistClicked(playlist: ListPlaylistsEntry) {
+function getMainGenres(playlist: PlaylistHeader) {
+	let genres = Object.entries(playlist.num_songs_by_genre).map(([genre, count]) => ({ genre, count }));
+	genres.sort((a, b) => {
+		if (a.count != b.count) {
+			return a.count - b.count
+		} else {
+			return a.genre < b.genre ? 1 : -1;
+		}
+	}).reverse();
+	let displayGenres = genres.slice(0, 5).map(({ genre }) => genre);
+	return displayGenres;
+}
+
+async function play(playlist: PlaylistHeader) {
+	const songs = (await getPlaylist(playlist.name)).songs.paths;
+	playback.clear();
+	playback.queueTracks(songs);
+	playback.setName(playlist.name);
+	playback.next();
+}
+
+function onPlaylistClicked(playlist: PlaylistHeader) {
 	router.push("/playlist/" + encodeURIComponent(playlist.name)).catch(err => { });
 }
 
+function onGenreClicked(name: string) {
+	router.push(makeGenreURL(name));
+}
 </script>
