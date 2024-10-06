@@ -1,17 +1,17 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { Ref, ref } from "vue";
 
-import { ListPlaylistsEntry } from "@/api/dto";
+import { PlaylistHeader } from "@/api/dto";
 import { playlists, putPlaylist } from "@/api/endpoints";
 import { usePlaybackStore } from "./playback";
 
 export type PlaylistsState = {
-	listing: ListPlaylistsEntry[];
+	listing: PlaylistHeader[];
 };
 
 export const usePlaylistsStore = defineStore("playlists", () => {
 
-	const listing: Ref<ListPlaylistsEntry[]> = ref([]);
+	const listing: Ref<PlaylistHeader[]> = ref([]);
 
 	async function refresh() {
 		listing.value = await playlists();
