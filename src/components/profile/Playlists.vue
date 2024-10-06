@@ -1,17 +1,15 @@
 <template>
 	<div class="flex flex-col">
 		<PageTitle label="Playlists" />
-		<div class="grow min-h-0 -mx-4 px-4 overflow-y-scroll whitespace-nowrap">
-			<div v-if="listing?.length">
-				<InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter"
-					icon="filter_alt" autofocus clearable />
+		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
+			<InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
+				autofocus clearable />
+			<div class="-mx-4 px-4 overflow-y-scroll whitespace-nowrap">
 				<div v-if="filtered?.length" class="flex flex-col overflow-x-hidden
                 divide-y divide-ls-200 dark:divide-ds-700">
 					<div v-for="playlist in filtered" :key="playlist.name"
 						class="flex items-center first:pt-1 py-4 gap-4">
-
 						<Button icon="play_arrow" severity="secondary" @click="play(playlist)" />
-
 						<div class="basis-fit shrink min-w-0 pr-8 flex flex-col">
 							<span @click="onPlaylistClicked(playlist)" class="cursor-pointer
 								font-semibold text-sm
@@ -36,28 +34,27 @@
 					</BlankStateFiller>
 				</div>
 			</div>
+		</div>
 
-			<div v-else-if="listing && !listing.length" class="grow flex mt-40 justify-center text-center">
-				<BlankStateFiller icon="music_off">
-					No playlists have been saved.
-				</BlankStateFiller>
-			</div>
+		<div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
+			<Spinner class="text-ls-700 dark:text-ds-400" />
+		</div>
 
-			<div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
-				<Spinner class="text-ls-700 dark:text-ds-400" />
-			</div>
+		<Error v-else-if="error">
+			Something went wrong while listing playlists.
+		</Error>
 
-			<Error v-else-if="error">
-				Something went wrong while listing playlists.
-			</Error>
+		<div v-else-if="!playlists.listing.length" class="grow flex mt-40 justify-center text-center">
+			<BlankStateFiller icon="music_off">
+				No playlists have been saved.
+			</BlankStateFiller>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAsyncState } from "@vueuse/core";
 
 import { PlaylistHeader } from "@/api/dto";
 import { getPlaylist } from "@/api/endpoints";
@@ -79,16 +76,27 @@ const router = useRouter();
 const playback = usePlaybackStore();
 const playlists = usePlaylistsStore();
 
-const { state: listing, isLoading, error } = useAsyncState(playlists.refresh, undefined);
+const isLoading = ref(false);
+const error = ref(false);
+
+onMounted(async () => {
+	try {
+		isLoading.value = true;
+		await playlists.refresh();
+	} catch (e) {
+		error.value = true;
+	}
+	isLoading.value = false;
+});
 
 const filter = ref("");
 
 const filtered = computed(() => {
-	if (!listing.value) {
+	if (!playlists.listing) {
 		return undefined;
 	}
 	const query = filter.value.toLowerCase();
-	return listing.value.filter(p => p.name.toLowerCase().includes(query));
+	return playlists.listing.filter(p => p.name.toLowerCase().includes(query));
 });
 
 function getMainGenres(playlist: PlaylistHeader) {
