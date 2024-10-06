@@ -15,7 +15,7 @@ const { severity = "primary", size = "base", ...props } = defineProps<{
     label?: string,
     icon?: string,
     disabled?: boolean,
-    severity?: "primary" | "secondary" | "tertiary",
+    severity?: "primary" | "secondary" | "tertiary" | "danger",
     size?: "sm" | "base" | "lg" | "xl",
 }>();
 
@@ -44,6 +44,12 @@ let palettes = {
         dark:hover:bg-ds-0/20 dark:text-ds-200
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 
     `,
+    danger: `
+        bg-red-600 hover:bg-red-500 text-ls-0
+        dark:bg-red-600 dark:hover:bg-red-500 dark:text-ds-0
+        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 
+        shadow-sm
+        `,
 };
 
 let sizes = {
@@ -67,6 +73,8 @@ const iconClass = computed(() => {
         return props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200";
     } else if (severity == "secondary") {
         return props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200";
+    } else if (severity == "danger") {
+        return "text-red-50 dark:text-red-50";
     } else {
         return "text-ls-50 dark:text-ds-50";
     }
