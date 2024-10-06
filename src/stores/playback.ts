@@ -171,13 +171,6 @@ export const usePlaybackStore = defineStore("playback", () => {
 		savePlaylist();
 	}
 
-	async function queuePlaylist(playlistName: string) {
-		const songList = await getPlaylist(playlistName);
-		playlist.value = songList.paths.map((p) => { return { key: make_key(), path: p } });
-		name.value = playlistName;
-		savePlaylist();
-	}
-
 	function reset() {
 		name.value = "";
 		playbackOrder.value = "default";
@@ -270,7 +263,6 @@ export const usePlaybackStore = defineStore("playback", () => {
 		next,
 		play,
 		previous,
-		queuePlaylist,
 		queueTracks,
 		removeTracks,
 		reorder,

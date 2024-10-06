@@ -12,11 +12,12 @@ import {
 	GenreHeader,
 	InitialSetup,
 	LastFMLinkToken,
-	ListPlaylistsEntry,
 	MountDir,
 	NewSettings,
 	NewUser,
 	Peaks,
+	Playlist,
+	PlaylistHeader,
 	Preferences,
 	SavePlaylistInput,
 	Settings,
@@ -261,17 +262,17 @@ export async function search(query: string): Promise<SongList> {
 
 // Playlist management
 
-export async function playlists(): Promise<ListPlaylistsEntry[]> {
+export async function playlists(): Promise<PlaylistHeader[]> {
 	return (await request("/playlists")).json();
 }
 
-export async function getPlaylist(name: string): Promise<SongList> {
+export async function getPlaylist(name: string): Promise<Playlist> {
 	const songs = useSongsStore();
 	const response = await request("/playlist/" + encodeURIComponent(name));
-	return await response.json().then((list: SongList) => {
-		songs.ingest(list.first_songs);
-		songs.request(list.paths);
-		return list;
+	return await response.json().then((playlist: Playlist) => {
+		songs.ingest(playlist.songs.first_songs);
+		songs.request(playlist.songs.paths);
+		return playlist;
 	});
 }
 

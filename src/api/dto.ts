@@ -136,8 +136,14 @@ export type SavePlaylistInput = {
 	tracks: string[];
 };
 
-export type ListPlaylistsEntry = {
+export interface PlaylistHeader {
 	name: string;
+	num_songs_by_genre: { [key: string]: number };
+	duration: number;
+};
+
+export interface Playlist extends PlaylistHeader {
+	songs: SongList,
 };
 
 export type LastFMLinkToken = {
