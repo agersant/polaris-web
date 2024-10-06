@@ -4,7 +4,7 @@
 		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
 				autofocus clearable />
-			<div class="-mx-4 px-4 overflow-y-scroll whitespace-nowrap">
+			<div ref="viewport" class="-mx-4 px-4 overflow-y-scroll whitespace-nowrap">
 				<div v-if="filtered?.length" class="flex flex-col overflow-x-hidden
                 divide-y divide-ls-200 dark:divide-ds-700">
 					<div v-for="playlist in filtered" :key="playlist.name"
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useRouter } from "vue-router";
 
 import { PlaylistHeader } from "@/api/dto";
@@ -66,11 +66,10 @@ import InputText from "@/components/basic/InputText.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
 import { formatLongDuration } from "@/format";
+import { saveScrollState, useHistory } from "@/history";
 import { makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import { usePlaylistsStore } from "@/stores/playlists";
-
-// TODO persistence
 
 const router = useRouter();
 const playback = usePlaybackStore();
@@ -88,6 +87,8 @@ onMounted(async () => {
 	}
 	isLoading.value = false;
 });
+
+const viewport = useTemplateRef("viewport");
 
 const filter = ref("");
 
@@ -127,4 +128,6 @@ function onPlaylistClicked(playlist: PlaylistHeader) {
 function onGenreClicked(name: string) {
 	router.push(makeGenreURL(name));
 }
+
+useHistory("playlists", [filter, saveScrollState(viewport)]);
 </script>
