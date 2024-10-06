@@ -22,7 +22,8 @@
 							dark:shadow-none dark:border dark:border-ds-800
 							">
 							<div class="relative p-6 flex flex-col gap-4">
-								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
+								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus
+									@keydown="onKeyDownPlaylistName" />
 								<Button label="Save" severity="primary" icon="save" @click="savePlaylist" />
 								<div class="absolute right-2 top-2">
 									<Button icon="close" severity="tertiary" @click="cancelSavePlaylist" />
@@ -153,6 +154,12 @@ function onKeyDown(event: KeyboardEvent) {
 		if (entry) {
 			playback.play(entry);
 		}
+	}
+}
+
+function onKeyDownPlaylistName(event: KeyboardEvent) {
+	if (event.code == "Enter") {
+		savePlaylist();
 	}
 }
 
