@@ -11,7 +11,6 @@ import {
 	Genre,
 	GenreHeader,
 	InitialSetup,
-	LastFMLinkToken,
 	MountDir,
 	NewSettings,
 	NewUser,
@@ -288,27 +287,6 @@ export async function putPlaylist(name: string, tracks: string[]): Promise<Respo
 export async function deletePlaylist(name: string): Promise<void> {
 	await request("/playlist/" + encodeURIComponent(name), { method: "DELETE" });
 }
-
-// LastFM
-
-export async function lastFMNowPlaying(path: string): Promise<void> {
-	await request("/lastfm/now_playing/" + encodeURIComponent(path), { method: "PUT" });
-}
-
-export async function lastFMScrobble(path: string): Promise<void> {
-	await request("/lastfm/scrobble/" + encodeURIComponent(path), { method: "POST" });
-}
-
-export async function lastFMGetLinkToken(): Promise<string> {
-	const response = await request("/lastfm/link_token");
-	const token: LastFMLinkToken = await response.json();
-	return token.value;
-}
-
-export async function lastFMUnlink(): Promise<void> {
-	await request("/lastfm/link", { method: "DELETE" });
-}
-
 // Media 
 
 export async function get_songs(paths: string[]): Promise<{ songs: Song[], not_found: string[] }> {

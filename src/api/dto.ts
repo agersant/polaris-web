@@ -48,7 +48,6 @@ export type DDNSConfig = {
 };
 
 export type Preferences = {
-	lastfm_username?: string | null;
 	web_theme_base?: string | null;
 	web_theme_accent?: string | null;
 };
@@ -144,8 +143,4 @@ export interface PlaylistHeader {
 
 export interface Playlist extends PlaylistHeader {
 	songs: SongList,
-};
-
-export type LastFMLinkToken = {
-	value: string;
 };
