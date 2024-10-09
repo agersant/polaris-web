@@ -28,7 +28,7 @@
 import { ref, onMounted, Ref } from "vue";
 import { NewUser } from "@/api/dto";
 import { useUsersStore } from "@/stores/users";
-import User from "@/components/profile/settings/User.vue";
+import User from "@/components/settings/User.vue";
 
 const newUser: Ref<NewUser | null> = ref(null);
 
