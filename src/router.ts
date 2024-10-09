@@ -18,11 +18,11 @@ import Search from "@/components/library/Search.vue";
 import Playlist from "@/components/profile/Playlist.vue";
 import Playlists from "@/components/profile/Playlists.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
-import Settings from "@/components/profile/settings/Settings.vue";
-import SettingsCollection from "@/components/profile/settings/Collection.vue";
-import SettingsDDNS from "@/components/profile/settings/DDNS.vue";
-import SettingsPreferences from "@/components/profile/settings/Preferences.vue";
-import SettingsUsers from "@/components/profile/settings/Users.vue";
+import Settings from "@/components/settings/Settings.vue";
+import SettingsCollection from "@/components/settings/Collection.vue";
+import SettingsDDNS from "@/components/settings/DDNS.vue";
+import SettingsPreferences from "@/components/settings/Preferences.vue";
+import SettingsUsers from "@/components/settings/Users.vue";
 import { useUserStore } from "@/stores/user";
 import { useInitialSetupStore } from "@/stores/initial-setup";
 
