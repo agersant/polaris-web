@@ -1,64 +1,48 @@
 <template>
-	<div>
-		<p class="explanation">
-			Polaris can automatically broadcast your computer's IP to YDNS to make your server reachable at a fixed URL.
-			You will need to sign up for a
-			<a href="https://ydns.io/" target="_blank">YDNS</a> account before filling out the corresponding settings on
-			this page. If you prefer not to use YDNS, you can ignore these settings and set
-			up any another dynamic DNS service manually.
-		</p>
-
-		<form v-if="ddns" v-on:submit.prevent>
-			<div class="field">
-				<label for="host">Hostname</label>
-				<input type="text" id="host" v-model="ddns.host" v-on:change="commit" placeholder="yourname.ydns.eu"
-					data-cy="ydns-hostname" />
-				<p class="tip">The URL pointing to your Polaris server.</p>
-				<label for="username">Username</label>
-				<input type="text" id="username" v-model="ddns.username" v-on:change="commit" data-cy="ydns-username" />
-				<p class="tip">
-					You can find this on the YDNS website under
-					<span class="code">Preferences > API</span>.
-				</p>
-				<label for="password">Password</label>
-				<input type="password" id="password" v-model="ddns.password" v-on:change="commit"
-					data-cy="ydns-password" />
-				<p class="tip">
-					You can find this on the YDNS website under
-					<span class="code">Preferences > API</span>.
-				</p>
-			</div>
-		</form>
+	<div class="flex flex-col">
+		<InputText v-model="url" :error="!!error" id="ddns" icon="network_ping" label="Update URL"
+			placeholder="https://my-provider.com/update?token=xxx" />
+		<div class="mt-4 text-ls-600 text-sm flex flex-col gap-2">
+			<p>
+				If this setting is populated, the Polaris server will regularly make GET requests at the specified URL.
+			</p>
+			<p>
+				If you use a Dynamic DNS service provider (DuckDNS, freemyip, YDNS, etc.), use the update URL they
+				give you in order to expose your Polaris instance to the internet.
+			</p>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, Ref, ref } from "vue";
-import { getDDNSConfig, putDDNSConfig } from "@/api/endpoints";
-import { DDNSConfig } from "@/api/dto";
+import { computed, onMounted, ref } from "vue";
+import { refDebounced, watchPausable } from "@vueuse/core";
 
-const ddns: Ref<DDNSConfig | null> = ref(null);
+import { getSettings, putSettings, } from "@/api/endpoints";
+import InputText from "@/components/basic/InputText.vue";
 
-onMounted(async () => {
-	ddns.value = await getDDNSConfig();
+const url = ref("");
+
+const urlDebounced = refDebounced(url, 200);
+
+const urlWatch = watchPausable(urlDebounced, (to, from) => {
+	if (!error.value && from != undefined) {
+		putSettings({ ddns_update_url: to });
+	}
 });
 
-function commit() {
-	if (!ddns.value) {
-		return;
+const error = computed(() => {
+	if (url.value.length && !URL.canParse(url.value)) {
+		return "Not a valid URL";
+	} else {
+		return null;
 	}
-	putDDNSConfig(ddns.value);
-}
+});
+
+onMounted(async () => {
+	urlWatch.pause();
+	url.value = (await getSettings()).ddns_update_url;
+	urlWatch.resume();
+});
+
 </script>
-
-<style scoped>
-a {
-	text-decoration: underline;
-	color: var(--theme-accent);
-}
-
-.code {
-	font-family: "Courier New", "sans-serif";
-	color: inherit;
-}
-</style>

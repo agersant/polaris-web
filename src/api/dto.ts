@@ -34,17 +34,13 @@ export type UserUpdate = {
 export type Settings = {
 	album_art_pattern: string;
 	reindex_every_n_seconds: number;
+	ddns_update_url: string;
 };
 
 export type NewSettings = {
 	album_art_pattern?: string;
 	reindex_every_n_seconds?: number;
-};
-
-export type DDNSConfig = {
-	host: string;
-	username: string;
-	password: string;
+	ddns_update_url?: string;
 };
 
 export type Preferences = {

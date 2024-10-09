@@ -7,7 +7,6 @@ import {
 	ArtistHeader,
 	Authorization,
 	BrowserEntry,
-	DDNSConfig,
 	Genre,
 	GenreHeader,
 	InitialSetup,
@@ -107,18 +106,6 @@ export async function putMountDirs(mountDirs: MountDir[]): Promise<Response> {
 	return await request("/mount_dirs", {
 		method: "PUT",
 		body: JSON.stringify(mountDirs),
-		headers: { "Content-Type": "application/json" },
-	});
-}
-
-export async function getDDNSConfig(): Promise<DDNSConfig> {
-	return (await request("/ddns")).json();
-}
-
-export async function putDDNSConfig(config: DDNSConfig) {
-	return request("/ddns", {
-		method: "PUT",
-		body: JSON.stringify(config),
 		headers: { "Content-Type": "application/json" },
 	});
 }
