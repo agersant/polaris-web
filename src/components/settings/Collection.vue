@@ -3,7 +3,7 @@
 
 
 		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
-			<SectionTitle label="Music Sources" class="!mb-4" />
+			<SectionTitle label="Music Sources" />
 			<div class="flex flex-col gap-4">
 				<div class="flex gap-4">
 					<InputText icon="library_music" placeholder="My Music" />
@@ -13,11 +13,12 @@
 			</div>
 		</div>
 		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
-			<SectionTitle label="Album Art Pattern" class="!mb-4" />
-			<InputText id="album-art" icon="image_search" class="w-80" placeholder="Folder.(jpg|png)" />
+			<SectionTitle label="Collection Format" />
+			<InputText id="album-art" label="Album Art Pattern" icon="image_search" class="w-80"
+				placeholder="Folder.(jpg|png)" />
 		</div>
 		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
-			<SectionTitle label="Indexing Status" class="!mb-4" />
+			<SectionTitle label="Indexing Status" />
 			<div class="flex justify-between items-center">
 				<div class="flex flex-col gap-3">
 					<div class="flex items-center gap-2">
