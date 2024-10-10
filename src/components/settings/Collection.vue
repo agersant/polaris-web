@@ -4,18 +4,18 @@
 
 		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
 			<SectionTitle label="Music Sources" />
-			<div class="flex flex-col gap-4">
-				<div class="flex gap-4">
-					<InputText icon="library_music" placeholder="My Music" />
-					<InputText icon="folder" placeholder="/home/music" />
+			<div class="flex flex-col gap-8">
+				<div class="flex flex-col gap-4">
+					<div class="flex gap-4 w-3/4">
+						<InputText label="Name" icon="library_music" placeholder="My Music" class="grow" />
+						<InputText label="Location" icon="folder" placeholder="/home/music" class="grow" />
+					</div>
+					<Button label="Add Source" icon="add" severity="tertiary" class="self-start" />
 				</div>
-				<Button label="Add Source" icon="add" severity="tertiary" class="self-start" />
+				<InputText id="album-art" label="Album Art Pattern" icon="image_search" class="w-72"
+					placeholder="Folder.(jpg|png)" />
+				<Button label="Apply Changes" icon="check" size="xl" class="self-end w-40" />
 			</div>
-		</div>
-		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
-			<SectionTitle label="Collection Format" />
-			<InputText id="album-art" label="Album Art Pattern" icon="image_search" class="w-80"
-				placeholder="Folder.(jpg|png)" />
 		</div>
 		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
 			<SectionTitle label="Indexing Status" />
