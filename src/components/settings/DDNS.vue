@@ -1,5 +1,6 @@
 <template>
-	<div class="flex flex-col">
+	<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+		<SectionTitle label="Configuration" />
 		<InputText v-model="url" :error="!!error" id="ddns" icon="network_ping" label="Update URL"
 			placeholder="https://my-provider.com/update?token=xxx" />
 		<div class="mt-4 text-ls-600 text-sm flex flex-col gap-2">
@@ -11,25 +12,19 @@
 				give you in order to expose your Polaris instance to the internet.
 			</p>
 		</div>
+		<Button label="Apply Changes" icon="check" size="xl" class="mt-8 self-end" @click="apply" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { refDebounced, watchPausable } from "@vueuse/core";
 
 import { getSettings, putSettings, } from "@/api/endpoints";
+import Button from "@/components/basic/Button.vue";
 import InputText from "@/components/basic/InputText.vue";
+import SectionTitle from "@/components/basic/SectionTitle.vue";
 
 const url = ref("");
-
-const urlDebounced = refDebounced(url, 200);
-
-const urlWatch = watchPausable(urlDebounced, (to, from) => {
-	if (!error.value && from != undefined) {
-		putSettings({ ddns_update_url: to });
-	}
-});
 
 const error = computed(() => {
 	if (url.value.length && !URL.canParse(url.value)) {
@@ -40,9 +35,13 @@ const error = computed(() => {
 });
 
 onMounted(async () => {
-	urlWatch.pause();
 	url.value = (await getSettings()).ddns_update_url;
-	urlWatch.resume();
 });
+
+function apply() {
+	if (!error.value && url.value !== undefined) {
+		putSettings({ ddns_update_url: url.value });
+	}
+}
 
 </script>
