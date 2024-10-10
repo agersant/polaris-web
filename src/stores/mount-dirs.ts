@@ -12,13 +12,13 @@ export const useMountDirsStore = defineStore("mountDirs", () => {
 	const fetchedInitialState = ref(false);
 	const listing: Ref<MountDir[]> = ref([]);
 
-	function create() {
-		listing.value.push({ name: "", source: "" });
-	}
-
 	async function refresh() {
 		listing.value = await getMountDirs();
 		fetchedInitialState.value = true;
+	}
+
+	function create() {
+		listing.value.push({ name: "", source: "" });
 	}
 
 	function remove(mountDir: MountDir) {
@@ -26,7 +26,6 @@ export const useMountDirsStore = defineStore("mountDirs", () => {
 		if (index >= 0) {
 			listing.value.splice(index, 1);
 		}
-		save();
 	}
 
 	async function overwrite(mountDirs: MountDir[]) {
