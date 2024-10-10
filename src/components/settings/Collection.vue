@@ -12,6 +12,7 @@
 					</div>
 					<Button label="Add Source" icon="add" severity="tertiary" class="self-start" />
 				</div>
+				<!-- TODO Tooltip -->
 				<InputText id="album-art" label="Album Art Pattern" icon="image_search" class="w-72"
 					placeholder="Folder.(jpg|png)" />
 				<Button label="Apply Changes" icon="check" size="xl" class="self-end w-40" />
