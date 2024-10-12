@@ -18,7 +18,10 @@
                 </div>
                 <div class="flex items-center gap-2 text-ls-500 dark:text-ds-400">
                     <span class="material-icons-round" v-text="'audiotrack'" />
-                    <span v-text="`${displayNumSongs} ${pluralize('song', displayNumSongs)}`" />
+                    <div class="inline-flex gap-1">
+                        <span v-text="displayNumSongs" :class="scanInProgress ? 'font-mono' : ''" />
+                        <span v-text="pluralize('song', displayNumSongs)" />
+                    </div>
                 </div>
             </div>
 
@@ -54,7 +57,7 @@ function lerp(a: number, b: number, t: number) {
 useRafFn(({ delta }) => {
     if (props.status.state != "InProgress") {
         displayNumSongs.value = props.status.num_songs_indexed;
-    } else if (displayNumSongs.value >= props.status.num_songs_indexed) {
+    } else if (displayNumSongs.value > props.status.num_songs_indexed) {
         displayNumSongs.value = 0;
     } else {
         const rate = 1 / 500;

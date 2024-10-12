@@ -85,7 +85,7 @@ export function formatSong(song: Song) {
 }
 
 export function pluralize(word: string, n: number) {
-	if (n > 1) {
+	if (n == 0 || n > 1) {
 		return `${word}s`;
 	} else {
 		return word;
