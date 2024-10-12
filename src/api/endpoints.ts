@@ -9,6 +9,7 @@ import {
 	BrowserEntry,
 	Genre,
 	GenreHeader,
+	IndexStatus,
 	InitialSetup,
 	MountDir,
 	NewSettings,
@@ -112,6 +113,10 @@ export async function putMountDirs(mountDirs: MountDir[]): Promise<Response> {
 
 export async function triggerIndex(): Promise<Response> {
 	return await request("/trigger_index", { method: "POST" });
+}
+
+export async function getIndexStatus(): Promise<IndexStatus> {
+	return (await request("/index_status")).json();
 }
 
 // Users
