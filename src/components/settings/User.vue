@@ -28,7 +28,6 @@
 <script setup lang="ts">
 import { Ref, ref } from "vue";
 import { User } from "@/api/dto";
-import StateButton, { State } from "@/components/StateButton.vue";
 import { useUserStore } from "@/stores/user";
 import { useUsersStore } from "@/stores/users";
 
