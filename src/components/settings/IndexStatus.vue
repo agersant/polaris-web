@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { formatTimeAgo, useRafFn } from "@vueuse/core";
+import { useRafFn, useTimeAgo } from "@vueuse/core";
 
 import { IndexStatus as Status } from "@/api/dto";
 import Button from "@/components/basic/Button.vue";
@@ -78,13 +78,13 @@ const title = computed(() => {
     }
 });
 
+const started = useTimeAgo(() => props.status.last_start_time || Date.now(), { showSecond: true, updateInterval: 0.5 });
+const end = useTimeAgo(() => props.status.last_end_time || Date.now(), { showSecond: false, updateInterval: 5 });
 const timing = computed(() => {
-    const started = new Date(props.status.last_start_time || Date.now());
-    const end = new Date(props.status.last_end_time || Date.now());
     switch (props.status.state) {
         case "OutOfDate": return "Scan is about to start";
-        case "InProgress": return `Started ${formatTimeAgo(started)}`;
-        case "UpToDate": return `Scanned ${formatTimeAgo(end)}`;
+        case "InProgress": return `Started ${started.value}`;
+        case "UpToDate": return `Scanned ${end.value}`;
     }
 });
 </script>
