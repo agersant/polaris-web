@@ -43,6 +43,13 @@ export type NewSettings = {
 	ddns_update_url?: string;
 };
 
+export type IndexStatus = {
+	state: "OutOfDate" | "InProgress" | "UpToDate";
+	last_start_time?: number,
+	last_end_time?: number,
+	num_songs_indexed: number,
+};
+
 export type Preferences = {
 	web_theme_base?: string | null;
 	web_theme_accent?: string | null;
