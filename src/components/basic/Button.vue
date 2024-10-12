@@ -69,7 +69,9 @@ const buttonClass = computed(() => {
 });
 
 const iconClass = computed(() => {
-    if (severity == "tertiary") {
+    if (props.disabled) {
+        return "text-ls-200 dark:text-ds-500";
+    } else if (severity == "tertiary") {
         return props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200";
     } else if (severity == "secondary") {
         return props.label?.length ? "text-ls-400 dark:text-ds-300" : "text-ls-700 dark:text-ds-200";
