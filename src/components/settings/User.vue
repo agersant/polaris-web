@@ -19,7 +19,7 @@
         </div>
 
         <div class="flex flex-col gap-2">
-            <Toggle v-model="isAdmin" label="Administrator" />
+            <Toggle v-model="isAdmin" label="Administrator" :disabled="isSelf" />
             <span class="italic text-xs text-ls-500 dark:text-ds-400">Grants access to all settings.</span>
         </div>
 
