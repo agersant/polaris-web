@@ -38,7 +38,7 @@ onMounted(() => {
 });
 
 const step = computed((): Step => {
-	if (!didAckWelcome.value || !mountDirs.fetchedInitialState || !users.fetchedInitialState) {
+	if (!didAckWelcome.value || !mountDirs.fetchedInitialState || !users.listing) {
 		return "welcome";
 	}
 	if (!mountDirs.listing.length) {

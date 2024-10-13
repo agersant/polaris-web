@@ -1,36 +1,44 @@
 <template>
-	<form v-if="users" v-on:submit.prevent>
-		<label>Users</label>
-		<ul>
-			<li v-for="(user, index) in users.listing" v-bind:key="index">
-				<User v-bind:user="user" />
-			</li>
-		</ul>
+	<div class="flex flex-col min-h-0">
 
-		<button v-if="!newUser" v-on:click="beginCreateUser" data-cy="begin-create-user">New user</button>
-		<form v-if="newUser" v-on:submit.prevent="endCreateUser">
-			<label>Create User</label>
-			<div class="field">
-				<label for="name">Username</label>
-				<input id="name" type="text" v-model="newUser.name" placeholder="" data-cy="new-user-name" />
-				<label for="password">Password</label>
-				<p v-if="!validatePassword(newUser.password)" class="tip error">The password cannot be blank.</p>
-				<input id="password" type="password" autocomplete="new-password" v-model="newUser.password"
-					placeholder="" data-cy="new-user-password" />
-				<button class="submit" v-bind:disabled="!validateNewUser()" submit="true" v-on:click="endCreateUser"
-					data-cy="end-create-user">Create user</button>
+		<div class="flex flex-col gap-8 grow overflow-y-scroll -mx-4 px-4">
+			<div v-for="user in users.listing" :key="user.name"
+				class=" rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+				<User :user="user" />
 			</div>
-		</form>
-	</form>
+
+			<Button v-if="!newUser" label="Add User" icon="person_add" severity="secondary" class="self-start"
+				@click="beginCreateUser" />
+
+			<div v-else
+				class="flex flex-col gap-4 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+				<SectionTitle :label="newUser.name || 'New User'" class="!mb-2">
+					<template #left>
+						<span class="material-icons-round rounded-full p-1
+									flex items-center justify-center
+									text-ls-500 dark:text-ds-400
+									bg-ls-200 dark:bg-ds-700" v-text="'person'" />
+					</template>
+				</SectionTitle>
+				<InputText v-model="newUser.name" id="username" label="Username" icon="person" class="w-80"
+					:error="!validNewUserName && !!newUser.name.length" />
+				<InputText v-model="newUser.password" id="password" label="Password" icon="key" password class="w-80" />
+				<Button label="Create User" icon="person_add" severity="primary" size="xl" @click="endCreateUser"
+					:disabled="!validNewUser" class="self-end" />
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, Ref } from "vue";
-import { NewUser } from "@/api/dto";
-import { useUsersStore } from "@/stores/users";
-import User from "@/components/settings/User.vue";
+import { ref, onMounted, Ref, computed } from "vue";
 
-const newUser: Ref<NewUser | null> = ref(null);
+import { NewUser } from "@/api/dto";
+import Button from "@/components/basic/Button.vue";
+import InputText from "@/components/basic/InputText.vue";
+import SectionTitle from "@/components/basic/SectionTitle.vue";
+import User from "@/components/settings/User.vue";
+import { useUsersStore } from "@/stores/users";
 
 const users = useUsersStore();
 
@@ -38,20 +46,24 @@ onMounted(() => {
 	users.refresh();
 });
 
-function validateNewUser() {
+const newUser: Ref<NewUser | undefined> = ref(undefined);
+
+const validNewUserName = computed(() => {
 	if (!newUser.value) {
 		return false;
 	}
-	return validateUsername(newUser.value.name) && validatePassword(newUser.value.password);
-}
+	const newUsername = newUser.value.name;
+	return newUsername.length && !users.listing?.some(u => u.name == newUsername);
+});
 
-function validateUsername(username: string): boolean {
-	return !!username && !users.listing.some(u => u.name == username);
-}
+const validNewUserPassword = computed(() => {
+	if (!newUser.value) {
+		return false;
+	}
+	return newUser.value.password.length;
+});
 
-function validatePassword(password: string): boolean {
-	return !!password;
-}
+const validNewUser = computed(() => validNewUserName.value && validNewUserPassword.value);
 
 function beginCreateUser() {
 	newUser.value = {
@@ -61,20 +73,11 @@ function beginCreateUser() {
 	};
 }
 
-function endCreateUser() {
+async function endCreateUser() {
 	if (newUser.value) {
-		users.create(newUser.value);
+		await users.create(newUser.value);
 	}
-	newUser.value = null;
+	newUser.value = undefined;
 }
+
 </script>
-
-<style scoped>
-ul {
-	width: calc(70% + 40px);
-}
-
-button.submit {
-	margin-top: 10px;
-}
-</style>

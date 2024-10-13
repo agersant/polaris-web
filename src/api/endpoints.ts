@@ -121,7 +121,7 @@ export async function getIndexStatus(): Promise<IndexStatus> {
 
 // Users
 
-export async function users(): Promise<User[]> {
+export async function getUsers(): Promise<User[]> {
 	return (await request("/users")).json();
 }
 

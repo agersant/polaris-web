@@ -1,47 +1,46 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { createUser, deleteUser, updateUser, users } from "@/api/endpoints";
+import { ShallowRef, shallowRef } from "vue";
+
+import { createUser, deleteUser as doDeleteUser, getUsers, updateUser } from "@/api/endpoints";
 import { NewUser, User, UserUpdate } from "@/api/dto";
 import { useUserStore } from "@/stores/user";
 
-export type UsersState = {
-	listing: User[];
-	fetchedInitialState: boolean;
-};
+export const useUsersStore = defineStore("users", () => {
 
-export const useUsersStore = defineStore("users", {
-	state: (): UsersState => ({
-		listing: [],
-		fetchedInitialState: false,
-	}),
-	actions: {
-		async refresh() {
-			this.listing = await users();
-			this.fetchedInitialState = true;
-		},
+	const listing: ShallowRef<User[] | undefined> = shallowRef(undefined);
 
-		async create(newUser: NewUser) {
-			await createUser(newUser);
+	async function refresh() {
+		listing.value = await getUsers();
+	}
 
-			if (this.listing.length > 0) {
-				this.refresh();
-			} else {
-				const user = useUserStore();
-				await user.login(newUser.name, newUser.password);
-				await this.refresh();
-			}
-		},
+	async function create(newUser: NewUser) {
+		await createUser(newUser);
+		if (listing.value?.length == 0) {
+			const user = useUserStore();
+			await user.login(newUser.name, newUser.password);
+		}
+		await refresh();
+	}
 
-		async update(username: string, userUpdate: UserUpdate) {
-			const response = await updateUser(username, userUpdate);
-			await this.refresh();
-			return response.status == 200;
-		},
+	async function update(username: string, userUpdate: UserUpdate) {
+		const response = await updateUser(username, userUpdate);
+		await refresh();
+		return response.status == 200;
+	}
 
-		async delete(username: string) {
-			await deleteUser(username);
-			await this.refresh();
-		},
-	},
+	async function deleteUser(username: string) {
+		await doDeleteUser(username);
+		await refresh();
+	}
+
+	return {
+		listing,
+
+		create,
+		deleteUser,
+		refresh,
+		update,
+	};
 });
 
 if (import.meta.hot) {
