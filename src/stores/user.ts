@@ -1,71 +1,45 @@
-import { computed, Ref, ref, watch } from "vue";
-import { useRouter } from "vue-router";
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { loadForAnyUser, saveForAnyUser } from "@/disk";
+import { computed, Ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { StorageSerializers, useStorage } from "@vueuse/core";
+
 import { login as doLogin } from "@/api/endpoints";
 
-const STORAGE_USERNAME = "username";
-const STORAGE_AUTH_TOKEN = "authToken";
-const STORAGE_IS_ADMIN = "isAdmin";
+interface CurrentUser {
+	name: string,
+	authToken: string,
+	isAdmin: boolean,
+}
 
 export const useUserStore = defineStore("user", () => {
-	const name: Ref<string | null> = ref(null);
-	const authToken: Ref<string | null> = ref(null);
-	const isAdmin = ref(false);
+	const user: Ref<CurrentUser | null> = useStorage("current_user", null, localStorage, { serializer: StorageSerializers.object });
 
-	const isLoggedIn = computed(() => !!authToken.value);
-
-	reset();
-	loadFromDisk();
+	const name = computed(() => user.value?.name);
+	const authToken = computed(() => user.value?.authToken);
+	const isAdmin = computed(() => user.value?.isAdmin === true);
+	const isLoggedIn = computed(() => authToken.value !== undefined);
 
 	const router = useRouter();
-	watch(
-		() => isLoggedIn.value,
-		() => {
-			router.push("/").catch(err => {});
-		}
-	);
+	watch(isLoggedIn, () => { router.push("/").catch(_ => { }); });
 
 	async function login(username: string, password: string): Promise<void> {
 		const authorization = await doLogin(username, password);
-		reset();
-		name.value = username;
-		authToken.value = authorization.token;
-		isAdmin.value = authorization.is_admin;
-		saveToDisk();
-	}
-
-	function loadFromDisk() {
-		reset();
-		name.value = loadForAnyUser(STORAGE_USERNAME);
-		authToken.value = loadForAnyUser(STORAGE_AUTH_TOKEN);
-		isAdmin.value = loadForAnyUser(STORAGE_IS_ADMIN) === "true";
+		user.value = {
+			name: username,
+			authToken: authorization.token,
+			isAdmin: authorization.is_admin,
+		};
 	}
 
 	function logout() {
-		reset();
-		saveToDisk();
-	}
-
-	function reset() {
-		name.value = null;
-		authToken.value = null;
-		isAdmin.value = false;
-	}
-
-	function saveToDisk() {
-		saveForAnyUser(STORAGE_USERNAME, name.value);
-		saveForAnyUser(STORAGE_AUTH_TOKEN, authToken.value);
-		saveForAnyUser(STORAGE_IS_ADMIN, isAdmin.value);
+		user.value = null;
 	}
 
 	return {
 		authToken,
 		isAdmin,
-		name,
-
 		isLoggedIn,
-
+		name,
 		login,
 		logout,
 	};
