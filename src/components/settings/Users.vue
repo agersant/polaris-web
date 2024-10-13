@@ -11,21 +11,18 @@
 				@click="beginCreateUser" />
 
 			<div v-else
-				class="flex flex-col gap-4 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+				class="flex flex-col gap-8 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
 
-				<div class="flex items-center justify-between -my-8 -mx-4 mb-0 py-6 px-4 border-b border-ls-200">
-					<div class="flex gap-4 items-center">
-						<span class="material-icons-round
+				<div class="flex gap-4 items-center">
+					<span class="material-icons-round
                         rounded-full p-2
                         flex items-center justify-center
                         text-ls-500 dark:text-ds-400
                         bg-ls-200 dark:bg-ds-700" v-text="'face'" />
-						<div v-text="newUser.name || 'New User'" class="font-medium text-ls-500 dark:text-ds-400" />
-					</div>
-
+					<div v-text="newUser.name || 'New User'" class="font-medium text-ls-600 dark:text-ds-300" />
 				</div>
 
-				<InputText v-model="newUser.name" id="username" label="Username" icon="person" class="w-80"
+				<InputText v-model="newUser.name" id="username" label="Username" icon="face" autofocus class="w-80"
 					:error="!validNewUserName && !!newUser.name.length" />
 				<InputText v-model="newUser.password" id="password" label="Password" icon="key" password class="w-80" />
 				<Button label="Create User" icon="person_add" severity="primary" size="xl" @click="endCreateUser"
