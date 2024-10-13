@@ -7,7 +7,7 @@
 				<User :user="user" />
 			</div>
 
-			<Button v-if="!newUser" label="Add User" icon="person_add" severity="secondary" class="self-start"
+			<Button v-if="!newUser" label="Add User" icon="person_add" severity="secondary" size="xl" class="self-start"
 				@click="beginCreateUser" />
 
 			<div v-else
