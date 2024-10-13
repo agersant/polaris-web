@@ -1,149 +1,66 @@
 <template>
-	<div>
-		<div class="username">
-			<i class="noselect material-icons md-24">account_box</i><span data-cy="username">{{ user.name }}</span>
-		</div>
-		<div class="details">
-			<div class="admin">
-				<input type="checkbox" id="'admin_' + user.name" v-bind:disabled="isSelf(user)"
-					v-bind:checked="user.is_admin" @input="onIsAdminChanged" />
-				<label for="'admin_' + user.name" class="admin">Administrator</label>
-				<p class="tip">Grants access to all settings.</p>
-			</div>
-			<div class="actions">
-				<button v-if="!editingPassword" @click="beginPasswordEdit">Change password</button>
-				<form class="password-editing" v-if="editingPassword" v-on:submit.prevent="endPasswordEdit(user)">
-					<input type="password" autocomplete="new-password" v-model="newPassword"
-						placeholder="New password" />
-					<StateButton v-if="passwordEditingState" v-bind:disabled="!newPassword" v-bind:submit="true"
-						v-bind:states="passwordEditingStates" v-bind:state="passwordEditingState" />
-				</form>
-				<button class="danger delete" v-bind:disabled="isSelf(user)" @click="deleteUser"
-					data-cy="delete-user">Delete</button>
-			</div>
-		</div>
-	</div>
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-4">
+            <SectionTitle :label="user.name" class="!mb-0">
+                <template #left>
+                    <span class="material-icons-round rounded-full p-1
+										flex items-center justify-center
+										text-ls-500 dark:text-ds-400
+										bg-ls-200 dark:bg-ds-700" v-text="'person'" />
+                </template>
+            </SectionTitle>
+            <div v-if="!isSelf" class="flex flex-col gap-2">
+                <Toggle v-model="isAdmin" label="Administrator" />
+                <span class="italic text-xs text-ls-500 dark:text-ds-400">Grants access to all settings.</span>
+            </div>
+            <div v-if="editingPassword" class="flex items-end gap-4">
+                <InputText v-model="newPassword" id="new-password" label="New Password" icon="key" password />
+                <Button label="Apply" icon="check" size="lg" :disabled="!newPassword.length"
+                    @click="confirmPasswordChange" />
+            </div>
+        </div>
+        <div class="flex gap-2 justify-end">
+            <Button v-if="!editingPassword" label="Change Password" icon="key" severity="tertiary" size="sm"
+                @click="editingPassword = true" />
+            <Button label="Delete User" icon="delete" severity="tertiary" size="sm" @click="users.deleteUser(user.name)"
+                :disabled="isSelf" />
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from "vue";
-import { User } from "@/api/dto";
-import { useUserStore } from "@/stores/user";
-import { useUsersStore } from "@/stores/users";
+import { computed, ref } from 'vue';
+
+import { User } from '@/api/dto';
+import Button from "@/components/basic/Button.vue";
+import InputText from "@/components/basic/InputText.vue";
+import SectionTitle from "@/components/basic/SectionTitle.vue";
+import Toggle from "@/components/basic/Toggle.vue";
+import { useUserStore } from '@/stores/user';
+import { useUsersStore } from '@/stores/users';
 
 const currentUser = useUserStore();
 const users = useUsersStore();
 
 const props = defineProps<{
-	user: User,
+    user: User,
 }>();
+
+const isSelf = computed(() => props.user.name == currentUser.name);
+
+const isAdmin = computed({
+    get: () => props.user.is_admin,
+    set: (value) => users.update(props.user.name, { new_is_admin: value }),
+});
 
 const newPassword = ref("");
 const editingPassword = ref(false);
-const passwordEditingStates: Ref<Record<string, State>> = ref({
-	ready: { name: "OK" },
-	applying: { name: "Saving…", disabled: true },
-	success: { name: "Got it!", disabled: true, success: true },
-	failure: { name: "Error :(", disabled: true, failure: true },
-});
-const passwordEditingState: Ref<State> = ref(passwordEditingStates.value.ready);
 
-function isSelf(user: User) {
-	return user.name == currentUser.name;
-}
-
-function onIsAdminChanged(event: Event) {
-	const userUpdate = {
-		new_is_admin: (event.target as HTMLInputElement).checked,
-	};
-	users.update(props.user.name, userUpdate);
-}
-
-function beginPasswordEdit() {
-	editingPassword.value = true;
-	newPassword.value = "";
-	passwordEditingState.value = passwordEditingStates.value.ready;
-}
-
-async function endPasswordEdit(user: User) {
-	passwordEditingState.value = passwordEditingStates.value.applying;
-	const userUpdate = {
-		new_password: newPassword.value,
-	};
-	const success = await users.update(user.name, userUpdate);
-	if (success) {
-		passwordEditingState.value = passwordEditingStates.value.success;
-	} else {
-		passwordEditingState.value = passwordEditingStates.value.failure;
-	}
-	setTimeout(() => {
-		passwordEditingState.value = passwordEditingStates.value.ready;
-		editingPassword.value = false;
-	}, 2000);
-}
-
-function deleteUser() {
-	users.delete(props.user.name);
+async function confirmPasswordChange() {
+    await users.update(props.user.name, {
+        new_password: newPassword.value,
+    });
+    editingPassword.value = false;
+    newPassword.value = "";
 }
 </script>
-
-<style scoped>
-div.username {
-	padding-top: 8px;
-	padding-left: 10px;
-	background-color: var(--theme-accent);
-	border-radius: 5px 5px 0px 0px;
-}
-
-div.username i {
-	color: var(--theme-foreground-against-accent);
-}
-
-div.username span {
-	vertical-align: top;
-	margin-left: 8px;
-	position: relative;
-	top: 1px;
-	color: var(--theme-foreground-against-accent);
-	font-weight: 600;
-}
-
-div.details {
-	padding: 20px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	margin-bottom: 20px;
-	border-radius: 0px 0px 5px 5px;
-	border: 1px solid var(--theme-border-muted);
-	border-top: 0;
-}
-
-div.actions {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 10px;
-}
-
-.admin label {
-	font-weight: 300;
-}
-
-input[type="checkbox"] {
-	margin-right: 5px;
-	width: auto;
-	position: relative;
-	top: 1px;
-}
-
-label.admin {
-	display: inline;
-}
-
-form.password-editing {
-	display: flex;
-}
-
-form.password-editing input {
-	margin-right: 10px;
-}
-</style>

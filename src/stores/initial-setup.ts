@@ -1,5 +1,7 @@
-import { computed, Ref, ref, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
+import { computed, Ref, ref } from "vue";
+import { watchImmediate } from "@vueuse/core";
+
 import { initialSetup } from "@/api/endpoints";
 import { useUsersStore } from "@/stores/users";
 
@@ -16,13 +18,7 @@ export const useInitialSetupStore = defineStore("initialSetup", () => {
 		hasAnyUsers.value = dto.has_any_users;
 	}
 
-	watch(
-		() => usersStore.listing.length == 0,
-		() => {
-			refresh();
-		},
-		{ immediate: true }
-	);
+	watchImmediate(() => usersStore.listing, refresh);
 
 	return { isStateKnown, isComplete, refresh };
 });
