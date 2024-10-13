@@ -50,7 +50,7 @@ async function request(endpoint: string, options?: RequestInit): Promise<Respons
 	return response;
 }
 
-function getAuthToken(): string | null {
+function getAuthToken(): string | undefined {
 	return useUserStore().authToken;
 }
 
