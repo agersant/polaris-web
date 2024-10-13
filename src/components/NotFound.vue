@@ -1,10 +1,13 @@
 <template>
-	<div class="pane">
-		<div class="paneContent">
-			<div class="help">
-				<i class="material-icons md-48">error</i>
-				<br />This page could not be found.
-			</div>
+	<div class="flex flex-col">
+		<div class="grow flex flex-col justify-center text-center">
+			<BlankStateFiller icon="error_outline">
+				This page does not exist.
+			</BlankStateFiller>
 		</div>
 	</div>
 </template>
+
+<script setup lang="ts">
+import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
+</script>
