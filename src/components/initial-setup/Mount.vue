@@ -2,10 +2,10 @@
 	<Step title="Music Sources"
 		description="Please indicate which directory Polaris should scan to populate your music collection.">
 		<div class="flex items-stretch gap-6">
-			<InputText class="grow" v-model="mountDir.source" id="location" name="location" label="Location"
-				placeholder="C:\MyMusic" required />
-			<InputText class="grow" v-model="mountDir.name" id="name" name="name" label="Name"
-				placeholder="Local Drive Music" required />
+			<InputText class="grow" v-model="mountDir.source" id="location" label="Location" placeholder="C:\MyMusic"
+				required />
+			<InputText class="grow" v-model="mountDir.name" id="name" label="Name" placeholder="Local Drive Music"
+				required />
 		</div>
 		<Button label="Next" size="xl" :disabled="!validate()" @click="proceed" />
 		<p class="mt-4 text-ls-500 text-xs">

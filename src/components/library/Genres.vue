@@ -3,8 +3,8 @@
         <PageTitle label="Genres" />
 
         <div v-if="genres && genres.length" class="grow min-h-0 flex flex-col">
-            <InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
-                autofocus clearable />
+            <InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
+                clearable />
             <div v-if="filtered.length" ref="viewport" class="flex flex-wrap gap-2 -mx-4 px-4 overflow-scroll">
                 <Draggable v-for="genre of filtered" :make-payload="() => new DndPayloadGenre(genre.name)"
                     class="cursor-pointer !w-fit !h-fit" :key="genre.name" @click="onGenreClicked(genre)">

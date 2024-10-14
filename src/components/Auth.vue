@@ -3,9 +3,9 @@
 		<div class="w-[480px] bg-ls-0 dark:bg-ds-900 p-12 rounded-lg shadow">
 			<img class="mx-auto h-16 mb-12" src="/assets/logo.svg" alt="Polaris" />
 			<form name="authForm" @submit.prevent="doLogin" class="space-y-6">
-				<InputText v-model="username" id="username" name="username" autocomplete="username" label="Username"
+				<InputText v-model="username" id="username" autocomplete="username" label="Username"
 					:error="badCredentials" required autofocus />
-				<InputText v-model="password" id="password" name="password" autocomplete="password" label="Password"
+				<InputText v-model="password" id="password" autocomplete="password" label="Password"
 					:error="badCredentials" required password />
 				<div v-if="badCredentials" class="text-red-600 dark:text-red-500 text-sm py-2">
 					Incorrect credentials, please try again.
