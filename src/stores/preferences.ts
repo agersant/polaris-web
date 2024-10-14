@@ -18,7 +18,8 @@ export const usePreferencesStore = defineStore("preferences", () => {
 	const artistDisplayMode: WritableComputedRef<ArtistDisplayMode> = useUserStorage("artistDisplayMode", "grid5");
 	const artistListMode: WritableComputedRef<ArtistListMode> = useUserStorage("artistListMode", "fixed");
 	const playlistDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("playlistDisplayMode", "tall");
-	const searchResultsDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("searchResultsDisplayMode", "compact");
+	const searchResultsDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("searchResultsDisplayMode", "tall");
+	const savedPlaylistDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("savedPlaylistDisplayMode", "tall");
 
 	watchImmediate([theme, accentBaseHue, accentChromaMultiplier], () => {
 		applyTheme(theme.value, accentBaseHue.value, accentChromaMultiplier.value);
@@ -44,6 +45,7 @@ export const usePreferencesStore = defineStore("preferences", () => {
 		artistListMode,
 		playlistDisplayMode,
 		searchResultsDisplayMode,
+		savedPlaylistDisplayMode,
 
 		setTheme,
 		resetTheme,

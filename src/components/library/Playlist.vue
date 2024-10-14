@@ -17,12 +17,12 @@
             <div class="basis-0 grow max-h-6 mr-6 mt-1.5 overflow-hidden flex flex-wrap gap-2">
                 <Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
             </div>
-            <Switch v-model="listMode"
+            <Switch v-model="preferences.savedPlaylistDisplayMode"
                 :items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
         </div>
 
         <div v-show="songs?.length" class="flex flex-col min-h-0">
-            <SongList v-model="songs" :compact="listMode == 'compact'" invert-stripes />
+            <SongList v-model="songs" :compact="preferences.savedPlaylistDisplayMode == 'compact'" invert-stripes />
         </div>
 
         <div v-if="songs?.length" />
@@ -62,18 +62,17 @@ import { makeGenreURL } from '@/router';
 import { formatLongDuration } from '@/format';
 import { usePlaybackStore } from '@/stores/playback';
 import { usePlaylistsStore } from '@/stores/playlists';
+import { usePreferencesStore } from '@/stores/preferences';
 
 const router = useRouter();
 const playback = usePlaybackStore();
 const playlists = usePlaylistsStore();
+const preferences = usePreferencesStore();
 
 const props = defineProps<{ name: string }>();
 
 const isLoading = ref(false);
 const error = ref(false);
-
-// TODO save to preferences
-const listMode = ref("compact");
 
 const songs = computed(() => playlist.value?.songs.paths || []);
 
