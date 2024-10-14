@@ -43,7 +43,7 @@ import Button from "@/components/basic/Button.vue";
 import Select, { SelectOption } from "@/components/basic/Select.vue";
 import Slider from "@/components/basic/Slider.vue";
 import { usePreferencesStore } from "@/stores/preferences";
-import { computeAccentRamp, getThemeName, Theme } from "@/theming/theming";
+import { computeAccentRamp, getThemeName, Theme } from "@/theming";
 
 const preferences = usePreferencesStore();
 

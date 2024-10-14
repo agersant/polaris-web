@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { watchImmediate } from "@vueuse/core";
 
 import { useUserStorage } from "@/storage";
-import { applyTheme, getDefaultAccentHue, getDefaultTheme, getThemePolarity, Theme } from "@/theming/theming";
+import { applyTheme, getDefaultAccentHue, getDefaultTheme, getThemePolarity, Theme } from "@/theming";
 
 export const usePreferencesStore = defineStore("preferences", () => {
 	const theme = useUserStorage("theme", getDefaultTheme());
