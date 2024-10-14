@@ -70,7 +70,7 @@ const unplayedDarkColor = useCssVar('--surface-700', null, { observe: true });
 const unplayedLightColor = useCssVar('--surface-300', null, { observe: true });
 
 const palette = computed(() => {
-    switch (preferences.effectivePolarity) {
+    switch (preferences.polarity) {
         case "dark":
             return {
                 unplayed: unplayedDarkColor.value,
