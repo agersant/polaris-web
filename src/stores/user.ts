@@ -1,7 +1,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { computed, Ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { StorageSerializers, useStorage } from "@vueuse/core";
+import { StorageSerializers, useLocalStorage } from "@vueuse/core";
 
 import { login as doLogin } from "@/api/endpoints";
 
@@ -12,7 +12,7 @@ interface CurrentUser {
 }
 
 export const useUserStore = defineStore("user", () => {
-	const user: Ref<CurrentUser | null> = useStorage("current_user", null, localStorage, { serializer: StorageSerializers.object });
+	const user: Ref<CurrentUser | null> = useLocalStorage("current_user", null, { serializer: StorageSerializers.object });
 
 	const name = computed(() => user.value?.name);
 	const authToken = computed(() => user.value?.authToken);
