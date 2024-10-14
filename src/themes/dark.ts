@@ -1,4 +1,4 @@
-import { ThemeData } from "@/theming/theming";
+import { ThemeData } from "@/theming";
 
 export default {
 	name: "Dark",
