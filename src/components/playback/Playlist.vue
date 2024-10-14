@@ -21,14 +21,13 @@
 							shadow-lg shadow-accent-600/20	
 							dark:shadow-none dark:border dark:border-ds-800
 							">
-							<div class="relative p-6 flex flex-col gap-4">
-								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus
-									@keydown="onKeyDownPlaylistName" />
-								<Button label="Save" severity="primary" icon="save" @click="savePlaylist" />
+							<form @submit.prevent="savePlaylist" class="relative p-6 flex flex-col gap-4">
+								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
+								<Button type="submit" label="Save" severity="primary" icon="save" />
 								<div class="absolute right-2 top-2">
 									<Button icon="close" severity="tertiary" @click="cancelSavePlaylist" />
 								</div>
-							</div>
+							</form>
 						</div>
 					</Transition>
 				</div>
@@ -154,12 +153,6 @@ function onKeyDown(event: KeyboardEvent) {
 		if (entry) {
 			playback.play(entry);
 		}
-	}
-}
-
-function onKeyDownPlaylistName(event: KeyboardEvent) {
-	if (event.code == "Enter") {
-		savePlaylist();
 	}
 }
 
