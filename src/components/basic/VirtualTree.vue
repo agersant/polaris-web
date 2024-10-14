@@ -47,6 +47,7 @@ const nodes = defineModel<T[]>({ required: true });
 
 const emit = defineEmits<{
     "node-expand": [node: T],
+    "node-double-click": [node: T],
     "nodes-drag-start": [event: DragEvent, nodes: T[]],
     "nodes-drag": [event: DragEvent],
     "nodes-drag-end": [event: DragEvent],
@@ -133,6 +134,7 @@ function onNodeDoubleClick(event: MouseEvent, node: T) {
     if (!node.leaf) {
         toggleNode(node);
     }
+    emit("node-double-click", node);
 }
 
 function onDragStart(event: DragEvent, node: T) {
