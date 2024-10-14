@@ -6,7 +6,7 @@
 
 			<ul class="-mx-2 space-y-1">
 				<li v-for="item in navigation" :key="item.label">
-					<SidebarItem :data-cy="item['data-cy']" :action="item.action" :label="item.label" :icon="item.icon"
+					<SidebarItem :action="item.action" :label="item.label" :icon="item.icon"
 						:current="isCurrent(item)" />
 				</li>
 			</ul>
@@ -42,7 +42,6 @@ const navigateTo = (url: string) => { return () => router.push(url).catch(err =>
 interface Item {
 	label: string,
 	icon: string,
-	'data-cy': string,
 	pattern?: RegExp,
 	action: () => void,
 }
@@ -52,12 +51,12 @@ function isCurrent(item: Item) {
 }
 
 const navigation: Ref<Item[]> = ref([
-	{ label: "Files", icon: "folder", "data-cy": "files", pattern: new RegExp("^/files"), action: navigateTo("/files") },
-	{ label: "Genres", icon: "label", "data-cy": "genres", pattern: new RegExp("^/genres"), action: navigateTo("/genres") },
-	{ label: "Artists", icon: "person", "data-cy": "artists", pattern: new RegExp("^/artists"), action: navigateTo("/artists") },
-	{ label: "Albums", icon: "library_music", "data-cy": "albums", pattern: new RegExp("^/albums"), action: navigateTo("/albums") },
-	{ label: "Playlists", icon: "playlist_play", "data-cy": "playlists", pattern: new RegExp("^/playlist"), action: navigateTo("/playlists") },
-	{ label: "Search", icon: "search", "data-cy": "search", pattern: new RegExp("^/search"), action: navigateTo("/search") },
-	{ label: "Settings", icon: "settings", "data-cy": "settings", pattern: new RegExp("^/settings"), action: navigateTo("/settings/preferences") },
+	{ label: "Files", icon: "folder", pattern: new RegExp("^/files"), action: navigateTo("/files") },
+	{ label: "Genres", icon: "label", pattern: new RegExp("^/genres"), action: navigateTo("/genres") },
+	{ label: "Artists", icon: "person", pattern: new RegExp("^/artists"), action: navigateTo("/artists") },
+	{ label: "Albums", icon: "library_music", pattern: new RegExp("^/albums"), action: navigateTo("/albums") },
+	{ label: "Playlists", icon: "playlist_play", pattern: new RegExp("^/playlist"), action: navigateTo("/playlists") },
+	{ label: "Search", icon: "search", pattern: new RegExp("^/search"), action: navigateTo("/search") },
+	{ label: "Settings", icon: "settings", pattern: new RegExp("^/settings"), action: navigateTo("/settings/preferences") },
 ]);
 </script>

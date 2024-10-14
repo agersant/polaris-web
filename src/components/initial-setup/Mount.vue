@@ -7,7 +7,7 @@
 			<InputText class="grow" v-model="mountDir.name" id="name" name="name" label="Name"
 				placeholder="Local Drive Music" required />
 		</div>
-		<Button data-cy="submit-mount-points" label="Next" size="xl" :disabled="!validate()" @click="proceed" />
+		<Button label="Next" size="xl" :disabled="!validate()" @click="proceed" />
 		<p class="mt-4 text-ls-500 text-xs">
 			You can change this or add more directories later from the settings menu.
 		</p>
