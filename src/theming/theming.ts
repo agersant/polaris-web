@@ -91,7 +91,7 @@ function hexToRGBString(hex: string) {
 	return rgbToString(colorRGB);
 }
 
-function computeAccentRamp(baseHue: number, chromaMultiplier: number): Rgb[] {
+export function computeAccentRamp(baseHue: number, chromaMultiplier: number): Rgb[] {
 
 	const ramp = [];
 

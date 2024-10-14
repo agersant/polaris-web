@@ -4,9 +4,11 @@
             {{ label }}
         </div>
         <div ref="root" @click="snapToCursor" @keydown="onKeyDown" tabindex="-1"
-            class="cursor-pointer group relative h-1.5 rounded-full bg-ls-300 dark:bg-ds-700">
-            <div class="absolute h-full rounded-full bg-accent-600 dark:bg-accent-700"
-                :style="`width: ${100 * unscale(model)}%`" />
+            class="cursor-pointer group relative rounded-full bg-ls-300 dark:bg-ds-700" :class="sizes[size]">
+            <slot name="fill">
+                <div class="absolute h-full rounded-full bg-accent-600 dark:bg-accent-700"
+                    :style="`width: ${100 * unscale(model)}%`" />
+            </slot>
             <div class="cursor-grab
             absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5
             rounded-full shadow-sm border-2
@@ -25,10 +27,11 @@ import { useMouseInElement, useMousePressed, watchPausable } from '@vueuse/core'
 
 const model = defineModel<number>({ required: true });
 
-const { min = 0, max = 1 } = defineProps<{
+const { min = 0, max = 1, size = "base" } = defineProps<{
     min?: number,
     max?: number
     label?: string,
+    size?: "base" | "lg",
 }>();
 
 const root = useTemplateRef("root");
@@ -46,6 +49,11 @@ watch(pressed, (down) => {
         endDrag();
     }
 });
+
+const sizes = {
+    base: "h-1.5",
+    lg: "h-3.5",
+};
 
 function scale(value: number) {
     return min + (max - min) * Math.max(0, Math.min(value, 1));
