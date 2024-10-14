@@ -28,15 +28,15 @@
 							shadow-lg shadow-accent-600/20	
 							dark:shadow-none dark:border dark:border-ds-800
 							">
-                        <div class="relative p-6 flex flex-col gap-4">
+                        <form @submit.prevent="confirmPasswordChange" class="relative p-6 flex flex-col gap-4">
                             <InputText v-model="newPassword" id="new-password" label="New Password" icon="key" autofocus
                                 password />
-                            <Button label="Apply" icon="check" size="lg" :disabled="!newPassword.length"
-                                @click="confirmPasswordChange" />
+                            <Button label="Apply" type="submit" icon="check" size="lg"
+                                :disabled="!newPassword.length" />
                             <div class="absolute right-2 top-2">
                                 <Button icon="close" severity="tertiary" @click="cancelPasswordChange" />
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </Transition>
             </div>
