@@ -15,11 +15,11 @@
                     <span @click="router.push(makeArtistURL(item.data.name))" class="cursor-pointer font-semibold
                                 overflow-hidden text-ellipsis
                                 text-ls-700 dark:text-ds-300
-                                hover:text-accent-600 hover:underline" :class="displayMode == 'fixed' ? 'text-sm' : ''"
+                                hover:text-accent-600 hover:underline" :class="listMode == 'fixed' ? 'text-sm' : ''"
                         :style="proportionalStyle[item.data.name]">
                         {{ item.data.name }}
                     </span>
-                    <span v-if="displayMode == 'fixed'" class="mt-1 text-xs text-ls-500 dark:text-ds-500">
+                    <span v-if="listMode == 'fixed'" class="mt-1 text-xs text-ls-500 dark:text-ds-500">
                         {{ `${item.data.num_songs} ${pluralize('song', item.data.num_songs)}` }}
                     </span>
                 </div>
@@ -41,15 +41,14 @@ import { ArtistHeader } from '@/api/dto';
 import Badge from "@/components/basic/Badge.vue";
 import { pluralize } from '@/format';
 import { makeArtistURL, makeGenreURL } from "@/router";
-import { usePreferencesStore } from '@/stores/preferences';
+import { ArtistListMode, usePreferencesStore } from '@/stores/preferences';
 
 const router = useRouter();
 const preferences = usePreferencesStore();
 
-export type DisplayMode = "fixed" | "proportional";
 const props = defineProps<{
     artists: ArtistHeader[],
-    displayMode: DisplayMode,
+    listMode: ArtistListMode,
 }>();
 
 const itemHeight = 73;
@@ -61,7 +60,7 @@ function remap(value: number, fromA: number, fromB: number, toA: number, toB: nu
 }
 
 const proportionalStyle: Ref<{ [key: string]: CSSProperties }> = computed(() => {
-    if (props.displayMode != "proportional" || !props.artists.length) {
+    if (props.listMode != "proportional" || !props.artists.length) {
         return {};
     }
 

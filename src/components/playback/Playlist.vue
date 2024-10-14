@@ -40,7 +40,7 @@
 				<Button label="Shuffle" severity="secondary" size="base" icon="shuffle" @click="playback.shuffle" />
 			</div>
 			<!-- TODO tooltips -->
-			<Switch v-model="listMode"
+			<Switch v-model="preferences.playlistDisplayMode"
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
@@ -93,15 +93,15 @@ import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
 import { usePlaybackStore, PlaylistEntry, PlaybackOrder } from '@/stores/playback';
 import { usePlaylistsStore } from "@/stores/playlists";
+import { usePreferencesStore } from "@/stores/preferences";
 
 const playback = usePlaybackStore();
 const playlists = usePlaylistsStore();
+const preferences = usePreferencesStore();
 
 const orderableList = useTemplateRef("orderableList");
 
-// TODO save to preferences
-const listMode = ref("compact");
-const compact = computed(() => listMode.value == "compact");
+const compact = computed(() => preferences.playlistDisplayMode == "compact");
 const itemHeight = computed(() => compact.value ? 32 : 48);
 
 const savingPlaylist = ref(false);
