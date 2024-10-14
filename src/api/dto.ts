@@ -48,11 +48,6 @@ export type IndexStatus = {
 	num_songs_indexed: number,
 };
 
-export type Preferences = {
-	web_theme_base?: string | null;
-	web_theme_accent?: string | null;
-};
-
 export type BrowserEntry = {
 	is_directory: boolean;
 	path: string;

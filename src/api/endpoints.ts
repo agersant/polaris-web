@@ -17,7 +17,6 @@ import {
 	Peaks,
 	Playlist,
 	PlaylistHeader,
-	Preferences,
 	SavePlaylistInput,
 	Settings,
 	Song,
@@ -70,22 +69,6 @@ export async function login(username: string, password: string): Promise<Authori
 }
 
 // Config
-
-export async function getPreferences(): Promise<Preferences> {
-	return (await request("/preferences")).json();
-}
-
-export async function putPreferences(theme: string, accentColor: string): Promise<void> {
-	const preferences: Preferences = {
-		web_theme_base: theme,
-		web_theme_accent: accentColor,
-	};
-	await request("/preferences", {
-		method: "PUT",
-		body: JSON.stringify(preferences),
-		headers: { "Content-Type": "application/json" },
-	});
-}
 
 export async function getSettings(): Promise<Settings> {
 	return (await request("/settings")).json();
