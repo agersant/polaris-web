@@ -1,6 +1,6 @@
 <template>
-	<div data-cy="browser" class="flex flex-col">
-		<PageTitle label="Files" data-cy="browser-header" />
+	<div class="flex flex-col">
+		<PageTitle label="Files" />
 
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filterQuery" id="filter" name="filter" placeholder="Filter"
