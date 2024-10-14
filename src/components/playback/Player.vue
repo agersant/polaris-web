@@ -87,7 +87,6 @@ function playFromStart() {
 		try {
 			await htmlAudio.value.play();
 			htmlAudio.value.currentTime = 0;
-			playback.setScrobbleAllowed(true);
 		} catch (e) {
 			// https://developer.chrome.com/blog/play-request-was-interrupted/
 			// This .play() promise will be rejected if we skip to a different
@@ -134,7 +133,6 @@ function seekTo(seconds: number) {
 		return;
 	}
 	htmlAudio.value.currentTime = seconds;
-	playback.setScrobbleAllowed(false);
 }
 
 function onEnded(event: Event) {
