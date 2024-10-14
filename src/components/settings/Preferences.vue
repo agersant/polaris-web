@@ -1,73 +1,33 @@
 <template>
-	<form v-on:submit.prevent>
-		<div class="field">
-			<label>Theme</label>
-			<table>
-				<thead>
-					<th>Mode</th>
-					<th>Color</th>
-					<th />
-				</thead>
-				<tr>
-					<td>
-						<select @input="onBaseSelected" v-bind:value="preferences.effectiveTheme" data-cy="theme">
-							<option v-for="theme of Object.values(Theme)" v-bind:key="theme" v-bind:value="theme">
-								{{ getThemeName(theme) }}
-							</option>
-						</select>
-					</td>
-					<td class="accent-color">
-						<input type="color" v-bind:value="preferences.effectiveAccentColor" @input="onAccentHovered"
-							@change="onAccentSelected" data-cy="accent-color" />
-					</td>
-					<td>
-						<i @click="preferences.resetTheming" class="noselect material-icons md-18"
-							data-cy="reset-theming">restore</i>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</form>
+
+	<div class="flex flex-col gap-8 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+		<Select v-model="theme" label="Theme" :options="themeOptions" class="w-48" />
+		<Slider v-model="preferences.accentBaseHue" label="Accent Hue" class="w-80" :min="0" :max="360" />
+		<Slider v-model="preferences.accentChromaMultiplier" label="Accent Saturation" class="w-80" :min="0" :max="2" />
+		<Button label="Reset to Default" icon="restore" severity="danger" size="xl" class="self-end"
+			@click="preferences.resetTheme" />
+	</div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 import { usePreferencesStore } from "@/stores/preferences";
 import { getThemeName, Theme } from "@/theming/theming";
+import Button from "@/components/basic/Button.vue";
+import Select, { SelectOption } from "@/components/basic/Select.vue";
+import Slider from "@/components/basic/Slider.vue";
 
 const preferences = usePreferencesStore();
 
-function onAccentHovered(event: Event) {
-	if (!event || !event.target) {
-		return;
-	}
-	preferences.previewAccentColor((event.target as HTMLInputElement).value);
-}
+const themeOptions: SelectOption<Theme>[] = Object.values(Theme).map(t => ({ label: getThemeName(t), value: t }));
 
-function onAccentSelected() {
-	preferences.saveTheming();
-}
-
-function onBaseSelected(event: Event) {
-	if (!event || !event.target) {
-		return;
-	}
-	const theme = <Theme>((event.target as HTMLInputElement).value);
-	preferences.previewTheme(theme);
-	preferences.saveTheming();
-}
+const theme = computed({
+	set(option: SelectOption<Theme>) {
+		preferences.setTheme(option.value);
+	},
+	get() {
+		return themeOptions.find(o => o.value == preferences.theme) || themeOptions[0];
+	},
+});
 </script>
-
-<style scoped>
-a {
-	text-decoration: underline;
-	color: var(--theme-accent);
-}
-
-td.accent-color {
-	background-color: var(--theme-accent);
-}
-
-input[type="color"] {
-	opacity: 0;
-}
-</style>
