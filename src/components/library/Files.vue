@@ -5,8 +5,9 @@
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter" icon="filter_alt"
 				clearable />
-			<VirtualTree ref="tree" v-model="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
-				@nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag" class="grow" />
+			<VirtualTree ref="tree" v-model="treeModel" @node-expand="openDirectory" @node-double-click="playSong"
+				@keydown="onKeyDown" @nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag"
+				class="grow" />
 		</div>
 
 		<Error v-if="!treeModel.length && error">
@@ -109,6 +110,14 @@ function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {
 function onKeyDown(event: KeyboardEvent) {
 	if (event.code == "Enter") {
 		queueSelection(!event.shiftKey);
+	}
+}
+
+function playSong(node: Node) {
+	if (node.leaf) {
+		playback.clear();
+		playback.queueTracks([node.key]);
+		playback.next();
 	}
 }
 
