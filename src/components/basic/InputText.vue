@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label v-if="label" :for="name" class="block text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">
+        <label v-if="label" :for="id" class="block text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">
             {{ props.label }}
         </label>
         <div :class="{ 'mt-2': label }" class="relative rounded-md shadow-sm">
@@ -8,8 +8,8 @@
                 <span class="material-icons-round text-ls-400" v-text="icon" />
             </div>
             <input ref="input" v-focus="autofocus" v-model="model" :id="id" :type="password ? 'password' : 'text'"
-                :placeholder="placeholder" :name="name" :autocomplete="autocomplete" :autofocus="autofocus"
-                :required="required" :class="inputClass" class="w-full rounded-md border-0 py-2 pr-8 shadow-sm text-sm leading-6
+                :placeholder="placeholder" :autocomplete="autocomplete" :autofocus="autofocus" :required="required"
+                :class="inputClass" class="w-full rounded-md border-0 py-2 pr-8 shadow-sm text-sm leading-6
                 ring-1 ring-inset focus:ring-2 focus:ring-inset 
                 dark:bg-white/5
                 text-ls-900 dark:text-ds-0
@@ -44,7 +44,6 @@ const props = defineProps<{
     label?: string,
     icon?: string,
     placeholder?: string,
-    name?: string,
     autocomplete?: string,
     autofocus?: boolean,
     password?: boolean,

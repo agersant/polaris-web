@@ -3,8 +3,8 @@
 		<PageTitle label="Search" />
 
 		<div class="mb-8 flex gap-2">
-			<InputText class="grow" v-model="query" id="search" name="search" placeholder="Search" icon=" search"
-				autofocus clearable />
+			<InputText class="grow" v-model="query" id="search" placeholder="Search" icon=" search" autofocus
+				clearable />
 			<Button icon="menu_book" label="Help" severity="tertiary" @click="showHelp = true" />
 		</div>
 

@@ -2,8 +2,8 @@
 	<div class="flex flex-col">
 		<PageTitle label="Playlists" />
 		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
-			<InputText class="mb-8" v-model="filter" id="filter" name="filter" placeholder="Filter" icon="filter_alt"
-				autofocus clearable />
+			<InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
+				clearable />
 			<div ref="viewport" class="-mx-4 px-4 overflow-y-scroll whitespace-nowrap">
 				<div v-if="filtered?.length" class="flex flex-col overflow-x-hidden
                 divide-y divide-ls-200 dark:divide-ds-700">

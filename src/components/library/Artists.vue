@@ -13,8 +13,8 @@
         <div v-if="artists.length" class="grow min-h-0 flex flex-col">
             <div class="mb-8 flex items-center justify-between">
                 <!-- TODO tooltips -->
-                <InputText class="w-80" v-model="filter" id="filter" name="filter" placeholder="Filter"
-                    icon="filter_alt" autofocus clearable />
+                <InputText class="w-80" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
+                    clearable />
                 <!-- TODO tooltips -->
                 <Switch v-model="displayMode"
                     :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />

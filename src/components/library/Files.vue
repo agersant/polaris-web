@@ -3,8 +3,8 @@
 		<PageTitle label="Files" />
 
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
-			<InputText class="mb-8" v-model="filterQuery" id="filter" name="filter" placeholder="Filter"
-				icon="filter_alt" clearable />
+			<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter" icon="filter_alt"
+				clearable />
 			<VirtualTree ref="tree" v-model="treeModel" @node-expand="openDirectory" @keydown="onKeyDown"
 				@nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag" class="grow" />
 		</div>
