@@ -1,8 +1,7 @@
 import { computed, Ref, ref, ShallowRef, shallowRef, watch } from "vue";
 import { defineStore, acceptHMRUpdate } from "pinia";
 
-import { getPlaylist } from "@/api/endpoints";
-import { saveForCurrentUser, loadForCurrentUser } from "@/disk";
+import { loadUserValue, saveUserValue } from "@/storage";
 import { useSongsStore } from "@/stores/songs";
 import { useUserStore } from "@/stores/user";
 
@@ -37,7 +36,6 @@ export const usePlaybackStore = defineStore("playback", () => {
 	const volume = ref(1);
 	const elapsedSeconds = ref(0);
 	const duration = ref(0);
-	const scrobbleAllowed = ref(false);
 
 	reset();
 
@@ -180,36 +178,32 @@ export const usePlaybackStore = defineStore("playback", () => {
 	}
 
 	function loadFromDisk() {
-		const paths: string[] = loadForCurrentUser("playlist") || [];
+		const paths: string[] = loadUserValue("playlist", []);
 		songs.request(paths);
 
 		playlist.value = paths.map(p => { return { key: make_key(), path: p } });
-		playbackOrder.value = loadForCurrentUser("playbackOrder") || "default";
-		currentTrack.value = playlist.value[loadForCurrentUser("currentTrackIndex") || 0] || null;
-		elapsedSeconds.value = loadForCurrentUser("elapsedSeconds") || 0;
-		name.value = loadForCurrentUser("playlistName") || null;
+		playbackOrder.value = loadUserValue("playbackOrder", "default");
+		currentTrack.value = playlist.value[loadUserValue("currentTrackIndex", 0)] || null;
+		elapsedSeconds.value = loadUserValue("elapsedSeconds", 0);
+		name.value = loadUserValue("playlistName", "");
 
-		const savedVolume = parseFloat(loadForCurrentUser("volume"));
+		const savedVolume = loadUserValue("volume", 1.0);
 		volume.value = isNaN(savedVolume) ? 1 : savedVolume;
 	}
 
 	function savePlaybackState() {
 		const currentTrackIndex = playlist.value.findIndex(t => t.key == currentTrack.value?.key);
-		saveForCurrentUser("currentTrackIndex", currentTrackIndex);
-		saveForCurrentUser("playbackOrder", playbackOrder.value);
-		saveForCurrentUser("elapsedSeconds", elapsedSeconds.value);
-		saveForCurrentUser("volume", volume.value);
+		saveUserValue("currentTrackIndex", currentTrackIndex);
+		saveUserValue("playbackOrder", playbackOrder.value);
+		saveUserValue("elapsedSeconds", elapsedSeconds.value);
+		saveUserValue("volume", volume.value);
 	}
 
 	function savePlaylist() {
-		if (saveForCurrentUser("playlist", playlist.value.map(e => e.path))) {
-			saveForCurrentUser("playlistName", name.value);
+		if (saveUserValue("playlist", playlist.value.map(e => e.path))) {
+			saveUserValue("playlistName", name.value);
 			savePlaybackState();
 		}
-	}
-
-	function setScrobbleAllowed(allowed: boolean) {
-		scrobbleAllowed.value = allowed;
 	}
 
 	function setDuration(seconds: number) {
@@ -254,7 +248,6 @@ export const usePlaybackStore = defineStore("playback", () => {
 		name,
 		playbackOrder,
 		playlist,
-		scrobbleAllowed,
 		volume,
 
 		clear,
@@ -266,7 +259,6 @@ export const usePlaybackStore = defineStore("playback", () => {
 		queueTracks,
 		removeTracks,
 		reorder,
-		setScrobbleAllowed,
 		setDuration,
 		setElapsedSeconds,
 		setPlaybackOrder,
