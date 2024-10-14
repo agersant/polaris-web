@@ -64,25 +64,8 @@ function seekToCursor() {
 
 watch(() => props.path, endDrag);
 
-const playedDarkColor = useCssVar('--accent-800', null, { observe: true });
-const playedLightColor = useCssVar('--accent-600', null, { observe: true });
-const unplayedDarkColor = useCssVar('--surface-700', null, { observe: true });
-const unplayedLightColor = useCssVar('--surface-300', null, { observe: true });
-
-const palette = computed(() => {
-    switch (preferences.polarity) {
-        case "dark":
-            return {
-                unplayed: unplayedDarkColor.value,
-                played: playedDarkColor.value,
-            };
-        case "light":
-            return {
-                unplayed: unplayedLightColor.value,
-                played: playedLightColor.value,
-            };
-    }
-});
+const playedColor = useCssVar(() => preferences.polarity == "light" ? "--accent-600" : "--accent-800", null, { observe: true });
+const unplayedColor = useCssVar(() => preferences.polarity == "light" ? "--surface-300" : "--surface-700", null, { observe: true });
 
 watch(() => props.path, async () => {
     if (props.path) {
@@ -102,18 +85,18 @@ watch(() => props.path, async () => {
 onMounted(redraw);
 
 watchThrottled(
-    [width, height, fullWaveform, playedWaveform, peaks, debouncedLoading, palette],
+    [width, height, fullWaveform, playedWaveform, peaks, debouncedLoading, playedColor, unplayedColor],
     redraw,
     { throttle: 100 },
 );
 
 function redraw() {
     if (fullWaveform.value) {
-        draw(fullWaveform.value, palette.value.unplayed);
+        draw(fullWaveform.value, unplayedColor.value);
     }
 
     if (playedWaveform.value) {
-        draw(playedWaveform.value, palette.value.played);
+        draw(playedWaveform.value, playedColor.value);
     }
 }
 
