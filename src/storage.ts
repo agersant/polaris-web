@@ -92,8 +92,8 @@ export function useUserStorage<T>(key: string, defaultValue: T): WritableCompute
 		if (!user.name) {
 			return defaultValue;
 		}
-		asRef.value;
-		return read(`${user.name}.${key}`, defaultValue, serializer);
+		asRef.value = read(`${user.name}.${key}`, defaultValue, serializer);
+		return asRef.value;
 	};
 
 	const setter = (value: T) => {

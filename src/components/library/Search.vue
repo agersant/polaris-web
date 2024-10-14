@@ -19,11 +19,13 @@
 				</div>
 				<template #right>
 					<!-- TODO tooltips -->
-					<Switch v-model="listMode"
-						:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
+					<Switch v-model="preferences.searchResultsDisplayMode" :items="[
+						{ icon: 'compress', value: 'compact' },
+						{ icon: 'view_list', value: 'tall' },
+					]" />
 				</template>
 			</SectionTitle>
-			<SongList v-model="songPaths" :compact="listMode == 'compact'" invert-stripes />
+			<SongList v-model="songPaths" :compact="preferences.searchResultsDisplayMode == 'compact'" invert-stripes />
 		</div>
 
 		<div v-if="songPaths.length" />
@@ -141,13 +143,12 @@ import Switch from "@/components/basic/Switch.vue";
 import SongList from "@/components/SongList.vue";
 import { pluralize } from "@/format";
 import { usePlaybackStore } from "@/stores/playback";
+import { usePreferencesStore } from "@/stores/preferences";
 
 const playback = usePlaybackStore();
+const preferences = usePreferencesStore();
 
 const query = ref("");
-
-// TODO save to preferences
-const listMode = ref("compact");
 
 const showHelp = ref(false);
 

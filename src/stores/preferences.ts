@@ -1,16 +1,24 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { computed } from "vue";
+import { computed, WritableComputedRef } from "vue";
 import { watchImmediate } from "@vueuse/core";
 
 import { useUserStorage } from "@/storage";
 import { applyTheme, getDefaultAccentHue, getDefaultTheme, getThemePolarity, Theme } from "@/theming";
 
+export type ArtistDisplayMode = "grid5" | "grid3" | "timeline";
+export type ArtistListMode = "fixed" | "proportional";
+export type SongListDisplayMode = "compact" | "tall";
+
 export const usePreferencesStore = defineStore("preferences", () => {
-	const theme = useUserStorage("theme", getDefaultTheme());
 	const accentBaseHue = useUserStorage("accentBaseHue", getDefaultAccentHue());
 	const accentChromaMultiplier = useUserStorage("accentChromaMultiplier", 1.0);
-
+	const theme = useUserStorage("theme", getDefaultTheme());
 	const polarity = computed(() => getThemePolarity(theme.value));
+
+	const artistDisplayMode: WritableComputedRef<ArtistDisplayMode> = useUserStorage("artistDisplayMode", "grid5");
+	const artistListMode: WritableComputedRef<ArtistListMode> = useUserStorage("artistListMode", "fixed");
+	const playlistDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("playlistDisplayMode", "tall");
+	const searchResultsDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("searchResultsDisplayMode", "compact");
 
 	watchImmediate([theme, accentBaseHue, accentChromaMultiplier], () => {
 		applyTheme(theme.value, accentBaseHue.value, accentChromaMultiplier.value);
@@ -29,8 +37,14 @@ export const usePreferencesStore = defineStore("preferences", () => {
 	return {
 		accentBaseHue,
 		accentChromaMultiplier,
-		theme,
 		polarity,
+		theme,
+
+		artistDisplayMode,
+		artistListMode,
+		playlistDisplayMode,
+		searchResultsDisplayMode,
+
 		setTheme,
 		resetTheme,
 	};

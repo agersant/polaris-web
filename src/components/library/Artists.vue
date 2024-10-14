@@ -16,11 +16,11 @@
                 <InputText class="w-80" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
                     clearable />
                 <!-- TODO tooltips -->
-                <Switch v-model="displayMode"
+                <Switch v-model="preferences.artistListMode"
                     :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />
             </div>
             <ArtistList v-if="filtered.length" ref="list" class="grow min-h-0 -mr-4 pr-4" :artists="filtered"
-                :display-mode="displayMode" />
+                :list-mode="preferences.artistListMode" />
             <div v-else class="grow flex mt-40 justify-center text-center">
                 <BlankStateFiller icon="filter_alt_off">
                     No artists match this filter.
@@ -59,8 +59,11 @@ import Switch from "@/components/basic/Switch.vue";
 import SwitchText from "@/components/basic/SwitchText.vue";
 import PageTitle from "@/components/basic/PageTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
-import ArtistList, { DisplayMode } from "@/components/library/ArtistList.vue";
+import ArtistList from "@/components/library/ArtistList.vue";
 import { saveScrollState, useHistory } from "@/history";
+import { usePreferencesStore } from "@/stores/preferences";
+
+const preferences = usePreferencesStore();
 
 const artists: Ref<ArtistHeader[]> = ref([]);
 
@@ -72,9 +75,6 @@ watch(fetchedArtists, (a) => {
 });
 
 const filter = ref("");
-
-// TODO save in preferences
-const displayMode: Ref<DisplayMode> = ref("fixed");
 
 type ArtistRole = "performer" | "composer" | "lyricist";
 const roleFilter: Ref<ArtistRole> = ref("performer");

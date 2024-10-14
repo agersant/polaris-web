@@ -11,13 +11,13 @@
         <div v-if="artist" class="flex flex-col min-h-0">
             <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-scroll flex flex-col gap-8">
 
-                <Switch class="absolute mt-0.5 top-4 right-4" v-model="displayMode" :items="[
+                <Switch class="absolute mt-0.5 top-4 right-4" v-model="preferences.artistDisplayMode" :items="[
                     { icon: 'apps', value: 'grid5' },
                     { icon: 'grid_view', value: 'grid3' },
                     { icon: 'timeline', value: 'timeline' }
                 ]" />
 
-                <div v-if="displayMode != 'timeline' && mainWorks?.length">
+                <div v-if="preferences.artistDisplayMode != 'timeline' && mainWorks?.length">
                     <SectionTitle label="Main Releases" class="h-10">
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(mainWorks)" />
@@ -27,7 +27,7 @@
                     <AlbumGrid :albums="mainWorks" :num-columns="numColumns" :show-artists="false" />
                 </div>
 
-                <div v-if="displayMode != 'timeline' && otherWorks?.length">
+                <div v-if="preferences.artistDisplayMode != 'timeline' && otherWorks?.length">
                     <SectionTitle label="Featured On" class="h-10">
                         <ButtonGroup>
                             <Button icon="play_arrow" severity="secondary" size="sm" @click="play(otherWorks)" />
@@ -37,7 +37,8 @@
                     <AlbumGrid :albums="otherWorks" :num-columns="numColumns" :show-artists="true" />
                 </div>
 
-                <Timeline v-if="displayMode == 'timeline'" :artist="artist.name" :albums="artist.albums" class="m-16" />
+                <Timeline v-if="preferences.artistDisplayMode == 'timeline'" :artist="artist.name"
+                    :albums="artist.albums" class="m-16" />
 
             </div>
 
@@ -57,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref, useTemplateRef, watch } from "vue";
+import { computed, useTemplateRef, watch } from "vue";
 import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
@@ -76,9 +77,11 @@ import Timeline from '@/components/library/Timeline.vue';
 import { saveScrollState, useHistory } from "@/history";
 import { makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
+import { usePreferencesStore } from "@/stores/preferences";
 
 const router = useRouter();
 const playback = usePlaybackStore();
+const preferences = usePreferencesStore();
 
 const props = defineProps<{
     name: string,
@@ -90,13 +93,8 @@ const { state: artist, isLoading, error, execute: fetchArtist } = useAsyncState(
     { immediate: false, resetOnExecute: true }
 );
 
-type DisplayMode = "grid5" | "grid3" | "timeline";
-
-// TODO save in preferences
-const displayMode: Ref<DisplayMode> = ref("grid5");
-
 const numColumns = computed(() => {
-    switch (displayMode.value) {
+    switch (preferences.artistDisplayMode) {
         case "grid5": return 5;
         case "grid3": return 3;
         case "timeline": return 1;
