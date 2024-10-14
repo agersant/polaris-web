@@ -3,12 +3,10 @@ import { watch } from "vue";
 import { makeThumbnailURL } from "./api/endpoints";
 import { formatArtists, formatSong } from "./format";
 import { usePlaybackStore } from "./stores/playback";
-import { usePreferencesStore } from "./stores/preferences";
 
 export default function setupBroadcasts() {
 
     const playback = usePlaybackStore();
-    const preferences = usePreferencesStore();
 
     // Browser window title
     watch(() => playback.currentSong, (song) => {
@@ -58,6 +56,10 @@ export default function setupBroadcasts() {
 
     watch(() => [playback.elapsedSeconds, playback.duration], () => {
         if (!navigator.mediaSession || !navigator.mediaSession.setPositionState) {
+            return;
+        }
+
+        if (playback.elapsedSeconds >= playback.duration) {
             return;
         }
 
