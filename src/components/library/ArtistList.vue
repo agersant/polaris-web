@@ -73,8 +73,8 @@ const proportionalStyle: Ref<{ [key: string]: CSSProperties }> = computed(() => 
     let pHigh = sorted[Math.floor(sorted.length * 0.9)].num_songs;
     let pLow = sorted[Math.floor(sorted.length * 0)].num_songs;
 
-    const lowColor = preferences.effectivePolarity == "light" ? "--surface-400" : "--surface-400";
-    const highColor = preferences.effectivePolarity == "light" ? "--surface-800" : "--surface-50";
+    const lowColor = preferences.polarity == "light" ? "--surface-400" : "--surface-400";
+    const highColor = preferences.polarity == "light" ? "--surface-800" : "--surface-50";
 
     for (const artist of sorted) {
         const t = remap(artist.num_songs, pLow, pHigh, 0, 1);
