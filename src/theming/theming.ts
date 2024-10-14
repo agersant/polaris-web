@@ -53,8 +53,23 @@ export function getDefaultTheme(): Theme {
 	return Theme.LIGHT;
 }
 
-export function getDefaultAccent(): string {
-	return "#44C8F1";
+const referenceRamp = [
+	"#f6f9fe",
+	"#ecf5fe",
+	"#d4ebfc",
+	"#b3e0f9",
+	"#88d5f6",
+	"#46c8f1",
+	"#25b2ee",
+	"#1196e4",
+	"#0f75c2",
+	"#0a4a89",
+	"#041934"
+];
+
+export function getDefaultAccentHue(): number {
+	const referenceShade = oklch(referenceRamp[5]);
+	return referenceShade?.h || 0;
 }
 
 function clamp(value: number, min?: number, max?: number) {
@@ -76,21 +91,7 @@ function hexToRGBString(hex: string) {
 	return rgbToString(colorRGB);
 }
 
-function computeAccentRamp(accent: Oklch): Rgb[] {
-
-	const referenceRamp = [
-		"#f6f9fe",
-		"#ecf5fe",
-		"#d4ebfc",
-		"#b3e0f9",
-		"#88d5f6",
-		"#46c8f1",
-		"#25b2ee",
-		"#1196e4",
-		"#0f75c2",
-		"#0a4a89",
-		"#041934"
-	];
+function computeAccentRamp(baseHue: number, chromaMultiplier: number): Rgb[] {
 
 	const ramp = [];
 
@@ -106,8 +107,8 @@ function computeAccentRamp(accent: Oklch): Rgb[] {
 		const shade: Oklch = {
 			mode: "oklch",
 			l: clamp(referenceShade.l),
-			c: clamp(referenceShade.c), // TODO allow users to add/subtract from this
-			h: ((accent?.h || 0) + hueShift) % 360,
+			c: clamp(referenceShade.c * chromaMultiplier),
+			h: (baseHue + hueShift) % 360,
 		};
 
 		const shadeRGB = toGamut("rgb", "oklch")(shade);
@@ -119,7 +120,7 @@ function computeAccentRamp(accent: Oklch): Rgb[] {
 	return ramp;
 }
 
-export function applyTheme(theme: Theme, accent: string) {
+export function applyTheme(theme: Theme, accentBaseHue: number, accentChromaMultiplier: number) {
 	let themeData = themes.get(theme);
 	if (!themeData) {
 		return;
@@ -141,7 +142,7 @@ export function applyTheme(theme: Theme, accent: string) {
 	style.setProperty("--surface-900", hexToRGBString(themeData["surface-900"]));
 	style.setProperty("--surface-950", hexToRGBString(themeData["surface-950"]));
 
-	const accentRamp = computeAccentRamp(oklch(accent) || { mode: "oklch", c: 0, l: 0 });
+	const accentRamp = computeAccentRamp(accentBaseHue, accentChromaMultiplier);
 	style.setProperty("--accent-0", "255 255 255");
 	style.setProperty("--accent-50", rgbToString(accentRamp[0]));
 	style.setProperty("--accent-100", rgbToString(accentRamp[1]));
