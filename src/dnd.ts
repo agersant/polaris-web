@@ -5,7 +5,7 @@ import { Album, AlbumHeader, AlbumKey, BrowserEntry, Song } from "./api/dto";
 import { flatten, getAlbum, getGenreSongs, getPlaylist } from "./api/endpoints";
 import { formatTitle, getPathTail, pluralize } from "./format";
 
-export type DnDPayload = DndPayloadAlbum | DndPayloadAlbumHeader | DndPayloadFiles | DndPayloadGenre | DndPayloadPaths | DndPayloadSongs;
+export type DnDPayload = DndPayloadAlbum | DndPayloadAlbumKey | DndPayloadFiles | DndPayloadGenre | DndPayloadPaths | DndPayloadSongs;
 
 const { x: mouseX, y: mouseY } = useMouse();
 
@@ -108,15 +108,17 @@ export class DndPayloadFiles {
     }
 };
 
-export class DndPayloadAlbumHeader {
-    album: AlbumHeader;
+export class DndPayloadAlbumKey {
+    name: string;
+    mainArtists: string[];
     tracks: Promise<string[]>;
 
-    constructor(album: AlbumHeader) {
-        this.album = album;
+    constructor(name: string, mainArtists: string[]) {
+        this.name = name;
+        this.mainArtists = mainArtists;
         const key: AlbumKey = {
-            name: album.name,
-            artists: album.main_artists,
+            name: this.name,
+            artists: this.mainArtists,
         };
         this.tracks = getAlbum(key).then(album => album.songs.map(s => s.path));
     }

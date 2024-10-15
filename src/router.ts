@@ -17,6 +17,7 @@ import Genres from "@/components/library/Genres.vue";
 import Playlist from "@/components/library/Playlist.vue";
 import Playlists from "@/components/library/Playlists.vue";
 import Search from "@/components/library/Search.vue";
+import SongDetails from "@/components/library/SongDetails.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
 import Settings from "@/components/settings/Settings.vue";
 import SettingsCollection from "@/components/settings/Collection.vue";
@@ -39,6 +40,18 @@ function extractAlbumKey(route: RouteLocation) {
 			name: route.params.name,
 		}
 	};
+}
+
+function extractVirtualPath(route: RouteLocation) {
+	let pathMatchParam = route.params.pathMatch;
+	let pathMatch: string[];
+	if (Array.isArray(pathMatchParam)) {
+		pathMatch = pathMatchParam;
+	} else {
+		pathMatch = [pathMatchParam];
+	}
+	const path = (pathMatch || []).join("/") + (route.hash || "");
+	return { path };
 }
 
 const routes = [
@@ -83,6 +96,7 @@ const routes = [
 					{ path: ":pathMatch(.*)*", component: SettingsPreferences },
 				],
 			},
+			{ path: "/songs/:pathMatch(.*)*", component: SongDetails, props: extractVirtualPath },
 			{ path: ":pathMatch(.*)", component: NotFound },
 		],
 	},
@@ -138,6 +152,10 @@ router.beforeEach(async (to, from, next) => {
 
 	next();
 });
+
+export function makeSongURL(path: string) {
+	return `/songs/${encodeURIComponent(path)}`;
+};
 
 export function makeGenreURL(name: string) {
 	return `/genres/${encodeURIComponent(name)}`;
