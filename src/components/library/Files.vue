@@ -21,7 +21,7 @@
 		</div>
 
 		<div v-else-if="!treeModel.length && isLoading" class="grow flex mt-24 items-start justify-center">
-			<Spinner class="text-ls-700 dark:text-ds-400" />
+			<Spinner />
 		</div>
 
 		<Teleport :to="dragPreview" v-if="draggedFiles === activeDnD">

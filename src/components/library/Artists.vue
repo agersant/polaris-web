@@ -30,7 +30,7 @@
         </div>
 
         <div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
-            <Spinner class="text-ls-700 dark:text-ds-400" />
+            <Spinner />
         </div>
 
         <Error v-else-if="error">
