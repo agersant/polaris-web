@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col">
         <div v-if="!song" class="grow flex items-center justify-center">
-            <Spinner class="text-ls-700 dark:text-ds-400" />
+            <Spinner />
         </div>
 
         <div v-else class="flex flex-col min-h-0">

@@ -2,7 +2,7 @@
 	<div class="grow overflow-y-auto -mx-4 px-4">
 		<div v-if="!settings || !mountDirs.fetchedInitialState || !indexStatus"
 			class="grow flex mt-24 items-start justify-center">
-			<Spinner class="text-ls-700 dark:text-ds-400" />
+			<Spinner />
 		</div>
 
 		<div v-else class="flex flex-col gap-8">
