@@ -1,6 +1,7 @@
 <template>
     <div class="w-full h-full">
-        <div class="w-full h-full" draggable="true" @dragstart="onDragStart" @drag="updateDrag" @dragend="endDrag">
+        <div class="w-full h-full" :draggable="!disabled" @dragstart="onDragStart" @drag="updateDrag"
+            @dragend="endDrag">
             <div class="w-full h-full" :class="{ 'pointer-events-none': !allowPointerEventsInside }">
                 <slot />
             </div>
@@ -16,10 +17,11 @@ import { Ref, ref } from 'vue';
 
 import { DnDPayload, useDragAndDrop } from '@/dnd';
 
-const { allowPointerEventsInside = false, ...props } = defineProps<{
+const { allowPointerEventsInside = false, disabled = false, ...props } = defineProps<{
     makePayload: () => T;
     // Prevents wild jank when dragging anything that involves <img> tags
-    allowPointerEventsInside?: boolean
+    allowPointerEventsInside?: boolean,
+    disabled?: boolean,
 }>();
 
 const emits = defineEmits<{

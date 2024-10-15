@@ -11,8 +11,7 @@
                 </span>
             </div>
             <div v-if="artists" class="text-ls-400 dark:text-ds-200">-</div>
-            <!-- TODO song click interaction -->
-            <span v-if="song"
+            <span v-if="song" @click="router.push(makeSongURL(song.path))"
                 class="cursor-pointer hover:underline hover:text-accent-600 overflow-hidden text-ellipsis">
                 {{ formatTitle(song) }}
             </span>
@@ -38,7 +37,7 @@ import { useRouter } from 'vue-router';
 import Waveform from '@/components/playback/Waveform.vue';
 import { formatDuration, formatTitle, isFakeArtist } from "@/format";
 import { usePlaybackStore } from '@/stores/playback';
-import { makeArtistURL } from '@/router';
+import { makeArtistURL, makeSongURL } from '@/router';
 
 const router = useRouter();
 const playback = usePlaybackStore();
