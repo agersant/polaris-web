@@ -9,7 +9,7 @@
                 <Switch v-model="displayMode"
                     :items="[{ icon: 'view_list', value: 'fixed' }, { icon: 'text_fields', value: 'proportional' }]" />
             </div>
-            <ArtistList ref="list" v-if="filteredArtists.length" :artists="filteredArtists" :display-mode="displayMode"
+            <ArtistList ref="list" v-if="filteredArtists.length" :artists="filteredArtists" :list-mode="displayMode"
                 class="-mx-4 px-4" />
             <div v-else class="grow flex mt-40 justify-center text-center">
                 <BlankStateFiller icon="filter_alt_off">
@@ -45,15 +45,16 @@ import Error from '@/components/basic/Error.vue';
 import InputText from '@/components/basic/InputText.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import Switch from '@/components/basic/Switch.vue';
-import ArtistList, { DisplayMode } from '@/components/library/ArtistList.vue';
+import ArtistList from '@/components/library/ArtistList.vue';
 import { saveScrollState, useHistory } from '@/history';
+import { ArtistListMode } from '@/stores/preferences';
 
 const props = defineProps<{ name: string }>();
 
 const filter = ref("");
 
 // TODO save in preferences
-const displayMode: Ref<DisplayMode> = ref("fixed");
+const displayMode: Ref<ArtistListMode> = ref("fixed");
 
 const { state: artists, isLoading, error, execute: fetchArtists } = useAsyncState(getGenreArtists, undefined, { immediate: false, resetOnExecute: true });
 
