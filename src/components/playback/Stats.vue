@@ -95,11 +95,11 @@ const genreChartOptions = computed(() => ({
     yaxis: { labels: { style: { colors: "#00000000" } } }, // Draw transparent. Disabling these entirely misaligns the chart.
 }));
 
-const minYear = 2012;
+const minYear = 2009;
 const maxYear = 2025;
 
 const yearSeries = [{
-    data: [...Array(1 + maxYear - minYear).keys()].map(n => [minYear + n, Math.floor((n * 165654 + n * n / 2) % 7)]),
+    data: [...Array(1 + maxYear - minYear).keys()].map(n => [`${minYear + n}-01-01`, Math.floor((n * 123654 + (n % 4) * n / 2) % 7)]),
 }];
 
 const yearChartOptions = {
@@ -125,22 +125,20 @@ const yearChartOptions = {
     stroke: { curve: "smooth" },
     tooltip: { enabled: false },
     xaxis: {
-        axisBorder: { show: false },
+        axisBorder: { color: toHex(surface200.value) },
         axisTicks: {
             color: toHex(surface400.value),
         },
         decimalsInFloat: 0,
         labels: {
-            offsetY: 8,
             rotateAlways: true,
             style: {
                 colors: toHex(surface500.value),
                 fontSize: "12px",
-                fontWeight: 500,
                 fontFamily: "InterVariable",
             },
         },
-        type: "numeric",
+        type: "datetime",
     },
     yaxis: {
         axisBorder: { show: false },
