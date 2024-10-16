@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="flex flex-col">
-            <SectionTitle label="Main Genres" icon="label" />
+            <SectionTitle label="Main Genres" icon="hexagon" />
             <apexchart type="radar" :options="genreChartOptions" :series="genreSeries" />
         </div>
         <div class="flex flex-col">
