@@ -22,7 +22,7 @@
         </div>
         <div class="flex flex-col">
             <SectionTitle label="Songs by Year" icon="timeline" />
-            <apexchart type="area" :options="yearChartOptions" :series="yearSeries" />
+            <apexchart type="line" :options="yearChartOptions" :series="yearSeries" />
         </div>
     </div>
 </template>
@@ -40,12 +40,13 @@ defineProps<{
     paths: string[]
 }>();
 
-const accentColor = useCssVar("--accent-600");
-const backgroundColor = useCssVar("--surface-0");
-const dimmestColor = useCssVar("--surface-50");
-const dimColor = useCssVar("--surface-200");
-const dimTextColor = useCssVar("--surface-500");
-const textColor = useCssVar("--surface-700");
+const accent600 = useCssVar("--accent-600");
+const surface0 = useCssVar("--surface-0");
+const surface50 = useCssVar("--surface-50");
+const surface200 = useCssVar("--surface-200");
+const surface400 = useCssVar("--surface-400");
+const surface500 = useCssVar("--surface-500");
+const surface700 = useCssVar("--surface-700");
 
 function toHex(color: string) {
     return formatHex(rgb(`rgb(${color})`));
@@ -62,15 +63,15 @@ const genreChartOptions = computed(() => ({
         toolbar: { show: false },
         zoom: { enabled: false },
     },
-    colors: [toHex(accentColor.value)],
+    colors: [toHex(accent600.value)],
     markers: { size: 5, shape: "diamond", strokeOpacity: 0, },
     plotOptions: {
         radar: {
             size: 130,
             polygons: {
-                strokeColors: toHex(dimColor.value),
+                strokeColors: toHex(surface200.value),
                 fill: {
-                    colors: [toHex(dimmestColor.value), toHex(backgroundColor.value)]
+                    colors: [toHex(surface50.value), toHex(surface0.value)]
                 }
             }
         }
@@ -84,7 +85,7 @@ const genreChartOptions = computed(() => ({
         categories: ['Metal', 'Heavy Metal', 'Black Metal', 'Power Metal', 'Symphonic Metal', 'Folk Metal'],
         labels: {
             style: {
-                colors: [toHex(textColor.value), toHex(textColor.value), toHex(textColor.value), toHex(textColor.value), toHex(textColor.value), toHex(textColor.value)],
+                colors: [toHex(surface700.value), toHex(surface700.value), toHex(surface700.value), toHex(surface700.value), toHex(surface700.value), toHex(surface700.value)],
                 fontSize: "12px",
                 fontWeight: 500,
                 fontFamily: "InterVariable",
@@ -94,8 +95,11 @@ const genreChartOptions = computed(() => ({
     yaxis: { labels: { style: { colors: "#00000000" } } }, // Draw transparent. Disabling these entirely misaligns the chart.
 }));
 
+const minYear = 2012;
+const maxYear = 2025;
+
 const yearSeries = [{
-    data: [[1990, 21], [1991, 65], [1992, 38], [1993, 94], [1998, 2], [2001, 6], [2002, 13], [2005, 17], [2012, 8], [2020, 2]],
+    data: [...Array(1 + maxYear - minYear).keys()].map(n => [minYear + n, Math.floor((n * 165654 + n * n / 2) % 7)]),
 }];
 
 const yearChartOptions = {
@@ -105,41 +109,44 @@ const yearChartOptions = {
         toolbar: { show: false },
         zoom: { enabled: false },
     },
-    colors: [toHex(accentColor.value)],
+    colors: [toHex(accent600.value)],
     dataLabels: { enabled: false },
-    grid: {
-        borderColor: toHex(dimColor.value),
+    grid: { show: false, },
+    fill: {
+        type: 'gradient',
+        gradient: {
+            type: "vertical",
+            colorStops: [
+                { offset: 0, color: toHex(accent600.value), opacity: 1 },
+                { offset: 100, color: toHex(accent600.value), opacity: 0.2 },
+            ]
+        }
     },
-    markers: { size: 5, shape: "diamond", strokeOpacity: 0, },
-    stroke: {
-        curve: "straight",
-        width: 1.5,
-    },
+    stroke: { curve: "smooth" },
     tooltip: { enabled: false },
     xaxis: {
         axisBorder: { show: false },
-        axisTicks: { show: false },
+        axisTicks: {
+            color: toHex(surface400.value),
+        },
+        decimalsInFloat: 0,
         labels: {
             offsetY: 8,
             rotateAlways: true,
             style: {
-                colors: toHex(dimTextColor.value),
+                colors: toHex(surface500.value),
                 fontSize: "12px",
                 fontWeight: 500,
                 fontFamily: "InterVariable",
             },
         },
+        type: "numeric",
     },
     yaxis: {
-        labels: {
-            offsetX: -16,
-            style: {
-                colors: toHex(dimTextColor.value),
-                fontSize: "12px",
-                fontWeight: 500,
-                fontFamily: "InterVariable",
-            },
-        },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        min: 0,
+        labels: { show: false },
     },
 };
 
