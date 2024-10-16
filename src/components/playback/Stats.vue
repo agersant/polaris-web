@@ -91,7 +91,7 @@ const genreChartOptions = computed(() => ({
             },
         },
     },
-    yaxis: { show: false },
+    yaxis: { labels: { style: { colors: "#00000000" } } }, // Draw transparent. Disabling these entirely misaligns the chart.
 }));
 
 const yearSeries = [{
