@@ -6,8 +6,7 @@
 			<template #right>
 				<div class="relative flex gap-2">
 					<Button label="Clear" severity="secondary" icon="clear" @click="playback.clear" />
-					<!-- TODO show playlist stats (duration, number of songs, songs per year bar chart? most represented artists? longest songs?) -->
-					<Button label="Stats" severity="secondary" icon="bar_chart" />
+					<Button label="Stats" severity="secondary" icon="bar_chart" @click="showStats = true" />
 					<Button label="Save" severity="secondary" icon="save" @click="savingPlaylist = true" />
 
 					<ScreenFade>
@@ -30,6 +29,10 @@
 							</form>
 						</div>
 					</Transition>
+
+					<SidePanel v-model="showStats">
+						<Stats :paths="[]" />
+					</SidePanel>
 				</div>
 			</template>
 		</PageTitle>
@@ -89,7 +92,9 @@ import ScreenFade from "@/components/basic/ScreenFade.vue"
 import Select, { SelectOption } from '@/components/basic/Select.vue';
 import Switch from '@/components/basic/Switch.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
+import SidePanel from '@/components/basic/SidePanel.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
+import Stats from '@/components/playback/Stats.vue';
 import { useDragAndDrop } from '@/dnd';
 import { usePlaybackStore, PlaylistEntry, PlaybackOrder } from '@/stores/playback';
 import { usePlaylistsStore } from "@/stores/playlists";
@@ -125,6 +130,8 @@ const playbackOrder = computed({
 		return playbackOrderOptions.find(o => o.value == playback.playbackOrder) || playbackOrderOptions[0];
 	},
 });
+
+const showStats = ref(false);
 
 const { activeDnD } = useDragAndDrop();
 
