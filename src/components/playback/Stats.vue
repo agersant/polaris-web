@@ -20,7 +20,7 @@
             <SectionTitle label="Main Genres" icon="hexagon" />
             <apexchart type="radar" :options="genreChartOptions" :series="genreSeries" />
         </div>
-        <div class="flex flex-col">
+        <div v-if="yearData.length > 1" class="flex flex-col">
             <SectionTitle label="Songs by Year" icon="timeline" />
             <apexchart type="line" :options="yearChartOptions" :series="yearSeries" />
         </div>
@@ -53,27 +53,48 @@ const playlistSongs = computed(() => {
 });
 
 const genreData: Ref<{ x: string, y: number }[]> = ref([]);
+const yearData: Ref<[string, number][]> = ref([]);
 
 watchImmediate(playlistSongs, () => {
     let songsByGenre = new Map<string, number>();
+    let songsByYear = new Map<number, number>();
     for (const song of playlistSongs.value) {
         for (const genre of song.genres || []) {
             songsByGenre.set(genre, 1 + (songsByGenre.get(genre) || 0));
         }
+        if (song.year) {
+            songsByYear.set(song.year, 1 + (songsByYear.get(song.year) || 0));
+        }
     }
 
-    // Sort by most songs
-    let genres = songsByGenre.entries().map(([genre, count]) => ({ x: genre, y: count })).toArray();
-    genres.sort((a, b) => a.y - b.y).reverse();
+    {
+        // Sort genres by most songs
+        let genres = songsByGenre.entries().map(([genre, count]) => ({ x: genre, y: Math.log(count) / Math.log(1.1) })).toArray();
+        genres.sort((a, b) => a.y - b.y).reverse();
 
-    // Only keep top 8 and sort alphabetically
-    genres = genres.filter(({ y }) => y > 0.02 && y < playlistSongs.value.length).slice(0, 8);
-    genres.sort((a, b) => a.x < b.x ? 1 : -1);
-    genreData.value = genres;
+        // Only keep top 8 and sort alphabetically
+        genres = genres.slice(0, 8);
+        genres.sort((a, b) => a.x < b.x ? 1 : -1);
+        genreData.value = genres;
+    }
+
+    {
+        let minYear = 9999;
+        let maxYear = 0;
+        for (let [year, _] of songsByYear.entries()) {
+            minYear = Math.min(year, minYear);
+            maxYear = Math.max(year, maxYear);
+        }
+        let years: [string, number][] = [];
+        for (let y = minYear; y <= maxYear; y++) {
+            years.push([`${y}-01-01`, songsByYear.get(y) || 0]);
+        }
+        yearData.value = years;
+    }
 });
 
-
 const genreSeries = computed(() => [{ data: genreData.value }]);
+const yearSeries = computed(() => [{ data: yearData.value }]);
 
 const accent600 = useCssVar("--accent-600");
 const surface0 = useCssVar("--surface-0");
@@ -127,12 +148,6 @@ const genreChartOptions = computed(() => ({
     },
 }));
 
-const minYear = 2009;
-const maxYear = 2025;
-
-const yearSeries = [{
-    data: [...Array(1 + maxYear - minYear).keys()].map(n => [`${minYear + n}-01-01`, Math.floor((n * 123654 + (n % 4) * n / 2) % 7)]),
-}];
 
 const yearChartOptions = {
     chart: {
