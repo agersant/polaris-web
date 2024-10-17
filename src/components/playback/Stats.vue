@@ -3,16 +3,17 @@
         <SectionTitle label="Playlist Stats" icon="bar_chart" />
         <div class="grid grid-cols-2 gap-8 mb-8">
             <div class="p-8 border border-ls-200 rounded-lg">
-                <p class="text-sm font-medium leading-6 text-ls-700">Number of songs</p>
+                <p class="text-sm font-medium leading-6 text-ls-700 dark:text-ds-200">Number of songs</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-ls-900" v-text="playback.playlist.length" />
+                    <span class="text-4xl font-semibold tracking-tight text-ls-900 dark:text-ds-0"
+                        v-text="playback.playlist.length" />
                 </p>
             </div>
             <div class="p-8 border border-ls-200 rounded-lg">
-                <p class="text-sm font-medium leading-6 text-ls-700">Duration</p>
+                <p class="text-sm font-medium leading-6 text-ls-700 dark:text-ds-200">Duration</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-ls-900" v-text="duration" />
-                    <span class="text-sm text-ls-700" v-text="durationUnit" />
+                    <span class="text-4xl font-semibold tracking-tight text-ls-900 dark:text-ds-0" v-text="duration" />
+                    <span class="text-sm text-ls-700 dark:text-ds-200" v-text="durationUnit" />
                 </p>
             </div>
         </div>
@@ -36,9 +37,11 @@ import { Song } from '@/api/dto';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import { usePlaybackStore } from '@/stores/playback';
 import { useSongsStore } from '@/stores/songs';
+import { usePreferencesStore } from '@/stores/preferences';
 
 const rgb = useMode(modeRgb);
 const playback = usePlaybackStore();
+const preferences = usePreferencesStore();
 const songs = useSongsStore();
 
 const playlistSongs = computed(() => {
@@ -115,13 +118,14 @@ watchImmediate(playlistSongs, () => {
 const genreSeries = computed(() => [{ data: genreData.value }]);
 const yearSeries = computed(() => [{ data: yearData.value }]);
 
-const accent600 = useCssVar("--accent-600");
-const surface0 = useCssVar("--surface-0");
-const surface50 = useCssVar("--surface-50");
-const surface200 = useCssVar("--surface-200");
-const surface400 = useCssVar("--surface-400");
+const lightMode = computed(() => preferences.polarity == "light");
+const accent600 = useCssVar(() => lightMode.value ? "--accent-600" : "--accent-700");
+const surface0 = useCssVar(() => lightMode.value ? "--surface-0" : "--surface-900");
+const surface50 = useCssVar(() => lightMode.value ? "--surface-50" : "--surface-800");
+const surface200 = useCssVar(() => lightMode.value ? "--surface-200" : "--surface-700");
+const surface400 = useCssVar(() => lightMode.value ? "--surface-400" : "--surface-600");
 const surface500 = useCssVar("--surface-500");
-const surface700 = useCssVar("--surface-700");
+const surface700 = useCssVar(() => lightMode.value ? "--surface-700" : "--surface-300");
 
 function toHex(color: string) {
     return formatHex(rgb(`rgb(${color})`));
