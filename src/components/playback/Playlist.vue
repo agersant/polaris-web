@@ -5,9 +5,12 @@
 		<PageTitle :label="playlistName">
 			<template #right>
 				<div class="relative flex gap-2">
-					<Button label="Clear" severity="secondary" icon="clear" @click="playback.clear" />
-					<Button label="Stats" severity="secondary" icon="bar_chart" @click="showStats = true" />
-					<Button label="Save" severity="secondary" icon="save" @click="savingPlaylist = true" />
+					<Button label="Clear" severity="secondary" icon="clear" @click="playback.clear"
+						:disabled="isEmpty" />
+					<Button label="Stats" severity="secondary" icon="bar_chart" @click="showStats = true"
+						:disabled="isEmpty" />
+					<Button label="Save" severity="secondary" icon="save" @click="savingPlaylist = true"
+						:disabled="isEmpty" />
 
 					<ScreenFade>
 						<ScreenDarkening v-if="savingPlaylist" class="z-10" />
@@ -137,6 +140,8 @@ const { activeDnD } = useDragAndDrop();
 
 onMounted(() => autoScroll("instant"));
 watch(() => playback.currentTrack, () => autoScroll("smooth"));
+
+const isEmpty = computed(() => playback.playlist.length == 0);
 
 function autoScroll(scrollBehavior: ScrollBehavior) {
 	nextTick(() => {

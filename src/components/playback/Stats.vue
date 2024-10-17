@@ -5,14 +5,14 @@
             <div class="p-8 border border-ls-200 rounded-lg">
                 <p class="text-sm font-medium leading-6 text-ls-700">Number of songs</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-ls-900">9999</span>
+                    <span class="text-4xl font-semibold tracking-tight text-ls-900" v-text="playback.playlist.length" />
                 </p>
             </div>
             <div class="p-8 border border-ls-200 rounded-lg">
                 <p class="text-sm font-medium leading-6 text-ls-700">Duration</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-ls-900">342.1</span>
-                    <span class="text-sm text-ls-700">hours</span>
+                    <span class="text-4xl font-semibold tracking-tight text-ls-900" v-text="duration" />
+                    <span class="text-sm text-ls-700" v-text="durationUnit" />
                 </p>
             </div>
         </div>
@@ -54,10 +54,14 @@ const playlistSongs = computed(() => {
 
 const genreData: Ref<{ x: string, y: number }[]> = ref([]);
 const yearData: Ref<[string, number][]> = ref([]);
+const duration = ref(0);
+const durationUnit = ref("");
 
 watchImmediate(playlistSongs, () => {
     let songsByGenre = new Map<string, number>();
     let songsByYear = new Map<number, number>();
+    let seconds = 0;
+
     for (const song of playlistSongs.value) {
         for (const genre of song.genres || []) {
             songsByGenre.set(genre, 1 + (songsByGenre.get(genre) || 0));
@@ -65,6 +69,7 @@ watchImmediate(playlistSongs, () => {
         if (song.year) {
             songsByYear.set(song.year, 1 + (songsByYear.get(song.year) || 0));
         }
+        seconds += song.duration || 0;
     }
 
     {
@@ -90,6 +95,20 @@ watchImmediate(playlistSongs, () => {
             years.push([`${y}-01-01`, songsByYear.get(y) || 0]);
         }
         yearData.value = years;
+    }
+
+    const minutes = seconds / 60;
+    const hours = minutes / 60;
+    const days = hours / 24;
+    if (hours < 2) {
+        duration.value = Math.floor(seconds / 60);
+        durationUnit.value = "mins";
+    } else if (days < 2) {
+        duration.value = Math.floor(10 * hours) / 10;
+        durationUnit.value = "hours";
+    } else {
+        duration.value = Math.floor(10 * days) / 10;
+        durationUnit.value = "days";
     }
 });
 
