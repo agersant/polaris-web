@@ -31,7 +31,7 @@
 					</Transition>
 
 					<SidePanel v-model="showStats">
-						<Stats :paths="[]" />
+						<Stats />
 					</SidePanel>
 				</div>
 			</template>
