@@ -77,7 +77,7 @@ watchImmediate(playlistSongs, () => {
 
     {
         // Sort genres by most songs
-        let genres = songsByGenre.entries().map(([genre, count]) => ({ x: genre, y: Math.log(count) / Math.log(1.1) })).toArray();
+        let genres = Array.from(songsByGenre, ([genre, count]) => ({ x: genre, y: Math.log(count) / Math.log(1.1) }));
         genres.sort((a, b) => a.y - b.y).reverse();
 
         // Only keep top 8 and sort alphabetically
