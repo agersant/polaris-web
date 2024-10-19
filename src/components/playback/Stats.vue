@@ -77,12 +77,12 @@ watchImmediate(playlistSongs, () => {
 
     {
         // Sort genres by most songs
-        let genres = Array.from(songsByGenre, ([genre, count]) => ({ x: genre, y: Math.log(count) / Math.log(1.1) }));
+        let genres = Array.from(songsByGenre, ([genre, count]) => ({ x: genre, y: Math.pow(count, 0.4) }));
         genres.sort((a, b) => a.y - b.y).reverse();
 
         // Only keep top 8 and sort alphabetically
         genres = genres.slice(0, 8);
-        genres.sort((a, b) => a.x < b.x ? 1 : -1);
+        genres.sort((a, b) => a.x < b.x ? -1 : 1);
         genreData.value = genres;
     }
 
@@ -183,7 +183,7 @@ const yearChartOptions = {
     dataLabels: { enabled: false },
     grid: { show: false, },
     fill: {
-        type: 'gradient',
+        type: "gradient",
         gradient: {
             type: "vertical",
             colorStops: [
@@ -211,10 +211,19 @@ const yearChartOptions = {
         type: "datetime",
     },
     yaxis: {
-        axisBorder: { show: false },
-        axisTicks: { show: false },
-        min: 0,
-        labels: { show: false },
+        axisBorder: { show: true },
+        axisTicks: {
+            show: true,
+            color: toHex(surface400.value),
+        },
+        tickAmount: 4,
+        labels: {
+            style: {
+                colors: toHex(surface500.value),
+                fontSize: "12px",
+                fontFamily: "InterVariable",
+            },
+        },
     },
 };
 
