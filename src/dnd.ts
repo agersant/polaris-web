@@ -1,8 +1,8 @@
 import { Ref, ref } from 'vue';
 import { useMouse } from '@vueuse/core'
 
-import { Album, AlbumHeader, AlbumKey, BrowserEntry, Song } from "./api/dto";
-import { flatten, getAlbum, getGenreSongs, getPlaylist } from "./api/endpoints";
+import { Album, AlbumKey, BrowserEntry, Song } from "./api/dto";
+import { flatten, getAlbum, getGenreSongs } from "./api/endpoints";
 import { formatTitle, getPathTail, pluralize } from "./format";
 
 export type DnDPayload = DndPayloadAlbum | DndPayloadAlbumKey | DndPayloadFiles | DndPayloadGenre | DndPayloadPaths | DndPayloadSongs;
