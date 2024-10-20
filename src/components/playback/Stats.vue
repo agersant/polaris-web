@@ -2,14 +2,14 @@
     <div class="min-h-full flex flex-col">
         <SectionTitle label="Playlist Stats" icon="bar_chart" />
         <div class="grid grid-cols-2 gap-8 mb-8">
-            <div class="p-8 border border-ls-200 rounded-lg">
+            <div class="p-8 border border-ls-200 dark:border-ds-700 rounded-lg">
                 <p class="text-sm font-medium leading-6 text-ls-700 dark:text-ds-200">Number of songs</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
                     <span class="text-4xl font-semibold tracking-tight text-ls-900 dark:text-ds-0"
                         v-text="playback.playlist.length" />
                 </p>
             </div>
-            <div class="p-8 border border-ls-200 rounded-lg">
+            <div class="p-8 border border-ls-200 dark:border-ds-700 rounded-lg">
                 <p class="text-sm font-medium leading-6 text-ls-700 dark:text-ds-200">Duration</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
                     <span class="text-4xl font-semibold tracking-tight text-ls-900 dark:text-ds-0" v-text="duration" />
@@ -144,6 +144,7 @@ const genreChartOptions = computed(() => ({
         radar: {
             size: 130,
             polygons: {
+                connectorColors: toHex(surface200.value),
                 strokeColors: toHex(surface200.value),
                 fill: {
                     colors: [toHex(surface50.value), toHex(surface0.value)]
@@ -211,7 +212,10 @@ const yearChartOptions = {
         type: "datetime",
     },
     yaxis: {
-        axisBorder: { show: true },
+        axisBorder: {
+            show: true,
+            color: toHex(surface400.value),
+        },
         axisTicks: {
             show: true,
             color: toHex(surface400.value),
