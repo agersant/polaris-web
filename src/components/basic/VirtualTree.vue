@@ -45,6 +45,8 @@ const itemHeight = ref(36);
 
 const nodes = defineModel<T[]>({ required: true });
 
+const props = defineProps<{ id?: string }>();
+
 const emit = defineEmits<{
     "node-expand": [node: T],
     "node-double-click": [node: T],
@@ -128,7 +130,6 @@ function toggleNode(node: T) {
 
     virtualList.value?.focus();
 }
-
 
 function onNodeDoubleClick(event: MouseEvent, node: T) {
     if (!node.leaf) {
@@ -262,6 +263,6 @@ function snapScrolling() {
     }
 }
 
-useHistory("virtual-tree", [nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)]);
+useHistory(`virtual-tree-${props.id || 'default'}`, [nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)]);
 
 </script>
