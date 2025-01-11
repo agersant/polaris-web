@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2" data-pw="album">
         <div @click="router.push(makeAlbumURL(album.main_artists, album.name))"
             :class="size == 'lg' ? 'hover:scale-105' : 'hover:scale-110'" class="
                 cursor-pointer aspect-square w-full origin-center 

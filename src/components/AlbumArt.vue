@@ -1,5 +1,5 @@
 <template>
-    <UseImage :src="url || ''" class="w-full h-full object-cover" :class="rounding">
+    <UseImage :src="url || ''" data-pw="album-art" class="w-full h-full object-cover" :class="rounding">
         <template #loading>
             <div class="bg-ls-200 text-ls-400 dark:bg-ds-950/30 dark:text-ds-600 w-full h-full aspect-square flex items-center justify-center"
                 :class="rounding">

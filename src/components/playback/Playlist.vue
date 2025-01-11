@@ -5,12 +5,12 @@
 		<PageTitle :label="playlistName">
 			<template #right>
 				<div class="relative flex gap-2">
-					<Button label="Clear" severity="secondary" icon="clear" @click="playback.clear"
-						:disabled="isEmpty" />
+					<Button label="Clear" severity="secondary" icon="clear" testID="clear-playlist"
+						@click="playback.clear" :disabled="isEmpty" />
 					<Button label="Stats" severity="secondary" icon="bar_chart" @click="showStats = true"
 						:disabled="isEmpty" />
-					<Button label="Save" severity="secondary" icon="save" @click="savingPlaylist = true"
-						:disabled="isEmpty" />
+					<Button label="Save" severity="secondary" icon="save" testID="save-playlist"
+						@click="savingPlaylist = true" :disabled="isEmpty" />
 
 					<ScreenFade>
 						<ScreenDarkening v-if="savingPlaylist" class="z-10" />
@@ -24,8 +24,10 @@
 							dark:shadow-none dark:border dark:border-ds-800
 							">
 							<form @submit.prevent="savePlaylist" class="relative p-6 flex flex-col gap-4">
-								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
-								<Button type="submit" label="Save" severity="primary" icon="save" />
+								<InputText v-model="playlistName" id="playlistName" label="Playlist Name"
+									testID="save-playlist-name" autofocus />
+								<Button type="submit" label="Save" severity="primary" icon="save"
+									testID="submit-save-playlist" />
 								<div class="absolute right-2 top-2">
 									<Button icon="close" severity="tertiary" @click="cancelSavePlaylist" />
 								</div>
