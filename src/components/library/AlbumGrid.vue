@@ -6,7 +6,7 @@
             <AlbumGridCell ref="sampleCell" :album="sampleAlbum" :size="cellSize" :show-artists="showArtists"
                 class="absolute opacity-0" :style="{ width: `${itemWidth}px` }" />
             <AlbumGridCell v-for="(album, index) of virtualAlbums" :key="album.name + album.main_artists.join('')"
-                :album="album" :size="cellSize" :show-artists="showArtists" class="absolute" :style="{
+                :album="album" :size="cellSize" :show-artists="showArtists" data-pw="album" class="absolute" :style="{
                     width: `${itemWidth}px`,
                     left: `${((index + firstVirtual) % numColumns) * (itemWidth + gapSize)}px`,
                     top: `${Math.floor((index + firstVirtual) / numColumns) * (itemHeight + gapSize)}px`,
