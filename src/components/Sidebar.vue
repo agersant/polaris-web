@@ -1,13 +1,13 @@
 <template>
-	<div
+	<div data-pw="sidebar"
 		class="w-80 rounded-lg flex flex-col overflow-hidden border bg-ls-0 dark:bg-ds-900 border-ls-200 dark:border-ds-700 p-6 pb-0">
 		<img src="/assets/logo.svg" class="mt-4 mb-10 mx-4" />
 		<nav class="grow flex flex-col gap-y-7">
 
 			<ul class="-mx-2 space-y-1">
 				<li v-for="item in navigation" :key="item.label">
-					<SidebarItem :action="item.action" :label="item.label" :icon="item.icon"
-						:current="isCurrent(item)" />
+					<SidebarItem :action="item.action" :label="item.label" :icon="item.icon" :current="isCurrent(item)"
+						:data-pw="item.testID" />
 				</li>
 			</ul>
 
@@ -43,6 +43,7 @@ interface Item {
 	label: string,
 	icon: string,
 	pattern?: RegExp,
+	testID?: string,
 	action: () => void,
 }
 
@@ -57,6 +58,6 @@ const navigation: Ref<Item[]> = ref([
 	{ label: "Albums", icon: "library_music", pattern: new RegExp("^/albums"), action: navigateTo("/albums") },
 	{ label: "Playlists", icon: "playlist_play", pattern: new RegExp("^/playlist"), action: navigateTo("/playlists") },
 	{ label: "Search", icon: "search", pattern: new RegExp("^/search"), action: navigateTo("/search") },
-	{ label: "Settings", icon: "settings", pattern: new RegExp("^/settings"), action: navigateTo("/settings/preferences") },
+	{ label: "Settings", icon: "settings", pattern: new RegExp("^/settings"), testID: "settings", action: navigateTo("/settings/preferences") },
 ]);
 </script>

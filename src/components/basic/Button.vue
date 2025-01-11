@@ -1,5 +1,5 @@
 <template>
-    <button type="button" :class="buttonClass" :disabled="disabled"
+    <button type="button" :class="buttonClass" :disabled="disabled" :data-pw="testID"
         class="inline-flex items-center justify-center gap-x-1.5 rounded-md text-sm font-semibold whitespace-nowrap">
         <span v-if="icon" class="material-icons-round" :class="iconClass">
             {{ icon }}
@@ -17,6 +17,7 @@ const { severity = "primary", size = "base", ...props } = defineProps<{
     disabled?: boolean,
     severity?: "primary" | "secondary" | "tertiary" | "danger",
     size?: "sm" | "base" | "lg" | "xl",
+    testID?: string,
 }>();
 
 let palettes = {
