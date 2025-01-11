@@ -32,21 +32,21 @@ export default defineConfig({
       name: 'initial-setup',
       testMatch: '**/initial-setup.spec.ts',
     },
-    // Perform tests with disruptive side-effects (eg. add/remove collection directories)
+    // Perform regular usage tests
     {
-      name: 'admin',
+      name: 'user',
       dependencies: ['initial-setup'],
-      testMatch: '**/admin.spec.ts',
+      testMatch: '**/user.*.spec.ts',
+      fullyParallel: true,
       use: {
         storageState: 'playwright/.auth/user.json',
       }
     },
-    // Perform regular usage tests
+    // Perform tests with disruptive side-effects (eg. add/remove collection directories)
     {
-      name: 'user',
-      dependencies: ['admin'],
-      testMatch: '**/user.*.spec.ts',
-      fullyParallel: true,
+      name: 'admin',
+      dependencies: ['user'],
+      testMatch: '**/admin.spec.ts',
       use: {
         storageState: 'playwright/.auth/user.json',
       }
