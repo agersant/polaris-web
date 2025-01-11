@@ -27,9 +27,9 @@ const tabs = computed(() => {
 	let items: TabItem<Category>[] = [];
 	items.push({ label: "Preferences", key: "preferences" });
 	if (user.isAdmin) {
-		items.push({ label: "Collection", key: "collection" });
-		items.push({ label: "Users", key: "users" });
-		items.push({ label: "Dynamic DNS", key: "ddns" });
+		items.push({ label: "Collection", key: "collection", testID: "collection" });
+		items.push({ label: "Users", key: "users", testID: "users" });
+		items.push({ label: "Dynamic DNS", key: "ddns", testID: "ddns" });
 	}
 	return items;
 });

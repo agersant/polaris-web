@@ -14,7 +14,7 @@
                 </div>
                 <div class="flex items-center gap-2 text-ls-500 dark:text-ds-400">
                     <span class="material-icons-round" v-text="'access_time'" />
-                    <span v-text="timing" />
+                    <span v-text="timing" data-pw="last-scan" />
                 </div>
                 <div class="flex items-center gap-2 text-ls-500 dark:text-ds-400">
                     <span class="material-icons-round" v-text="'audiotrack'" />
@@ -26,7 +26,7 @@
             </div>
 
             <Button label="Scan Collection" icon="sync" severity="secondary" size="xl" @click="emit('trigger-index')"
-                :disabled="status.state != 'UpToDate'" />
+                testID="trigger-scan" :disabled="status.state != 'UpToDate'" />
         </div>
     </div>
 </template>

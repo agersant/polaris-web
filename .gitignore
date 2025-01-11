@@ -5,4 +5,4 @@ automated.config.toml
 /test-results/
 /playwright-report/
 /blob-report/
-/playwright/.cache/
+/playwright/

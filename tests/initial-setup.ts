@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import path from 'path';
+
+const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 
 test.describe('initial setup tests', () => {
 
@@ -22,5 +25,7 @@ test.describe('initial setup tests', () => {
         await page.getByTestId('submit-user').click();
 
         await page.waitForURL('**/files');
+
+        await page.context().storageState({ path: authFile });
     });
 });

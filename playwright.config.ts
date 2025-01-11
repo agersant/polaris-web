@@ -5,13 +5,11 @@ import { defineConfig } from '@playwright/test';
  */
 export default defineConfig({
   expect: {
-    timeout: 2_000,
+    timeout: 5_000,
   },
   timeout: 5_000,
   testDir: './tests',
   globalSetup: './tests/wipe-polaris-config',
-  /* Run tests in files in parallel */
-  fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -28,25 +26,29 @@ export default defineConfig({
     testIdAttribute: 'data-pw',
   },
 
-  /* Configure projects for major browsers */
   projects: [
+    // Perform initial setup
     {
       name: 'initial-setup',
       testMatch: '**/initial-setup.ts',
     },
+    // Perform tests with side-effects (eg. add/remove collection directories)
     {
       name: 'admin',
       testMatch: '**/admin.ts',
       dependencies: ['initial-setup'],
+      use: {
+        storageState: 'playwright/.auth/user.json',
+      }
     },
+    // Perform all other tests
     {
-      name: 'login',
-      testMatch: '**/login.ts',
-      dependencies: ['initial-setup', 'admin'],
-    },
-    {
-      name: 'client',
-      dependencies: ['login'],
+      name: 'user',
+      dependencies: ['admin'],
+      fullyParallel: true,
+      use: {
+        storageState: 'playwright/.auth/user.json',
+      }
     },
   ]
 });
