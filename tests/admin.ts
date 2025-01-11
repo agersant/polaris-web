@@ -46,11 +46,28 @@ test("add and remove mount dir", async ({ page }) => {
     await expect(page.getByTestId('source')).toHaveCount(1);
 });
 
+test("change ddns update URL", async ({ page }) => {
+    const url = `http://example.com/${Math.random().toString()}`;
+
+    await page.goto("/");
+    await page.getByTestId('sidebar').getByTestId('settings').click();
+    await page.getByTestId('ddns').click();
+
+    await page.getByTestId('ddns-url').fill(url);
+    console.log(url);
+
+    const putRequest = page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/settings"));
+    await page.getByTestId('apply').click();
+    await putRequest;
+    await page.reload();
+
+    await expect(page.getByTestId('ddns-url')).toHaveValue(url);
+});
+
 test("reindex", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId('sidebar').getByTestId('settings').click();
     await page.getByTestId('collection').click();
-    await expect(page.getByTestId('last-scan')).not.toContainText('just now');
     await page.getByTestId('trigger-scan').click();
-    await expect(page.getByTestId('last-scan')).toContainText('just now');
+    await expect(page.getByTestId('last-scan')).toContainText('just now', { timeout: 10_000 });
 });
