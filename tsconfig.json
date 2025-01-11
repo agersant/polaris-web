@@ -10,15 +10,24 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"esModuleInterop": true,
-		"lib": ["esnext", "dom"],
+		"lib": [
+			"esnext",
+			"dom"
+		],
 		"skipLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": [
+				"src/*"
+			]
 		},
-		"types": ["cypress"]
 	},
-	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.tsx",
+		"src/**/*.vue"
+	],
 	"references": [
 		{
 			"path": "./tsconfig.node.json"

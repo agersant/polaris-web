@@ -1,42 +1,41 @@
 {
-	"name": "polaris-web",
-	"version": "1.0.0",
-	"description": "Web UI for Polaris",
-	"repository": "https://github.com/agersant/polaris-web.git",
-	"author": "Antoine Gersant <antoine.gersant@lesforges.org>",
-	"license": "MIT",
-	"devDependencies": {
-		"@types/node": "^20.0",
-		"@vitejs/plugin-vue": "^4",
-		"autoprefixer": "^10.4.20",
-		"cypress": "^13.0",
-		"postcss": "^8.4.41",
-		"tailwindcss": "^3.4.9",
-		"typescript": "^5.2",
-		"vite": "^4",
-		"vue-tsc": "^2.1.6"
-	},
-	"dependencies": {
-		"@headlessui/vue": "^1.7.22",
-		"@tailwindcss/forms": "^0.5.7",
-		"@types/array-equal": "^1.0.2",
-		"@types/culori": "^2.1.1",
-		"@vueuse/components": "^11.0.3",
-		"@vueuse/core": "^10.11.1",
-		"apexcharts": "^3.54.1",
-		"array-equal": "^1.0.2",
-		"culori": "^4.0.1",
-		"material-icons": "^1.13.12",
-		"pinia": "^2.2.2",
-		"vue": "^3.5",
-		"vue-router": "^4.4.3",
-		"vue-use-scroll-size-observer": "^1.0.4",
-		"vue3-apexcharts": "^1.7.0"
-	},
-	"scripts": {
-		"dev": "vite",
-		"test": "vite build && cypress run",
-		"test-ui": "vite build && cypress open",
-		"production": "vue-tsc --noEmit && vite build"
-	}
+  "name": "polaris-web",
+  "version": "1.0.0",
+  "description": "Web UI for Polaris",
+  "repository": "https://github.com/agersant/polaris-web.git",
+  "author": "Antoine Gersant <antoine.gersant@lesforges.org>",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@types/node": "^20.0",
+    "@vitejs/plugin-vue": "^4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.9",
+    "typescript": "^5.2",
+    "vite": "^4",
+    "vue-tsc": "^2.1.6"
+  },
+  "dependencies": {
+    "@headlessui/vue": "^1.7.22",
+    "@tailwindcss/forms": "^0.5.7",
+    "@types/array-equal": "^1.0.2",
+    "@types/culori": "^2.1.1",
+    "@vueuse/components": "^11.0.3",
+    "@vueuse/core": "^10.11.1",
+    "apexcharts": "^3.54.1",
+    "array-equal": "^1.0.2",
+    "culori": "^4.0.1",
+    "material-icons": "^1.13.12",
+    "pinia": "^2.2.2",
+    "vue": "^3.5",
+    "vue-router": "^4.4.3",
+    "vue-use-scroll-size-observer": "^1.0.4",
+    "vue3-apexcharts": "^1.7.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vite build && npx playwright test",
+    "production": "vue-tsc --noEmit && vite build"
+  }
 }
