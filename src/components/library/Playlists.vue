@@ -7,7 +7,7 @@
 			<div ref="viewport" class="-mx-4 px-4 overflow-y-scroll whitespace-nowrap">
 				<div v-if="filtered?.length" class="flex flex-col overflow-x-hidden
                 divide-y divide-ls-200 dark:divide-ds-700">
-					<div v-for="playlist in filtered" :key="playlist.name"
+					<div v-for="playlist in filtered" :key="playlist.name" data-pw="saved-playlist"
 						class="flex items-center first:pt-1 py-4 gap-4">
 						<Button icon="play_arrow" severity="secondary" @click="play(playlist)" />
 						<div class="basis-fit shrink min-w-0 pr-8 flex flex-col">

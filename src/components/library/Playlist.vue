@@ -8,7 +8,8 @@
             <template #right>
                 <div class="ml-8 flex gap-2">
                     <Button label="Play All" severity="secondary" icon="play_arrow" @click="play" />
-                    <Button label="Delete" severity="danger" icon="delete" @click="deletePlaylist" />
+                    <Button label="Delete" severity="danger" icon="delete" testID="delete-playlist"
+                        @click="deletePlaylist" />
                 </div>
             </template>
         </PageTitle>
@@ -21,7 +22,7 @@
                 :items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
         </div>
 
-        <div v-show="songs?.length" class="flex flex-col min-h-0">
+        <div v-show="songs?.length" data-pw="saved-playlist-songs" class="flex flex-col min-h-0">
             <SongList v-model="songs" :compact="preferences.savedPlaylistDisplayMode == 'compact'" invert-stripes />
         </div>
 
