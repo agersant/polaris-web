@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-8" data-pw="user">
 
         <div class="flex items-center justify-between">
             <div class="flex gap-4 items-center">
@@ -14,7 +14,7 @@
             <div class="relative flex gap-4 justify-end">
                 <Button label="Change Password" icon="key" severity="secondary" size="base"
                     @click="editingPassword = true" />
-                <Button label="Delete User" icon="delete" severity="danger" size="base"
+                <Button label="Delete User" icon="delete" severity="danger" size="base" testID="delete-user"
                     @click="users.deleteUser(user.name)" :disabled="isSelf" />
 
                 <ScreenFade>

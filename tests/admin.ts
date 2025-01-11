@@ -17,7 +17,7 @@ test("set album art pattern", async ({ page }) => {
 test("add and remove mount dir", async ({ page }) => {
     const source = Math.random().toString();
     const name = Math.random().toString();
-    const waitForPut = () => page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/mount_dirs"))
+    const waitForPut = () => page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/mount_dirs"));
 
     await page.goto("/");
     await page.getByTestId('sidebar').getByTestId('settings').click();
@@ -44,6 +44,35 @@ test("add and remove mount dir", async ({ page }) => {
     await page.reload();
 
     await expect(page.getByTestId('source')).toHaveCount(1);
+});
+
+test("add and remove user", async ({ page }) => {
+
+    const username = Math.random().toString();
+    const password = Math.random().toString();
+
+    await page.goto("/");
+    await page.getByTestId('sidebar').getByTestId('settings').click();
+    await page.getByTestId('users').click();
+
+    await page.getByTestId('add-user').click();
+    await page.getByTestId('new-user-name').fill(username);
+    await page.getByTestId('new-user-password').fill(password);
+
+    const postRequest = page.waitForRequest(request => request.method() == "POST" && request.url().endsWith('/api/user'));
+    await page.getByTestId('create-user').click();
+    await postRequest;
+    await page.reload();
+
+    await expect(page.getByTestId('user')).toHaveCount(2);
+    await expect(page.getByTestId('user').last()).toContainText(username);
+
+    const deleteRequest = page.waitForRequest(request => request.method() == "DELETE" && request.url().endsWith(`/api/user/${username}`));
+    await page.getByTestId('delete-user').last().click();
+    await deleteRequest;
+    await page.reload();
+
+    await expect(page.getByTestId('user')).toHaveCount(1);
 });
 
 test("change ddns update URL", async ({ page }) => {
