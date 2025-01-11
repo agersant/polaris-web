@@ -12,6 +12,8 @@
 3. Within the polaris-web directory, run `npm install` followed by `npm run dev`
 4. Open the client by visiting the URL listed in the output of `npm run dev`
 5. Changes you make within `polaris-web/src` are visible immediately
-6. The test suite can be run with `npm test`, with the following requirements:
-    - The Polaris server is running with the `-w` option pointing at `\dist` within the polaris-web repository (eg. `-w ../polaris-web/dist`).
-    - The Polaris server only has user accounts created by this test suite
+
+## Running tests
+
+1. Run a Polaris server with the following flags: `polaris -f -w ../polaris-web/dist -c ../polaris-web/automated.config.toml`, where `../polaris-web` is this repository
+2. Run `npm test`
