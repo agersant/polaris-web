@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test("set album art pattern", async ({ page }) => {
+test("can set album art pattern", async ({ page }) => {
     const pattern = Math.random().toString();
     const putRequest = page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/settings"));
 
@@ -14,7 +14,7 @@ test("set album art pattern", async ({ page }) => {
     await expect(page.getByTestId('album-art-pattern')).toHaveValue(pattern);
 });
 
-test("add and remove mount dir", async ({ page }) => {
+test("can add and remove mount dir", async ({ page }) => {
     const source = Math.random().toString();
     const name = Math.random().toString();
     const waitForPut = () => page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/mount_dirs"));
@@ -46,7 +46,7 @@ test("add and remove mount dir", async ({ page }) => {
     await expect(page.getByTestId('source')).toHaveCount(1);
 });
 
-test("add and remove user", async ({ page }) => {
+test("can add and remove user", async ({ page }) => {
 
     const username = Math.random().toString();
     const password = Math.random().toString();
@@ -75,7 +75,7 @@ test("add and remove user", async ({ page }) => {
     await expect(page.getByTestId('user')).toHaveCount(1);
 });
 
-test("change ddns update URL", async ({ page }) => {
+test("can change ddns update URL", async ({ page }) => {
     const url = `http://example.com/${Math.random().toString()}`;
 
     await page.goto("/");
@@ -92,7 +92,7 @@ test("change ddns update URL", async ({ page }) => {
     await expect(page.getByTestId('ddns-url')).toHaveValue(url);
 });
 
-test("reindex", async ({ page }) => {
+test("can trigger reindex", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId('sidebar').getByTestId('settings').click();
     await page.getByTestId('collection').click();

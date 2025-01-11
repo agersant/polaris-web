@@ -5,7 +5,7 @@ const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 
 test.describe('initial setup tests', () => {
 
-    test('click through initial setup flow', async ({ page }) => {
+    test('can click through initial setup flow', async ({ page }) => {
         await page.goto("/");
 
         await expect(page.getByText("Welcome to Polaris!")).toBeVisible();
