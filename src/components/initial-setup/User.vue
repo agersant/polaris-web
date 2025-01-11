@@ -1,13 +1,15 @@
 <template>
 	<Step title="User Account" description="Please choose a username and password.">
-		<InputText v-model="username" id="username" autocomplete="username" label="Username" required />
-		<InputText v-model="password" id="password" autocomplete="password" label="Password" required password />
+		<InputText v-model="username" id="username" autocomplete="username" label="Username" required
+			testID="create-username" />
+		<InputText v-model="password" id="password" autocomplete="password" label="Password" required password
+			testID="create-password" />
 		<InputText v-model="passwordConfirm" id="passwordConfirm" autocomplete="password" label="Confirm password"
-			required password />
+			required password testID="create-password-confirm" />
 		<p v-if="passwordMismatch" class="text-red-600 dark:text-red-500 text-sm py-2">
 			The passwords do not match.
 		</p>
-		<Button label="Next" size="xl" :disabled="!validate()" @click="proceed" class="mt-8" />
+		<Button label="Next" size="xl" :disabled="!validate()" @click="proceed" class="mt-8" data-pw="submit-user" />
 	</Step>
 </template>
 

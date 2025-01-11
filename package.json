@@ -35,7 +35,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "test": "vite build && npx playwright test",
-    "production": "vue-tsc --noEmit && vite build"
+    "build": "vue-tsc --noEmit && vite build",
+    "test": "npm run build && npx playwright test"
   }
 }

@@ -34,19 +34,18 @@ jobs:
               run: cargo build --release
             - name: Run Polaris
               working-directory: polaris
-              run: ./target/release/polaris -w ../dist -f &
+              run: ./target/release/polaris -f -w ../dist -c ../automated.config.toml &
 
             - name: Install Node.js
               uses: actions/setup-node@v1
               with:
                   node-version: "18.12.1"
-            - name: Build Polaris Web
-              run: npm ci && npm run production
-            - name: Install Playwright Browsers
+            - name: Install browsers
               run: npx playwright install --with-deps
-            - name: Run Playwright tests
-
-              run: npx playwright test
+            - name: Build Polaris Web
+              run: npm ci
+            - name: Run tests
+              run: npm test
             - uses: actions/upload-artifact@v4
               with:
                 name: playwright-report
