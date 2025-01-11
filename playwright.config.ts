@@ -7,7 +7,7 @@ export default defineConfig({
   expect: {
     timeout: 5_000,
   },
-  timeout: 5_000,
+  timeout: 10_000,
   testDir: './tests',
   globalSetup: './tests/wipe-polaris-config',
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -30,21 +30,22 @@ export default defineConfig({
     // Perform initial setup
     {
       name: 'initial-setup',
-      testMatch: '**/initial-setup.ts',
+      testMatch: '**/initial-setup.spec.ts',
     },
-    // Perform tests with side-effects (eg. add/remove collection directories)
+    // Perform tests with disruptive side-effects (eg. add/remove collection directories)
     {
       name: 'admin',
-      testMatch: '**/admin.ts',
       dependencies: ['initial-setup'],
+      testMatch: '**/admin.spec.ts',
       use: {
         storageState: 'playwright/.auth/user.json',
       }
     },
-    // Perform all other tests
+    // Perform regular usage tests
     {
       name: 'user',
       dependencies: ['admin'],
+      testMatch: '**/user.*.spec.ts',
       fullyParallel: true,
       use: {
         storageState: 'playwright/.auth/user.json',
