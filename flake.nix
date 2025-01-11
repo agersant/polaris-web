@@ -18,7 +18,12 @@
 
       devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [ playwright-driver.browsers ];
           packages = with pkgs; [ node2nix nodejs nodePackages.pnpm yarn ];
+          shellHook = ''
+            export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
+            export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
+          '';
         };
       });
     };
