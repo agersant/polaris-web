@@ -54,7 +54,6 @@ test("change ddns update URL", async ({ page }) => {
     await page.getByTestId('ddns').click();
 
     await page.getByTestId('ddns-url').fill(url);
-    console.log(url);
 
     const putRequest = page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/settings"));
     await page.getByTestId('apply').click();
