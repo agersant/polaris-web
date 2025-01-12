@@ -8,7 +8,7 @@ test("Can save, retrieve, delete playlist", async ({ page }) => {
     for (const name of names) {
         await page.goto("/");
         await page.getByTestId('sidebar').getByTestId('albums').click();
-        await page.getByTestId('album').filter({ hasText: 'Hunted' }).getByTestId('album-art').click({ force: true });
+        await page.getByTestId('album').filter({ hasText: 'Hunted' }).getByTestId('album-art').click({ force: true, timeout: 500 });
         await page.getByTestId('play-all').click();
         await page.getByTestId('save-playlist').click();
         await page.getByTestId('save-playlist-name').fill(name);
