@@ -7,15 +7,15 @@ test("can set album art pattern", async ({ page }) => {
     await page.goto("/");
     await page.getByTestId('sidebar').getByTestId('settings').click();
     await page.getByTestId('collection').click();
-    await page.getByTestId('album-art-pattern').fill(pattern);
+    await page.getByLabel('album art pattern').fill(pattern);
     await page.getByTestId('apply').click();
     await putRequest;
     await page.reload();
-    await expect(page.getByTestId('album-art-pattern')).toHaveValue(pattern);
+    await expect(page.getByLabel('album art pattern')).toHaveValue(pattern);
 });
 
 test("can add and remove mount dir", async ({ page }) => {
-    const source = Math.random().toString();
+    const location = Math.random().toString();
     const name = Math.random().toString();
     const waitForPut = () => page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/mount_dirs"));
 
@@ -24,17 +24,17 @@ test("can add and remove mount dir", async ({ page }) => {
     await page.getByTestId('collection').click();
 
     await page.getByTestId('add-source').click();
-    await page.getByTestId('source').last().fill(source);
-    await page.getByTestId('name').last().fill(name);
+    await page.getByTestId('location').getByRole('textbox').last().fill(location);
+    await page.getByTestId('name').getByRole('textbox').last().fill(name);
 
     var putRequest = waitForPut();
     await page.getByTestId('apply').click();
     await putRequest;
     await page.reload();
 
-    await expect(page.getByTestId('source')).toHaveCount(2);
-    await expect(page.getByTestId('source').last()).toHaveValue(source);
-    await expect(page.getByTestId('name').last()).toHaveValue(name);
+    await expect(page.getByTestId('location')).toHaveCount(2);
+    await expect(page.getByTestId('location').getByRole('textbox').last()).toHaveValue(location);
+    await expect(page.getByTestId('name').getByRole('textbox').last()).toHaveValue(name);
 
     await page.getByTestId('delete-source').last().click();
 
@@ -43,7 +43,7 @@ test("can add and remove mount dir", async ({ page }) => {
     await putRequest;
     await page.reload();
 
-    await expect(page.getByTestId('source')).toHaveCount(1);
+    await expect(page.getByTestId('location')).toHaveCount(1);
 });
 
 test("can add and remove user", async ({ page }) => {
@@ -56,8 +56,8 @@ test("can add and remove user", async ({ page }) => {
     await page.getByTestId('users').click();
 
     await page.getByTestId('add-user').click();
-    await page.getByTestId('new-user-name').fill(username);
-    await page.getByTestId('new-user-password').fill(password);
+    await page.getByLabel('username').fill(username);
+    await page.getByLabel('password').fill(password);
 
     const postRequest = page.waitForRequest(request => request.method() == "POST" && request.url().endsWith('/api/user'));
     await page.getByTestId('create-user').click();
@@ -82,14 +82,14 @@ test("can change ddns update URL", async ({ page }) => {
     await page.getByTestId('sidebar').getByTestId('settings').click();
     await page.getByTestId('ddns').click();
 
-    await page.getByTestId('ddns-url').fill(url);
+    await page.getByLabel('update url').fill(url);
 
     const putRequest = page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith("/api/settings"));
     await page.getByTestId('apply').click();
     await putRequest;
     await page.reload();
 
-    await expect(page.getByTestId('ddns-url')).toHaveValue(url);
+    await expect(page.getByLabel('update url')).toHaveValue(url);
 });
 
 test("can trigger reindex", async ({ page }) => {

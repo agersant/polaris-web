@@ -2,8 +2,8 @@
 	<div class="flex flex-col">
 		<PageTitle label="Files" />
 
-		<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter" icon="filter_alt" testID="filter"
-			autofocus clearable />
+		<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter" icon="filter_alt" autofocus
+			clearable />
 
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
 			<VirtualTree id="all-files" v-show="!showFiltered" ref="tree" v-model="treeModel"

@@ -9,7 +9,7 @@
             </div>
             <input ref="input" v-focus="autofocus" v-model="model" :id="id" :type="password ? 'password' : 'text'"
                 :placeholder="placeholder" :autocomplete="autocomplete" :autofocus="autofocus" :required="required"
-                :data-pw="testID" :class="inputClass" class="w-full rounded-md border-0 py-2 pr-8 shadow-sm text-sm leading-6
+                :class="inputClass" class="w-full rounded-md border-0 py-2 pr-8 shadow-sm text-sm leading-6
                 ring-1 ring-inset focus:ring-2 focus:ring-inset 
                 dark:bg-white/5
                 text-ls-900 dark:text-ds-0
@@ -41,7 +41,6 @@ const vFocus = {
 
 const props = defineProps<{
     id: string,
-    testID?: string,
     label?: string,
     icon?: string,
     placeholder?: string,

@@ -3,9 +3,9 @@
 		description="Please indicate which directory Polaris should scan to populate your music collection.">
 		<div class="flex items-stretch gap-6">
 			<InputText class="grow" v-model="mountDir.source" id="location" label="Location" placeholder="C:\MyMusic"
-				required testID="location" />
+				required />
 			<InputText class="grow" v-model="mountDir.name" id="name" label="Name" placeholder="Local Drive Music"
-				required testID="name" />
+				required />
 		</div>
 		<Button label="Next" size="xl" :disabled="!validate()" @click="proceed" data-pw="submit-mount-dirs" />
 		<p class="mt-4 text-ls-500 text-xs">
