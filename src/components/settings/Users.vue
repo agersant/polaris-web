@@ -7,7 +7,7 @@
 				<User :user="user" />
 			</div>
 
-			<Button v-if="!newUser" label="Add User" icon="person_add" severity="secondary" size="xl" testID="add-user"
+			<Button v-if="!newUser" label="Add User" icon="person_add" severity="secondary" size="xl" data-pw="add-user"
 				class="self-start" @click="beginCreateUser" />
 
 			<div v-else
@@ -26,7 +26,7 @@
 					autofocus class="w-80" :error="!validNewUserName && !!newUser.name.length" />
 				<InputText v-model="newUser.password" id="password" label="Password" icon="key"
 					testID="new-user-password" password class="w-80" />
-				<Button label="Create User" icon="person_add" severity="primary" size="xl" testID="create-user"
+				<Button label="Create User" icon="person_add" severity="primary" size="xl" data-pw="create-user"
 					@click="endCreateUser" :disabled="!validNewUser" class="self-end" />
 			</div>
 		</div>

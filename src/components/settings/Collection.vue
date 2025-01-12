@@ -19,18 +19,18 @@
 								icon="library_music" placeholder="My Music" class="grow" />
 							<InputText v-model="mountDir.source" id="source" :label="index ? '' : 'Location'"
 								testID="source" icon="folder" placeholder="/home/music" class="grow" />
-							<Button icon="delete" severity="tertiary" testID="delete-source" class="self-end mb-0.5"
+							<Button icon="delete" severity="tertiary" data-pw="delete-source" class="self-end mb-0.5"
 								@click="mountDirs.remove(mountDir)" />
 						</div>
-						<Button label="Add Source" icon="add" severity="tertiary" testID="add-source" class="self-start"
-							@click="mountDirs.create" />
+						<Button label="Add Source" icon="add" severity="tertiary" data-pw="add-source"
+							class="self-start" @click="mountDirs.create" />
 					</div>
 					<!-- TODO Tooltip -->
 					<InputText id="album-art" v-model="settings.album_art_pattern" label="Album Art Pattern"
 						icon="image_search" placeholder="Folder.(jpg|png)" :error="albumArtPatternError"
 						testID="album-art-pattern" class="w-72" />
 					<Button label="Apply Changes" icon="check" size="xl" class="self-end w-40" @click="apply"
-						testID="apply" />
+						data-pw="apply" />
 				</div>
 			</div>
 		</div>
