@@ -7,8 +7,8 @@
 				<div class="relative flex gap-2">
 					<Button label="Clear" severity="secondary" icon="clear" testID="clear-playlist"
 						@click="playback.clear" :disabled="isEmpty" />
-					<Button label="Stats" severity="secondary" icon="bar_chart" @click="showStats = true"
-						:disabled="isEmpty" />
+					<Button label="Stats" severity="secondary" icon="bar_chart" testID="show-playlist-stats"
+						@click="showStats = true" :disabled="isEmpty" />
 					<Button label="Save" severity="secondary" icon="save" testID="save-playlist"
 						@click="savingPlaylist = true" :disabled="isEmpty" />
 
