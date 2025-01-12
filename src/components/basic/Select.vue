@@ -1,5 +1,5 @@
 <template>
-    <Listbox as="div" v-model="selected" :data-pw="testID">
+    <Listbox as="div" v-model="selected">
         <ListboxLabel v-if="label" class="block mb-2 text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">
             {{ label }}
         </ListboxLabel>
@@ -52,6 +52,5 @@ const selected = defineModel<SelectOption<T>>({ required: true });
 defineProps<{
     label?: string,
     options: SelectOption<T>[],
-    testID?: string,
 }>();
 </script>

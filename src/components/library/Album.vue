@@ -3,8 +3,8 @@
 		<PageTitle :label="header">
 			<template #right>
 				<div class="ml-8 flex gap-2">
-					<Button label="Play All" severity="secondary" icon="play_arrow" testID="play-all" @click="play" />
-					<Button label="Queue All" severity="secondary" icon="playlist_add" testID="queue-all"
+					<Button label="Play All" severity="secondary" icon="play_arrow" data-pw="play-all" @click="play" />
+					<Button label="Queue All" severity="secondary" icon="playlist_add" data-pw="queue-all"
 						@click="queue" />
 				</div>
 			</template>

@@ -14,7 +14,7 @@
 					give you in order to expose your Polaris instance to the internet.
 				</p>
 			</div>
-			<Button label="Apply Changes" icon="check" size="xl" testID="apply" class="mt-8 self-end" @click="apply" />
+			<Button label="Apply Changes" icon="check" size="xl" data-pw="apply" class="mt-8 self-end" @click="apply" />
 		</div>
 	</div>
 </template>

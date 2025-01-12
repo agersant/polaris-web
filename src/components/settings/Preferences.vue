@@ -1,7 +1,7 @@
 <template>
 	<div class="grow overflow-y-auto -mx-4 px-4">
 		<div class="flex flex-col gap-8 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
-			<Select v-model="theme" label="Theme" :options="themeOptions" testID="theme" class="w-48" />
+			<Select v-model="theme" label="Theme" :options="themeOptions" data-pw="theme" class="w-48" />
 			<Slider v-model="preferences.accentBaseHue" label="Accent Hue" size="lg" :min="0" :max="360"
 				data-pw="accent-hue" class="w-80">
 				<template #fill>
@@ -31,7 +31,7 @@
 					<div data-pw="swatch" class="w-8 h-8 bg-accent-900 rounded-r-md" />
 				</div>
 			</div>
-			<Button label="Reset to Default" icon="restore" severity="danger" size="xl" testID="reset-color-scheme"
+			<Button label="Reset to Default" icon="restore" severity="danger" size="xl" data-pw="reset-color-scheme"
 				class="self-end" @click="preferences.resetTheme" />
 		</div>
 	</div>

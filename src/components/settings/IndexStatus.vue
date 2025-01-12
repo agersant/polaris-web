@@ -26,7 +26,7 @@
             </div>
 
             <Button label="Scan Collection" icon="sync" severity="secondary" size="xl" @click="emit('trigger-index')"
-                testID="trigger-scan" :disabled="status.state != 'UpToDate'" />
+                data-pw="trigger-scan" :disabled="status.state != 'UpToDate'" />
         </div>
     </div>
 </template>

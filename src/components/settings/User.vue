@@ -14,7 +14,7 @@
             <div class="relative flex gap-4 justify-end">
                 <Button label="Change Password" icon="key" severity="secondary" size="base"
                     @click="editingPassword = true" />
-                <Button label="Delete User" icon="delete" severity="danger" size="base" testID="delete-user"
+                <Button label="Delete User" icon="delete" severity="danger" size="base" data-pw="delete-user"
                     @click="users.deleteUser(user.name)" :disabled="isSelf" />
 
                 <ScreenFade>

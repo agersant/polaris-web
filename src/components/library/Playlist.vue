@@ -8,7 +8,7 @@
             <template #right>
                 <div class="ml-8 flex gap-2">
                     <Button label="Play All" severity="secondary" icon="play_arrow" @click="play" />
-                    <Button label="Delete" severity="danger" icon="delete" testID="delete-playlist"
+                    <Button label="Delete" severity="danger" icon="delete" data-pw="delete-playlist"
                         @click="deletePlaylist" />
                 </div>
             </template>
