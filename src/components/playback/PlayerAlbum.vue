@@ -1,14 +1,14 @@
 <template>
     <div class="flex items-center">
         <!-- TODO tooltips -->
-        <div @click="onAlbumClicked" class="shrink-0 cursor-pointer w-24 h-24">
+        <div @click="onAlbumClicked" :class="albumURL ? 'cursor-pointer' : ''" class="shrink-0 w-24 h-24">
             <AlbumArt :url="artworkURL" />
         </div>
 
         <div class="ml-4 min-w-0 flex flex-col text-sm">
 
             <div v-if="albumName" @click="onAlbumClicked"
-                class="cursor-pointer mb-2 text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis"
+                class="mb-2 text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis"
                 :class="albumURL ? 'cursor-pointer hover:underline hover:text-accent-600' : ''">
                 {{ albumName }}
             </div>
@@ -28,7 +28,7 @@
             <div v-if="song && song.year" class="text-ls-400 dark:text-ds-600 overflow-hidden text-ellipsis">
                 {{ song.year }}
             </div>
-            <div v-else class="rounded-full w-12 h-2.5 my-[5px] bg-ls-200 dark:bg-ds-700" />
+            <div v-else-if="!song" class="rounded-full w-12 h-2.5 my-[5px] bg-ls-200 dark:bg-ds-700" />
 
         </div>
     </div>
