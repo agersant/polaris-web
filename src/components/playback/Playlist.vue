@@ -52,7 +52,7 @@
 				:items="[{ icon: 'compress', value: 'compact' }, { icon: 'view_list', value: 'tall' }]" />
 		</div>
 
-		<div class="grow relative min-h-0">
+		<div data-pw="playlist-songs" class="grow relative min-h-0">
 			<OrderableList ref="orderableList" class="h-full -ml-8 -mr-4 pr-4" :items="playback.playlist"
 				:item-height="itemHeight" :show-drop-preview="activeDnD != undefined" @keydown="onKeyDown"
 				@list-reorder="onReorder" @list-delete="playback.removeTracks" @list-drop="onDrop">
