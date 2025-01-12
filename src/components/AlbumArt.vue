@@ -8,7 +8,8 @@
         </template>
 
         <template #error>
-            <div class="bg-ls-200 dark:bg-ds-950/30 w-full h-full aspect-square flex items-center justify-center"
+            <div data-pw="album-art"
+                class="bg-ls-200 dark:bg-ds-950/30 w-full h-full aspect-square flex items-center justify-center"
                 :class="rounding">
                 <span class="material-icons-round text-ls-400 dark:text-ds-700">image_not_supported</span>
             </div>
