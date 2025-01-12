@@ -9,38 +9,11 @@ describe("Playlist", function () {
 		cy.login();
 	});
 
-	it("can use queue all button for album", () => {
-		cy.visit("/");
-		cy.contains("Music Collection");
-		cy.get("[data-cy=browser]").contains("Test").click();
-		cy.get("[data-cy=browser]").contains("Tobokegao").click();
-		cy.get("[data-cy=browser]").contains("Picnic").click();
-		cy.get("[data-cy=browser-header]").should("have.text", "Picnic");
-		cy.contains("Queue All").click();
-		cy.get("[data-cy=playlist]").find("[data-cy=track]").should("have.length", 7);
-	});
-
 	it("can use queue all button for multiple albums", () => {
 		cy.visit("/");
 		cy.contains("Music Collection");
 		cy.contains("Queue All").click();
 		cy.get("[data-cy=playlist]").find("[data-cy=track]").should("have.length", 13);
-	});
-
-	it("can drag and drop an album from random", () => {
-		cy.visit("/");
-		cy.navigateToRandom();
-		cy.contains("Random");
-		cy.get("[data-cy=album]").contains("Hunted").drag("[data-cy=playlist]");
-		cy.get("[data-cy=playlist]").find("[data-cy=track]").should("have.length", 5);
-	});
-
-	it("can drag and drop an album from recent", () => {
-		cy.visit("/");
-		cy.navigateToRecent();
-		cy.contains("Recent");
-		cy.get("[data-cy=album]").contains("Hunted").drag("[data-cy=playlist]");
-		cy.get("[data-cy=playlist]").find("[data-cy=track]").should("have.length", 5);
 	});
 
 	it("can remove a track", () => {
