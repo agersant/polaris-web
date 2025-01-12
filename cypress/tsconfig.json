@@ -1,8 +1,0 @@
-{
-	"extends": "../tsconfig.json",
-	"compilerOptions": {
-		// TODO Workaround for https://github.com/cypress-io/cypress/issues/26203
-		// When resolved, this entire file can be removed
-		"sourceMap": false
-	}
-}
