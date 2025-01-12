@@ -1,14 +1,15 @@
 <template>
 	<div class="grow overflow-y-auto -mx-4 px-4">
 		<div class="flex flex-col gap-8 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
-			<Select v-model="theme" label="Theme" :options="themeOptions" class="w-48" />
-			<Slider v-model="preferences.accentBaseHue" label="Accent Hue" size="lg" :min="0" :max="360" class="w-80">
+			<Select v-model="theme" label="Theme" :options="themeOptions" testID="theme" class="w-48" />
+			<Slider v-model="preferences.accentBaseHue" label="Accent Hue" size="lg" :min="0" :max="360"
+				data-pw="accent-hue" class="w-80">
 				<template #fill>
 					<div class="absolute h-full w-full rounded-full" :style="hueScale" />
 				</template>
 			</Slider>
 			<Slider v-model="preferences.accentChromaMultiplier" label="Accent Saturation" size="lg"
-				:min="minChromaMultiplier" :max="maxChromaMultiplier" class="w-80">
+				:min="minChromaMultiplier" :max="maxChromaMultiplier" data-pw="accent-saturation" class="w-80">
 				<template #fill>
 					<div class="absolute h-full w-full rounded-full" :style="chromaScale" />
 				</template>
@@ -18,20 +19,20 @@
 					Preview
 				</div>
 				<div class="flex">
-					<div class="w-8 h-8 bg-accent-50 rounded-l-md" />
-					<div class="w-8 h-8 bg-accent-100" />
-					<div class="w-8 h-8 bg-accent-200" />
-					<div class="w-8 h-8 bg-accent-300" />
-					<div class="w-8 h-8 bg-accent-400" />
-					<div class="w-8 h-8 bg-accent-500" />
-					<div class="w-8 h-8 bg-accent-600" />
-					<div class="w-8 h-8 bg-accent-700" />
-					<div class="w-8 h-8 bg-accent-800" />
-					<div class="w-8 h-8 bg-accent-900 rounded-r-md" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-50 rounded-l-md" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-100" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-200" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-300" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-400" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-500" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-600" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-700" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-800" />
+					<div data-pw="swatch" class="w-8 h-8 bg-accent-900 rounded-r-md" />
 				</div>
 			</div>
-			<Button label="Reset to Default" icon="restore" severity="danger" size="xl" class="self-end"
-				@click="preferences.resetTheme" />
+			<Button label="Reset to Default" icon="restore" severity="danger" size="xl" testID="reset-color-scheme"
+				class="self-end" @click="preferences.resetTheme" />
 		</div>
 	</div>
 </template>

@@ -25,7 +25,7 @@ const user = useUserStore();
 
 const tabs = computed(() => {
 	let items: TabItem<Category>[] = [];
-	items.push({ label: "Preferences", key: "preferences" });
+	items.push({ label: "Preferences", key: "preferences", testID: "preferences" });
 	if (user.isAdmin) {
 		items.push({ label: "Collection", key: "collection", testID: "collection" });
 		items.push({ label: "Users", key: "users", testID: "users" });

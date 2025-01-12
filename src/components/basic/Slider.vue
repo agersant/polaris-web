@@ -9,7 +9,7 @@
                 <div class="absolute h-full rounded-full bg-accent-600 dark:bg-accent-700"
                     :style="`width: ${100 * unscale(model)}%`" />
             </slot>
-            <div class="cursor-grab
+            <div data-pw="knob" class="cursor-grab
             absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5
             rounded-full shadow-sm border-2
             bg-ls-0 dark:bg-ds-900 
