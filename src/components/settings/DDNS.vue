@@ -2,7 +2,7 @@
 	<div class="grow overflow-y-auto -mx-4 px-4">
 		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
 			<SectionTitle label="Configuration" />
-			<InputText v-model="url" :error="!!error" id="ddns" icon="network_ping" label="Update URL" testID="ddns-url"
+			<InputText v-model="url" :error="!!error" id="ddns" icon="network_ping" label="Update URL"
 				placeholder="https://my-provider.com/update?token=xxx" />
 			<div class="mt-4 text-ls-600 text-sm flex flex-col gap-2">
 				<p>

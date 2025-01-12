@@ -10,7 +10,7 @@ test("can expand directories", async ({ page }) => {
 test("can filter content", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByText('Tobokegao')).toBeVisible();
-    await page.getByTestId('filter').fill('Hunted');
+    await page.getByPlaceholder('filter').fill('Hunted');
     await expect(page.getByText('Tobokegao')).not.toBeVisible();
 });
 

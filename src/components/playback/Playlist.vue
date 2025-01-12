@@ -24,8 +24,7 @@
 							dark:shadow-none dark:border dark:border-ds-800
 							">
 							<form @submit.prevent="savePlaylist" class="relative p-6 flex flex-col gap-4">
-								<InputText v-model="playlistName" id="playlistName" label="Playlist Name"
-									testID="save-playlist-name" autofocus />
+								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
 								<Button type="submit" label="Save" severity="primary" icon="save"
 									data-pw="submit-save-playlist" />
 								<div class="absolute right-2 top-2">

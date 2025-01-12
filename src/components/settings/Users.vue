@@ -22,10 +22,9 @@
 					<div v-text="newUser.name || 'New User'" class="font-medium text-ls-600 dark:text-ds-300" />
 				</div>
 
-				<InputText v-model="newUser.name" id="username" label="Username" icon="face" testID="new-user-name"
-					autofocus class="w-80" :error="!validNewUserName && !!newUser.name.length" />
-				<InputText v-model="newUser.password" id="password" label="Password" icon="key"
-					testID="new-user-password" password class="w-80" />
+				<InputText v-model="newUser.name" id="username" label="Username" icon="face" autofocus class="w-80"
+					:error="!validNewUserName && !!newUser.name.length" />
+				<InputText v-model="newUser.password" id="password" label="Password" icon="key" password class="w-80" />
 				<Button label="Create User" icon="person_add" severity="primary" size="xl" data-pw="create-user"
 					@click="endCreateUser" :disabled="!validNewUser" class="self-end" />
 			</div>
