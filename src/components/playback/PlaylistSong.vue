@@ -1,5 +1,5 @@
 <template>
-    <div @dblclick="playback.play(entry)" class="flex" :style="{ height: height + 'px' }">
+    <div @dblclick="playback.play(entry)" data-pw="playlist-song" class="flex" :style="{ height: height + 'px' }">
         <!-- TODO tooltips -->
         <!-- TODO context menu -->
         <div class="basis-8 shrink-0 flex justify-center items-center" :class="!compact ? '-translate-x-2' : ''">

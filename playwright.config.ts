@@ -24,6 +24,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     defaultBrowserType: 'firefox',
     testIdAttribute: 'data-pw',
+    viewport: { width: 2560, height: 1440 },
   },
 
   projects: [
