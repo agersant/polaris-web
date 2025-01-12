@@ -5,7 +5,7 @@
             <div class="p-8 border border-ls-200 dark:border-ds-700 rounded-lg">
                 <p class="text-sm font-medium leading-6 text-ls-700 dark:text-ds-200">Number of songs</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-ls-900 dark:text-ds-0"
+                    <span data-pw="song-count" class="text-4xl font-semibold tracking-tight text-ls-900 dark:text-ds-0"
                         v-text="playback.playlist.length" />
                 </p>
             </div>
