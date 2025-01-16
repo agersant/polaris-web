@@ -160,23 +160,23 @@ export async function getGenres(): Promise<GenreHeader[]> {
 }
 
 export async function getGenre(name: string): Promise<Genre> {
-	const response = await request(`/genres/${encodeURIComponent(name)}`);
+	const response = await request(`/genre/${encodeURIComponent(name)}`);
 	return await response.json();
 }
 
 export async function getGenreAlbums(name: string): Promise<AlbumHeader[]> {
-	const response = await request(`/genres/${encodeURIComponent(name)}/albums`);
+	const response = await request(`/genre/${encodeURIComponent(name)}/albums`);
 	return await response.json();
 }
 
 export async function getGenreArtists(name: string): Promise<ArtistHeader[]> {
-	const response = await request(`/genres/${encodeURIComponent(name)}/artists`);
+	const response = await request(`/genre/${encodeURIComponent(name)}/artists`);
 	return await response.json();
 }
 
 export async function getGenreSongs(genre: string): Promise<SongList> {
 	const songs = useSongsStore();
-	const response = await request(`/genres/${encodeURIComponent(genre)}/songs`);
+	const response = await request(`/genre/${encodeURIComponent(genre)}/songs`);
 	const songList = response.json().then((list: SongList) => {
 		songs.ingest(list.first_songs);
 		songs.request(list.paths);
@@ -206,13 +206,13 @@ export async function getArtists(): Promise<ArtistHeader[]> {
 }
 
 export async function getArtist(name: string): Promise<Artist> {
-	const response = await request(`/artists/${encodeURIComponent(name)}`);
+	const response = await request(`/artist/${encodeURIComponent(name)}`);
 	return await response.json();
 }
 
 export async function getAlbum(albumKey: AlbumKey): Promise<Album> {
 	const songs = useSongsStore();
-	const response = await request("/artists/" + encodeURIComponent(albumKey.artists.join(API_ARRAY_SEPARATOR)) + "/albums/" + encodeURIComponent(albumKey.name || ""));
+	const response = await request("/album/" + encodeURIComponent(albumKey.name || "") + "/by/" + encodeURIComponent(albumKey.artists.join(API_ARRAY_SEPARATOR)));
 	return await response.json().then((album: Album) => {
 		songs.ingest(album.songs);
 		return album;
