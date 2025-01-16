@@ -2,7 +2,7 @@
 
 	<div class="flex flex-col py-8 pl-16 pr-8 bg-ls-0 dark:bg-ds-900">
 
-		<PageTitle :label="playlistName">
+		<PageTitle :label="playlistName || 'New Playlist'">
 			<template #right>
 				<div class="relative flex gap-2">
 					<Button label="Clear" severity="secondary" icon="clear" data-pw="clear-playlist"
@@ -25,8 +25,8 @@
 							">
 							<form @submit.prevent="savePlaylist" class="relative p-6 flex flex-col gap-4">
 								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
-								<Button type="submit" label="Save" severity="primary" icon="save"
-									data-pw="submit-save-playlist" />
+								<Button type="submit" :disabled="!playlistName" label="Save" severity="primary"
+									icon="save" data-pw="submit-save-playlist" />
 								<div class="absolute right-2 top-2">
 									<Button icon="close" severity="tertiary" @click="cancelSavePlaylist" />
 								</div>
@@ -115,7 +115,7 @@ const itemHeight = computed(() => compact.value ? 32 : 48);
 
 const savingPlaylist = ref(false);
 const playlistName = computed({
-	get: () => playback.name || "New Playlist",
+	get: () => playback.name,
 	set: (value) => playback.setName(value),
 });
 
