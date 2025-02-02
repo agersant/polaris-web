@@ -12,7 +12,8 @@ jobs:
             - name: Clone Polaris
               run: git clone -b next http://github.com/agersant/polaris
             - uses: actions-rust-lang/setup-rust-toolchain@v1
-              cache-workspaces: "polaris -> target"
+              with:
+                cache-workspaces: "polaris -> target"
             - name: Build Polaris
               working-directory: polaris
               run: cargo build --release
