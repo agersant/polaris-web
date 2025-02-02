@@ -54,6 +54,7 @@ jobs:
               uses: actions/download-artifact@v4.1.7
               with:
                   name: web
+                  path: web
             - name: Compress Build
               run: zip -r web.zip web
             - name: Generate build number
