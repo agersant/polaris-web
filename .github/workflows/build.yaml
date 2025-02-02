@@ -22,7 +22,7 @@ jobs:
                   key: polaris-binary-${{ hashFiles('polaris-version') }}
             - name: Copy rust-toolchain file
               if: steps.cache.outputs.cache-hit != 'true'
-              run: cp polaris/rust-toolchain .
+              run: cp polaris/rust-toolchain.toml .
             - name: Install Rust toolchain
               if: steps.cache.outputs.cache-hit != 'true'
               uses: actions-rs/toolchain@v1
