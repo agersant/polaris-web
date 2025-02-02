@@ -53,7 +53,7 @@ jobs:
                 retention-days: 30
 
             - name: Upload Build
-              uses: actions/upload-artifact@v1
+              uses: actions/upload-artifact@v4
               with:
                   name: web
                   path: dist
