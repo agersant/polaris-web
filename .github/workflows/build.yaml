@@ -10,7 +10,7 @@ jobs:
             - name: Clone Polaris Web
               uses: actions/checkout@master
             - name: Clone Polaris
-              run: git clone http://github.com/agersant/polaris
+              run: git clone -b next http://github.com/agersant/polaris
             - name: Check polaris version
               working-directory: polaris
               run: git rev-parse HEAD > $GITHUB_WORKSPACE/polaris-version
