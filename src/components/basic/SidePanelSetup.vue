@@ -1,6 +1,6 @@
 <template>
     <div class="absolute h-full w-full pointer-events-none">
-        <div class="relative h-full w-full">
+        <div class="relative h-full w-full overflow-hidden">
             <ScreenFade>
                 <ScreenDarkening v-show="open" @click="close" class="z-10" />
             </ScreenFade>
