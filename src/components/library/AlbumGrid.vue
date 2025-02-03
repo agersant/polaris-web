@@ -1,5 +1,5 @@
 <template>
-    <div ref="viewport" class="overflow-y-scroll -m-4 p-4 mb-0 pb-0" tabindex="-1" :style="{
+    <div ref="viewport" class="overflow-y-auto -m-4 p-4 mb-0 pb-0" tabindex="-1" :style="{
         gap: `${gapSize}px`,
     }">
         <div class="relative" :style="{ height: `${contentHeight}px` }">

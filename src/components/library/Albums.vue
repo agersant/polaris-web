@@ -22,7 +22,7 @@
                 </BlankStateFiller>
             </div>
 
-            <AlbumGrid ref="grid" class="-m-4 p-4 overflow-y-scroll" :albums="filtered" :num-columns="numColumns"
+            <AlbumGrid ref="grid" class="-m-4 p-4 overflow-y-auto" :albums="filtered" :num-columns="numColumns"
                 :show-artists="true">
                 <template #footer>
                     <div v-if="isLoading" class="flex p-8 items-start justify-center">

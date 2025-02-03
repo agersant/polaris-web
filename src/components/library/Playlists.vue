@@ -4,7 +4,7 @@
 		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
 				clearable />
-			<div ref="viewport" class="-mx-4 px-4 overflow-y-scroll whitespace-nowrap">
+			<div ref="viewport" class="-mx-4 px-4 overflow-y-auto whitespace-nowrap">
 				<div v-if="filtered?.length" class="flex flex-col overflow-x-hidden
                 divide-y divide-ls-200 dark:divide-ds-700">
 					<div v-for="playlist in filtered" :key="playlist.name" data-pw="saved-playlist"

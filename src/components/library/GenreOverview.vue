@@ -1,5 +1,5 @@
 <template>
-    <div ref="viewport" class="min-h-0 flex flex-col overflow-y-scroll -mx-4 px-4">
+    <div ref="viewport" class="min-h-0 flex flex-col overflow-y-auto -mx-4 px-4">
         <div v-if="genre" class="flex flex-col gap-8">
             <div v-if="relatedGenres?.length">
                 <SectionTitle label="Related Genres" icon="label" />

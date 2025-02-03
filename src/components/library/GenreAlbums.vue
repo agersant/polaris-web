@@ -3,7 +3,7 @@
         <div class="min-h-0 flex flex-col">
             <InputText class="mb-8 w-80" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
                 clearable />
-            <AlbumGrid v-if="filteredAlbums.length" ref="album-grid" class="-m-4 p-4 overflow-y-scroll"
+            <AlbumGrid v-if="filteredAlbums.length" ref="album-grid" class="-m-4 p-4 overflow-y-auto"
                 :albums="filteredAlbums" :num-columns="5" :show-artists="true">
             </AlbumGrid>
             <div v-else class="grow flex mt-40 justify-center text-center">

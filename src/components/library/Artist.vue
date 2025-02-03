@@ -9,7 +9,7 @@
         </PageTitle>
 
         <div v-if="artist" class="flex flex-col min-h-0">
-            <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-scroll flex flex-col gap-8">
+            <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-auto flex flex-col gap-8">
 
                 <Switch class="absolute mt-0.5 top-4 right-4" v-model="preferences.artistDisplayMode" :items="[
                     { icon: 'apps', value: 'grid5' },

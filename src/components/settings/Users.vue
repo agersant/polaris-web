@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col min-h-0">
 
-		<div class="flex flex-col gap-8 grow overflow-y-scroll -mx-4 px-4">
+		<div class="flex flex-col gap-8 grow overflow-y-auto -mx-4 px-4">
 			<div v-for="user in users.listing" :key="user.name"
 				class=" rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
 				<User :user="user" />

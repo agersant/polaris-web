@@ -1,6 +1,6 @@
 <template>
-    <div ref="viewport" class="overflow-y-scroll overflow-x-hidden" tabindex="-1" @keydown="onKeyDown"
-        @dragenter.prevent @dragover.prevent @drop="onDrop">
+    <div ref="viewport" class="overflow-y-auto overflow-x-hidden" tabindex="-1" @keydown="onKeyDown" @dragenter.prevent
+        @dragover.prevent @drop="onDrop">
         <div ref="wrapper" class="relative min-h-full divide-ls-200 dark:border-ds-700" :class="{ 'divide-y': divider }"
             :style="{ height: `${props.items.length * rowHeight}px` }">
             <TransitionGroup :name="isReordering ? 'reorder' : 'drop'" :css="isReordering">

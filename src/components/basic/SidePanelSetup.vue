@@ -10,7 +10,7 @@
                     <div class="absolute right-12 top-11">
                         <Button icon="close" severity="tertiary" @click="close" />
                     </div>
-                    <div ref="panelContent" id="side-panel" class="-mr-4 pr-4 overflow-y-scroll" />
+                    <div ref="panelContent" id="side-panel" class="-mr-4 pr-4 overflow-y-auto" />
                 </div>
             </Transition>
         </div>
