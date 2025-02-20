@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2" @keydown="(event) => onAlbumKeyDown(makeAlbumURL(album.main_artists, album.name), event)">
         <div @click="router.push(makeAlbumURL(album.main_artists, album.name))"
             :class="size == 'lg' ? 'hover:scale-105' : 'hover:scale-110'" class="
                 cursor-pointer aspect-square w-full min-h-0 origin-center 
@@ -52,5 +52,12 @@ function onArtistClicked(name: string) {
         router.push(makeArtistURL(name));
     }
 }
+
+async function onAlbumKeyDown(albumUrl: string, event: KeyboardEvent) {
+    if (event.code == "Enter") {
+        router.push(albumUrl)
+    }
+}
+
 
 </script>
