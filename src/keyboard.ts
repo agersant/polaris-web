@@ -1,4 +1,3 @@
-// src/composables/useKeyboardNavigation.ts
 import { onMounted, onUnmounted } from "vue";
 import router from "@/router";
 
