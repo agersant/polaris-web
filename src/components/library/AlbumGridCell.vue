@@ -1,10 +1,11 @@
 <template>
     <div class="flex flex-col gap-2" @keydown="(event) => onAlbumKeyDown(makeAlbumURL(album.main_artists, album.name), event)">
-        <div @click="router.push(makeAlbumURL(album.main_artists, album.name))"
-            :class="size == 'lg' ? 'hover:scale-105' : 'hover:scale-110'" class="
+        <div tabindex="0" @click="router.push(makeAlbumURL(album.main_artists, album.name))"
+            :class="[size == 'lg' ? 'hover:scale-105 focus:scale-105' : 'hover:scale-110 focus:scale-110']" class="
                 cursor-pointer aspect-square w-full min-h-0 origin-center 
                 transition-all ease-out duration-100
                 hover:opacity-90
+                focus:ring-2 focus:ring-accent-500 rounded-md outline-none
                 ">
             <Draggable :make-payload="() => new DndPayloadAlbumKey(album.name, album.main_artists)">
                 <AlbumArt :url="album.artwork ? makeThumbnailURL(album.artwork, 'small') : undefined" />
