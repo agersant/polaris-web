@@ -8,7 +8,8 @@
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
 			<VirtualTree id="all-files" v-show="!showFiltered" ref="tree" v-model="treeModel"
 				@node-expand="openDirectory" @node-double-click="playSong" @keydown="onKeyDown"
-				@nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag" class="grow" />
+				@nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag"
+				@nodes-restored="onNodesRestored" class="grow" />
 			<div v-if="showFiltered" class="grow min-h-0 flex flex-col">
 				<Error v-if="filterError">
 					Something went wrong while filtering files.
@@ -68,8 +69,10 @@ import { DndPayloadFiles, useDragAndDrop } from '@/dnd';
 import { getPathTail } from '@/format';
 import { useHistory } from "@/history";
 import { usePlaybackStore } from "@/stores/playback";
+import { useSongsStore } from "@/stores/songs";
 
 const playback = usePlaybackStore();
+const songs = useSongsStore();
 const { activeDnD, startDrag, updateDrag, endDrag, dragPreview } = useDragAndDrop();
 
 const treeModel: Ref<Node[]> = shallowRef([]);
@@ -255,6 +258,10 @@ async function queue(paths: string[], replace: boolean) {
 		playback.stop();
 	}
 	playback.queueTracks(paths);
+}
+
+function onNodesRestored() {
+	songs.request(treeModel.value.filter(n => n.leaf).map(n => n.key))
 }
 
 useHistory("files", [filterQuery]);

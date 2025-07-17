@@ -53,6 +53,7 @@ const emit = defineEmits<{
     "nodes-drag-start": [event: DragEvent, nodes: T[]],
     "nodes-drag": [event: DragEvent],
     "nodes-drag-end": [event: DragEvent],
+    "nodes-restored": [],
 }>();
 
 const virtualList = useTemplateRef("virtualList");
@@ -263,6 +264,8 @@ function snapScrolling() {
     }
 }
 
-useHistory(`virtual-tree-${props.id || 'default'}`, [nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)]);
+if (useHistory(`virtual-tree-${props.id || 'default'}`, [nodes, expandedKeys, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)])) {
+    emit('nodes-restored');
+}
 
 </script>
