@@ -4,7 +4,7 @@ on: push
 jobs:
     test:
         name: Run Tests
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-latest
 
         steps:
             - name: Clone Polaris Web
@@ -46,7 +46,7 @@ jobs:
     release:
         name: Make Release
         needs: test
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-latest
         if: github.ref == 'refs/heads/master'
 
         steps:
