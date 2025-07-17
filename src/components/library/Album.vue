@@ -92,11 +92,13 @@ import { isFakeArtist } from "@/format";
 import { saveScrollState, useHistory } from "@/history";
 import { makeArtistURL, makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
+import { useSongsStore } from "@/stores/songs";
 import useMultiselect from "@/multiselect";
 
 // TODO Context menus
 
 const playback = usePlaybackStore();
+const songs = useSongsStore();
 const router = useRouter();
 
 const props = defineProps<{ albumKey: AlbumKey }>();
@@ -156,6 +158,8 @@ const { clickItem, selection, selectItem, selectedKeys, focusedKey, multiselect,
 
 if (!useHistory("album", [album, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)])) {
 	fetchAlbum(0, props.albumKey);
+} else {
+	songs.ingest(album.value?.songs ?? []);
 }
 
 watch(() => props.albumKey, () => {
