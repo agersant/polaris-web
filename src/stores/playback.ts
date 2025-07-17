@@ -102,6 +102,12 @@ export const usePlaybackStore = defineStore("playback", () => {
 		savePlaybackState();
 	}
 
+	function stop() {
+		currentTrack.value = null;
+		elapsedSeconds.value = 0;
+		savePlaybackState();
+	}
+
 	function next(): PlaylistEntry | null {
 		const newTrack = advance(1);
 		if (newTrack) {
@@ -265,6 +271,7 @@ export const usePlaybackStore = defineStore("playback", () => {
 		setName,
 		setVolume,
 		shuffle,
+		stop,
 	};
 });
 

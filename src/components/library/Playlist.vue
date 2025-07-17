@@ -103,9 +103,9 @@ function onGenreClicked(name: string) {
 async function play() {
     const songs = await listSongs();
     playback.clear();
+    playback.stop();
     playback.queueTracks(songs);
     playback.setName(props.name);
-    playback.next();
 }
 
 async function deletePlaylist() {

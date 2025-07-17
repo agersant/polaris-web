@@ -226,8 +226,8 @@ function getSelectionFiltered(): string[] {
 function playSong(node: Node) {
 	if (node.leaf) {
 		playback.clear();
+		playback.stop();
 		playback.queueTracks([node.key]);
-		playback.next();
 	}
 }
 
@@ -252,11 +252,9 @@ async function queue(paths: string[], replace: boolean) {
 	}
 	if (replace) {
 		playback.clear();
+		playback.stop();
 	}
 	playback.queueTracks(paths);
-	if (replace) {
-		playback.next();
-	}
 }
 
 useHistory("files", [filterQuery]);

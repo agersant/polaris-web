@@ -169,8 +169,8 @@ watch(() => props.albumKey, () => {
 async function play() {
 	const songs = await listSongs();
 	playback.clear();
+	playback.stop();
 	playback.queueTracks(songs);
-	playback.next();
 }
 
 async function queue() {
@@ -197,8 +197,8 @@ function onGenreClicked(name: string) {
 
 function onSongDoubleClicked(song: Song) {
 	playback.clear();
+	playback.stop();
 	playback.queueTracks([song.path]);
-	playback.next();
 }
 
 function onDragStart(event: DragEvent, song: Song) {
@@ -222,11 +222,9 @@ async function queueSelection(replace: boolean) {
 
 	if (replace) {
 		playback.clear();
+		playback.stop();
 	}
 	playback.queueTracks(tracks);
-	if (replace) {
-		playback.next();
-	}
 }
 
 function snapScrolling() {

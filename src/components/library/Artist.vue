@@ -154,8 +154,8 @@ function onGenreClicked(name: string) {
 async function play(albums: AlbumHeader[]) {
     const songs = await listSongs(albums);
     playback.clear();
+    playback.stop();
     playback.queueTracks(songs);
-    playback.next();
 }
 
 async function queue(albums: AlbumHeader[]) {

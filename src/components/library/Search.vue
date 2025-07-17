@@ -187,8 +187,8 @@ function play() {
 		return;
 	}
 	playback.clear();
+	playback.stop();
 	playback.queueTracks(songPaths.value);
-	playback.next();
 }
 
 function queue() {

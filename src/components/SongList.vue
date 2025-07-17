@@ -100,11 +100,9 @@ async function queueSelection(replace: boolean) {
 
     if (replace) {
         playback.clear();
+        playback.stop();
     }
     playback.queueTracks(tracks);
-    if (replace) {
-        playback.next();
-    }
 }
 
 function onDragStart(event: DragEvent, path: string) {
@@ -115,8 +113,8 @@ function onDragStart(event: DragEvent, path: string) {
 
 function onSongDoubleClicked(path: string) {
     playback.clear();
+    playback.stop();
     playback.queueTracks([path]);
-    playback.next();
 }
 
 useHistory("song-list", [paths, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)]);

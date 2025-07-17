@@ -116,9 +116,9 @@ function getMainGenres(playlist: PlaylistHeader) {
 async function play(playlist: PlaylistHeader) {
 	const songs = (await getPlaylist(playlist.name)).songs.paths;
 	playback.clear();
+	playback.stop();
 	playback.queueTracks(songs);
 	playback.setName(playlist.name);
-	playback.next();
 }
 
 function onPlaylistClicked(playlist: PlaylistHeader) {

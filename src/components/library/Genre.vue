@@ -85,8 +85,8 @@ watch(viewMode, (viewMode) => {
 async function playAll() {
     const songs = (await getGenreSongs(props.name)).paths;
     playback.clear();
+    playback.stop();
     playback.queueTracks(songs);
-    playback.next();
 }
 
 async function queueAll() {
