@@ -57,6 +57,9 @@ module.exports = {
           950: "rgb(var(--surface-950) / <alpha-value>)",
         }
       },
+      screens: {
+        "3xl": "120rem",
+      },
     },
   },
   plugins: [
