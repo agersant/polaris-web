@@ -1,5 +1,5 @@
 <template>
-    <div class="mb-8 flex space-x-4">
+    <div class="mb-8 flex space-x-4 whitespace-nowrap">
         <div v-for="tab in tabs" @click="current = tab.value" :data-pw="tab.testID"
             class="cursor-pointer rounded-md px-3 py-2 text-sm font-medium" :class="tab.value == current
                 ? 'bg-accent-100 text-accent-700 dark:bg-ds-700 dark:text-ds-50'
