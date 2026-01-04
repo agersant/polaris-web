@@ -6,11 +6,12 @@
 		</div>
 
 		<div v-else class="flex flex-col gap-8">
-			<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+			<Section>
+				<SectionTitle label="Indexing Status" />
 				<IndexStatus :status="indexStatus" @trigger-index="onTriggerIndex" />
-			</div>
+			</Section>
 
-			<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+			<Section>
 				<SectionTitle label="Music Sources" />
 				<div class="flex flex-col gap-8">
 					<div class="flex flex-col gap-4">
@@ -31,7 +32,7 @@
 					<Button label="Apply Changes" icon="check" size="xl" class="self-end w-40" @click="apply"
 						data-pw="apply" />
 				</div>
-			</div>
+			</Section>
 		</div>
 
 	</div>
@@ -45,6 +46,7 @@ import { IndexStatus as IndexStatusDTO, Settings } from "@/api/dto";
 import { getIndexStatus, getSettings, putSettings, triggerIndex } from "@/api/endpoints";
 import Button from "@/components/basic/Button.vue";
 import InputText from "@/components/basic/InputText.vue";
+import Section from "@/components/basic/Section.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import IndexStatus from "@/components/settings/IndexStatus.vue";

@@ -1,9 +1,7 @@
 <template>
 	<div class="flex flex-col">
 		<PageTitle label="Settings" />
-
 		<Tabs v-model="category" :tabs="tabs" />
-
 		<div class="grow min-h-0 flex flex-col">
 			<router-view />
 		</div>

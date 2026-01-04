@@ -2,16 +2,14 @@
 	<div class="flex flex-col min-h-0">
 
 		<div class="flex flex-col gap-8 grow overflow-y-auto -mx-4 px-4">
-			<div v-for="user in users.listing" :key="user.name"
-				class=" rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+			<Section v-for="user in users.listing" :key="user.name">
 				<User :user="user" />
-			</div>
+			</Section>
 
 			<Button v-if="!newUser" label="Add User" icon="person_add" severity="secondary" size="xl" data-pw="add-user"
 				class="self-start" @click="beginCreateUser" />
 
-			<div v-else
-				class="flex flex-col gap-8 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+			<Section v-else class="flex flex-col gap-8">
 
 				<div class="flex gap-4 items-center">
 					<span class="material-icons-round
@@ -27,7 +25,7 @@
 				<InputText v-model="newUser.password" id="password" label="Password" icon="key" password class="w-80" />
 				<Button label="Create User" icon="person_add" severity="primary" size="xl" data-pw="create-user"
 					@click="endCreateUser" :disabled="!validNewUser" class="self-end" />
-			</div>
+			</Section>
 		</div>
 	</div>
 </template>
@@ -38,6 +36,7 @@ import { ref, onMounted, Ref, computed } from "vue";
 import { NewUser } from "@/api/dto";
 import Button from "@/components/basic/Button.vue";
 import InputText from "@/components/basic/InputText.vue";
+import Section from "@/components/basic/Section.vue";
 import User from "@/components/settings/User.vue";
 import { useUsersStore } from "@/stores/users";
 
