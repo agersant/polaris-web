@@ -9,7 +9,7 @@
                 ]" />
             </template>
             <template #right>
-                <div class="ml-8 flex gap-2">
+                <div class="flex gap-2">
                     <Button label="Play All" severity="secondary" icon="play_arrow" @click="playAll" />
                     <Button label="Queue All" severity="secondary" icon="playlist_add" @click="queueAll" />
                 </div>

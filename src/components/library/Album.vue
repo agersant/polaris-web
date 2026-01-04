@@ -2,7 +2,7 @@
 	<div class="flex flex-col">
 		<PageTitle :label="header">
 			<template #right>
-				<div class="ml-8 flex gap-2">
+				<div class="flex gap-2">
 					<Button label="Play All" severity="secondary" icon="play_arrow" data-pw="play-all" @click="play" />
 					<Button label="Queue All" severity="secondary" icon="playlist_add" data-pw="queue-all"
 						@click="queue" />

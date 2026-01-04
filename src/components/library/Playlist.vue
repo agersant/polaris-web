@@ -2,11 +2,11 @@
     <div class="flex flex-col">
         <PageTitle :label="name">
             <template #left>
-                <span v-if="playlist" class="ml-4 italic text-xs text-ls-500 dark:text-ds-500"
+                <span v-if="playlist" class="ml-4 italic whitespace-nowrap text-xs text-ls-500 dark:text-ds-500"
                     v-text="formatLongDuration(playlist.duration)" />
             </template>
             <template #right>
-                <div class="ml-8 flex gap-2">
+                <div class="flex gap-2">
                     <Button label="Play All" severity="secondary" icon="play_arrow" @click="play" />
                     <Button label="Delete" severity="danger" icon="delete" data-pw="delete-playlist"
                         @click="deletePlaylist" />

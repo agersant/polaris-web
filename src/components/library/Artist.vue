@@ -2,7 +2,7 @@
     <div class="flex flex-col">
         <PageTitle :label="name">
             <template #right>
-                <div class="basis-0 grow max-h-6 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
+                <div class="basis-0 grow max-h-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
                     <Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
                 </div>
             </template>
