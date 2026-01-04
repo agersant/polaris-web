@@ -25,11 +25,11 @@ const user = useUserStore();
 
 const tabs = computed(() => {
 	let items: TabItem<Category>[] = [];
-	items.push({ label: "Preferences", key: "preferences", testID: "preferences" });
+	items.push({ label: "Preferences", value: "preferences", testID: "preferences" });
 	if (user.isAdmin) {
-		items.push({ label: "Collection", key: "collection", testID: "collection" });
-		items.push({ label: "Users", key: "users", testID: "users" });
-		items.push({ label: "Dynamic DNS", key: "ddns", testID: "ddns" });
+		items.push({ label: "Collection", value: "collection", testID: "collection" });
+		items.push({ label: "Users", value: "users", testID: "users" });
+		items.push({ label: "Dynamic DNS", value: "ddns", testID: "ddns" });
 	}
 	return items;
 });
