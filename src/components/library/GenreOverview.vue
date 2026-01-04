@@ -10,7 +10,7 @@
             </div>
             <div v-if="mainArtists?.length">
                 <SectionTitle label="Main Artists" icon="person" />
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-2 2xl:grid-cols-3 gap-4">
                     <div v-for="artist of mainArtists.slice(0, 6)" class="
                         cursor-pointer
                         flex items-center gap-4 px-3 p-4
@@ -35,7 +35,7 @@
             </div>
             <div v-if="genre.recently_added?.length">
                 <SectionTitle label="Recently Added" icon="new_releases" />
-                <AlbumGrid :albums="genre.recently_added.slice(0, 10)" :num-columns="5" show-artists />
+                <AlbumGrid :albums="genre.recently_added" :max-rows="2" show-artists />
             </div>
         </div>
 

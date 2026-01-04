@@ -5,7 +5,7 @@ import { watchImmediate } from "@vueuse/core";
 import { useUserStorage } from "@/storage";
 import { applyTheme, getDefaultAccentHue, getDefaultTheme, getThemePolarity, Theme } from "@/theming";
 
-export type ArtistDisplayMode = "grid5" | "grid3" | "timeline";
+export type ArtistDisplayMode = "grid" | "timeline";
 export type ArtistListMode = "fixed" | "proportional";
 export type SongListDisplayMode = "compact" | "tall";
 
@@ -15,7 +15,7 @@ export const usePreferencesStore = defineStore("preferences", () => {
 	const theme = useUserStorage("theme", getDefaultTheme());
 	const polarity = computed(() => getThemePolarity(theme.value));
 
-	const artistDisplayMode: WritableComputedRef<ArtistDisplayMode> = useUserStorage("artistDisplayMode", "grid5");
+	const artistDisplayMode: WritableComputedRef<ArtistDisplayMode> = useUserStorage("artistDisplayMode", "grid");
 	const artistListMode: WritableComputedRef<ArtistListMode> = useUserStorage("artistListMode", "fixed");
 	const playlistDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("playlistDisplayMode", "tall");
 	const searchResultsDisplayMode: WritableComputedRef<SongListDisplayMode> = useUserStorage("searchResultsDisplayMode", "tall");

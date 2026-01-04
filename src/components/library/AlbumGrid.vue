@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue';
-import { useElementSize, useScroll } from '@vueuse/core';
+import { useElementSize, useMediaQuery, useScroll } from '@vueuse/core';
 
 import { AlbumHeader } from '@/api/dto';
 import AlbumGridCell from '@/components/library/AlbumGridCell.vue';
@@ -26,13 +26,15 @@ import AlbumGridCell from '@/components/library/AlbumGridCell.vue';
 const props = defineProps<{
     albums: AlbumHeader[],
     showArtists: boolean,
-    numColumns: number,
+    maxRows?: number,
 }>();
 
 const gapSize = ref(32);
 
+const isSmallScreen = useMediaQuery("(width < 96rem)");
+const numColumns = computed(() => isSmallScreen.value ? 3 : 5);
 const cellSize = computed(() =>
-    props.numColumns <= 3 ? "lg" : "md",
+    numColumns.value <= 3 ? "lg" : "md",
 );
 
 const viewport = useTemplateRef("viewport");
@@ -41,17 +43,24 @@ const { y: scrollY } = useScroll(viewport);
 
 const sampleCell = useTemplateRef("sampleCell");
 const itemWidth = computed(() =>
-    (viewportWidth.value - (props.numColumns - 1) * gapSize.value) / props.numColumns
+    (viewportWidth.value - (numColumns.value - 1) * gapSize.value) / numColumns.value
 );
 const { height: itemHeight } = useElementSize(sampleCell);
 
-const contentHeight = computed(() => Math.ceil(props.albums.length / props.numColumns) * (itemHeight.value + gapSize.value));
+const trimmedAlbums = computed(() => {
+    if (props.maxRows) {
+        return props.albums.slice(0, props.maxRows * numColumns.value);
+    } else {
+        return props.albums;
+    }
+});
+const contentHeight = computed(() => Math.ceil(trimmedAlbums.value.length / numColumns.value) * (itemHeight.value + gapSize.value));
 
-const firstVirtual = computed(() => Math.floor(scrollY.value / (itemHeight.value + gapSize.value)) * props.numColumns);
-const numVirtualItems = computed(() => Math.ceil(1 + viewportHeight.value / (itemHeight.value + gapSize.value)) * props.numColumns);
+const firstVirtual = computed(() => Math.floor(scrollY.value / (itemHeight.value + gapSize.value)) * numColumns.value);
+const numVirtualItems = computed(() => Math.ceil(1 + viewportHeight.value / (itemHeight.value + gapSize.value)) * numColumns.value);
 
 const virtualAlbums = computed(() => {
-    return props.albums.slice(firstVirtual.value, firstVirtual.value + numVirtualItems.value);
+    return trimmedAlbums.value.slice(firstVirtual.value, firstVirtual.value + numVirtualItems.value);
 });
 
 const sampleAlbum = {
@@ -60,5 +69,5 @@ const sampleAlbum = {
     year: 2000,
 };
 
-defineExpose({ contentHeight });
+defineExpose({ contentHeight, numColumns });
 </script>

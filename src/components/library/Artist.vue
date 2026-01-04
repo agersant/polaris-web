@@ -12,8 +12,7 @@
             <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-auto flex flex-col gap-8">
 
                 <Switch class="absolute mt-0.5 top-4 right-4" v-model="preferences.artistDisplayMode" :items="[
-                    { icon: 'apps', value: 'grid5' },
-                    { icon: 'grid_view', value: 'grid3' },
+                    { icon: 'apps', value: 'grid' },
                     { icon: 'timeline', value: 'timeline' }
                 ]" />
 
@@ -24,7 +23,7 @@
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(mainWorks)" />
                         </ButtonGroup>
                     </SectionTitle>
-                    <AlbumGrid :albums="mainWorks" :num-columns="numColumns" :show-artists="false" />
+                    <AlbumGrid :albums="mainWorks" :show-artists="false" />
                 </div>
 
                 <div v-if="preferences.artistDisplayMode != 'timeline' && otherWorks?.length">
@@ -34,7 +33,7 @@
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(otherWorks)" />
                         </ButtonGroup>
                     </SectionTitle>
-                    <AlbumGrid :albums="otherWorks" :num-columns="numColumns" :show-artists="true" />
+                    <AlbumGrid :albums="otherWorks" :show-artists="true" />
                 </div>
 
                 <Timeline v-if="preferences.artistDisplayMode == 'timeline'" :artist="artist.name"
@@ -92,14 +91,6 @@ const { state: artist, isLoading, error, execute: fetchArtist } = useAsyncState(
     undefined,
     { immediate: false, resetOnExecute: true }
 );
-
-const numColumns = computed(() => {
-    switch (preferences.artistDisplayMode) {
-        case "grid5": return 5;
-        case "grid3": return 3;
-        case "timeline": return 1;
-    };
-});
 
 const genres = computed(() => {
     let entries = Object.entries(artist.value?.num_songs_by_genre || {});

@@ -22,8 +22,7 @@
                 </BlankStateFiller>
             </div>
 
-            <AlbumGrid ref="grid" class="-m-4 p-4 overflow-y-auto" :albums="filtered" :num-columns="numColumns"
-                :show-artists="true">
+            <AlbumGrid ref="grid" class="-m-4 p-4 overflow-y-auto" :albums="filtered" :show-artists="true">
                 <template #footer>
                     <div v-if="isLoading" class="flex p-8 items-start justify-center">
                         <Spinner />
@@ -66,8 +65,6 @@ import Spinner from "@/components/basic/Spinner.vue";
 import AlbumGrid from "@/components/library/AlbumGrid.vue";
 import { saveScrollState, useHistory } from "@/history";
 
-const numColumns = ref(5);
-
 type ViewMode = "recent" | "random" | "all";
 const viewMode: Ref<ViewMode> = ref("recent");
 
@@ -76,13 +73,15 @@ const fetchedAll = ref(false);
 const seed = ref(generateSeed());
 
 const { state: fetchedAlbums, isLoading, isReady, error, execute: fetchAlbums } = useAsyncState(async () => {
+    const numColumns = grid.value?.numColumns ?? 5;
+    const fetchCount = numColumns * 20;
     switch (viewMode.value) {
         case "all":
             return getAlbums();
         case "recent":
-            return getRecentAlbums(albums.value.length, numColumns.value * 20);
+            return getRecentAlbums(albums.value.length, fetchCount);
         case "random":
-            return getRandomAlbums(seed.value, albums.value.length, numColumns.value * 20);
+            return getRandomAlbums(seed.value, albums.value.length, fetchCount);
     }
 }, [], { immediate: false });
 

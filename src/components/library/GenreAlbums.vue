@@ -4,7 +4,7 @@
             <InputText class="mb-8 w-80" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
                 clearable />
             <AlbumGrid v-if="filteredAlbums.length" ref="album-grid" class="-m-4 p-4 overflow-y-auto"
-                :albums="filteredAlbums" :num-columns="5" :show-artists="true">
+                :albums="filteredAlbums" :show-artists="true">
             </AlbumGrid>
             <div v-else class="grow flex mt-40 justify-center text-center">
                 <BlankStateFiller icon="filter_alt_off">
