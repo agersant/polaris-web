@@ -23,7 +23,8 @@
                         {{ `${item.data.num_songs} ${pluralize('song', item.data.num_songs)}` }}
                     </span>
                 </div>
-                <div class="basis-1/4 grow shrink-[10] overflow-hidden flex max-h-14 flex-wrap justify-end gap-2">
+                <div
+                    class="hidden xl:inline-flex basis-1/4 grow shrink-[10] overflow-hidden max-h-14 flex-wrap justify-end gap-2">
                     <Badge v-for="genre of getMainGenres(item.data)" :label="genre" auto-color
                         @click="onGenreClicked(genre)" />
                 </div>

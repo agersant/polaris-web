@@ -22,7 +22,7 @@
 								v-text="formatLongDuration(playlist.duration)" />
 						</div>
 						<div
-							class="basis-1/4 grow shrink-[10] overflow-hidden flex max-h-14 flex-wrap justify-end gap-2">
+							class="hidden xl:inline-flex basis-1/4 grow shrink-[10] overflow-hidden max-h-14 flex-wrap justify-end gap-2">
 							<Badge v-for="genre of getMainGenres(playlist)" :label="genre" auto-color
 								@click="onGenreClicked(genre)" />
 						</div>

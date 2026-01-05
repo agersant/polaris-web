@@ -31,8 +31,9 @@ const props = defineProps<{
 
 const gapSize = ref(32);
 
+const isTinyScreen = useMediaQuery("(width < 80rem)");
 const isSmallScreen = useMediaQuery("(width < 96rem)");
-const numColumns = computed(() => isSmallScreen.value ? 3 : 5);
+const numColumns = computed(() => isTinyScreen.value ? 2 : isSmallScreen.value ? 3 : 5);
 const cellSize = computed(() =>
     numColumns.value <= 3 ? "lg" : "md",
 );

@@ -13,7 +13,7 @@
             <div v-if="mainArtists?.length">
                 <Section>
                     <SectionTitle label="Main Artists" />
-                    <div class="grid grid-cols-2 2xl:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
                         <div v-for="artist of mainArtists.slice(0, 6)" class="
                                 cursor-pointer
                                 flex items-center gap-4 px-3 p-4

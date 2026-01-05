@@ -4,7 +4,7 @@
 			@ended="onEnded" @pause="onPaused" @playing="onPlaying" @waiting="onWaiting" />
 		<PlayerAlbum class="basis-80 min-w-0 grow shrink" />
 		<PlayerSong :seconds-played="secondsPlayed" :duration="duration" :progress="trackProgress" @seek="seekTo"
-			class="grow-[8] basis-80 min-w-32 mx-16" />
+			class="grow-[8] basis-80 min-w-32 mx-8 xl:mx-16" />
 		<PlayerControls class="basis-80 min-w-0 grow shrink" v-model:volume="volume" :paused="paused"
 			:buffering="buffering" :error="error" @play="play" @pause="pause" @previous="skipPrevious"
 			@next="skipNext" />
