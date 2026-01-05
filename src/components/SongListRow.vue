@@ -4,14 +4,18 @@
         <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
             <AlbumArt :url="artworkURL" />
         </div>
-        <div class="grow basis-0 pr-4 text-ellipsis" :class="{ 'overflow-hidden': song }">
+        <div class="xl:hidden grow basis-0 text-ellipsis" :class="{ 'overflow-hidden': song }">
+            <span v-if="song" v-text="formatTrackShort(song)" />
+            <div v-else class="bg-black/5 dark:bg-white/5 h-3 rounded-full" />
+        </div>
+        <div class="hidden xl:block grow basis-0 pr-4 text-ellipsis" :class="{ 'overflow-hidden': song }">
             <span v-if="song" v-text="formatTrackContext(song)" />
             <div v-else class="-mr-8 bg-black/5 dark:bg-white/5 h-3 rounded-full" />
         </div>
-        <div class="basis-8 shrink-0 text-right mr-1">
+        <div class="hidden xl:block basis-8 shrink-0 text-right mr-1">
             <span v-if="song && song.track_number"> {{ formatTrackNumber(song) }}.</span>
         </div>
-        <div class="grow basis-0 pr-4 overflow-hidden text-ellipsis">
+        <div class="hidden xl:block grow basis-0 pr-4 overflow-hidden text-ellipsis">
             <span v-if="song">
                 {{ formatTitle(song) }}
                 <span :class="selected ? '' : 'text-ls-400 dark:text-ds-600'"
@@ -110,5 +114,18 @@ function formatTrackDuration(song: Song) {
         return "??:??";
     }
     return formatDuration(song.duration);
+}
+
+function formatTrackShort(song: Song) {
+    let formatted = "";
+    if (song.album_artists) {
+        formatted += formatArtists(song.album_artists);
+    } else if (song.artists) {
+        formatted += formatArtists(song.artists);
+    } else {
+        formatted += "Unknown Artist";
+    }
+    formatted += ` - ${formatTitle(song)}`;
+    return formatted;
 }
 </script>
