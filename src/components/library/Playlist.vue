@@ -14,7 +14,7 @@
             </template>
         </PageTitle>
 
-        <div v-if="songs.length" class="mb-8 flex justify-between">
+        <div v-if="songs.length" class="mb-8 basis-10 shrink-0 flex items-center justify-between">
             <div class="basis-0 grow max-h-6 mr-6 mt-1.5 overflow-hidden flex flex-wrap gap-2">
                 <Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
             </div>
