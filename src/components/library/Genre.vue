@@ -1,13 +1,6 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name">
-            <template #right>
-                <div class="flex gap-2">
-                    <Button label="Play All" severity="secondary" icon="play_arrow" @click="playAll" />
-                    <Button label="Queue All" severity="secondary" icon="playlist_add" @click="queueAll" />
-                </div>
-            </template>
-        </PageTitle>
+        <PageTitle :label="name" :actions="pageActions" />
 
         <Tabs v-model="viewMode" :tabs="viewModes" />
 
@@ -24,7 +17,6 @@ import { computed, ComputedRef, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getGenreSongs } from '@/api/endpoints';
-import Button from '@/components/basic/Button.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import Tabs from '@/components/basic/Tabs.vue';
 import { makeGenreURL } from '@/router';
@@ -34,6 +26,11 @@ const router = useRouter();
 const playback = usePlaybackStore();
 
 const props = defineProps<{ name: string }>();
+
+const pageActions = [
+    { label: " Play All", icon: "play_arrow", action: playAll },
+    { label: " Queue All", icon: "playlist_add", action: queueAll },
+];
 
 type ViewMode = "overview" | "artists" | "albums";
 

@@ -1,16 +1,9 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name">
+        <PageTitle :label="name" :actions="pageActions">
             <template #left>
                 <span v-if="playlist" class="ml-4 italic whitespace-nowrap text-xs text-ls-500 dark:text-ds-500"
                     v-text="formatLongDuration(playlist.duration)" />
-            </template>
-            <template #right>
-                <div class="flex gap-2">
-                    <Button label="Play All" severity="secondary" icon="play_arrow" @click="play" />
-                    <Button label="Delete" severity="danger" icon="delete" data-pw="delete-playlist"
-                        @click="deletePlaylist" />
-                </div>
             </template>
         </PageTitle>
 
@@ -53,7 +46,6 @@ import { useRouter } from 'vue-router';
 import { getPlaylist } from '@/api/endpoints';
 import Badge from '@/components/basic/Badge.vue';
 import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
-import Button from '@/components/basic/Button.vue';
 import Error from '@/components/basic/Error.vue';
 import PageTitle from '@/components/basic/PageTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
@@ -71,6 +63,11 @@ const playlists = usePlaylistsStore();
 const preferences = usePreferencesStore();
 
 const props = defineProps<{ name: string }>();
+
+const pageActions = [
+    { label: " Play All", icon: "play_arrow", action: play },
+    { label: " Delete", icon: "delete", action: deletePlaylist, danger: true, testID: "delete-playlist" },
+];
 
 const isLoading = ref(false);
 const error = ref(false);

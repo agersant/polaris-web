@@ -2,44 +2,35 @@
 
 	<div class="flex flex-col py-8 pl-8 xl:pl-16 pr-8 bg-ls-0 dark:bg-ds-900">
 
-		<PageTitle :label="playlistName || 'New Playlist'">
-			<template #right>
-				<div class="relative flex gap-2">
-					<Button label="Clear" severity="secondary" icon="clear" data-pw="clear-playlist"
-						@click="playback.clear" :disabled="isEmpty" />
-					<Button label="Stats" severity="secondary" icon="bar_chart" data-pw="show-playlist-stats"
-						@click="showStats = true" :disabled="isEmpty" />
-					<Button label="Save" severity="secondary" icon="save" data-pw="save-playlist"
-						@click="savingPlaylist = true" :disabled="isEmpty" />
+		<div class="relative flex gap-2">
+			<ScreenFade>
+				<ScreenDarkening v-if="savingPlaylist" class="z-10" />
+			</ScreenFade>
 
-					<ScreenFade>
-						<ScreenDarkening v-if="savingPlaylist" class="z-10" />
-					</ScreenFade>
-
-					<Transition appear name="slide">
-						<div v-if="savingPlaylist" v-on-click-outside="cancelSavePlaylist" class="z-10 absolute right-0 -bottom-2 w-80 translate-y-full
+			<Transition appear name="slide">
+				<div v-if="savingPlaylist" v-on-click-outside="cancelSavePlaylist" class="z-10 absolute right-0 -bottom-2 w-80 translate-y-full
 							rounded-md
 							bg-ls-0 dark:bg-ds-950
 							shadow-lg shadow-accent-600/20	
 							dark:shadow-none dark:border dark:border-ds-800
 							">
-							<form @submit.prevent="savePlaylist" class="relative p-6 flex flex-col gap-4">
-								<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
-								<Button type="submit" :disabled="!playlistName" label="Save" severity="primary"
-									icon="save" data-pw="submit-save-playlist" />
-								<div class="absolute right-2 top-2">
-									<Button icon="close" severity="tertiary" @click="cancelSavePlaylist" />
-								</div>
-							</form>
+					<form @submit.prevent="savePlaylist" class="relative p-6 flex flex-col gap-4">
+						<InputText v-model="playlistName" id="playlistName" label="Playlist Name" autofocus />
+						<Button type="submit" :disabled="!playlistName" label="Save" severity="primary" icon="save"
+							data-pw="submit-save-playlist" />
+						<div class="absolute right-2 top-2">
+							<Button icon="close" severity="tertiary" @click="cancelSavePlaylist" />
 						</div>
-					</Transition>
-
-					<SidePanel v-model="showStats">
-						<Stats />
-					</SidePanel>
+					</form>
 				</div>
-			</template>
-		</PageTitle>
+			</Transition>
+
+			<SidePanel v-model="showStats">
+				<Stats />
+			</SidePanel>
+		</div>
+
+		<PageTitle :label="playlistName || 'New Playlist'" :actions="pageActions" />
 
 		<div class="mb-8 flex items-center justify-between">
 			<div class="flex gap-4">
@@ -119,6 +110,14 @@ const playlistName = computed({
 	set: (value) => playback.setName(value),
 });
 
+const isEmpty = computed(() => playback.playlist.length == 0);
+
+const pageActions = computed(() => [
+	{ label: "Clear", icon: "clear", action: playback.clear, disabled: isEmpty.value, testID: "clear-playlist" },
+	{ label: "Stats", icon: "bar_chart", action: () => { showStats.value = true }, disabled: isEmpty.value, testID: "show-playlist-stats" },
+	{ label: "Save", icon: "save", action: () => { savingPlaylist.value = true }, disabled: isEmpty.value, testID: "save-playlist" },
+]);
+
 const playbackOrderOptions: SelectOption<PlaybackOrder>[] = [
 	{ label: "Play Once", value: "default" },
 	{ label: "Play Randomly", value: "random" },
@@ -141,8 +140,6 @@ const { activeDnD } = useDragAndDrop();
 
 onMounted(() => autoScroll("instant"));
 watch(() => playback.currentTrack, () => autoScroll("smooth"));
-
-const isEmpty = computed(() => playback.playlist.length == 0);
 
 function autoScroll(scrollBehavior: ScrollBehavior) {
 	nextTick(() => {

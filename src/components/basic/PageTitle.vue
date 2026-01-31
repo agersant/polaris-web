@@ -8,11 +8,29 @@
             <slot name="left" />
         </div>
         <slot name="right" />
+        <div v-if="actions?.length" class="flex gap-2">
+            <Button v-for="action in actions" :label="action.label" :icon="action.icon" :disabled="action.disabled"
+                @click="action.action" :severity="action.danger ? 'danger' : 'secondary'" :data-pw="action.testID"
+                class="grow" />
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import Button from '@/components/basic/Button.vue';
 
-defineProps<{ label: string }>();
+export type PageAction = {
+    label?: string,
+    icon?: string,
+    disabled?: boolean,
+    danger?: boolean,
+    testID?: string,
+    action: () => void,
+};
+
+defineProps<{
+    label: string,
+    actions?: PageAction[],
+}>();
 
 </script>

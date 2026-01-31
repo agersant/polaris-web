@@ -1,18 +1,11 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle :label="header">
-			<template #right>
-				<div class="flex gap-2">
-					<Button label="Play All" severity="secondary" icon="play_arrow" data-pw="play-all" @click="play" />
-					<Button label="Queue All" severity="secondary" icon="playlist_add" data-pw="queue-all"
-						@click="queue" />
-				</div>
-			</template>
-		</PageTitle>
+		<PageTitle :label="header" :actions="pageActions" class="hidden xl:inline-flex" />
 
 		<div v-if="album" class="grow min-h-0 flex flex-col gap-8 xl:gap-0">
-			<div class="flex flex-row gap-4 items-start">
-				<div class="flex flex-col basis-2/5 xl:hidden">
+
+			<div class="flex flex-row gap-4 items-start mt-11 xl:basis-10 shrink-0 xl:mb-8 xl:mt-0">
+				<div class="flex flex-col basis-[105px] shrink-0 xl:hidden">
 					<Draggable :make-payload="() => new DndPayloadAlbum(album as AlbumDTO)" class="cursor-grab">
 						<AlbumArt :url="artworkURL" size="md" class="shadow-lg shadow-ls-100 dark:shadow-ds-900" />
 						<template #drag-preview>
@@ -21,7 +14,7 @@
 					</Draggable>
 				</div>
 				<div
-					class="xl:grow xl:shrink-1 self-stretch xl:self-start xl:mb-8 flex flex-col items-start gap-2 xl:flex-row xl:items-center xl:gap-6">
+					class="xl:grow xl:shrink-1 self-stretch flex flex-col items-start gap-2 xl:flex-row xl:items-center xl:gap-6">
 					<div class="xl:hidden">
 						<span v-text="`${albumKey.name}`" class="text-md" />
 						<span v-if="album.year" v-text="` (${album.year})`"
@@ -37,11 +30,19 @@
 						</span>
 					</div>
 					<div
-						class="xl:shrink-[2] xl:grow max-h-6 overflow-hidden flex flex-wrap self-start xl:justify-end gap-2">
+						class="xl:shrink-[2] xl:grow max-h-6 overflow-hidden flex flex-wrap self-start xl:self-center xl:justify-end gap-2">
 						<Badge v-for="genre of genres" :label="genre" :auto-color="true"
 							@click="onGenreClicked(genre)" />
 					</div>
 				</div>
+			</div>
+
+			<!-- TODO allow PageTitle to replace label with/ custom widget and re-use Actions instead of duplicating buttons here -->
+			<div class="flex gap-2 basis-10 shrink-0 xl:hidden">
+				<Button label="Play All" severity="secondary" icon="play_arrow" data-pw="play-all" @click="play"
+					class="grow" />
+				<Button label="Queue All" severity="secondary" icon="playlist_add" data-pw="queue-all" @click="queue"
+					class="grow" />
 			</div>
 
 			<div class="min-h-0 flex items-start gap-8">
@@ -132,6 +133,11 @@ const { state: album, isLoading, error, execute: fetchAlbum } = useAsyncState(
 const header = computed((): string => {
 	return props.albumKey.name || "Unknown Album";
 });
+
+const pageActions = [
+	{ label: "Play All", icon: "play_arrow", action: play, testID: "play-all" },
+	{ label: "Queue All", icon: "playlist_add", action: queue, testID: "queue-all" },
+];
 
 const artworkURL = computed(() => album.value?.artwork ? makeThumbnailURL(album.value.artwork, "large") : undefined);
 
