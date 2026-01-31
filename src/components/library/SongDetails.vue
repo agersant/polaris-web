@@ -5,7 +5,7 @@
         </div>
 
         <div v-else class="flex flex-col min-h-0">
-            <PageTitle :label="title" />
+            <PageHeader :label="title" />
 
             <div class="-mx-8 px-8 min-h-0 overflow-y-auto">
                 <div class="flex items-center gap-6 mt-3 mb-8">
@@ -77,7 +77,7 @@ import { makeThumbnailURL } from '@/api/endpoints';
 import AlbumArt from '@/components/AlbumArt.vue';
 import Badge from '@/components/basic/Badge.vue';
 import Draggable from '@/components/basic/Draggable.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import SongField from '@/components/library/SongField.vue';
 import { DndPayloadAlbumKey } from '@/dnd';

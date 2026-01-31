@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name" :actions="pageActions" />
+        <PageHeader :label="name" :actions="pageActions" />
 
         <Tabs v-model="viewMode" :tabs="viewModes" />
 
@@ -17,7 +17,7 @@ import { computed, ComputedRef, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getGenreSongs } from '@/api/endpoints';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Tabs from '@/components/basic/Tabs.vue';
 import { makeGenreURL } from '@/router';
 import { usePlaybackStore } from '@/stores/playback';

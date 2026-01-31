@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle label="Search" caption="Find music by querying song metadata." />
+		<PageHeader label="Search" caption="Find music by querying song metadata." />
 
 		<div class="mb-8 flex gap-2">
 			<InputText class="grow" v-model="query" id="search" placeholder="Search" icon=" search" autofocus
@@ -135,7 +135,7 @@ import Button from "@/components/basic/Button.vue";
 import ButtonGroup from "@/components/basic/ButtonGroup.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
-import PageTitle from "@/components/basic/PageTitle.vue";
+import PageHeader from "@/components/basic/PageHeader.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
 import SidePanel from "@/components/basic/SidePanel.vue";
 import Spinner from "@/components/basic/Spinner.vue";

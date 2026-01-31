@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle :label="header" :actions="pageActions" class="hidden xl:inline-flex" />
+		<PageHeader :label="header" :actions="pageActions" class="hidden xl:inline-flex" />
 
 		<div v-if="album" class="grow min-h-0 flex flex-col gap-8 xl:gap-0">
 
@@ -37,7 +37,7 @@
 				</div>
 			</div>
 
-			<!-- TODO allow PageTitle to replace label with/ custom widget and re-use Actions instead of duplicating buttons here -->
+			<!-- TODO allow PageHeader to replace label with/ custom widget and re-use Actions instead of duplicating buttons here -->
 			<div class="flex gap-2 basis-10 shrink-0 xl:hidden">
 				<Button label="Play All" severity="secondary" icon="play_arrow" data-pw="play-all" @click="play"
 					class="grow" />
@@ -100,7 +100,7 @@ import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import Error from '@/components/basic/Error.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumDragPreview from '@/components/library/AlbumDragPreview.vue';

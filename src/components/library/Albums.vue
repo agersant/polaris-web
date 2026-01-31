@@ -1,7 +1,7 @@
 <template>
 
     <div class="flex flex-col whitespace-nowrap">
-        <PageTitle label="Albums">
+        <PageHeader label="Albums">
             <template #left>
                 <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="viewMode" :items="[
                     { label: 'Recently Added', value: 'recent' },
@@ -9,7 +9,7 @@
                     { label: 'All', value: 'all' },
                 ]" />
             </template>
-        </PageTitle>
+        </PageHeader>
 
         <div v-if="albums.length" class="grow min-h-0 flex flex-col">
 
@@ -60,7 +60,7 @@ import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import SwitchText from "@/components/basic/SwitchText.vue";
-import PageTitle from "@/components/basic/PageTitle.vue";
+import PageHeader from "@/components/basic/PageHeader.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import AlbumGrid from "@/components/library/AlbumGrid.vue";
 import { saveScrollState, useHistory } from "@/history";

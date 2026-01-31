@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle label="Settings" caption="Adjust color schemes and Polaris behavior." />
+		<PageHeader label="Settings" caption="Adjust color schemes and Polaris behavior." />
 		<Tabs v-model="category" :tabs="tabs" />
 		<div class="grow min-h-0 flex flex-col">
 			<router-view />
@@ -12,7 +12,7 @@
 import { computed, ComputedRef } from 'vue';
 import { useRouter } from 'vue-router';
 
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Tabs, { TabItem } from '@/components/basic/Tabs.vue';
 import { useUserStore } from '@/stores/user';
 

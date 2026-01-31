@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col whitespace-nowrap">
-        <PageTitle label="Genres" caption="Explore music by genre tags." />
+        <PageHeader label="Genres" caption="Explore music by genre tags." />
 
         <div v-if="genres && genres.length" class="grow min-h-0 flex flex-col">
             <InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
@@ -53,7 +53,7 @@ import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import Error from '@/components/basic/Error.vue';
 import InputText from '@/components/basic/InputText.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import { DndPayloadGenre } from '@/dnd';
 import { saveScrollState, useHistory } from '@/history';

@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle label="Files" caption="Browse music as a hierarchy of files and folders." />
+		<PageHeader label="Files" caption="Browse music as a hierarchy of files and folders." />
 
 		<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter" icon="filter_alt" autofocus
 			clearable />
@@ -61,7 +61,7 @@ import { browse, flatten, search } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
-import PageTitle from "@/components/basic/PageTitle.vue";
+import PageHeader from "@/components/basic/PageHeader.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";

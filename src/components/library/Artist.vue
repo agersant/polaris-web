@@ -1,13 +1,13 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name">
+        <PageHeader :label="name">
             <template #right>
                 <div
                     class="basis-auto xl:basis-0 grow max-h-6 my-1.5 xl:mb-0 overflow-hidden flex flex-wrap xl:justify-end gap-2">
                     <Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
                 </div>
             </template>
-        </PageTitle>
+        </PageHeader>
 
         <div v-if="artist" class="flex flex-col min-h-0">
             <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-auto flex flex-col gap-8">
@@ -68,7 +68,7 @@ import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
 import ButtonGroup from '@/components/basic/ButtonGroup.vue';
 import Error from '@/components/basic/Error.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';

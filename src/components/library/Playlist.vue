@@ -1,11 +1,11 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name" :actions="pageActions">
+        <PageHeader :label="name" :actions="pageActions">
             <template #left>
                 <span v-if="playlist" class="ml-4 italic whitespace-nowrap text-xs text-ls-500 dark:text-ds-500"
                     v-text="formatLongDuration(playlist.duration)" />
             </template>
-        </PageTitle>
+        </PageHeader>
 
         <div v-if="songs.length" class="mb-8 basis-10 shrink-0 flex items-center justify-between">
             <div class="basis-0 grow max-h-6 mr-6 mt-1.5 overflow-hidden flex flex-wrap gap-2">
@@ -47,7 +47,7 @@ import { getPlaylist } from '@/api/endpoints';
 import Badge from '@/components/basic/Badge.vue';
 import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
 import Error from '@/components/basic/Error.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import Switch from '@/components/basic/Switch.vue';
 import SongList from '@/components/SongList.vue';

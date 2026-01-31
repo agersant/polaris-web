@@ -30,7 +30,7 @@
 			</SidePanel>
 		</div>
 
-		<PageTitle :label="playlistName || 'New Playlist'" :actions="pageActions" />
+		<PageHeader :label="playlistName || 'New Playlist'" :actions="pageActions" />
 
 		<div class="mb-8 flex items-center justify-between">
 			<div class="flex gap-4">
@@ -81,7 +81,7 @@ import { vOnClickOutside } from '@vueuse/components'
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
 import InputText from "@/components/basic/InputText.vue"
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import ScreenDarkening from '@/components/basic/ScreenDarkening.vue';
 import ScreenFade from "@/components/basic/ScreenFade.vue"
 import Select, { SelectOption } from '@/components/basic/Select.vue';
