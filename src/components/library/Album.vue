@@ -38,8 +38,8 @@
 					<div v-text="`${albumKey.name} (${album.year})`"
 						class="mt-3 px-4 italic text-ls-500 dark:text-ds-400 text-xs text-center" />
 				</div>
-				<div ref="viewport" class="grow -m-4 p-4 self-stretch overflow-y-auto flex flex-col gap-8" tabindex="-1"
-					@keydown="onKeyDown">
+				<div ref="viewport" class="grow -m-4 mb-0 p-4 self-stretch overflow-y-auto flex flex-col gap-8"
+					tabindex="-1" @keydown="onKeyDown">
 					<div v-for="[discNumber, songs] of discs" class="flex flex-col">
 						<SectionTitle v-if="discs?.size && discNumber" icon="numbers" :label="`Disc ${discNumber}`" />
 						<Draggable :make-payload="() => new DndPayloadSongs(selection)" v-for="(song, index) of songs"
