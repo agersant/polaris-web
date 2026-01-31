@@ -1,7 +1,7 @@
 <template>
 
     <div class="flex flex-col whitespace-nowrap">
-        <PageHeader label="Albums">
+        <PageHeader title="Albums">
             <template #left>
                 <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="viewMode" :items="[
                     { label: 'Recently Added', value: 'recent' },

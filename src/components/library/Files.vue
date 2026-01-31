@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader label="Files" caption="Browse music as a hierarchy of files and folders." />
+		<PageHeader title="Files" caption="Browse music as a hierarchy of files and folders." />
 
 		<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter" icon="filter_alt" autofocus
 			clearable />

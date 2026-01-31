@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader label="Settings" caption="Adjust color schemes and Polaris behavior." />
+		<PageHeader title="Settings" caption="Adjust color schemes and Polaris behavior." />
 		<Tabs v-model="category" :tabs="tabs" />
 		<div class="grow min-h-0 flex flex-col">
 			<router-view />

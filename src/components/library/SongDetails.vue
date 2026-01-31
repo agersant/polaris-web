@@ -5,7 +5,7 @@
         </div>
 
         <div v-else class="flex flex-col min-h-0">
-            <PageHeader :label="title" />
+            <PageHeader :title="title" />
 
             <div class="-mx-8 px-8 min-h-0 overflow-y-auto">
                 <div class="flex items-center gap-6 mt-3 mb-8">

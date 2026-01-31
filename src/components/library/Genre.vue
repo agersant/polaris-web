@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col">
-        <PageHeader :label="name" :actions="pageActions" />
+        <PageHeader :title="name" :actions="pageActions" />
 
         <Tabs v-model="viewMode" :tabs="viewModes" />
 

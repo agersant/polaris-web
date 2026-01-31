@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader :label="header" :actions="pageActions" class="hidden xl:inline-flex" />
+		<PageHeader :title="header" :actions="pageActions" class="hidden xl:inline-flex" />
 
 		<div v-if="album" class="grow min-h-0 flex flex-col gap-8 xl:gap-0">
 

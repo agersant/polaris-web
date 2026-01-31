@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col">
-        <PageHeader :label="name">
+        <PageHeader :title="name">
             <template #right>
                 <div
                     class="basis-auto xl:basis-0 grow max-h-6 my-1.5 xl:mb-0 overflow-hidden flex flex-wrap xl:justify-end gap-2">

@@ -3,7 +3,7 @@
         class="mt-11 mb-8 pb-3 border-b border-ls-200 dark:border-ds-700 flex flex-col xl:flex-row gap-x-8 gap-y-4 xl:items-center justify-between">
         <div class="min-w-0 flex items-center">
             <h3 class="text-4xl text-ls-500 dark:text-ds-400 whitespace-nowrap overflow-hidden text-ellipsis">
-                {{ label }}
+                {{ title }}
             </h3>
             <slot name="left" />
         </div>
@@ -33,7 +33,7 @@ export type PageAction = {
 };
 
 defineProps<{
-    label: string,
+    title: string,
     caption?: string,
     actions?: PageAction[],
 }>();

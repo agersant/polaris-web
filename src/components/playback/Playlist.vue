@@ -30,7 +30,7 @@
 			</SidePanel>
 		</div>
 
-		<PageHeader :label="playlistName || 'New Playlist'" :actions="pageActions" />
+		<PageHeader :title="playlistName || 'New Playlist'" :actions="pageActions" />
 
 		<div class="mb-8 flex items-center justify-between">
 			<div class="flex gap-4">
