@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col">
         <PageHeader :title="name" :actions="pageActions">
-            <template #left>
+            <template #post-title>
                 <span v-if="playlist" class="ml-4 italic whitespace-nowrap text-xs text-ls-500 dark:text-ds-500"
                     v-text="formatLongDuration(playlist.duration)" />
             </template>

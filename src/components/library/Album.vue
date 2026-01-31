@@ -1,48 +1,55 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader :title="header" :actions="pageActions" class="hidden xl:inline-flex" />
+		<PageHeader :title="header" :actions="pageActions">
+			<template #jumbo v-if="album && isTinyScreen">
+				<div class="mb-4 flex gap-4 items-start shrink-0">
+					<div class="flex flex-col basis-[105px] shrink-0">
+						<Draggable :make-payload="() => new DndPayloadAlbum(album as AlbumDTO)" class="cursor-grab">
+							<AlbumArt :url="artworkURL" size="md" class="shadow-lg shadow-ls-100 dark:shadow-ds-900" />
+							<template #drag-preview>
+								<AlbumDragPreview :album="album" />
+							</template>
+						</Draggable>
+					</div>
+					<div class="self-stretch flex flex-col gap-2">
+						<div>
+							<span v-text="`${albumKey.name}`" class="text-md" />
+							<span v-if="album.year" v-text="` (${album.year})`"
+								class="text-xs italic text-ls-500 dark:text-ds-400" />
+						</div>
+						<div class="text-xs uppercase font-medium text-ls-500 dark:text-ds-400">
+							<span v-text="`By `" />
+							<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
+								<span v-text="artist" :class="isFakeArtist(artist) ? '' :
+									'cursor-pointer underline text-accent-600 dark:text-accent-700'" @click="onArtistClicked(artist)" />
+								<span v-if="index == albumKey.artists.length - 2">&nbsp;&&nbsp;</span>
+								<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
+							</span>
+						</div>
+						<div class="max-h-6 overflow-hidden flex flex-wrap gap-2">
+							<Badge v-for="genre of genres" :label="genre" :auto-color="true"
+								@click="onGenreClicked(genre)" />
+						</div>
+					</div>
+				</div>
+			</template>
+		</PageHeader>
 
 		<div v-if="album" class="grow min-h-0 flex flex-col gap-8 xl:gap-0">
 
-			<div class="flex flex-row gap-4 items-start mt-11 xl:basis-10 shrink-0 xl:mb-8 xl:mt-0">
-				<div class="flex flex-col basis-[105px] shrink-0 xl:hidden">
-					<Draggable :make-payload="() => new DndPayloadAlbum(album as AlbumDTO)" class="cursor-grab">
-						<AlbumArt :url="artworkURL" size="md" class="shadow-lg shadow-ls-100 dark:shadow-ds-900" />
-						<template #drag-preview>
-							<AlbumDragPreview :album="album" />
-						</template>
-					</Draggable>
+			<div class="basis-10 shrink-0 flex gap-4 items-center mb-8 hidden xl:inline-flex">
+				<div class="shrink-[1] text-xs xl:text-sm uppercase font-medium text-ls-500 dark:text-ds-400">
+					<span v-text="`By `" />
+					<span v-for="(artist, index) of albumKey.artists">
+						<span v-text="artist" :class="isFakeArtist(artist) ? '' :
+							'cursor-pointer underline text-accent-600 dark:text-accent-700'" @click="onArtistClicked(artist)" />
+						<span v-if="index == albumKey.artists.length - 2">&nbsp;&&nbsp;</span>
+						<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
+					</span>
 				</div>
-				<div
-					class="xl:grow xl:shrink-1 self-stretch flex flex-col items-start gap-2 xl:flex-row xl:items-center xl:gap-6">
-					<div class="xl:hidden">
-						<span v-text="`${albumKey.name}`" class="text-md" />
-						<span v-if="album.year" v-text="` (${album.year})`"
-							class="text-xs italic text-ls-500 dark:text-ds-400" />
-					</div>
-					<div class="xl:shrink-[1] text-xs xl:text-sm uppercase font-medium text-ls-500 dark:text-ds-400">
-						<span v-text="`By `" />
-						<span v-for="(artist, index) of albumKey.artists" class="inline-flex">
-							<span v-text="artist" :class="isFakeArtist(artist) ? '' :
-								'cursor-pointer underline text-accent-600 dark:text-accent-700'" @click="onArtistClicked(artist)" />
-							<span v-if="index == albumKey.artists.length - 2">&nbsp;&&nbsp;</span>
-							<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
-						</span>
-					</div>
-					<div
-						class="xl:shrink-[2] xl:grow max-h-6 overflow-hidden flex flex-wrap self-start xl:self-center xl:justify-end gap-2">
-						<Badge v-for="genre of genres" :label="genre" :auto-color="true"
-							@click="onGenreClicked(genre)" />
-					</div>
+				<div class="shrink-[2] grow max-h-6 overflow-hidden flex flex-wrap justify-end gap-2">
+					<Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
 				</div>
-			</div>
-
-			<!-- TODO allow PageHeader to replace label with/ custom widget and re-use Actions instead of duplicating buttons here -->
-			<div class="flex gap-2 basis-10 shrink-0 xl:hidden">
-				<Button label="Play All" severity="secondary" icon="play_arrow" data-pw="play-all" @click="play"
-					class="grow" />
-				<Button label="Queue All" severity="secondary" icon="playlist_add" data-pw="queue-all" @click="queue"
-					class="grow" />
 			</div>
 
 			<div class="min-h-0 flex items-start gap-8">
@@ -90,14 +97,13 @@
 
 <script setup lang="ts">
 import { computed, useTemplateRef, watch, } from "vue";
-import { useAsyncState } from "@vueuse/core";
+import { useAsyncState, useMediaQuery } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
 import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
 import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
 import Badge from '@/components/basic/Badge.vue';
-import Button from '@/components/basic/Button.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import Error from '@/components/basic/Error.vue';
 import PageHeader from '@/components/basic/PageHeader.vue';
@@ -123,6 +129,8 @@ const props = defineProps<{ albumKey: AlbumKey }>();
 
 const viewport = useTemplateRef("viewport");
 const albumSongs = useTemplateRef("albumSongs");
+
+const isTinyScreen = useMediaQuery("(width < 80rem)");
 
 const { state: album, isLoading, error, execute: fetchAlbum } = useAsyncState(
 	(key: AlbumKey) => getAlbum(key),
