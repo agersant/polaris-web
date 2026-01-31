@@ -1,6 +1,6 @@
 <template>
 	<div data-pw="sidebar"
-		class="3xl:w-80 rounded-r-lg xl:rounded-lg flex flex-col overflow-hidden border bg-ls-0 dark:bg-ds-900 border-ls-200 dark:border-ds-700 p-4 pb-0">
+		class="3xl:w-80 rounded-r-lg xl:rounded-lg flex flex-col overflow-hidden xl:ml-8 border border-l-0 xl:border-l dark:border-0 bg-ls-0 dark:bg-ds-900 border-ls-200 dark:border-ds-700 p-4 pb-0">
 		<img src="/assets/logo.svg" class="hidden 3xl:inline mt-6 mb-10 mx-6" />
 		<img src="/assets/logo_no_text.svg" class="3xl:hidden mt-9 mb-11 pb-1" />
 		<nav class="grow flex flex-col gap-y-7">
