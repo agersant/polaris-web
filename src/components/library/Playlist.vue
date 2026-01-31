@@ -65,8 +65,8 @@ const preferences = usePreferencesStore();
 const props = defineProps<{ name: string }>();
 
 const pageActions = [
-    { label: " Play All", icon: "play_arrow", action: play },
-    { label: " Delete", icon: "delete", action: deletePlaylist, danger: true, testID: "delete-playlist" },
+    { label: "Play All", icon: "play_arrow", action: play },
+    { label: "Delete", icon: "delete", action: deletePlaylist, danger: true, testID: "delete-playlist" },
 ];
 
 const isLoading = ref(false);

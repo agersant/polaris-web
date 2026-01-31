@@ -28,8 +28,8 @@ const playback = usePlaybackStore();
 const props = defineProps<{ name: string }>();
 
 const pageActions = [
-    { label: " Play All", icon: "play_arrow", action: playAll },
-    { label: " Queue All", icon: "playlist_add", action: queueAll },
+    { label: "Play All", icon: "play_arrow", action: playAll },
+    { label: "Queue All", icon: "playlist_add", action: queueAll },
 ];
 
 type ViewMode = "overview" | "artists" | "albums";
