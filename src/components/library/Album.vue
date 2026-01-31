@@ -5,17 +5,17 @@
 				<div class="mb-4 flex gap-4 items-start shrink-0">
 					<div class="flex flex-col basis-[105px] shrink-0">
 						<Draggable :make-payload="() => new DndPayloadAlbum(album as AlbumDTO)" class="cursor-grab">
-							<AlbumArt :url="artworkURL" size="md" class="shadow-lg shadow-ls-100 dark:shadow-ds-900" />
+							<AlbumArt :url="artworkURL" size="md" />
 							<template #drag-preview>
 								<AlbumDragPreview :album="album" />
 							</template>
 						</Draggable>
 					</div>
-					<div class="self-stretch flex flex-col gap-2">
+					<div class="grow self-stretch flex flex-col gap-2 pb-3 border-b border-ls-200 dark:border-ds-700">
 						<div>
-							<span v-text="`${albumKey.name}`" class="text-md" />
+							<span v-text="`${albumKey.name}`" class="text-md text-ls-700 dark:text-ds-300" />
 							<span v-if="album.year" v-text="` (${album.year})`"
-								class="text-xs italic text-ls-500 dark:text-ds-400" />
+								class="text-xs italic text-ls-400 dark:text-ds-500" />
 						</div>
 						<div class="text-xs uppercase font-medium text-ls-500 dark:text-ds-400">
 							<span v-text="`By `" />
