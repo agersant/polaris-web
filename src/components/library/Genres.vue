@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col whitespace-nowrap">
-        <PageTitle label="Genres" />
+        <PageTitle label="Genres" caption="Explore music by genre tags." />
 
         <div v-if="genres && genres.length" class="grow min-h-0 flex flex-col">
             <InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus

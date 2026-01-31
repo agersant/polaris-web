@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle label="Playlists" />
+		<PageTitle label="Playlists" caption="Listen to your saved playlists." />
 		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
 				clearable />

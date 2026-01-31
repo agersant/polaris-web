@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle label="Search" />
+		<PageTitle label="Search" caption="Find music by querying song metadata." />
 
 		<div class="mb-8 flex gap-2">
 			<InputText class="grow" v-model="query" id="search" placeholder="Search" icon=" search" autofocus
