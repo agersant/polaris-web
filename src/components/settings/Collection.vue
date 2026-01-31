@@ -15,7 +15,7 @@
 				<SectionTitle label="Music Sources" />
 				<div class="flex flex-col gap-8">
 					<div class="flex flex-col gap-4">
-						<div class="flex gap-4 w-3/4" v-for="(mountDir, index) in mountDirs.listing">
+						<div class="flex gap-4 3xl:w-4/5" v-for="(mountDir, index) in mountDirs.listing">
 							<InputText v-model="mountDir.name" id="name" :label="index ? '' : 'Name'"
 								icon="library_music" placeholder="My Music" data-pw="name" class="grow" />
 							<InputText v-model="mountDir.source" id="source" :label="index ? '' : 'Location'"
