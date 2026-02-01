@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatHex, modeRgb, useMode } from 'culori';
+import { formatHex, modeRgb, useMode } from 'culori/fn';
 import { computed, Ref, ref } from 'vue';
 import { useCssVar, watchImmediate } from '@vueuse/core';
 
