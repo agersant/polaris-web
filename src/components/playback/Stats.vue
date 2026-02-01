@@ -30,7 +30,8 @@
 
 <script setup lang="ts">
 import { formatHex, modeRgb, useMode } from 'culori/fn';
-import { computed, Ref, ref } from 'vue';
+import { computed, getCurrentInstance, Ref, ref } from 'vue';
+import VueApexCharts from "vue3-apexcharts";
 import { useCssVar, watchImmediate } from '@vueuse/core';
 
 import { Song } from '@/api/dto';
@@ -38,6 +39,8 @@ import SectionTitle from '@/components/basic/SectionTitle.vue';
 import { usePlaybackStore } from '@/stores/playback';
 import { useSongsStore } from '@/stores/songs';
 import { usePreferencesStore } from '@/stores/preferences';
+
+getCurrentInstance()?.appContext.app.use(VueApexCharts);
 
 const rgb = useMode(modeRgb);
 const playback = usePlaybackStore();

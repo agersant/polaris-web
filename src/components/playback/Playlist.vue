@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, defineAsyncComponent, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { vOnClickOutside } from '@vueuse/components'
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
@@ -98,11 +98,14 @@ import Switch from '@/components/basic/Switch.vue';
 import OrderableList from '@/components/basic/OrderableList.vue';
 import SidePanel from '@/components/basic/SidePanel.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
-import Stats from '@/components/playback/Stats.vue';
 import { useDragAndDrop } from '@/dnd';
 import { usePlaybackStore, PlaylistEntry, PlaybackOrder } from '@/stores/playback';
 import { usePlaylistsStore } from "@/stores/playlists";
 import { usePreferencesStore } from "@/stores/preferences";
+
+const Stats = defineAsyncComponent(() =>
+	import('@/components/playback/Stats.vue')
+)
 
 const playback = usePlaybackStore();
 const playlists = usePlaylistsStore();
