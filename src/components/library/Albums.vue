@@ -1,15 +1,7 @@
 <template>
 
     <div class="flex flex-col whitespace-nowrap">
-        <PageHeader title="Albums">
-            <template #post-title>
-                <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="viewMode" :items="[
-                    { label: 'Recently Added', value: 'recent' },
-                    { label: 'Random', value: 'random' },
-                    { label: 'All', value: 'all' },
-                ]" />
-            </template>
-        </PageHeader>
+        <PageHeader title="Albums" :view-modes="viewModes" v-model:view-mode="viewMode" />
 
         <div v-if="albums.length" class="grow min-h-0 flex flex-col">
 
@@ -59,14 +51,18 @@ import { getAlbums, getRandomAlbums, getRecentAlbums } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
-import SwitchText from "@/components/basic/SwitchText.vue";
-import PageHeader from "@/components/basic/PageHeader.vue";
+import PageHeader, { PageViewMode } from "@/components/basic/PageHeader.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import AlbumGrid from "@/components/library/AlbumGrid.vue";
 import { saveScrollState, useHistory } from "@/history";
 
 type ViewMode = "recent" | "random" | "all";
 const viewMode: Ref<ViewMode> = ref("recent");
+const viewModes: PageViewMode<ViewMode>[] = [
+    { label: 'Recently Added', value: 'recent' },
+    { label: 'Random', value: 'random' },
+    { label: 'All', value: 'all' },
+];
 
 const albums: ShallowRef<AlbumHeader[]> = ref([]);
 const fetchedAll = ref(false);

@@ -1,14 +1,6 @@
 <template>
     <div class="flex flex-col whitespace-nowrap">
-        <PageHeader title="Artists">
-            <template #post-title>
-                <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="roleFilter" :items="[
-                    { label: 'Performers', value: 'performer' },
-                    { label: 'Composers', value: 'composer' },
-                    { label: 'Lyricists', value: 'lyricist' }
-                ]" />
-            </template>
-        </PageHeader>
+        <PageHeader title="Artists" :view-modes="roles" v-model:view-mode="roleFilter" />
 
         <div v-if="artists.length" class="grow min-h-0 flex flex-col">
             <div class="mb-8 flex items-center justify-between">
@@ -56,8 +48,7 @@ import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import Switch from "@/components/basic/Switch.vue";
-import SwitchText from "@/components/basic/SwitchText.vue";
-import PageHeader from "@/components/basic/PageHeader.vue";
+import PageHeader, { PageViewMode } from "@/components/basic/PageHeader.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import ArtistList from "@/components/library/ArtistList.vue";
 import { saveScrollState, useHistory } from "@/history";
@@ -78,6 +69,11 @@ const filter = ref("");
 
 type ArtistRole = "performer" | "composer" | "lyricist";
 const roleFilter: Ref<ArtistRole> = ref("performer");
+const roles: PageViewMode<ArtistRole>[] = [
+    { label: 'Performers', value: 'performer' },
+    { label: 'Composers', value: 'composer' },
+    { label: 'Lyricists', value: 'lyricist' },
+];
 
 function isRelevant(artist: ArtistHeader) {
     return artist.num_albums_as_performer > 0
