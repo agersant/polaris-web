@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-col gap-8" data-pw="user">
+    <div class="flex flex-col gap-4 2xl:gap-8" data-pw="user">
 
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col items-start gap-y-4 2xl:flex-row 2xl:items-center justify-between">
             <div class="flex gap-4 items-center">
                 <span class="material-icons-round
                         rounded-full p-2
