@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+// TODO Implement this component without '@headlessui/vue' to remove dependency
 import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 
 const value = defineModel<boolean>({ required: true });
