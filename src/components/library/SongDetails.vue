@@ -5,10 +5,10 @@
         </div>
 
         <div v-else class="flex flex-col min-h-0">
-            <PageHeader :title="title" />
+            <PageHeader :title="title" class="hidden xl:inline-flex" />
 
-            <div class="-mx-8 px-8 min-h-0 overflow-y-auto">
-                <div class="flex items-center gap-6 mt-3 mb-8">
+            <div class="-mx-8 px-8 -mt-3 pt-3 min-h-0 overflow-y-auto">
+                <div class="flex items-center gap-6 mt-11 xl:mt-0 mb-8">
                     <div @click="onAlbumClicked" class="shrink-0 basis-24 rounded-lg shadow-md" :class="[
                         albumURL ? 'cursor-pointer origin-center transition-all ease-out duration-100 hover:opacity-90 hover:scale-125' : '',
                     ]
