@@ -5,8 +5,10 @@
 </template>
 
 <script setup lang="ts">
+import { useKeyboardNavigation } from "@/keyboard";
 import { useInitialSetupStore } from "@/stores/initial-setup";
 const initialSetup = useInitialSetupStore();
+useKeyboardNavigation();
 </script>
 
 <style scoped>
