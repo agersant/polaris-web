@@ -15,7 +15,7 @@
             <span v-if="song" @click="router.push(makeSongURL(song.path))"
                 class="cursor-pointer hover:underline hover:text-accent-600 overflow-hidden text-ellipsis">
                 <span>{{ formatTitle(song) }}</span>
-                <span class="text-ls-400 dark:text-ds-600"
+                <span class="text-ls-400 dark:text-ds-500"
                     v-if="miniPlayer && song.artists && song.album_artists && !equals(song.artists, song.album_artists)">
                     ({{ formatArtists(song.artists) }})
                 </span>

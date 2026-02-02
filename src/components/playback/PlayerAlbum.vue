@@ -7,7 +7,7 @@
         </div>
 
         <div
-            class="min-w-0 flex flex-col px-3 py-2 lg:ml-4 lg:p-0 border border-t-0 rounded-b-lg lg:border-0 text-md lg:text-sm">
+            class="min-w-0 flex flex-col px-3 py-2 lg:ml-4 lg:p-0 border border-t-0 rounded-b-lg border-ls-200 dark:border-ds-700 lg:border-0 text-md lg:text-sm">
 
             <div v-if="albumName" @click="onAlbumClicked"
                 class="mb-2 text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis"
