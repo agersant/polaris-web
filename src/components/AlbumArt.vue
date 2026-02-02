@@ -18,15 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { UseImage } from "@vueuse/components";
 
 import Spinner from "@/components/basic/Spinner.vue"
 
-const { size = "md", ...props } = defineProps<{
+const { rounding = "rounded-md", ...props } = defineProps<{
     url: string | undefined,
-    size?: "md" | "lg",
+    rounding?: string,
 }>();
-
-const rounding = computed(() => size == "md" ? "rounded-md" : "rounded-lg");
 </script>

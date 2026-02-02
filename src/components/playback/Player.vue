@@ -1,11 +1,12 @@
 <template>
-	<div data-pw="player" class="relative flex items-center px-8 py-4 bg-ls-0 dark:bg-ds-900 whitespace-nowrap">
+	<div data-pw="player"
+		class="relative flex flex-col gap-y-8 justify-center items-stretch min-h-0 lg:flex-row lg:items-center p-4 lg:px-8 bg-ls-0 dark:bg-ds-900 whitespace-nowrap">
 		<audio ref="htmlAudio" v-if="audioURL" v-bind:src="audioURL" @timeupdate="onTimeUpdate" @error="onPlaybackError"
 			@ended="onEnded" @pause="onPaused" @playing="onPlaying" @waiting="onWaiting" />
-		<PlayerAlbum class="basis-80 min-w-0 grow shrink" />
-		<PlayerSong :seconds-played="secondsPlayed" :duration="duration" :progress="trackProgress" @seek="seekTo"
-			class="grow-[8] basis-80 min-w-32 mx-8 xl:mx-16" />
-		<PlayerControls class="basis-80 min-w-0 grow shrink" v-model:volume="volume" :paused="paused"
+		<PlayerAlbum :mini-player="isMiniPlayer" class="lg:basis-80 min-w-0 min-h-0 lg:grow shrink" />
+		<PlayerSong :mini-player="isMiniPlayer" :seconds-played="secondsPlayed" :duration="duration"
+			:progress="trackProgress" @seek="seekTo" class="lg:grow-[8] lg:basis-80 min-w-32 lg:mx-8 xl:mx-16" />
+		<PlayerControls class="lg:basis-80 lg:min-w-0 lg:grow lg:shrink" v-model:volume="volume" :paused="paused"
 			:buffering="buffering" :error="error" @play="play" @pause="pause" @previous="skipPrevious"
 			@next="skipNext" />
 	</div>
@@ -13,6 +14,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, Ref, ref, useTemplateRef, watch } from "vue";
+import { useMediaQuery } from "@vueuse/core";
 
 import { makeAudioURL, makeThumbnailURL } from "@/api/endpoints";
 import PlayerAlbum from "@/components/playback/PlayerAlbum.vue";
@@ -24,6 +26,8 @@ import { useTimeoutPoll } from "@vueuse/core";
 import { formatSong } from "@/format";
 
 const playback = usePlaybackStore();
+
+const isMiniPlayer = useMediaQuery("(width < 64rem)");
 
 const secondsPlayed = ref(0);
 const duration = ref(1);

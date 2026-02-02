@@ -58,6 +58,7 @@ module.exports = {
         }
       },
       screens: {
+        "lg": "60rem",
         "3xl": "120rem",
       },
     },

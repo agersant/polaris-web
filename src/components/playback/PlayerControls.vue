@@ -1,5 +1,5 @@
 <template>
-    <div class="flex gap-4 items-center justify-end">
+    <div class="flex gap-4 items-center justify-center lg:justify-end">
         <div v-if="error" class="flex items-center">
             <!-- TODO error text as tooltip -->
             <span class="material-icons-round text-red-500 dark:text-red-700">error_outline</span>

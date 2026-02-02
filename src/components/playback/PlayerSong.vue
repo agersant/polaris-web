@@ -1,7 +1,8 @@
 <template>
     <div class="flex flex-col gap-4">
-        <div class="flex justify-center items-center text-sm text-ls-900 dark:text-ds-200 gap-1">
-            <div v-if="artists" class="overflow-hidden text-ellipsis">
+        <div class="flex justify-center items-center px-2 text-md lg:text-sm text-ls-900 dark:text-ds-200 gap-1"
+            :class="{ 'pointer-events-none': miniPlayer }">
+            <div v-if="artists && !miniPlayer" class="overflow-hidden text-ellipsis">
                 <span v-for="artist, index in artists">
                     <span @click="onArtistClicked(artist)"
                         :class="artist.url ? 'cursor-pointer hover:underline hover:text-accent-600' : 'pointer-events-none'">
@@ -10,10 +11,14 @@
                     <span v-if="index < artists.length - 1">{{ ", " }}</span>
                 </span>
             </div>
-            <div v-if="artists" class="text-ls-400 dark:text-ds-200">-</div>
+            <div v-if="artists && !miniPlayer" class="text-ls-400 dark:text-ds-200">-</div>
             <span v-if="song" @click="router.push(makeSongURL(song.path))"
                 class="cursor-pointer hover:underline hover:text-accent-600 overflow-hidden text-ellipsis">
-                {{ formatTitle(song) }}
+                <span>{{ formatTitle(song) }}</span>
+                <span class="text-ls-400 dark:text-ds-600"
+                    v-if="miniPlayer && song.artists && song.album_artists && !equals(song.artists, song.album_artists)">
+                    ({{ formatArtists(song.artists) }})
+                </span>
             </span>
             <span v-else class="rounded-full w-40 mt-1 h-3 mb-1 bg-ls-200 dark:bg-ds-700" />
         </div>
@@ -31,11 +36,12 @@
 </template>
 
 <script setup lang="ts">
+import equals from "array-equal"
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Waveform from '@/components/playback/Waveform.vue';
-import { formatDuration, formatTitle, isFakeArtist } from "@/format";
+import { formatArtists, formatDuration, formatTitle, isFakeArtist } from "@/format";
 import { usePlaybackStore } from '@/stores/playback';
 import { makeArtistURL, makeSongURL } from '@/router';
 
@@ -48,6 +54,7 @@ interface Artist {
 }
 
 const props = defineProps<{
+    miniPlayer: boolean,
     secondsPlayed: number,
     duration: number,
     progress: number,

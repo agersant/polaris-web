@@ -1,11 +1,13 @@
 <template>
-    <div class="flex items-center">
+    <div class="flex flex-col lg:flex-row lg:items-center" :class="{ 'pointer-events-none': miniPlayer }">
         <!-- TODO tooltips -->
-        <div @click="onAlbumClicked" :class="albumURL ? 'cursor-pointer' : ''" class="shrink-0 w-24 h-24">
-            <AlbumArt :url="artworkURL" />
+        <div @click="onAlbumClicked" :class="albumURL ? 'cursor-pointer' : ''"
+            class="min-h-0 lg:shrink-0 lg:w-24 lg:h-24">
+            <AlbumArt :url="artworkURL" :rounding="miniPlayer ? 'rounded-t-md' : undefined" />
         </div>
 
-        <div class="ml-4 min-w-0 flex flex-col text-sm">
+        <div
+            class="min-w-0 flex flex-col px-3 py-2 lg:ml-4 lg:p-0 border border-t-0 rounded-b-lg lg:border-0 text-md lg:text-sm">
 
             <div v-if="albumName" @click="onAlbumClicked"
                 class="mb-2 text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis"
@@ -44,6 +46,10 @@ import { isFakeArtist } from '@/format';
 import { usePlaybackStore } from '@/stores/playback';
 import { makeAlbumURLFromSong, makeArtistURL } from '@/router';
 
+const props = defineProps<{
+    miniPlayer: boolean,
+}>();
+
 interface Artist {
     name: string,
     url?: string,
@@ -54,7 +60,13 @@ const playback = usePlaybackStore();
 
 const song = computed(() => playback.currentSong);
 
-const artworkURL = computed(() => song.value?.artwork ? makeThumbnailURL(song.value.artwork, "small") : undefined);
+const artworkURL = computed(() => {
+    if (!song.value?.artwork) {
+        return undefined;
+    }
+    const size = props.miniPlayer ? "large" : "small";
+    return makeThumbnailURL(song.value.artwork, size);
+});
 
 const albumName = computed(() => {
     if (!song.value) {
