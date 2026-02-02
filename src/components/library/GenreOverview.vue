@@ -40,7 +40,7 @@
             <div v-if="genre.recently_added?.length">
                 <Section>
                     <SectionTitle label="Recently Added" />
-                    <AlbumGrid :albums="genre.recently_added" :max-rows="2" show-artists />
+                    <AlbumGrid :albums="genre.recently_added" :max-rows="1" show-artists />
                 </Section>
             </div>
         </div>
