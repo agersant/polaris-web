@@ -37,7 +37,7 @@
 
 		<div v-if="album" class="grow min-h-0 flex flex-col gap-8 xl:gap-0">
 
-			<div class="basis-10 shrink-0 flex gap-4 items-center mb-8 hidden xl:inline-flex">
+			<div class="basis-10 shrink-0 flex gap-8 items-center mb-8 hidden xl:inline-flex">
 				<div class="shrink-[1] text-xs xl:text-sm uppercase font-medium text-ls-500 dark:text-ds-400">
 					<span v-text="`By `" />
 					<span v-for="(artist, index) of albumKey.artists">
@@ -47,7 +47,7 @@
 						<span v-else-if="index < albumKey.artists.length - 1">,&nbsp;</span>
 					</span>
 				</div>
-				<div class="shrink-[2] grow max-h-6 overflow-hidden flex flex-wrap justify-end gap-2">
+				<div class="shrink-[2] basis-80 grow max-h-6 overflow-hidden flex flex-wrap justify-end gap-2">
 					<Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
 				</div>
 			</div>
