@@ -1,15 +1,7 @@
 <template>
 
     <div class="flex flex-col whitespace-nowrap">
-        <PageTitle label="Albums">
-            <template #left>
-                <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="viewMode" :items="[
-                    { label: 'Recently Added', value: 'recent' },
-                    { label: 'Random', value: 'random' },
-                    { label: 'All', value: 'all' },
-                ]" />
-            </template>
-        </PageTitle>
+        <PageHeader title="Albums" :view-modes="viewModes" v-model:view-mode="viewMode" />
 
         <div v-if="albums.length" class="grow min-h-0 flex flex-col">
 
@@ -22,8 +14,7 @@
                 </BlankStateFiller>
             </div>
 
-            <AlbumGrid ref="grid" class="-m-4 p-4 overflow-y-auto" :albums="filtered" :num-columns="numColumns"
-                :show-artists="true">
+            <AlbumGrid ref="grid" class="-m-4 p-4 overflow-y-auto" :albums="filtered" :show-artists="true">
                 <template #footer>
                     <div v-if="isLoading" class="flex p-8 items-start justify-center">
                         <Spinner />
@@ -60,29 +51,33 @@ import { getAlbums, getRandomAlbums, getRecentAlbums } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
-import SwitchText from "@/components/basic/SwitchText.vue";
-import PageTitle from "@/components/basic/PageTitle.vue";
+import PageHeader, { PageViewMode } from "@/components/basic/PageHeader.vue";
 import Spinner from "@/components/basic/Spinner.vue";
 import AlbumGrid from "@/components/library/AlbumGrid.vue";
 import { saveScrollState, useHistory } from "@/history";
 
-const numColumns = ref(5);
-
 type ViewMode = "recent" | "random" | "all";
 const viewMode: Ref<ViewMode> = ref("recent");
+const viewModes: PageViewMode<ViewMode>[] = [
+    { label: 'Recently Added', value: 'recent' },
+    { label: 'Random', value: 'random' },
+    { label: 'All', value: 'all' },
+];
 
 const albums: ShallowRef<AlbumHeader[]> = ref([]);
 const fetchedAll = ref(false);
 const seed = ref(generateSeed());
 
 const { state: fetchedAlbums, isLoading, isReady, error, execute: fetchAlbums } = useAsyncState(async () => {
+    const numColumns = grid.value?.numColumns ?? 5;
+    const fetchCount = numColumns * 20;
     switch (viewMode.value) {
         case "all":
             return getAlbums();
         case "recent":
-            return getRecentAlbums(albums.value.length, numColumns.value * 20);
+            return getRecentAlbums(albums.value.length, fetchCount);
         case "random":
-            return getRandomAlbums(seed.value, albums.value.length, numColumns.value * 20);
+            return getRandomAlbums(seed.value, albums.value.length, fetchCount);
     }
 }, [], { immediate: false });
 

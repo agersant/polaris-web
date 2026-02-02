@@ -7,7 +7,7 @@
             :class="[props.current ? '' : 'text-ls-400 group-hover:text-accent-600 dark:group-hover:text-ds-300']">
             {{ props.icon }}
         </span>
-        {{ props.label }}
+        <span class="hidden 3xl:inline">{{ props.label }}</span>
     </a>
 </template>
 

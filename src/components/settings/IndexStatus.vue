@@ -1,33 +1,28 @@
 <template>
-    <div class="flex flex-col">
-        <SectionTitle label="Indexing Status" />
-        <div class="flex justify-between items-center">
-
-            <div class="flex flex-col gap-3">
-                <div class="flex items-center gap-2">
-                    <div class="relative rounded-full p-1.5" :class="dotColor">
-                        <div v-if="scanInProgress"
-                            class="absolute inline-flex animate-ping h-3 w-3 rounded-full bg-current" />
-                        <div class="h-3 w-3 rounded-full bg-current" />
-                    </div>
-                    <span class="font-medium text-ls-700 dark:text-ds-200" v-text="title" />
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-2">
+                <div class="relative rounded-full p-1.5" :class="dotColor">
+                    <div v-if="scanInProgress"
+                        class="absolute inline-flex animate-ping h-3 w-3 rounded-full bg-current" />
+                    <div class="h-3 w-3 rounded-full bg-current" />
                 </div>
-                <div class="flex items-center gap-2 text-ls-500 dark:text-ds-400">
-                    <span class="material-icons-round" v-text="'access_time'" />
-                    <span v-text="timing" data-pw="last-scan" />
-                </div>
-                <div class="flex items-center gap-2 text-ls-500 dark:text-ds-400">
-                    <span class="material-icons-round" v-text="'audiotrack'" />
-                    <div class="inline-flex gap-1">
-                        <span v-text="displayNumSongs" :class="scanInProgress ? 'font-mono' : ''" />
-                        <span v-text="pluralize('song', displayNumSongs)" />
-                    </div>
+                <span class="font-medium text-ls-700 dark:text-ds-200" v-text="title" />
+            </div>
+            <div class="flex items-center gap-2 text-ls-500 dark:text-ds-400">
+                <span class="material-icons-round" v-text="'access_time'" />
+                <span v-text="timing" data-pw="last-scan" />
+            </div>
+            <div class="flex items-center gap-2 text-ls-500 dark:text-ds-400">
+                <span class="material-icons-round" v-text="'audiotrack'" />
+                <div class="inline-flex gap-1">
+                    <span v-text="displayNumSongs" :class="scanInProgress ? 'font-mono' : ''" />
+                    <span v-text="pluralize('song', displayNumSongs)" />
                 </div>
             </div>
-
-            <Button label="Scan Collection" icon="sync" severity="secondary" size="xl" @click="emit('trigger-index')"
-                data-pw="trigger-scan" :disabled="status.state != 'UpToDate'" />
         </div>
+        <Button label="Scan Collection" icon="sync" severity="secondary" size="xl" @click="emit('trigger-index')"
+            data-pw="trigger-scan" :disabled="status.state != 'UpToDate'" />
     </div>
 </template>
 

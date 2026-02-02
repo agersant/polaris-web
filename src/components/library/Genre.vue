@@ -1,20 +1,8 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name">
-            <template #left>
-                <SwitchText class="ml-6 pl-6 border-l border-ls-200 dark:border-ds-700" v-model="viewMode" :items="[
-                    { label: 'Overview', value: 'overview' },
-                    { label: 'Artists', value: 'artists' },
-                    { label: 'Albums', value: 'albums' }
-                ]" />
-            </template>
-            <template #right>
-                <div class="ml-8 flex gap-2">
-                    <Button label="Play All" severity="secondary" icon="play_arrow" @click="playAll" />
-                    <Button label="Queue All" severity="secondary" icon="playlist_add" @click="queueAll" />
-                </div>
-            </template>
-        </PageTitle>
+        <PageHeader :title="name" :actions="pageActions" />
+
+        <Tabs v-model="viewMode" :tabs="viewModes" />
 
         <div class="grow min-h-0 flex flex-col">
             <router-view v-slot="{ Component }">
@@ -29,9 +17,8 @@ import { computed, ComputedRef, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { getGenreSongs } from '@/api/endpoints';
-import Button from '@/components/basic/Button.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
-import SwitchText from '@/components/basic/SwitchText.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
+import Tabs from '@/components/basic/Tabs.vue';
 import { makeGenreURL } from '@/router';
 import { usePlaybackStore } from '@/stores/playback';
 
@@ -40,7 +27,18 @@ const playback = usePlaybackStore();
 
 const props = defineProps<{ name: string }>();
 
+const pageActions = [
+    { label: "Play All", icon: "play_arrow", action: playAll },
+    { label: "Queue All", icon: "playlist_add", action: queueAll },
+];
+
 type ViewMode = "overview" | "artists" | "albums";
+
+const viewModes = [
+    { label: 'Overview', value: 'overview' },
+    { label: 'Artists', value: 'artists' },
+    { label: 'Albums', value: 'albums' }
+];
 
 const viewMode: ComputedRef<ViewMode> = computed({
     get: () => {

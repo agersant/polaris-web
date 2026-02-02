@@ -5,10 +5,10 @@
         </div>
 
         <div v-else class="flex flex-col min-h-0">
-            <PageTitle :label="title" />
+            <PageHeader :title="title" class="hidden xl:inline-flex" />
 
-            <div class="-mx-8 px-8 min-h-0 overflow-y-auto">
-                <div class="flex items-center gap-6 mt-3 mb-8">
+            <div class="-mx-8 px-8 -mt-3 pt-3 min-h-0 overflow-y-auto">
+                <div class="flex items-center gap-6 mt-11 xl:mt-0 mb-8">
                     <div @click="onAlbumClicked" class="shrink-0 basis-24 rounded-lg shadow-md" :class="[
                         albumURL ? 'cursor-pointer origin-center transition-all ease-out duration-100 hover:opacity-90 hover:scale-125' : '',
                     ]
@@ -77,7 +77,7 @@ import { makeThumbnailURL } from '@/api/endpoints';
 import AlbumArt from '@/components/AlbumArt.vue';
 import Badge from '@/components/basic/Badge.vue';
 import Draggable from '@/components/basic/Draggable.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import SongField from '@/components/library/SongField.vue';
 import { DndPayloadAlbumKey } from '@/dnd';

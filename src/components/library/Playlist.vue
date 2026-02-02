@@ -1,20 +1,13 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name">
-            <template #left>
-                <span v-if="playlist" class="ml-4 italic text-xs text-ls-500 dark:text-ds-500"
+        <PageHeader :title="name" :actions="pageActions">
+            <template #post-title>
+                <span v-if="playlist" class="ml-4 italic whitespace-nowrap text-xs text-ls-500 dark:text-ds-500"
                     v-text="formatLongDuration(playlist.duration)" />
             </template>
-            <template #right>
-                <div class="ml-8 flex gap-2">
-                    <Button label="Play All" severity="secondary" icon="play_arrow" @click="play" />
-                    <Button label="Delete" severity="danger" icon="delete" data-pw="delete-playlist"
-                        @click="deletePlaylist" />
-                </div>
-            </template>
-        </PageTitle>
+        </PageHeader>
 
-        <div v-if="songs.length" class="mb-8 flex justify-between">
+        <div v-if="songs.length" class="mb-8 basis-10 shrink-0 flex items-center justify-between">
             <div class="basis-0 grow max-h-6 mr-6 mt-1.5 overflow-hidden flex flex-wrap gap-2">
                 <Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
             </div>
@@ -53,9 +46,8 @@ import { useRouter } from 'vue-router';
 import { getPlaylist } from '@/api/endpoints';
 import Badge from '@/components/basic/Badge.vue';
 import BlankStateFiller from '@/components/basic/BlankStateFiller.vue';
-import Button from '@/components/basic/Button.vue';
 import Error from '@/components/basic/Error.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import Switch from '@/components/basic/Switch.vue';
 import SongList from '@/components/SongList.vue';
@@ -71,6 +63,11 @@ const playlists = usePlaylistsStore();
 const preferences = usePreferencesStore();
 
 const props = defineProps<{ name: string }>();
+
+const pageActions = [
+    { label: "Play All", icon: "play_arrow", action: play },
+    { label: "Delete", icon: "delete", action: deletePlaylist, danger: true, testID: "delete-playlist" },
+];
 
 const isLoading = ref(false);
 const error = ref(false);

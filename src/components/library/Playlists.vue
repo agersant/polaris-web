@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle label="Playlists" />
+		<PageHeader title="Playlists" caption="Listen to your saved playlists." />
 		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
 				clearable />
@@ -22,7 +22,7 @@
 								v-text="formatLongDuration(playlist.duration)" />
 						</div>
 						<div
-							class="basis-1/4 grow shrink-[10] overflow-hidden flex max-h-14 flex-wrap justify-end gap-2">
+							class="hidden xl:inline-flex basis-1/4 grow shrink-[10] overflow-hidden max-h-14 flex-wrap justify-end gap-2">
 							<Badge v-for="genre of getMainGenres(playlist)" :label="genre" auto-color
 								@click="onGenreClicked(genre)" />
 						</div>
@@ -64,7 +64,7 @@ import Button from "@/components/basic/Button.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import Spinner from "@/components/basic/Spinner.vue";
-import PageTitle from "@/components/basic/PageTitle.vue";
+import PageHeader from "@/components/basic/PageHeader.vue";
 import { formatLongDuration } from "@/format";
 import { saveScrollState, useHistory } from "@/history";
 import { makeGenreURL } from "@/router";

@@ -1,9 +1,7 @@
 <template>
 	<div class="flex flex-col">
-		<PageTitle label="Settings" />
-
+		<PageHeader title="Settings" caption="Adjust color schemes and Polaris behavior." />
 		<Tabs v-model="category" :tabs="tabs" />
-
 		<div class="grow min-h-0 flex flex-col">
 			<router-view />
 		</div>
@@ -14,7 +12,7 @@
 import { computed, ComputedRef } from 'vue';
 import { useRouter } from 'vue-router';
 
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import Tabs, { TabItem } from '@/components/basic/Tabs.vue';
 import { useUserStore } from '@/stores/user';
 
@@ -25,11 +23,11 @@ const user = useUserStore();
 
 const tabs = computed(() => {
 	let items: TabItem<Category>[] = [];
-	items.push({ label: "Preferences", key: "preferences", testID: "preferences" });
+	items.push({ label: "Preferences", value: "preferences", testID: "preferences" });
 	if (user.isAdmin) {
-		items.push({ label: "Collection", key: "collection", testID: "collection" });
-		items.push({ label: "Users", key: "users", testID: "users" });
-		items.push({ label: "Dynamic DNS", key: "ddns", testID: "ddns" });
+		items.push({ label: "Collection", value: "collection", testID: "collection" });
+		items.push({ label: "Users", value: "users", testID: "users" });
+		items.push({ label: "Dynamic DNS", value: "ddns", testID: "ddns" });
 	}
 	return items;
 });

@@ -1,6 +1,6 @@
 <template>
 	<div class="grow overflow-y-auto -mx-4 px-4">
-		<div class="flex flex-col gap-8 rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+		<Section class="flex flex-col gap-8">
 			<Select v-model="theme" label="Theme" :options="themeOptions" data-pw="theme" class="w-48" />
 			<Slider v-model="preferences.accentBaseHue" label="Accent Hue" size="lg" :min="0" :max="360"
 				data-pw="accent-hue" class="w-80">
@@ -33,7 +33,7 @@
 			</div>
 			<Button label="Reset to Default" icon="restore" severity="danger" size="xl" data-pw="reset-color-scheme"
 				class="self-end" @click="preferences.resetTheme" />
-		</div>
+		</Section>
 	</div>
 </template>
 
@@ -43,6 +43,7 @@ import { computed } from "vue";
 
 import Button from "@/components/basic/Button.vue";
 import Select, { SelectOption } from "@/components/basic/Select.vue";
+import Section from "@/components/basic/Section.vue";
 import Slider from "@/components/basic/Slider.vue";
 import { usePreferencesStore } from "@/stores/preferences";
 import { computeAccentRamp, getThemeName, Theme } from "@/theming";

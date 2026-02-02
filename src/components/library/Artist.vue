@@ -1,19 +1,19 @@
 <template>
     <div class="flex flex-col">
-        <PageTitle :label="name">
+        <PageHeader :title="name">
             <template #right>
-                <div class="basis-0 grow max-h-6 ml-6 mt-1.5 overflow-hidden flex flex-wrap justify-end gap-2">
+                <div
+                    class="basis-auto xl:basis-0 grow max-h-6 my-1.5 xl:mb-0 overflow-hidden flex flex-wrap xl:justify-end gap-2">
                     <Badge v-for="genre of genres" :label="genre" :auto-color="true" @click="onGenreClicked(genre)" />
                 </div>
             </template>
-        </PageTitle>
+        </PageHeader>
 
         <div v-if="artist" class="flex flex-col min-h-0">
             <div ref="viewport" class="relative grow -m-4 p-4 mb-0 overflow-y-auto flex flex-col gap-8">
 
                 <Switch class="absolute mt-0.5 top-4 right-4" v-model="preferences.artistDisplayMode" :items="[
-                    { icon: 'apps', value: 'grid5' },
-                    { icon: 'grid_view', value: 'grid3' },
+                    { icon: 'apps', value: 'grid' },
                     { icon: 'timeline', value: 'timeline' }
                 ]" />
 
@@ -24,7 +24,7 @@
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(mainWorks)" />
                         </ButtonGroup>
                     </SectionTitle>
-                    <AlbumGrid :albums="mainWorks" :num-columns="numColumns" :show-artists="false" />
+                    <AlbumGrid :albums="mainWorks" :show-artists="false" />
                 </div>
 
                 <div v-if="preferences.artistDisplayMode != 'timeline' && otherWorks?.length">
@@ -34,7 +34,7 @@
                             <Button icon="playlist_add" severity="secondary" size="sm" @click="queue(otherWorks)" />
                         </ButtonGroup>
                     </SectionTitle>
-                    <AlbumGrid :albums="otherWorks" :num-columns="numColumns" :show-artists="true" />
+                    <AlbumGrid :albums="otherWorks" :show-artists="true" />
                 </div>
 
                 <Timeline v-if="preferences.artistDisplayMode == 'timeline'" :artist="artist.name"
@@ -68,7 +68,7 @@ import Badge from '@/components/basic/Badge.vue';
 import Button from '@/components/basic/Button.vue';
 import ButtonGroup from '@/components/basic/ButtonGroup.vue';
 import Error from '@/components/basic/Error.vue';
-import PageTitle from '@/components/basic/PageTitle.vue';
+import PageHeader from '@/components/basic/PageHeader.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Switch from '@/components/basic/Switch.vue';
 import Spinner from '@/components/basic/Spinner.vue';
@@ -92,14 +92,6 @@ const { state: artist, isLoading, error, execute: fetchArtist } = useAsyncState(
     undefined,
     { immediate: false, resetOnExecute: true }
 );
-
-const numColumns = computed(() => {
-    switch (preferences.artistDisplayMode) {
-        case "grid5": return 5;
-        case "grid3": return 3;
-        case "timeline": return 1;
-    };
-});
 
 const genres = computed(() => {
     let entries = Object.entries(artist.value?.num_songs_by_genre || {});

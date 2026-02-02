@@ -2,40 +2,46 @@
     <div ref="viewport" class="min-h-0 flex flex-col overflow-y-auto -mx-4 px-4">
         <div v-if="genre" class="flex flex-col gap-8">
             <div v-if="relatedGenres?.length">
-                <SectionTitle label="Related Genres" icon="label" />
-                <div class="flex flex-wrap gap-2 max-h-8 overflow-hidden">
-                    <Badge v-for="genre of relatedGenres" :label="genre" size="lg" auto-color
-                        @click="onGenreClicked(genre)" />
-                </div>
+                <Section>
+                    <SectionTitle label="Related Genres" />
+                    <div class="flex flex-wrap gap-2 max-h-8 overflow-hidden">
+                        <Badge v-for="genre of relatedGenres" :label="genre" size="lg" auto-color
+                            @click="onGenreClicked(genre)" />
+                    </div>
+                </Section>
             </div>
             <div v-if="mainArtists?.length">
-                <SectionTitle label="Main Artists" icon="person" />
-                <div class="grid grid-cols-3 gap-4">
-                    <div v-for="artist of mainArtists.slice(0, 6)" class="
-                        cursor-pointer
-                        flex items-center gap-4 px-3 p-4
-                        rounded-md border border-ls-200 dark:border-ds-700
-                        hover:bg-ls-100 hover:dark:bg-ds-700
-                        " @click="onArtistClicked(artist.name)">
-                        <span class="material-icons-round rounded-full p-2
-                            flex items-center justify-center
-                            text-ls-500 dark:text-ds-400
-                            bg-ls-200 dark:bg-ds-700">
-                            person
-                        </span>
-                        <div class="flex flex-col gap-1 overflow-hidden">
-                            <span v-text="artist.name"
-                                class="font-medium text-sm text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis" />
-                            <span
-                                class="text-xs text-ls-500 dark:text-ds-500 whitespace-nowrap overflow-hidden text-ellipsis"
-                                v-text="`${artist.num_songs_by_genre[genre.name]} ${pluralize('song', artist.num_songs_by_genre[genre.name])}`" />
+                <Section>
+                    <SectionTitle label="Main Artists" />
+                    <div class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
+                        <div v-for="artist of mainArtists.slice(0, 6)" class="
+                                cursor-pointer
+                                flex items-center gap-4 px-3 p-4
+                                rounded-md border border-ls-200 dark:border-ds-700
+                                hover:bg-ls-100 hover:dark:bg-ds-700
+                                " @click="onArtistClicked(artist.name)">
+                            <span class="material-icons-round rounded-full p-2
+                                    flex items-center justify-center
+                                    text-ls-500 dark:text-ds-400
+                                    bg-ls-200 dark:bg-ds-700">
+                                person
+                            </span>
+                            <div class="flex flex-col gap-1 overflow-hidden">
+                                <span v-text="artist.name"
+                                    class="font-medium text-sm text-ls-900 dark:text-ds-200 overflow-hidden text-ellipsis" />
+                                <span
+                                    class="text-xs text-ls-500 dark:text-ds-500 whitespace-nowrap overflow-hidden text-ellipsis"
+                                    v-text="`${artist.num_songs_by_genre[genre.name]} ${pluralize('song', artist.num_songs_by_genre[genre.name])}`" />
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Section>
             </div>
             <div v-if="genre.recently_added?.length">
-                <SectionTitle label="Recently Added" icon="new_releases" />
-                <AlbumGrid :albums="genre.recently_added.slice(0, 10)" :num-columns="5" show-artists />
+                <Section>
+                    <SectionTitle label="Recently Added" />
+                    <AlbumGrid :albums="genre.recently_added" :max-rows="1" show-artists />
+                </Section>
             </div>
         </div>
 
@@ -57,6 +63,7 @@ import { useAsyncState } from '@vueuse/core';
 import { getGenre } from '@/api/endpoints';
 import Badge from '@/components/basic/Badge.vue';
 import Error from '@/components/basic/Error.vue';
+import Section from '@/components/basic/Section.vue';
 import SectionTitle from '@/components/basic/SectionTitle.vue';
 import Spinner from '@/components/basic/Spinner.vue';
 import AlbumGrid from '@/components/library/AlbumGrid.vue';

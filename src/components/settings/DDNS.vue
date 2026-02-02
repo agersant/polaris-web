@@ -1,6 +1,6 @@
 <template>
 	<div class="grow overflow-y-auto -mx-4 px-4">
-		<div class="flex flex-col rounded-md p-8 border bg-ls-0 border-ls-200 dark:bg-ds-900 dark:border-ds-700">
+		<Section class="flex flex-col">
 			<SectionTitle label="Configuration" />
 			<InputText v-model="url" :error="!!error" id="ddns" icon="network_ping" label="Update URL"
 				placeholder="https://my-provider.com/update?token=xxx" />
@@ -15,7 +15,7 @@
 				</p>
 			</div>
 			<Button label="Apply Changes" icon="check" size="xl" data-pw="apply" class="mt-8 self-end" @click="apply" />
-		</div>
+		</Section>
 	</div>
 </template>
 
@@ -25,6 +25,7 @@ import { computed, onMounted, ref } from "vue";
 import { getSettings, putSettings, } from "@/api/endpoints";
 import Button from "@/components/basic/Button.vue";
 import InputText from "@/components/basic/InputText.vue";
+import Section from "@/components/basic/Section.vue";
 import SectionTitle from "@/components/basic/SectionTitle.vue";
 
 const url = ref("");
