@@ -1,7 +1,7 @@
 <template>
     <div class="mt-11 mb-8 border-ls-200 dark:border-ds-700 flex flex-col xl:flex-row gap-x-8 gap-y-4 xl:items-center justify-between"
         :class="{ 'border-b': !$slots.jumbo, 'pb-3': !$slots.jumbo }">
-        <div class="min-w-0 flex flex-col items-start gap-y-4 xl:flex-row xl:items-center">
+        <div class="min-w-0 flex flex-col items-stretch gap-y-4 xl:flex-row xl:items-center">
             <slot name="jumbo">
                 <div class="min-w-0 flex items-center">
                     <h3 class="text-4xl text-ls-500 dark:text-ds-400 whitespace-nowrap overflow-hidden text-ellipsis">
