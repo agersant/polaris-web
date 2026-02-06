@@ -151,7 +151,6 @@ function isIdle() {
     return (Date.now() - mouseLastPressed.value) > 200;
 }
 
-
 function onDragStart(event: DragEvent, item: T) {
     isReordering.value = true;
     event.dataTransfer?.setDragImage(blankImage, 0, 0);
