@@ -7,16 +7,17 @@
 
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
 			<VirtualTree id="all-files" v-show="!showFiltered" ref="tree" v-model="treeModel"
-				@node-expand="openDirectory" @node-double-click="playSong" @keydown="onKeyDown"
-				@nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag"
+				@node-expand="openDirectory" @node-double-click="playSong" @node-right-click="onRightClick"
+				@keydown="onKeyDown" @nodes-drag-start="onDragStart" @nodes-drag="updateDrag" @nodes-drag-end="endDrag"
 				@nodes-restored="onNodesRestored" class="grow" />
 			<div v-if="showFiltered" class="grow min-h-0 flex flex-col">
 				<Error v-if="filterError">
 					Something went wrong while filtering files.
 				</Error>
 				<VirtualTree id="filtered-files" ref="filteredTree" v-else-if="filterTreeModel.length"
-					v-model="filterTreeModel" @node-double-click="playSong" @keydown="onKeyDown"
-					@nodes-drag-start="onDragStartFiltered" @nodes-drag="updateDrag" @nodes-drag-end="endDrag" />
+					v-model="filterTreeModel" @node-double-click="playSong" @node-right-click="onRightClick"
+					@keydown="onKeyDown" @nodes-drag-start="onDragStartFiltered" @nodes-drag="updateDrag"
+					@nodes-drag-end="endDrag" />
 				<div v-else-if="filtering" class="grow flex mt-24 items-start justify-center">
 					<Spinner />
 				</div>
@@ -49,6 +50,7 @@
 			</div>
 		</Teleport>
 
+		<ContextMenu ref="contextMenu" :items="contextMenuItems" />
 	</div>
 </template>
 
@@ -59,6 +61,7 @@ import { useAsyncState } from "@vueuse/core";
 import { BrowserEntry } from "@/api/dto";
 import { browse, flatten, search } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
+import ContextMenu from "@/components/basic/ContextMenu.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import PageHeader from "@/components/basic/PageHeader.vue";
@@ -180,8 +183,7 @@ function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {
 
 async function onKeyDown(event: KeyboardEvent) {
 	if (event.code == "Enter") {
-		const selection = showFiltered.value ? getSelectionFiltered() : await getSelectionUnfiltered();
-		queue(selection, !event.shiftKey);
+		sendSelectionToPlaylist(!event.shiftKey);
 	}
 }
 
@@ -234,6 +236,16 @@ function playSong(node: Node) {
 	}
 }
 
+const contextMenu = useTemplateRef("contextMenu");
+const contextMenuItems = [
+	{ label: "Play", shortcut: "Enter", action: () => { sendSelectionToPlaylist(true) } },
+	{ label: "Queue", shortcut: "Shift+Enter", action: () => { sendSelectionToPlaylist(false) } },
+];
+
+function onRightClick(event: MouseEvent, node: Node) {
+	contextMenu.value?.show(event);
+}
+
 function onDragStart(event: DragEvent, nodes: Node[]) {
 	draggedFiles.value = new DndPayloadFiles(nodes.map(n => {
 		return { path: n.key, is_directory: !n.leaf };
@@ -249,7 +261,8 @@ function onDragStartFiltered(event: DragEvent, nodes: Node[]) {
 	startDrag(event, draggedFiles.value);
 }
 
-async function queue(paths: string[], replace: boolean) {
+async function sendSelectionToPlaylist(replace: boolean) {
+	const paths = showFiltered.value ? getSelectionFiltered() : await getSelectionUnfiltered();
 	if (!paths.length) {
 		return;
 	}

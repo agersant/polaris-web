@@ -4,10 +4,10 @@
             <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
                 <VirtualTreeNode v-for="node in virtualNodes" :style="`height: ${itemHeight}px`" :node="node.data"
                     tabindex="-1" @node-toggle="toggleNode" @click="clickNode($event, node.data)"
-                    @dblclick="onNodeDoubleClick($event, node.data)" draggable="true"
-                    @dragstart="onDragStart($event, node.data)" @drag="onDrag($event)" @dragend="onDragEnd($event)"
-                    :expanded="expandedKeys.has(node.data.key)" :focused="focusedKey == node.data.key"
-                    :selected="selectedKeys.has(node.data.key)">
+                    @contextmenu="onNodeRightClick($event, node.data)" @dblclick="onNodeDoubleClick($event, node.data)"
+                    draggable="true" @dragstart="onDragStart($event, node.data)" @drag="onDrag($event)"
+                    @dragend="onDragEnd($event)" :expanded="expandedKeys.has(node.data.key)"
+                    :focused="focusedKey == node.data.key" :selected="selectedKeys.has(node.data.key)">
                 </VirtualTreeNode>
             </div>
         </div>
@@ -50,6 +50,7 @@ const props = defineProps<{ id?: string }>();
 const emit = defineEmits<{
     "node-expand": [node: T],
     "node-double-click": [node: T],
+    "node-right-click": [event: MouseEvent, node: T],
     "nodes-drag-start": [event: DragEvent, nodes: T[]],
     "nodes-drag": [event: DragEvent],
     "nodes-drag-end": [event: DragEvent],
@@ -137,6 +138,13 @@ function onNodeDoubleClick(event: MouseEvent, node: T) {
         toggleNode(node);
     }
     emit("node-double-click", node);
+}
+
+function onNodeRightClick(event: MouseEvent, node: T) {
+    if (!selectedKeys.value.has(node.key)) {
+        selectNode(node);
+    }
+    emit("node-right-click", event, node);
 }
 
 function onDragStart(event: DragEvent, node: T) {
