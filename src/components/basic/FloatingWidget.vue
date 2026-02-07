@@ -18,6 +18,10 @@ const props = defineProps<{
 	position: [number, number],
 }>();
 
+const emit = defineEmits<{
+	'dismissed': [],
+}>();
+
 defineExpose({ open, close });
 
 function open() {
@@ -27,6 +31,12 @@ function open() {
 function close() {
 	bus.emit("CLOSE_WIDGET");
 }
+
+bus.on((event) => {
+	if (event == "CLOSE_WIDGET") {
+		emit("dismissed");
+	}
+});
 
 const positionStyle = computed(() => {
 	return {
