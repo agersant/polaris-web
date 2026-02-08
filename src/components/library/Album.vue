@@ -107,7 +107,7 @@ import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
 import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
 import Badge from '@/components/basic/Badge.vue';
-import ContextMenu from '@/components/basic/ContextMenu.vue';
+import ContextMenu, { ContextMenuItem } from '@/components/basic/ContextMenu.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import Error from '@/components/basic/Error.vue';
 import PageHeader from '@/components/basic/PageHeader.vue';
@@ -118,12 +118,10 @@ import AlbumSong from '@/components/library/AlbumSong.vue';
 import { DndPayloadAlbum, DndPayloadSongs } from "@/dnd";
 import { isFakeArtist } from "@/format";
 import { saveScrollState, useHistory } from "@/history";
-import { makeArtistURL, makeGenreURL } from "@/router";
+import { makeArtistURL, makeGenreURL, makeSongURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import { useSongsStore } from "@/stores/songs";
 import useMultiselect from "@/multiselect";
-
-// TODO Context menus
 
 const playback = usePlaybackStore();
 const songs = useSongsStore();
@@ -152,10 +150,19 @@ const pageActions = [
 	{ label: "Queue All", icon: "playlist_add", action: queue, testID: "queue-all" },
 ];
 
-const contextMenuItems = [
-	{ label: "Play", shortcut: "Enter", action: () => { queueSelection(true) } },
-	{ label: "Queue", shortcut: "Shift+Enter", action: () => { queueSelection(false) } },
-];
+const contextMenuItems = computed(() => {
+	const items: ContextMenuItem[] = [
+		{ label: "Play", shortcut: "Enter", action: () => { queueSelection(true) } },
+		{ label: "Queue", shortcut: "Shift+Enter", action: () => { queueSelection(false) } },
+	];
+
+	if (selection.value.length == 1) {
+		const songURL = makeSongURL(selection.value[0].path);
+		items.push({ label: "File Properties", action: () => { router.push(songURL); } });
+	}
+
+	return items;
+});
 
 const artworkURL = computed(() => album.value?.artwork ? makeThumbnailURL(album.value.artwork, "large") : undefined);
 

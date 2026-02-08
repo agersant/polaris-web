@@ -57,11 +57,12 @@
 <script setup lang="ts">
 import { computed, Ref, ref, shallowRef, useTemplateRef, watch } from "vue";
 import { useAsyncState } from "@vueuse/core";
+import { useRouter } from "vue-router";
 
 import { BrowserEntry } from "@/api/dto";
 import { browse, flatten, search } from "@/api/endpoints";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
-import ContextMenu from "@/components/basic/ContextMenu.vue";
+import ContextMenu, { ContextMenuItem } from "@/components/basic/ContextMenu.vue";
 import Error from "@/components/basic/Error.vue";
 import InputText from "@/components/basic/InputText.vue";
 import PageHeader from "@/components/basic/PageHeader.vue";
@@ -71,10 +72,12 @@ import { Node } from "@/components/basic/VirtualTree.vue";
 import { DndPayloadFiles, useDragAndDrop } from '@/dnd';
 import { getPathTail } from '@/format';
 import { useHistory } from "@/history";
+import { makeSongURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import { useSongsStore } from "@/stores/songs";
 
 const playback = usePlaybackStore();
+const router = useRouter();
 const songs = useSongsStore();
 const { activeDnD, startDrag, updateDrag, endDrag, dragPreview } = useDragAndDrop();
 
@@ -187,7 +190,19 @@ async function onKeyDown(event: KeyboardEvent) {
 	}
 }
 
-async function getSelectionUnfiltered(): Promise<string[]> {
+function getSelection(): Node[] {
+	if (showFiltered.value) {
+		return filteredTree.value?.selection || [];
+	} else {
+		return tree.value?.selection || [];
+	}
+}
+
+async function flattenSelection(): Promise<string[]> {
+	return showFiltered.value ? flattenSelectionFiltered() : await flattenSelectionUnfiltered();
+}
+
+async function flattenSelectionUnfiltered(): Promise<string[]> {
 	if (!tree.value) {
 		return [];
 	}
@@ -202,7 +217,7 @@ async function getSelectionUnfiltered(): Promise<string[]> {
 	).flat();
 }
 
-function getSelectionFiltered(): string[] {
+function flattenSelectionFiltered(): string[] {
 	if (!filteredTree.value) {
 		return [];
 	}
@@ -237,10 +252,20 @@ function playSong(node: Node) {
 }
 
 const contextMenu = useTemplateRef("contextMenu");
-const contextMenuItems = [
-	{ label: "Play", shortcut: "Enter", action: () => { sendSelectionToPlaylist(true) } },
-	{ label: "Queue", shortcut: "Shift+Enter", action: () => { sendSelectionToPlaylist(false) } },
-];
+const contextMenuItems = computed(() => {
+	const items: ContextMenuItem[] = [
+		{ label: "Play", shortcut: "Enter", action: () => { sendSelectionToPlaylist(true) } },
+		{ label: "Queue", shortcut: "Shift+Enter", action: () => { sendSelectionToPlaylist(false) } },
+	];
+
+	const selection = getSelection();
+	if (selection.length == 1 && selection[0].leaf) {
+		const songURL = makeSongURL(selection[0].key);
+		items.push({ label: "File Properties", action: () => { router.push(songURL); } });
+	}
+
+	return items;
+});
 
 function onRightClick(event: MouseEvent, node: Node) {
 	contextMenu.value?.show(event);
@@ -254,7 +279,7 @@ function onDragStart(event: DragEvent, nodes: Node[]) {
 }
 
 function onDragStartFiltered(event: DragEvent, nodes: Node[]) {
-	const selection = getSelectionFiltered();
+	const selection = flattenSelectionFiltered();
 	draggedFiles.value = new DndPayloadFiles(selection.map(path => {
 		return { path, is_directory: false };
 	}));
@@ -262,7 +287,7 @@ function onDragStartFiltered(event: DragEvent, nodes: Node[]) {
 }
 
 async function sendSelectionToPlaylist(replace: boolean) {
-	const paths = showFiltered.value ? getSelectionFiltered() : await getSelectionUnfiltered();
+	const paths = await flattenSelection();
 	if (!paths.length) {
 		return;
 	}

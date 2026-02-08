@@ -94,7 +94,7 @@ import OrderableList from '@/components/basic/OrderableList.vue';
 import SidePanel from '@/components/basic/SidePanel.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
-import { makeAlbumURLFromSongPaths } from "@/router";
+import { makeAlbumURLFromSongPaths, makeSongURL } from "@/router";
 import { usePlaybackStore, PlaylistEntry, PlaybackOrder } from '@/stores/playback';
 import { usePlaylistsStore } from "@/stores/playlists";
 import { usePreferencesStore } from "@/stores/preferences";
@@ -210,6 +210,11 @@ const contextMenuItems = computed(() => {
 	const albumURL = makeAlbumURLFromSongPaths(selectedSongs);
 	if (albumURL) {
 		items.push({ label: "View Album", action: () => { router.push(albumURL); } });
+	}
+
+	if (selectedSongs.length == 1) {
+		const songURL = makeSongURL(selectedSongs[0]);
+		items.push({ label: "File Properties", action: () => { router.push(songURL); } });
 	}
 
 	return items;
