@@ -48,7 +48,8 @@
 				@list-reorder="onReorder" @list-delete="playback.removeTracks" @list-drop="onDrop">
 				<template #default="{ item, index, selected, focused }">
 					<PlaylistSong :entry="item" :compact="compact" :height="itemHeight" :index="index"
-						:selected="selected" :focused="focused" />
+						:selected="selected" :focused="focused"
+						@contextmenu="(e: MouseEvent) => onSongRightClicked(e, item)" />
 				</template>
 				<template #drop-preview>
 					<div class="flex items-stretch pl-8 pr-2 py-1" :style="{ height: `${itemHeight}px` }">
@@ -62,6 +63,7 @@
 					</div>
 				</template>
 			</OrderableList>
+			<ContextMenu ref="contextMenu" :items="contextMenuItems" />
 			<div v-if="!playback.playlist.length"
 				class="pointer-events-none absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center text-center">
 				<BlankStateFiller icon="queue">
@@ -77,9 +79,11 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { vOnClickOutside } from '@vueuse/components'
+import { useRouter } from "vue-router";
 
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue"
 import Button from "@/components/basic/Button.vue"
+import ContextMenu, { ContextMenuItem } from "@/components/basic/ContextMenu.vue"
 import InputText from "@/components/basic/InputText.vue"
 import PageHeader from '@/components/basic/PageHeader.vue';
 import ScreenDarkening from '@/components/basic/ScreenDarkening.vue';
@@ -90,9 +94,11 @@ import OrderableList from '@/components/basic/OrderableList.vue';
 import SidePanel from '@/components/basic/SidePanel.vue';
 import PlaylistSong from '@/components/playback/PlaylistSong.vue';
 import { useDragAndDrop } from '@/dnd';
+import { makeAlbumURLFromSongPaths } from "@/router";
 import { usePlaybackStore, PlaylistEntry, PlaybackOrder } from '@/stores/playback';
 import { usePlaylistsStore } from "@/stores/playlists";
 import { usePreferencesStore } from "@/stores/preferences";
+import { useSongsStore } from "@/stores/songs";
 
 const Stats = defineAsyncComponent(() =>
 	import('@/components/playback/Stats.vue')
@@ -101,6 +107,8 @@ const Stats = defineAsyncComponent(() =>
 const playback = usePlaybackStore();
 const playlists = usePlaylistsStore();
 const preferences = usePreferencesStore();
+const router = useRouter();
+const songs = useSongsStore();
 
 const orderableList = useTemplateRef("orderableList");
 
@@ -183,6 +191,30 @@ function savePlaylist() {
 function cancelSavePlaylist() {
 	savingPlaylist.value = false;
 }
+
+function onSongRightClicked(event: MouseEvent, entry: PlaylistEntry) {
+	if (!orderableList.value?.isSelected(entry.key)) {
+		orderableList.value?.selectItem(entry);
+	}
+	contextMenu.value?.show(event);
+}
+
+const contextMenu = useTemplateRef("contextMenu");
+const contextMenuItems = computed(() => {
+	const selection = orderableList.value?.selection || [];
+	const items: ContextMenuItem[] = [
+		{ label: "Remove", shortcut: "Del", action: () => { playback.removeTracks(selection) } },
+	];
+
+	const selectedSongs = selection.map(s => s.path);
+	const albumURL = makeAlbumURLFromSongPaths(selectedSongs);
+	if (albumURL) {
+		items.push({ label: "View Album", action: () => { router.push(albumURL); } });
+	}
+
+	return items;
+});
+
 </script>
 
 <style lang="css" scoped>

@@ -24,8 +24,9 @@ import SettingsCollection from "@/components/settings/Collection.vue";
 import SettingsDDNS from "@/components/settings/DDNS.vue";
 import SettingsPreferences from "@/components/settings/Preferences.vue";
 import SettingsUsers from "@/components/settings/Users.vue";
-import { useUserStore } from "@/stores/user";
 import { useInitialSetupStore } from "@/stores/initial-setup";
+import { useSongsStore } from "@/stores/songs";
+import { useUserStore } from "@/stores/user";
 
 export const URI_ARRAY_SEPARATOR = " ⨯ ";
 
@@ -183,6 +184,26 @@ export function makeAlbumURLFromSong(song: Song) {
 		return undefined;
 	}
 	return makeAlbumURL(artists, song.album);
+};
+
+export function makeAlbumURLFromSongPaths(paths: string[]) {
+	const songs = useSongsStore();
+
+	let albumURL = undefined;
+	for (const path of paths) {
+		const song = songs.cache.get(path);
+		if (!song) {
+			return undefined;
+		}
+		const thisURL = makeAlbumURLFromSong(song);
+		if (!albumURL) {
+			albumURL = thisURL;
+		} else if (thisURL != albumURL) {
+			return undefined;
+		}
+	}
+
+	return albumURL;
 };
 
 export default router;

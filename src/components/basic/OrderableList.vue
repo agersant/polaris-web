@@ -142,13 +142,17 @@ watch(() => props.itemHeight, (to, from) => {
     });
 });
 
-defineExpose({ isIdle, selectItem, selection, snapScrolling });
+defineExpose({ isIdle, isSelected, selectItem, selection, snapScrolling });
 
 function isIdle() {
     if (isReordering.value || props.showDropPreview) {
         return true;
     }
     return (Date.now() - mouseLastPressed.value) > 200;
+}
+
+function isSelected(key: string | number) {
+    return selectedKeys.value.has(key);
 }
 
 function onDragStart(event: DragEvent, item: T) {

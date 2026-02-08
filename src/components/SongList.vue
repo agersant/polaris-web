@@ -33,7 +33,7 @@ import SongListRow from '@/components/SongListRow.vue';
 import { saveScrollState, useHistory } from '@/history';
 import { usePlaybackStore } from '@/stores/playback';
 import { useSongsStore } from '@/stores/songs';
-import { makeAlbumURLFromSong } from '@/router';
+import { makeAlbumURLFromSongPaths } from '@/router';
 
 const playback = usePlaybackStore();
 const router = useRouter();
@@ -138,14 +138,10 @@ const contextMenuItems = computed(() => {
         { label: "Queue", shortcut: "Shift+Enter", action: () => { queueSelection(false) } },
     ];
 
-    const albumURLs = selection.value.map(s => {
-        const song = songs.cache.get(s.key);
-        return song ? makeAlbumURLFromSong(song) : undefined;
-    });
-
-    const exactlyOneAlbum = albumURLs.length && albumURLs.every(v => v && v == albumURLs[0]);
-    if (exactlyOneAlbum) {
-        items.push({ label: "View Album", action: () => { router.push(albumURLs[0]!); } });
+    const selectedSongs = selection.value.map(s => s.key);
+    const albumURL = makeAlbumURLFromSongPaths(selectedSongs);
+    if (albumURL) {
+        items.push({ label: "View Album", action: () => { router.push(albumURL); } });
     }
 
     return items;
