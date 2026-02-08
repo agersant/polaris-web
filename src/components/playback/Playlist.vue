@@ -209,7 +209,7 @@ const contextMenuItems = computed(() => {
 	const selectedSongs = selection.map(s => s.path);
 	const albumURL = makeAlbumURLFromSongPaths(selectedSongs);
 	if (albumURL) {
-		items.push({ label: "View Album", action: () => { router.push(albumURL); } });
+		items.push({ label: "Album Details", action: () => { router.push(albumURL); } });
 	}
 
 	if (selectedSongs.length == 1) {
