@@ -73,7 +73,8 @@
 							<AlbumSong ref="albumSongs" :song="song" :selected="selectedKeys.has(song.path)"
 								:focused="focusedKey == song.path" :is-last="index == songs.length - 1"
 								@click="clickItem($event, { key: song.path, ...song })"
-								@dblclick="onSongDoubleClicked(song)" />
+								@dblclick="onSongDoubleClicked(song)"
+								@contextmenu="(e: MouseEvent) => onSongRightClicked(e, song)" />
 							<template #drag-preview="{ payload }">
 								<div class="flex items-center gap-2">
 									<span v-text="`music_note`" class="material-icons-round" />
@@ -84,6 +85,7 @@
 					</div>
 				</div>
 			</div>
+			<ContextMenu ref="contextMenu" :items="contextMenuItems" />
 		</div>
 
 		<div v-else-if="isLoading" class="grow flex mt-24 items-start justify-center">
@@ -105,6 +107,7 @@ import { Album as AlbumDTO, AlbumKey, Song } from "@/api/dto";
 import { getAlbum, makeThumbnailURL } from "@/api/endpoints";
 import AlbumArt from '@/components/AlbumArt.vue';
 import Badge from '@/components/basic/Badge.vue';
+import ContextMenu from '@/components/basic/ContextMenu.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import Error from '@/components/basic/Error.vue';
 import PageHeader from '@/components/basic/PageHeader.vue';
@@ -130,6 +133,7 @@ const props = defineProps<{ albumKey: AlbumKey }>();
 
 const viewport = useTemplateRef("viewport");
 const albumSongs = useTemplateRef("albumSongs");
+const contextMenu = useTemplateRef("contextMenu");
 
 const isTinyScreen = useMediaQuery("(width < 80rem)");
 
@@ -146,6 +150,11 @@ const header = computed((): string => {
 const pageActions = [
 	{ label: "Play All", icon: "play_arrow", action: play, testID: "play-all" },
 	{ label: "Queue All", icon: "playlist_add", action: queue, testID: "queue-all" },
+];
+
+const contextMenuItems = [
+	{ label: "Play", shortcut: "Enter", action: () => { queueSelection(true) } },
+	{ label: "Queue", shortcut: "Shift+Enter", action: () => { queueSelection(false) } },
 ];
 
 const artworkURL = computed(() => album.value?.artwork ? makeThumbnailURL(album.value.artwork, "large") : undefined);
@@ -231,6 +240,13 @@ function onSongDoubleClicked(song: Song) {
 	playback.clear();
 	playback.stop();
 	playback.queueTracks([song.path]);
+}
+
+function onSongRightClicked(event: MouseEvent, song: Song) {
+	if (!selectedKeys.value.has(song.path)) {
+		selectItem({ key: song.path, ...song });
+	}
+	contextMenu.value?.show(event);
 }
 
 function onDragStart(event: DragEvent, song: Song) {
