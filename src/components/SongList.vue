@@ -1,41 +1,42 @@
 <template>
     <div v-bind="containerProps" tabindex="-1" @keydown="onKeyDown" class="-mx-4 px-4">
         <div v-bind="wrapperProps">
-            <ContextMenu :items="contextMenuItems">
-                <Draggable v-for="item in virtualItems" :key="item.index" :allow-pointer-events-inside="true"
-                    @draggable-start="onDragStart($event, item.data.key)"
-                    :make-payload="() => new DndPayloadPaths(selection.map(s => s.key))"
-                    :style="`height: ${itemHeight}px`">
-                    <SongListRow :path="item.data.key" :index="item.index + +!!invertStripes" :compact="compact"
-                        :selected="selectedKeys.has(item.data.key)" :focused="focusedKey == item.data.key"
-                        @dblclick="onSongDoubleClicked(item.data.key)" @contextmenu="onSongRightClicked(item.data.key)"
-                        @click="(e: MouseEvent) => clickItem(e, item.data)" />
-                    <template #drag-preview="{ payload }">
-                        <div class="flex items-center gap-2">
-                            <span v-text="'audiotrack'" class="material-icons-round" />
-                            <span v-text="payload?.getDescription()" />
-                        </div>
-                    </template>
-                </Draggable>
-            </ContextMenu>
+            <Draggable v-for="item in virtualItems" :key="item.index" :allow-pointer-events-inside="true"
+                @draggable-start="onDragStart($event, item.data.key)"
+                :make-payload="() => new DndPayloadPaths(selection.map(s => s.key))" :style="`height: ${itemHeight}px`">
+                <SongListRow :path="item.data.key" :index="item.index + +!!invertStripes" :compact="compact"
+                    :selected="selectedKeys.has(item.data.key)" :focused="focusedKey == item.data.key"
+                    @click="(e: MouseEvent) => clickItem(e, item.data)" @dblclick="onSongDoubleClicked(item.data.key)"
+                    @contextmenu="(e: MouseEvent) => onSongRightClicked(e, item.data.key)" />
+                <template #drag-preview="{ payload }">
+                    <div class="flex items-center gap-2">
+                        <span v-text="'audiotrack'" class="material-icons-round" />
+                        <span v-text="payload?.getDescription()" />
+                    </div>
+                </template>
+            </Draggable>
         </div>
+        <ContextMenu ref="contextMenu" :items="contextMenuItems" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, watch } from 'vue';
+import { computed, nextTick, onMounted, useTemplateRef, watch } from 'vue';
 import { useElementSize, useScroll, useVirtualList } from '@vueuse/core';
+import { useRouter } from 'vue-router';
 
 import { DndPayloadPaths } from '@/dnd';
 import useMultiselect from '@/multiselect';
-import ContextMenu from '@/components/basic/ContextMenu.vue';
+import ContextMenu, { ContextMenuItem } from '@/components/basic/ContextMenu.vue';
 import Draggable from '@/components/basic/Draggable.vue';
 import SongListRow from '@/components/SongListRow.vue';
 import { saveScrollState, useHistory } from '@/history';
 import { usePlaybackStore } from '@/stores/playback';
 import { useSongsStore } from '@/stores/songs';
+import { makeAlbumURLFromSong } from '@/router';
 
 const playback = usePlaybackStore();
+const router = useRouter();
 const songs = useSongsStore();
 
 const props = defineProps<{
@@ -47,10 +48,6 @@ const paths = defineModel<string[]>({ required: true });
 
 const items = computed(() => paths.value.map(p => ({ key: p })));
 
-const contextMenuItems = [
-    { label: "Play", shortcut: "Enter", action: () => { queueSelection(true) } },
-    { label: "Queue", shortcut: "Shift+Enter", action: () => { queueSelection(false) } },
-];
 
 const itemHeight = computed(() => props.compact ? 32 : 48);
 
@@ -127,11 +124,32 @@ function onSongDoubleClicked(path: string) {
     playback.queueTracks([path]);
 }
 
-function onSongRightClicked(path: string) {
+function onSongRightClicked(e: MouseEvent, path: string) {
     if (!selectedKeys.value.has(path)) {
         selectItem({ key: path });
     }
+    contextMenu.value?.show(e);
 }
+
+const contextMenu = useTemplateRef("contextMenu");
+const contextMenuItems = computed(() => {
+    const items: ContextMenuItem[] = [
+        { label: "Play", shortcut: "Enter", action: () => { queueSelection(true) } },
+        { label: "Queue", shortcut: "Shift+Enter", action: () => { queueSelection(false) } },
+    ];
+
+    const albumURLs = selection.value.map(s => {
+        const song = songs.cache.get(s.key);
+        return song ? makeAlbumURLFromSong(song) : undefined;
+    });
+
+    const exactlyOneAlbum = albumURLs.length && albumURLs.every(v => v && v == albumURLs[0]);
+    if (exactlyOneAlbum) {
+        items.push({ label: "View Album", action: () => { router.push(albumURLs[0]!); } });
+    }
+
+    return items;
+});
 
 useHistory("song-list", [paths, selectedKeys, focusedKey, pivotKey, saveScrollState(viewport)]);
 
