@@ -61,8 +61,9 @@
 							<AlbumDragPreview :album="album" />
 						</template>
 					</Draggable>
-					<div v-text="`${albumKey.name} (${album.year})`"
-						class="mt-3 px-4 italic text-ls-500 dark:text-ds-400 text-xs text-center" />
+					<div class="mt-3 px-4 italic text-ls-500 dark:text-ds-400 text-xs text-center">
+						<span v-text="albumKey.name" /><span v-if="album.year" v-text="` (${album.year})`" />
+					</div>
 				</div>
 				<div ref="viewport" class="grow -m-4 mb-0 p-4 self-stretch overflow-y-auto flex flex-col gap-8"
 					tabindex="-1" @keydown="onKeyDown">
