@@ -162,10 +162,12 @@ export const usePlaybackStore = defineStore("playback", () => {
 	}
 
 	function enqueue(tracks: string[], index: number) {
+		const playbackStarted = !!currentTrack.value;
+		const playbackFinished = !!currentTrack.value && elapsedSeconds.value >= duration.value && !hasNext();
 		let newPlaylist = [...playlist.value];
 		newPlaylist.splice(index, 0, ...tracks.map(s => { return { key: make_key(), path: s } }));
 		playlist.value = newPlaylist;
-		if (!currentTrack.value && playlist.value.length > 0) {
+		if (playbackFinished || !playbackStarted) {
 			next();
 		}
 	}
