@@ -23,9 +23,8 @@ export const useUsersStore = defineStore("users", () => {
 	}
 
 	async function update(username: string, userUpdate: UserUpdate) {
-		const response = await updateUser(username, userUpdate);
+		await updateUser(username, userUpdate);
 		await refresh();
-		return response.status == 200;
 	}
 
 	async function deleteUser(username: string) {

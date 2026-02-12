@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, Ref, useTemplateRef, watch } from 'vue';
+import { onMounted, ref, Ref, useTemplateRef, watch } from 'vue';
 import { refDebounced, useCssVar, useElementSize, useMouseInElement, watchPausable, watchThrottled } from '@vueuse/core';
 
 import { Peaks } from '@/api/dto';

@@ -43,6 +43,9 @@ async function request(endpoint: string, options?: RequestInit): Promise<Respons
 	const response = await fetch("api" + endpoint, options);
 	if (response.status == 401) {
 		user.logout();
+	}
+
+	if (!response.ok) {
 		throw response;
 	}
 
@@ -86,16 +89,16 @@ export async function getMountDirs(): Promise<MountDir[]> {
 	return (await request("/mount_dirs")).json();
 }
 
-export async function putMountDirs(mountDirs: MountDir[]): Promise<Response> {
-	return await request("/mount_dirs", {
+export async function putMountDirs(mountDirs: MountDir[]): Promise<void> {
+	await request("/mount_dirs", {
 		method: "PUT",
 		body: JSON.stringify(mountDirs),
 		headers: { "Content-Type": "application/json" },
 	});
 }
 
-export async function triggerIndex(): Promise<Response> {
-	return await request("/trigger_index", { method: "POST" });
+export async function triggerIndex(): Promise<void> {
+	await request("/trigger_index", { method: "POST" });
 }
 
 export async function getIndexStatus(): Promise<IndexStatus> {
@@ -116,8 +119,8 @@ export async function createUser(newUser: NewUser): Promise<void> {
 	});
 }
 
-export async function updateUser(name: string, userUpdate: UserUpdate): Promise<Response> {
-	return await request("/user/" + name, {
+export async function updateUser(name: string, userUpdate: UserUpdate): Promise<void> {
+	await request("/user/" + name, {
 		method: "PUT",
 		body: JSON.stringify(userUpdate),
 		headers: { "Content-Type": "application/json" },
@@ -250,9 +253,9 @@ export async function getPlaylist(name: string): Promise<Playlist> {
 	});
 }
 
-export async function putPlaylist(name: string, tracks: string[]): Promise<Response> {
+export async function putPlaylist(name: string, tracks: string[]): Promise<void> {
 	let playlist: SavePlaylistInput = { tracks: tracks };
-	return await request("/playlist/" + encodeURIComponent(name), {
+	await request("/playlist/" + encodeURIComponent(name), {
 		method: "PUT",
 		body: JSON.stringify(playlist),
 		headers: { "Content-Type": "application/json" },
@@ -262,6 +265,7 @@ export async function putPlaylist(name: string, tracks: string[]): Promise<Respo
 export async function deletePlaylist(name: string): Promise<void> {
 	await request("/playlist/" + encodeURIComponent(name), { method: "DELETE" });
 }
+
 // Media 
 
 export async function get_songs(paths: string[]): Promise<{ songs: Song[], not_found: string[] }> {

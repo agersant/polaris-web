@@ -34,10 +34,8 @@ export const useMountDirsStore = defineStore("mountDirs", () => {
 	}
 
 	async function save() {
-		const response = await putMountDirs(listing.value);
-		if (response.ok) {
-			await refresh();
-		}
+		await putMountDirs(listing.value);
+		await refresh();
 	}
 
 	return {
