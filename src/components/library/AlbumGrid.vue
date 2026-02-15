@@ -64,6 +64,7 @@ const virtualAlbums = computed(() => {
     return trimmedAlbums.value.slice(firstVirtual.value, firstVirtual.value + numVirtualItems.value);
 });
 
+// TODO Random page, click any album, press back button, something wacky happens and layout explodes
 const sampleAlbum = {
     name: "WWWW ".repeat(10),
     main_artists: ["WWWW ".repeat(10)],
