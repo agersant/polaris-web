@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader title="Playlists" caption="Listen to your saved playlists." />
+		<PageHeader title="Playlists" :actions="pageActions" />
 		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
 				clearable />
@@ -57,7 +57,7 @@ import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useRouter } from "vue-router";
 
 import { PlaylistHeader } from "@/api/dto";
-import { getPlaylist } from "@/api/endpoints";
+import { exportPlaylists as doExportPlaylists, getPlaylist } from "@/api/endpoints";
 import Badge from "@/components/basic/Badge.vue";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Button from "@/components/basic/Button.vue";
@@ -89,6 +89,10 @@ onMounted(async () => {
 });
 
 const viewport = useTemplateRef("viewport");
+
+const pageActions = computed(() => [
+	{ label: "Export", icon: "upload", action: exportPlaylists, disabled: !playlists.listing.length },
+]);
 
 const filter = ref("");
 
@@ -127,6 +131,17 @@ function onPlaylistClicked(playlist: PlaylistHeader) {
 
 function onGenreClicked(name: string) {
 	router.push(makeGenreURL(name));
+}
+
+function exportPlaylists() {
+	doExportPlaylists().then(({ filename, payload }) => {
+		const link = document.createElement("a");
+		const url = window.URL.createObjectURL(payload);
+		link.href = url;
+		link.download = filename;
+		link.click();
+		URL.revokeObjectURL(url);
+	});
 }
 
 useHistory("playlists", [filter, saveScrollState(viewport)]);
