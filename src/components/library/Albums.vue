@@ -123,6 +123,9 @@ const filter = ref("");
 const filtered = computed(() => {
     const query = filter.value.toLowerCase();
     return albums.value.filter(a => {
+        if (viewMode.value != "all") {
+            return true;
+        }
         if (!query.length) {
             return true;
         }
