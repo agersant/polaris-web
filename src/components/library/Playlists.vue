@@ -91,6 +91,7 @@ onMounted(async () => {
 const viewport = useTemplateRef("viewport");
 
 const pageActions = computed(() => [
+	{ label: "Import", icon: "download", action: importPlaylists },
 	{ label: "Export", icon: "upload", action: exportPlaylists, disabled: !playlists.listing.length },
 ]);
 
@@ -142,6 +143,30 @@ function exportPlaylists() {
 		link.click();
 		URL.revokeObjectURL(url);
 	});
+}
+
+function importPlaylists() {
+	const input = document.createElement("input");
+	input.type = "file";
+	input.accept = ".m3u,.m3u8,.zip";
+	input.multiple = true;
+	input.onchange = async e => {
+		const files = [];
+		const numFiles = input.files?.length || 0;
+		for (let i = 0; i < numFiles; i++) {
+			const file = input.files?.item(i);
+			if (!file) {
+				continue;
+			}
+			const data = new Blob([await file.bytes()]);
+			files.push({
+				filename: file.name,
+				content: data,
+			});
+		}
+		await playlists.importPlaylists(files);
+	}
+	input.click();
 }
 
 useHistory("playlists", [filter, saveScrollState(viewport)]);
