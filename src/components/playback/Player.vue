@@ -192,6 +192,7 @@ function onPlaybackError(event: Event) {
 	}
 	pause();
 	error.value = errorText;
-	notify("Playback Error", artworkURL.value, errorText);
+	const throttle = true;
+	notify("Playback Error", artworkURL.value, errorText, throttle);
 }
 </script>

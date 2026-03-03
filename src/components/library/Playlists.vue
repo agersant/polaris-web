@@ -67,6 +67,7 @@ import Spinner from "@/components/basic/Spinner.vue";
 import PageHeader from "@/components/basic/PageHeader.vue";
 import { formatLongDuration } from "@/format";
 import { saveScrollState, useHistory } from "@/history";
+import notify from "@/notify";
 import { makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import { usePlaylistsStore } from "@/stores/playlists";
@@ -164,7 +165,15 @@ function importPlaylists() {
 				content: data,
 			});
 		}
-		await playlists.importPlaylists(files);
+		try {
+			await playlists.importPlaylists(files);
+		} catch (e: any) {
+			if (e instanceof Response) {
+				const text = await e.text();
+				const throttle = false;
+				notify("Playlist Import Error", null, text, throttle);
+			}
+		}
 	}
 	input.click();
 }

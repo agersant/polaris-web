@@ -10,7 +10,7 @@ let areWeSpammy = function () {
 	return recentNotificationTimes.length >= maxRecentNotifications;
 };
 
-export default async function (title: string, icon: string | null, body: string) {
+export default async function (title: string, icon: string | null, body: string, throttle: boolean) {
 	if (!("Notification" in window)) {
 		return;
 	}
@@ -22,7 +22,7 @@ export default async function (title: string, icon: string | null, body: string)
 		}
 	}
 
-	if (areWeSpammy()) {
+	if (throttle && areWeSpammy()) {
 		console.log("Ignored spammy notification: " + body);
 		return;
 	}
