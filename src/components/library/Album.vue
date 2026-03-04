@@ -71,8 +71,9 @@
 						<SectionTitle v-if="discs?.size && discNumber" icon="numbers" :label="`Disc ${discNumber}`" />
 						<Draggable :make-payload="() => new DndPayloadSongs(selection)" v-for="(song, index) of songs"
 							@draggable-start="onDragStart($event, song)" :allow-pointer-events-inside="true">
-							<AlbumSong ref="albumSongs" :song="song" :selected="selectedKeys.has(song.path)"
-								:focused="focusedKey == song.path" :is-last="index == songs.length - 1"
+							<AlbumSong ref="albumSongs" v-for="_i of [0]" :song="song"
+								:selected="selectedKeys.has(song.path)" :focused="focusedKey == song.path"
+								:is-last="index == songs.length - 1"
 								@click="clickItem($event, { key: song.path, ...song })"
 								@dblclick="onSongDoubleClicked(song)"
 								@contextmenu="(e: MouseEvent) => onSongRightClicked(e, song)" />
