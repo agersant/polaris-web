@@ -24,7 +24,7 @@ jobs:
             - name: Install Node.js
               uses: actions/setup-node@v1
               with:
-                  node-version: "18.12.1"
+                  node-version: "24.14.0"
             - name: Install Polaris Web dependencies
               run: npm ci
             - name: Install browsers

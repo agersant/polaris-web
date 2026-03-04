@@ -3,7 +3,7 @@
 ## Dependencies
 
 1. Install Polaris or compile your own by following [this guide](https://github.com/agersant/polaris/blob/master/docs/CONTRIBUTING.md)
-2. Install [Node.js](https://nodejs.org) version 14 or more
+2. Install [Node.js](https://nodejs.org) version 22 or more
 
 ## Workflow
 
