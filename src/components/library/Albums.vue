@@ -100,12 +100,6 @@ watchThrottled(needsMoreAlbums, () => {
     }
 }, { throttle: 200 });
 
-watch(viewMode, () => {
-    albums.value = [];
-    fetchedAll.value = false;
-    fetchAlbums();
-});
-
 watch(fetchedAlbums, () => {
     fetchedAll.value = !fetchedAlbums.value.length;
     switch (viewMode.value) {
@@ -148,4 +142,10 @@ function generateSeed() {
 if (!useHistory("albums", [albums, filter, viewMode, seed, saveScrollState(viewport)])) {
     fetchAlbums();
 }
+
+watch(viewMode, () => {
+    albums.value = [];
+    fetchedAll.value = false;
+    fetchAlbums();
+});
 </script>
