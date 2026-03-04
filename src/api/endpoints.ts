@@ -266,6 +266,28 @@ export async function deletePlaylist(name: string): Promise<void> {
 	await request("/playlist/" + encodeURIComponent(name), { method: "DELETE" });
 }
 
+export async function exportPlaylists(): Promise<{ filename: string, payload: Blob }> {
+	const response = await request("/playlists/export");
+	const parseFilename = /(filename="?([\w\-\.]+)"?)|(filename\*=UTF-8''([\w\-\.]+))/i;
+	const match = response.headers.get("Content-Disposition")?.match(parseFilename);
+	let filename = "playlists.zip";
+	if (match) {
+		filename = match[2] || match[4];
+	}
+	return { filename, payload: await response.blob() };
+}
+
+export async function importPlaylists(files: { filename: string, content: Blob }[]): Promise<void> {
+	const formData = new FormData();
+	for (let { filename, content } of files) {
+		formData.append(filename, content);
+	}
+	await request("/playlists/import", {
+		method: "PUT",
+		body: formData,
+	});
+}
+
 // Media 
 
 export async function get_songs(paths: string[]): Promise<{ songs: Song[], not_found: string[] }> {

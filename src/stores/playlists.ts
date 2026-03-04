@@ -2,7 +2,7 @@ import { defineStore, acceptHMRUpdate } from "pinia";
 import { markRaw, Ref, ref } from "vue";
 
 import { Playlist, PlaylistHeader } from "@/api/dto";
-import { deletePlaylist as doDeletePlaylist, getPlaylist, listPlaylists, putPlaylist } from "@/api/endpoints";
+import { deletePlaylist as doDeletePlaylist, getPlaylist, listPlaylists, importPlaylists as doImportPlaylists, putPlaylist } from "@/api/endpoints";
 import { usePlaybackStore } from "./playback";
 
 export type PlaylistsState = {
@@ -37,6 +37,11 @@ export const usePlaylistsStore = defineStore("playlists", () => {
 		await fetchList();
 	}
 
+	async function importPlaylists(files: { filename: string, content: Blob }[]) {
+		await doImportPlaylists(files);
+		await fetchList();
+	}
+
 	return {
 		listing,
 		playlists,
@@ -44,6 +49,7 @@ export const usePlaylistsStore = defineStore("playlists", () => {
 		deletePlaylist,
 		fetchList,
 		fetchPlaylist,
+		importPlaylists,
 		save,
 	};
 });

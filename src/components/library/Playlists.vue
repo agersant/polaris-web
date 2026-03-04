@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col">
-		<PageHeader title="Playlists" caption="Listen to your saved playlists." />
+		<PageHeader title="Playlists" :actions="pageActions" />
 		<div v-if="playlists.listing.length" class="grow min-h-0 flex flex-col">
 			<InputText class="mb-8" v-model="filter" id="filter" placeholder="Filter" icon="filter_alt" autofocus
 				clearable />
@@ -57,7 +57,7 @@ import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useRouter } from "vue-router";
 
 import { PlaylistHeader } from "@/api/dto";
-import { getPlaylist } from "@/api/endpoints";
+import { exportPlaylists as doExportPlaylists, getPlaylist } from "@/api/endpoints";
 import Badge from "@/components/basic/Badge.vue";
 import BlankStateFiller from "@/components/basic/BlankStateFiller.vue";
 import Button from "@/components/basic/Button.vue";
@@ -67,6 +67,7 @@ import Spinner from "@/components/basic/Spinner.vue";
 import PageHeader from "@/components/basic/PageHeader.vue";
 import { formatLongDuration } from "@/format";
 import { saveScrollState, useHistory } from "@/history";
+import notify from "@/notify";
 import { makeGenreURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
 import { usePlaylistsStore } from "@/stores/playlists";
@@ -89,6 +90,11 @@ onMounted(async () => {
 });
 
 const viewport = useTemplateRef("viewport");
+
+const pageActions = computed(() => [
+	{ label: "Import", icon: "download", action: importPlaylists },
+	{ label: "Export", icon: "upload", action: exportPlaylists, disabled: !playlists.listing.length },
+]);
 
 const filter = ref("");
 
@@ -127,6 +133,49 @@ function onPlaylistClicked(playlist: PlaylistHeader) {
 
 function onGenreClicked(name: string) {
 	router.push(makeGenreURL(name));
+}
+
+function exportPlaylists() {
+	doExportPlaylists().then(({ filename, payload }) => {
+		const link = document.createElement("a");
+		const url = window.URL.createObjectURL(payload);
+		link.href = url;
+		link.download = filename;
+		link.click();
+		URL.revokeObjectURL(url);
+	});
+}
+
+function importPlaylists() {
+	const input = document.createElement("input");
+	input.type = "file";
+	input.accept = ".m3u,.m3u8,.zip";
+	input.multiple = true;
+	input.onchange = async e => {
+		const files = [];
+		const numFiles = input.files?.length || 0;
+		for (let i = 0; i < numFiles; i++) {
+			const file = input.files?.item(i);
+			if (!file) {
+				continue;
+			}
+			const data = new Blob([await file.bytes()]);
+			files.push({
+				filename: file.name,
+				content: data,
+			});
+		}
+		try {
+			await playlists.importPlaylists(files);
+		} catch (e: any) {
+			if (e instanceof Response) {
+				const text = await e.text();
+				const throttle = false;
+				notify("Playlist Import Error", null, text, throttle);
+			}
+		}
+	}
+	input.click();
 }
 
 useHistory("playlists", [filter, saveScrollState(viewport)]);
